@@ -1,5 +1,6 @@
 <!--
     Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+    Copyright (C) 2014 The CyanogenMod Project
 
     Not a Contribution.
 
@@ -26,8 +27,8 @@
     </string-array>
 
     <string-array name="pref_camera_powermode_entryvalues" translatable="false">
-        <item>@string/pref_camera_powermode_value_lp</item>
-        <item>@string/pref_camera_powermode_value_np</item>
+        <item>Low_Power</item>
+        <item>Normal_Power</item>
     </string-array>
 
     <!-- Camera Preferences Picture format dialog box entries -->
@@ -104,78 +105,79 @@
         <item>@string/pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12rggb</item>
         <item>@string/pref_camera_picture_format_entry_raw_bayer_ideal_plain16_12bggr</item>
     </string-array>
+
     <string-array name="pref_camera_picture_format_entryvalues" translatable="false">
-        <item>@string/pref_camera_picture_format_value_jpeg</item>
-        <item>@string/pref_camera_picture_format_value_raw</item>
-        <item>@string/pref_camera_picture_format_value_raw_yuv_422_sp</item>
-        <item>@string/pref_camera_picture_format_value_raw_yuv_8bit_yuyv</item>
-        <item>@string/pref_camera_picture_format_value_raw_yuv_8bit_yvyu</item>
-        <item>@string/pref_camera_picture_format_value_raw_yuv_8bit_uyvy</item>
-        <item>@string/pref_camera_picture_format_value_raw_yuv_8bit_vyuy</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_8gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_8grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_8rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_8bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_10gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_10grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_10rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_10bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_12gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_12grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_12rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_qcom_12bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_8gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_8grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_8rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_8bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_10gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_10grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_10rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_10bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_12gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_12grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_12rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_mipi_12bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_8gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_8grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_8rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_8bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_10gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_10grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_10rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_10bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_12gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_12grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_12rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_qcom_12bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_8gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_8grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_8rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_8bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_10gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_10grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_10rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_10bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_12gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_12grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_12rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_mipi_12bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain8_8gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain8_8grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain8_8rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain8_8bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_8gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_8grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_8rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_8bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_10gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_10grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_10rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_10bggr</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_12gbrg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_12grbg</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_12rggb</item>
-        <item>@string/pref_camera_picture_format_value_raw_bayer_ideal_plain16_12bggr</item>
+        <item>jpeg</item>
+        <item>raw</item>
+        <item>yuv422sp</item>
+        <item>yuv-raw8-yuyv</item>
+        <item>yuv-raw8-yvyu</item>
+        <item>yuv-raw8-uyvy</item>
+        <item>yuv-raw8-vyuy</item>
+        <item>bayer-qcom-8gbrg</item>
+        <item>bayer-qcom-8grbg</item>
+        <item>bayer-qcom-8rggb</item>
+        <item>bayer-qcom-8bgrr</item>
+        <item>bayer-qcom-10gbrg</item>
+        <item>bayer-qcom-10grbg</item>
+        <item>bayer-qcom-10rggb</item>
+        <item>bayer-qcom-10bggr</item>
+        <item>bayer-qcom-12gbrg</item>
+        <item>bayer-qcom-12grbg</item>
+        <item>bayer-qcom-12rggb</item>
+        <item>bayer-qcom-12bggr</item>
+        <item>bayer-mipi-8gbrg</item>
+        <item>bayer-mipi-8grbg</item>
+        <item>bayer-mipi-8rggb</item>
+        <item>bayer-mipi-8bggr</item>
+        <item>bayer-mipi-10gbrg</item>
+        <item>bayer-mipi-10grbg</item>
+        <item>bayer-mipi-10rggb</item>
+        <item>bayer-mipi-10bggr</item>
+        <item>bayer-mipi-12gbrg</item>
+        <item>bayer-mipi-12grbg</item>
+        <item>bayer-mipi-12rggb</item>
+        <item>bayer-mipi-12bggr</item>
+        <item>bayer-ideal-qcom-8gbrg</item>
+        <item>bayer-ideal-qcom-8grbg</item>
+        <item>bayer-ideal-qcom-8rggb</item>
+        <item>bayer-ideal-qcom-8bggr</item>
+        <item>bayer-ideal-qcom-10gbrg</item>
+        <item>bayer-ideal-qcom-10grbg</item>
+        <item>bayer-ideal-qcom-10rggb</item>
+        <item>bayer-ideal-qcom-10bggr</item>
+        <item>bayer-ideal-qcom-12gbrg</item>
+        <item>bayer-ideal-qcom-12grbg</item>
+        <item>bayer-ideal-qcom-12rggb</item>
+        <item>bayer-ideal-qcom-12bggr</item>
+        <item>bayer-ideal-mipi-8gbrg</item>
+        <item>bayer-ideal-mipi-8grbg</item>
+        <item>bayer-ideal-mipi-8rggb</item>
+        <item>bayer-ideal-mipi-8bggr</item>
+        <item>bayer-ideal-mipi-10gbrg</item>
+        <item>bayer-ideal-mipi-10grbg</item>
+        <item>bayer-ideal-mipi-10rggb</item>
+        <item>bayer-ideal-mipi-8bggr</item>
+        <item>bayer-ideal-mipi-12gbrg</item>
+        <item>bayer-ideal-mipi-12grbg</item>
+        <item>bayer-ideal-mipi-12rggb</item>
+        <item>bayer-ideal-mipi-12bggr</item>
+        <item>bayer-ideal-plain8-8gbrg</item>
+        <item>bayer-ideal-plain8-8grbg</item>
+        <item>bayer-ideal-plain8-8rggb</item>
+        <item>bayer-ideal-plain8-8bggr</item>
+        <item>bayer-ideal-plain16-8gbrg</item>
+        <item>bayer-ideal-plain16-8grbg</item>
+        <item>bayer-ideal-plain16-8rggb</item>
+        <item>bayer-ideal-plain16-8bggr</item>
+        <item>bayer-ideal-plain16-10gbrg</item>
+        <item>bayer-ideal-plain16-10grbg</item>
+        <item>bayer-ideal-plain16-10rggb</item>
+        <item>bayer-ideal-plain16-10bggr</item>
+        <item>bayer-ideal-plain16-12gbrg</item>
+        <item>bayer-ideal-plain16-12grbg</item>
+        <item>bayer-ideal-plain16-12rggb</item>
+        <item>bayer-ideal-plain16-12bggr</item>
     </string-array>
 
     <!-- Camera Preferences JPEG quality dialog box entries -->
@@ -250,11 +252,10 @@
 
     <!-- Camera Preferences AE Bracketing dialog box entries -->
     <string-array name="pref_camera_ae_bracket_hdr_entries" translatable="false">
-        <item>@string/pref_camera_ae_bracket_hdr_entry_off</item>
-        <item>@string/pref_camera_ae_bracket_hdr_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
 
-    <!-- Do not localize entryvalues -->
     <string-array name="pref_camera_ae_bracket_hdr_entryvalues" translatable="false">
         <item>Off</item>
         <item>AE-Bracket</item>
@@ -262,11 +263,10 @@
 
     <!-- Camera Preferences Touch AF/AEC dialog box entries -->
     <string-array name="pref_camera_touchafaec_entries" translatable="false">
-        <item>@string/pref_camera_touchafaec_entry_off</item>
-        <item>@string/pref_camera_touchafaec_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
 
-    <!-- Do not localize entryvalues -->
     <string-array name="pref_camera_touchafaec_entryvalues" translatable="false">
         <item>touch-off</item>
         <item>touch-on</item>
@@ -274,11 +274,10 @@
 
     <!-- DIS dialog box entries -->
     <string-array name="pref_camera_dis_entries" translatable="false">
-        <item>@string/pref_camera_dis_entry_off</item>
-        <item>@string/pref_camera_dis_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
 
-    <!-- Do not localize entryvalues -->
     <string-array name="pref_camera_dis_entryvalues" translatable="false">
         <item>disable</item>
         <item>enable</item>
@@ -286,15 +285,14 @@
 
     <!-- Face Recognition dialog box entries -->
     <string-array name="pref_camera_facerc_entries" translatable="false">
-        <item>@string/pref_camera_facerc_entry_off</item>
-        <item>@string/pref_camera_facerc_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
 
-    <!-- Do not localize entryvalues -->
     <string-array name="pref_camera_facerc_entryvalues" translatable="false">
         <item>off</item>
         <item>on</item>
-   </string-array>
+    </string-array>
 
     <!-- Camera Preferences MultiLevel dialog box entries -->
     <string-array name="pref_camera_sharpness_entries" translatable="false">
@@ -305,6 +303,17 @@
         <item>@string/pref_camera_sharpness_entry_level4</item>
         <item>@string/pref_camera_sharpness_entry_level5</item>
         <item>@string/pref_camera_sharpness_entry_level6</item>
+    </string-array>
+
+    <!-- Entry Valur array for sharpness -->
+    <string-array name="pref_camera_multilevel_sharpness_entryvalues" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
     </string-array>
 
     <!-- Camera Preferences MultiLevel dialog box entries -->
@@ -335,17 +344,6 @@
         <item>@string/pref_camera_saturation_entry_level8</item>
         <item>@string/pref_camera_saturation_entry_level9</item>
         <item>@string/pref_camera_saturation_entry_level10</item>
-    </string-array>
-
-    <!-- Entry Valur array for sharpness -->
-    <string-array name="pref_camera_multilevel_sharpness_entryvalues" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
     </string-array>
 
     <!-- Entry values array is shared between Saturation & Contrast -->
@@ -388,7 +386,6 @@
         <item>@string/pref_camera_iso_entry_iso12800</item>
     </string-array>
 
-    <!-- Do not localize entryvalues -->
     <string-array name="pref_camera_iso_entryvalues" translatable="false">
         <item>auto</item>
         <item>ISO_HJR</item>
@@ -414,52 +411,50 @@
     </string-array>
 
     <!-- Camera Preferences Anti Banding dialog box entries -->
-     <string-array name="pref_camera_antibanding_entries" translatable="false">
-         <item>@string/pref_camera_antibanding_entry_0</item>
-         <item>@string/pref_camera_antibanding_entry_1</item>
-         <item>@string/pref_camera_antibanding_entry_2</item>
-         <item>@string/pref_camera_antibanding_entry_3</item>
-     </string-array>
+    <string-array name="pref_camera_antibanding_entries" translatable="false">
+        <item>@string/pref_camera_antibanding_entry_0</item>
+        <item>@string/pref_camera_antibanding_entry_1</item>
+        <item>@string/pref_camera_antibanding_entry_2</item>
+        <item>@string/pref_camera_antibanding_entry_3</item>
+    </string-array>
 
-     <string-array name="pref_camera_antibanding_entryvalues" translatable="false">
-         <item>off</item>
-         <item>50hz</item>
-         <item>60hz</item>
-         <item>auto</item>
-     </string-array>
+    <string-array name="pref_camera_antibanding_entryvalues" translatable="false">
+        <item>off</item>
+        <item>50hz</item>
+        <item>60hz</item>
+        <item>auto</item>
+    </string-array>
 
-     <!-- Camera Preferences Histogram dialog box entries -->
-     <string-array name="pref_camera_histogram_entries" translatable="false">
-          <item>@string/pref_camera_histogram_entry_disable</item>
-          <item>@string/pref_camera_histogram_entry_enable</item>
-     </string-array>
+    <!-- Video Preferences High Frame Rate dialog box entries -->
+    <string-array name="pref_camera_hfr_entries" translatable="false">
+        <item>@string/pref_camera_hfr_entry_off</item>
+        <item>@string/pref_camera_hfr_entry_2x</item>
+        <item>@string/pref_camera_hfr_entry_3x</item>
+        <item>@string/pref_camera_hfr_entry_4x</item>
+    </string-array>
 
-     <!-- Video Preferences High Frame Rate dialog box entries -->
-     <string-array name="pref_camera_hfr_entries" translatable="false">
-          <item>@string/pref_camera_hfr_entry_off</item>
-          <item>@string/pref_camera_hfr_entry_2x</item>
-          <item>@string/pref_camera_hfr_entry_3x</item>
-          <item>@string/pref_camera_hfr_entry_4x</item>
-     </string-array>
+    <string-array name="pref_camera_hfr_entryvalues" translatable="false">
+        <item>off</item>
+        <item>60</item>
+        <item>90</item>
+        <item>120</item>
+    </string-array>
 
-     <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_hfr_entryvalues" translatable="false">
-          <item>@string/pref_camera_hfr_value_off</item>
-          <item>@string/pref_camera_hfr_value_2x</item>
-          <item>@string/pref_camera_hfr_value_3x</item>
-          <item>@string/pref_camera_hfr_value_4x</item>
-     </string-array>
+    <!-- Camera Preferences Histogram dialog box entries -->
+    <string-array name="pref_camera_histogram_entries" translatable="false">
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
+    </string-array>
 
-     <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_histogram_entryvalues" translatable="false">
-          <item>@string/pref_camera_histogram_value_disable</item>
-          <item>@string/pref_camera_histogram_value_enable</item>
-     </string-array>
+    <string-array name="pref_camera_histogram_entryvalues" translatable="false">
+        <item>disable</item>
+        <item>enable</item>
+    </string-array>
 
     <!-- Camera Preferences Face Detection dialog box entries -->
     <string-array name="pref_camera_facedetection_entries" translatable="false">
-         <item>@string/pref_camera_facedetection_entry_off</item>
-         <item>@string/pref_camera_facedetection_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
 
     <string-array name="pref_camera_facedetection_entryvalues" translatable="false">
@@ -468,39 +463,40 @@
     </string-array>
 
     <!-- Camera Preferences Wavelet Denoise dialog box entries -->
+    <string-array name="pref_camera_denoise_entries" translatable="false">
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
+    </string-array>
+
     <string-array name="pref_camera_denoise_entryvalues" translatable="false">
         <item>denoise-off</item>
         <item>denoise-on</item>
     </string-array>
 
-    <string-array name="pref_camera_denoise_entries" translatable="false">
-    <item>@string/pref_camera_denoise_entry_off</item>
-    <item>@string/pref_camera_denoise_entry_on</item>
-    </string-array>
-
     <!-- Camera Preferences Auto Scene Detection dialog box entries -->
     <string-array name="pref_camera_scenedetect_entries" translatable="false">
-        <item>@string/pref_camera_scenedetect_entry_off</item>
-        <item>@string/pref_camera_scenedetect_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
+
     <string-array name="pref_camera_scenedetect_entryvalues" translatable="false">
         <item>off</item>
         <item>on</item>
     </string-array>
 
     <!-- Camera Preferences Auto Exposure dialog box entries -->
-     <string-array name="pref_camera_autoexposure_entries" translatable="false">
-         <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
-         <item>@string/pref_camera_autoexposure_entry_centerweighted</item>
-         <item>@string/pref_camera_autoexposure_entry_spotmetering</item>
-     </string-array>
+    <string-array name="pref_camera_autoexposure_entries" translatable="false">
+        <item>@string/pref_camera_autoexposure_entry_frameaverage</item>
+        <item>@string/pref_camera_autoexposure_entry_centerweighted</item>
+        <item>@string/pref_camera_autoexposure_entry_spotmetering</item>
+    </string-array>
 
-     <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_autoexposure_entryvalues" translatable="false">
-         <item>@string/pref_camera_autoexposure_value_frameaverage</item>
-         <item>@string/pref_camera_autoexposure_value_centerweighted</item>
-         <item>@string/pref_camera_autoexposure_value_spotmetering</item>
-     </string-array>
+    <string-array name="pref_camera_autoexposure_entryvalues" translatable="false">
+        <item>frame-average</item>
+        <item>center-weighted</item>
+        <item>spot-metering</item>
+    </string-array>
+
     <!-- Camera Preferences Video Encoder dialog box entries -->
     <string-array name="pref_camera_videoencoder_entries" translatable="false">
         <item>@string/pref_camera_videoencoder_entry_0</item>
@@ -527,40 +523,41 @@
 
     <!-- Camera Preferences Video Duration dialog box entries -->
     <string-array name="pref_camera_video_duration_entries" translatable="false">
-    <item>@string/pref_camera_video_duration_entry_mms</item>
-    <item>@string/pref_camera_video_duration_entry_10</item>
-    <item>@string/pref_camera_video_duration_entry_30</item>
+        <item>@string/pref_camera_video_duration_entry_mms</item>
+        <item>@string/pref_camera_video_duration_entry_10</item>
+        <item>@string/pref_camera_video_duration_entry_30</item>
     </string-array>
 
     <!-- The numbers are in minutes, except -1 means the duration suitable for mms. -->
     <string-array name="pref_camera_video_duration_entryvalues" translatable="false">
-    <item>-1</item>
-    <item>10</item>
-    <item>30</item>
+        <item>-1</item>
+        <item>10</item>
+        <item>30</item>
     </string-array>
 
     <!-- Camera Preferences Skin Tone Enhancement dialog box entries -->
-     <string-array name="pref_camera_skinToneEnhancement_entries" translatable="false">
-          <item>@string/pref_camera_skinToneEnhancement_entry_enable</item>
-          <item>@string/pref_camera_skinToneEnhancement_entry_disable</item>
-     </string-array>
+    <string-array name="pref_camera_skinToneEnhancement_entries" translatable="false">
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
+    </string-array>
 
-     <!-- Do not localize entryvalues -->
-     <string-array name="pref_camera_skinToneEnhancement_entryvalues" translatable="false">
-          <item>@string/pref_camera_skinToneEnhancement_value_enable</item>
-          <item>@string/pref_camera_skinToneEnhancement_value_disable</item>
-     </string-array>
+    <!-- Do not localize entryvalues -->
+    <string-array name="pref_camera_skinToneEnhancement_entryvalues" translatable="false">
+        <item>disable</item>
+        <item>enable</item>
+    </string-array>
 
-     <!-- Camera Preferences Redeye Reduction dialog box entries -->
-     <string-array name="pref_camera_redeyereduction_entries" translatable="false">
-         <item>@string/pref_camera_redeyereduction_entry_enable</item>
-         <item>@string/pref_camera_redeyereduction_entry_disable</item>
-     </string-array>
+    <!-- Camera Preferences Redeye Reduction dialog box entries -->
+    <string-array name="pref_camera_redeyereduction_entries" translatable="false">
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
+    </string-array>
 
-     <string-array name="pref_camera_redeyereduction_entryvalues" translatable="false">
-         <item>enable</item>
-         <item>disable</item>
-     </string-array>
+    <string-array name="pref_camera_redeyereduction_entryvalues" translatable="false">
+        <item>disable</item>
+        <item>enable</item>
+    </string-array>
+
     <!-- Camera Preferences Selectable Zone AF dialog box entries -->
     <string-array name="pref_camera_selectablezoneaf_entries" translatable="false">
         <item>@string/pref_camera_selectablezoneaf_entry_auto</item>
@@ -570,21 +567,20 @@
     </string-array>
 
     <string-array name="pref_camera_selectablezoneaf_entryvalues" translatable="false">
-         <item>@string/pref_camera_selectablezoneaf_value_auto</item>
-         <item>@string/pref_camera_selectablezoneaf_value_spotmetering</item>
-         <item>@string/pref_camera_selectablezoneaf_value_centerweighted</item>
-         <item>@string/pref_camera_selectablezoneaf_value_frameaverage</item>
+        <item>auto</item>
+        <item>spot-metering</item>
+        <item>center-weighted</item>
+        <item>frame-average</item>
     </string-array>
 
     <!-- Video HDR dialog box entries -->
     <string-array name="pref_camera_video_hdr_entries" translatable="false">
-        <item>@string/pref_camera_video_hdr_entry_off</item>
-        <item>@string/pref_camera_video_hdr_entry_on</item>
+        <item>@string/setting_off</item>
+        <item>@string/setting_on</item>
     </string-array>
 
     <string-array name="pref_camera_video_hdr_entryvalues" translatable="false">
-        <item>@string/pref_camera_video_hdr_value_off</item>
-        <item>@string/pref_camera_video_hdr_value_on</item>
+        <item>off</item>
+        <item>on</item>
     </string-array>
 </resources>
-
