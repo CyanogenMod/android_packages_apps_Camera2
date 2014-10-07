@@ -71,6 +71,12 @@ public class Settings3A {
     private static final int FOCUS_HOLD_MILLIS = 3000;
 
     /**
+     * The number of milliseconds to hold tap-to-expose/metering after the
+     * last payload frame is received before returning to continuous 3A.
+     */
+    private static final int GCAM_POST_SHOT_FOCUS_HOLD_MILLIS = 1000;
+
+    /**
      * Width of touch metering region in [0,1] relative to shorter edge of the
      * current crop region. Multiply this number by the number of pixels along
      * shorter edge of the current crop region's width to get a value in pixels.
@@ -98,7 +104,7 @@ public class Settings3A {
      * Was fixed at 15.0f prior to L release.
      * </p>
      */
-    private static final float GCAM_METERING_REGION_WEIGHT = 22.0f;
+    private static final float GCAM_METERING_REGION_WEIGHT = 45.0f;
 
     public static float getAutoFocusRegionWidth() {
         return AF_REGION_BOX;
@@ -122,5 +128,9 @@ public class Settings3A {
 
     public static int getFocusHoldMillis() {
         return FOCUS_HOLD_MILLIS;
+    }
+
+    public static int getGcamPostShotFocusHoldMillis() {
+        return GCAM_POST_SHOT_FOCUS_HOLD_MILLIS;
     }
 }
