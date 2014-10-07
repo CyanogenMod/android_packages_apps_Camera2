@@ -103,6 +103,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
+import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
@@ -1336,7 +1337,13 @@ public class CameraActivity extends QuickActivity
         mAppContext = getApplicationContext();
         mSoundPlayer = new SoundPlayer(mAppContext);
 
-        mCameraManager = OneCameraManager.get(this);
+        try {
+            mCameraManager = OneCameraManager.get(this);
+        } catch (OneCameraException e) {
+            Log.d(TAG, "Creating camera manager failed.", e);
+            CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+            return;
+        }
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
