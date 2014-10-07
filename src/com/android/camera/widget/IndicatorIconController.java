@@ -206,7 +206,7 @@ public class IndicatorIconController
         } else if (buttonManager.isEnabled(ButtonManager.BUTTON_HDR)
                 && buttonManager.isVisible(ButtonManager.BUTTON_HDR)) {
             setIndicatorState(SettingsManager.SCOPE_GLOBAL,
-                              Keys.KEY_CAMERA_HDR_PLUS, mHdrIndicator,
+                              Keys.KEY_CAMERA_HDR, mHdrIndicator,
                               mHdrIndicatorIcons, false);
         } else {
             changeVisibility(mHdrIndicator, View.GONE);
