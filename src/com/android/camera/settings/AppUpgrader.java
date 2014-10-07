@@ -209,14 +209,6 @@ public class AppUpgrader extends SettingsUpgrader {
             }
         }
 
-        // Request return to HDR+: boolean -> String, from module.
-        if (defaultPreferences.contains(Keys.KEY_REQUEST_RETURN_HDR_PLUS)) {
-            boolean requestReturnHdrPlus = removeBoolean(defaultPreferences,
-                    Keys.KEY_REQUEST_RETURN_HDR_PLUS);
-            settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_REQUEST_RETURN_HDR_PLUS,
-                    requestReturnHdrPlus);
-        }
-
         // Should show refocus viewer cling: boolean -> String, from default.
         if (defaultPreferences.contains(Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
             boolean shouldShowRefocusViewer = removeBoolean(defaultPreferences,
@@ -328,6 +320,8 @@ public class AppUpgrader extends SettingsUpgrader {
     /**
      * Part of the AOSP upgrade path, copies all of the keys and values in a
      * SharedPreferences file to another SharedPreferences file, as Strings.
+     * Settings that are not a known supported format (int/boolean/String)
+     * are dropped with warning.
      */
     private void copyPreferences(SharedPreferences oldPrefs,
             SharedPreferences newPrefs) {
@@ -335,10 +329,31 @@ public class AppUpgrader extends SettingsUpgrader {
         for (Map.Entry<String, ?> entry : entries.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value != null) {
-                newPrefs.edit().putString(key, String.valueOf(value)).apply();
-            } else {
+            if (value == null) {
                 Log.w(TAG, "skipped upgrade for null key " + key);
+            } else if (value instanceof Boolean) {
+                String boolValue = SettingsManager.convert((Boolean) value);
+                newPrefs.edit().putString(key, boolValue).apply();
+            } else if (value instanceof Integer) {
+                String intValue = SettingsManager.convert((Integer) value);
+                newPrefs.edit().putString(key, intValue).apply();
+            } else if (value instanceof Long){
+                // New SettingsManager only supports int values. Attempt to
+                // recover any longs which happen to be present if they are
+                // within int range.
+                long longValue = (Long) value;
+                if (longValue <= Integer.MAX_VALUE && longValue >= Integer.MIN_VALUE) {
+                    String intValue = SettingsManager.convert((int) longValue);
+                    newPrefs.edit().putString(key, intValue).apply();
+                } else {
+                    Log.w(TAG, "skipped upgrade for out of bounds long key " +
+                            key + " : " + longValue);
+                }
+            } else if (value instanceof String){
+                newPrefs.edit().putString(key, (String) value).apply();
+            } else {
+                Log.w(TAG,"skipped upgrade for unrecognized key type " +
+                        key + " : " + value.getClass());
             }
         }
     }
