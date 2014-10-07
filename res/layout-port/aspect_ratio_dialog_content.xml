@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_margin="28dp"
         android:gravity="center"
         android:text="@string/photo_size_selection_title"
         android:textSize="22sp"
@@ -63,6 +64,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:textSize="20sp"
+        android:layout_margin="28dp"
         android:textColor="@color/dialog_text_color"
         android:gravity="center"
         android:text="@string/photo_aspect_ratio_selection_content" />
