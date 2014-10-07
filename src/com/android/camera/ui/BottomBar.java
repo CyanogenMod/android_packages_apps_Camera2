@@ -148,11 +148,18 @@ public class BottomBar extends FrameLayout {
 
     private void setCancelBackgroundColor(int alpha, int color) {
         LayerDrawable layerDrawable = (LayerDrawable) mCancelButton.getBackground();
-        ColorDrawable colorDrawable = (ColorDrawable) layerDrawable.getDrawable(0);
-        if (!ApiHelper.isLOrHigher()) {
-            colorDrawable.setColor(color);
+        Drawable d = layerDrawable.getDrawable(0);
+        if (d instanceof AnimatedCircleDrawable) {
+            AnimatedCircleDrawable animatedCircleDrawable = (AnimatedCircleDrawable) d;
+            animatedCircleDrawable.setColor(color);
+            animatedCircleDrawable.setAlpha(alpha);
+        } else if (d instanceof ColorDrawable) {
+            ColorDrawable colorDrawable = (ColorDrawable) d;
+            if (!ApiHelper.isLOrHigher()) {
+                colorDrawable.setColor(color);
+            }
+            colorDrawable.setAlpha(alpha);
         }
-        colorDrawable.setAlpha(alpha);
     }
 
     private void setCaptureButtonUp() {
@@ -378,6 +385,7 @@ public class BottomBar extends FrameLayout {
     private void setupShutterBackgroundForModeIndex(int index) {
         LayerDrawable shutterBackground = mShutterButtonBackgrounds[index];
         mShutterButton.setBackground(shutterBackground);
+        mCancelButton.setBackground(shutterBackground.getConstantState().newDrawable());
 
         Drawable d = shutterBackground.getDrawable(0);
         mAnimatedCircleDrawable = null;
