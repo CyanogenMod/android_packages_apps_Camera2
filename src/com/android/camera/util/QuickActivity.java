@@ -25,15 +25,15 @@ import android.provider.MediaStore;
 import com.android.camera.debug.Log;
 
 /**
- * Workaround for lockscreen double-onResume() bug:
+ * Workaround for secure-lockscreen double-onResume() bug:
  * <p>
- * If started from the lockscreen, the activity may be quickly started, resumed,
- * paused, stopped, and then started and resumed again. This is problematic for
- * launch time from the lockscreen because we typically open the camera in
- * onResume() and close it in onPause(). These camera operations take a long
- * time to complete. To workaround it, this class filters out high-frequency
- * onResume()->onPause() sequences if the current intent indicates that we have
- * started from the lockscreen.
+ * If started from the secure-lockscreen, the activity may be quickly started,
+ * resumed, paused, stopped, and then started and resumed again. This is
+ * problematic for launch time from the secure-lockscreen because we typically open the
+ * camera in onResume() and close it in onPause(). These camera operations take
+ * a long time to complete. To workaround it, this class filters out
+ * high-frequency onResume()->onPause() sequences if the current intent
+ * indicates that we have started from the secure-lockscreen.
  * </p>
  * <p>
  * Subclasses should override the appropriate on[Create|Start...]Tasks() method
@@ -41,7 +41,7 @@ import com.android.camera.debug.Log;
  * </p>
  * <p>
  * Sequences of onResume() followed quickly by onPause(), when the activity is
- * started from an unsecure lockscreen will result in a quick no-op.<br>
+ * started from a secure-lockscreen will result in a quick no-op.<br>
  * </p>
  */
 public abstract class QuickActivity extends Activity {
@@ -55,7 +55,13 @@ public abstract class QuickActivity extends Activity {
     /** A reference to the main handler on which to run lifecycle methods. */
     private Handler mMainHandler;
     private boolean mPaused;
-    private boolean mStopped;
+    /**
+     * True if the last call to onResume() resulted in a delayed call to
+     * mOnResumeTasks which was then canceled due to an immediate onPause().
+     * This allows optimizing the common case in which the subsequent
+     * call to onResume() should execute onResumeTasks() immediately.
+     */
+    private boolean mCanceledResumeTasks = false;
 
     /**
      * A runnable for deferring tasks to be performed in onResume() if starting
@@ -65,13 +71,10 @@ public abstract class QuickActivity extends Activity {
             @Override
         public void run() {
             logLifecycle("onResumeTasks", true);
-            if (mStopped) {
-                onStartTasks();
-                mStopped = false;
-            }
             if (mPaused) {
                 onResumeTasks();
                 mPaused = false;
+                mCanceledResumeTasks = false;
             }
             logLifecycle("onResumeTasks", false);
         }
@@ -98,7 +101,6 @@ public abstract class QuickActivity extends Activity {
         onCreateTasks(bundle);
 
         mPaused = true;
-        mStopped = true;
 
         logLifecycle("onCreate", false);
     }
@@ -106,15 +108,7 @@ public abstract class QuickActivity extends Activity {
     @Override
     protected final void onStart() {
         logLifecycle("onStart", true);
-        if (delayOnResumeOnStart()) {
-            // Do nothing, instead wait for onResume() to be called and then
-            // execute onStartTasks() in mOnResumeTasks.
-        } else {
-            if (mStopped) {
-                onStartTasks();
-                mStopped = false;
-            }
-        }
+        onStartTasks();
         super.onStart();
         logLifecycle("onStart", false);
     }
@@ -123,12 +117,13 @@ public abstract class QuickActivity extends Activity {
     protected final void onResume() {
         logLifecycle("onResume", true);
         mMainHandler.removeCallbacks(mOnResumeTasks);
-        if (delayOnResumeOnStart()) {
+        if (delayOnResumeOnStart() && !mCanceledResumeTasks) {
             mMainHandler.postDelayed(mOnResumeTasks, ON_RESUME_DELAY_MILLIS);
         } else {
             if (mPaused) {
                 onResumeTasks();
                 mPaused = false;
+                mCanceledResumeTasks = false;
             }
         }
         super.onResume();
@@ -142,6 +137,8 @@ public abstract class QuickActivity extends Activity {
         if (!mPaused) {
             onPauseTasks();
             mPaused = true;
+        } else {
+            mCanceledResumeTasks = true;
         }
         super.onPause();
         logLifecycle("onPause", false);
@@ -153,11 +150,7 @@ public abstract class QuickActivity extends Activity {
             Log.v(TAG, "changing configurations");
         }
         logLifecycle("onStop", true);
-        mMainHandler.removeCallbacks(mOnResumeTasks);
-        if (!mStopped) {
-            onStopTasks();
-            mStopped = true;
-        }
+        onStopTasks();
         super.onStop();
         logLifecycle("onStop", false);
     }
@@ -185,11 +178,9 @@ public abstract class QuickActivity extends Activity {
 
     private boolean delayOnResumeOnStart() {
         String action = getIntent().getAction();
-        boolean isLockscreenCamera =
-                action.equals(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
         boolean isSecureLockscreenCamera =
                 action.equals(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
-        return isLockscreenCamera || isSecureLockscreenCamera;
+        return isSecureLockscreenCamera;
     }
 
     /**
