@@ -66,6 +66,12 @@ public class DebugCameraProxy extends CameraAgent.CameraProxy {
     }
 
     @Override
+    public CameraAgent getAgent() {
+        log("getAgent");
+        return mProxy.getAgent();
+    }
+
+    @Override
     public CameraCapabilities getCapabilities() {
         log("getCapabilities");
         return mProxy.getCapabilities();
