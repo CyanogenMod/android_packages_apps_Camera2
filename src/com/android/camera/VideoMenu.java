@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
- * Copyright (C) 2013 The CyanogenMod Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimeIntervalPopup;
+
 import com.android.camera2.R;
 
 import java.util.Locale;
@@ -62,29 +63,26 @@ public class VideoMenu extends PieController
         PieItem item = null;
         final Resources res = mActivity.getResources();
         Locale locale = res.getConfiguration().locale;
-        // the order is from left to right in the menu
+        // The order is from left to right in the menu.
 
-        // exposure compensation
-        if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
-            item = makeItem(CameraSettings.KEY_EXPOSURE);
-            item.setLabel(res.getString(R.string.pref_exposure_label));
-            mRenderer.addItem(item);
-        }
-        // enhance
+        // Enhance submenu
         PieItem enhance = makeItem(R.drawable.ic_enhance);
         enhance.setLabel(res.getString(R.string.camera_menu_enhance_label));
         mRenderer.addItem(enhance);
-        // hdr
+
+        // Video HDR
         if (group.findPreference(CameraSettings.KEY_VIDEO_HDR) != null) {
             item = makeSwitchItem(CameraSettings.KEY_VIDEO_HDR, true);
             enhance.addItem(item);
         }
-        // beautify
+
+        // Beautify
         if (group.findPreference(CameraSettings.KEY_BEAUTY_MODE) != null) {
             item = makeSwitchItem(CameraSettings.KEY_BEAUTY_MODE, true);
             enhance.addItem(item);
         }
-        // color effect
+
+        // Color effect
         final ListPreference colorPref =
                 group.findPreference(CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT);
         if (colorPref != null) {
@@ -108,39 +106,48 @@ public class VideoMenu extends PieController
             enhance.addItem(item);
         }
 
-        // more settings
-        PieItem more = makeItem(R.drawable.ic_settings_holo_light);
-        more.setLabel(res.getString(R.string.camera_menu_settings_label));
-        mRenderer.addItem(more);
-        // flash
-        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE);
-            mRenderer.addItem(item);
+        // Advanced submenu
+        PieItem advanced = makeItem(R.drawable.ic_advanced);
+        advanced.setLabel(res.getString(R.string.camera_menu_advanced_label));
+        mRenderer.addItem(advanced);
+
+        // Exposure compensation
+        if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
+            item = makeItem(CameraSettings.KEY_EXPOSURE);
+            item.setLabel(res.getString(R.string.pref_exposure_label));
+            advanced.addItem(item);
         }
 
-        // camera switcher
-        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
-            final PieItem fitem = item;
+        // White balance
+        final ListPreference whiteBalancePref =
+                group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
+        if (whiteBalancePref != null) {
+            item = makeItem(R.drawable.ic_wb_auto);
+            item.setLabel(res.getString(
+                    R.string.pref_camera_whitebalance_label).toUpperCase(locale));
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
-                    // Find the index of next camera.
-                    ListPreference pref = mPreferenceGroup
-                            .findPreference(CameraSettings.KEY_CAMERA_ID);
-                    if (pref != null) {
-                        int index = pref.findIndexOfValue(pref.getValue());
-                        CharSequence[] values = pref.getEntryValues();
-                        index = (index + 1) % values.length;
-                        pref.setValueIndex(index);
-                        mListener.onCameraPickerClicked(index);
-                    }
-                    updateItem(fitem, CameraSettings.KEY_CAMERA_ID);
+                    ListPrefSettingPopup popup =
+                            (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
+                            R.layout.list_pref_setting_popup, null, false);
+                    popup.initialize(whiteBalancePref);
+                    popup.setSettingChangedListener(VideoMenu.this);
+                    mUI.dismissPopup();
+                    mPopup = popup;
+                    mPopupStatus = POPUP_SECOND_LEVEL;
+                    mUI.showPopup(mPopup);
                 }
             });
-            mRenderer.addItem(item);
+            advanced.addItem(item);
         }
-        // time lapse
+
+        // Settings submenu
+        PieItem more = makeItem(R.drawable.ic_settings_holo_light);
+        more.setLabel(res.getString(R.string.camera_menu_settings_label));
+        mRenderer.addItem(more);
+
+        // Time lapse
         final ListPreference tlPref =
                 group.findPreference(CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
         item = makeItem(R.drawable.ic_timer);
@@ -161,7 +168,8 @@ public class VideoMenu extends PieController
             }
         });
         more.addItem(item);
-        // video size
+
+        // Video size
         final ListPreference sizePref = group.findPreference(CameraSettings.KEY_VIDEO_QUALITY);
         if (sizePref != null) {
             item = makeItem(R.drawable.ic_imagesize);
@@ -183,20 +191,21 @@ public class VideoMenu extends PieController
             });
             more.addItem(item);
         }
-        // white balance
-        final ListPreference whiteBalancePref =
-                group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
-        if (whiteBalancePref != null) {
-            item = makeItem(R.drawable.ic_wb_auto);
+
+        // Slow motion (HFR)
+        final ListPreference hfrPref =
+                group.findPreference(CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE);
+        if (hfrPref != null) {
+            item = makeItem(R.drawable.ic_slow_motion);
             item.setLabel(res.getString(
-                    R.string.pref_camera_whitebalance_label).toUpperCase(locale));
+                    R.string.pref_camera_hfr_title).toUpperCase(locale));
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
-                    LayoutInflater inflater = mActivity.getLayoutInflater();
-                    ListPrefSettingPopup popup = (ListPrefSettingPopup) inflater.inflate(
+                    ListPrefSettingPopup popup =
+                            (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
                             R.layout.list_pref_setting_popup, null, false);
-                    popup.initialize(whiteBalancePref);
+                    popup.initialize(hfrPref);
                     popup.setSettingChangedListener(VideoMenu.this);
                     mUI.dismissPopup();
                     mPopup = popup;
@@ -206,16 +215,16 @@ public class VideoMenu extends PieController
             });
             more.addItem(item);
         }
-        // extra settings popup
+
+        // More settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_STORAGE,
                 CameraSettings.KEY_POWER_SHUTTER,
                 CameraSettings.KEY_DIS,
-                CameraSettings.KEY_VIDEO_ENCODER,
-                CameraSettings.KEY_AUDIO_ENCODER,
                 CameraSettings.KEY_FOCUS_TIME,
                 CameraSettings.KEY_JPEG_QUALITY,
-                CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
+                CameraSettings.KEY_VIDEO_ENCODER,
+                CameraSettings.KEY_AUDIO_ENCODER
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
@@ -223,8 +232,8 @@ public class VideoMenu extends PieController
             @Override
             public void onClick(PieItem item) {
                 if (mPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
-                    LayoutInflater inflater = mActivity.getLayoutInflater();
-                    MoreSettingPopup popup = (MoreSettingPopup) inflater.inflate(
+                    MoreSettingPopup popup =
+                            (MoreSettingPopup) mActivity.getLayoutInflater().inflate(
                             R.layout.more_setting_popup, null, false);
                     popup.initialize(mPreferenceGroup, mOtherKeys);
                     popup.setSettingChangedListener(VideoMenu.this);
@@ -235,6 +244,36 @@ public class VideoMenu extends PieController
             }
         });
         more.addItem(item);
+
+        // Flash
+        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
+            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE);
+            item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
+            mRenderer.addItem(item);
+        }
+
+        // Camera switcher
+        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
+            final PieItem fitem = item;
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    // Find the index of next camera.
+                    ListPreference pref = mPreferenceGroup
+                            .findPreference(CameraSettings.KEY_CAMERA_ID);
+                    if (pref != null) {
+                        int index = pref.findIndexOfValue(pref.getValue());
+                        CharSequence[] values = pref.getEntryValues();
+                        index = (index + 1) % values.length;
+                        pref.setValueIndex(index);
+                        mListener.onCameraPickerClicked(index);
+                    }
+                    updateItem(fitem, CameraSettings.KEY_CAMERA_ID);
+                }
+            });
+            mRenderer.addItem(item);
+        }
     }
 
     @Override
