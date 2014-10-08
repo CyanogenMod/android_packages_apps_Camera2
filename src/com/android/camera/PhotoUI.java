@@ -622,7 +622,7 @@ public class PhotoUI implements PieListener,
         int wbIndex = 2;
         ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
         if (pref != null) {
-            wbIndex = pref.getCurrentUnfilteredIndex();
+            wbIndex = pref.getCurrentIndex();
         }
         mOnScreenIndicators.updateWBIndicator(wbIndex);
         boolean location = RecordLocationPreference.get(
