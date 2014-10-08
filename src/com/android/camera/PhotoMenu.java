@@ -360,7 +360,7 @@ public class PhotoMenu extends PieController
             // Slow shutter is obviously incompatible, and HDR uses the ZSL burst
             // mechanism already on most cameras.
             setPreference(CameraSettings.KEY_CAMERA_HDR, mSettingOff);
-            setPreference(CameraSettings.KEY_SLOW_SHUTTER, mSettingOff);
+            setPreference(CameraSettings.KEY_SLOW_SHUTTER, "0");
             mUI.updateBurstModeIcon(Integer.valueOf(pref.getValue()));
         }
         super.onSettingChanged(pref);
