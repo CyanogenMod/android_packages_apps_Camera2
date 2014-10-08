@@ -177,7 +177,10 @@ public abstract class QuickActivity extends Activity {
     }
 
     private boolean delayOnResumeOnStart() {
-        return true;
+        String action = getIntent().getAction();
+        boolean isSecureLockscreenCamera =
+                action.equals(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
+        return isSecureLockscreenCamera;
     }
 
     /**
