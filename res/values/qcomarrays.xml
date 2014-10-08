@@ -433,11 +433,25 @@
         <item>@string/pref_camera_hfr_entry_4x</item>
     </string-array>
 
+    <string-array name="pref_camera_hfr_labels" translatable="false">
+        <item>@string/pref_camera_hfr_label_off</item>
+        <item>@string/pref_camera_hfr_entry_2x</item>
+        <item>@string/pref_camera_hfr_entry_3x</item>
+        <item>@string/pref_camera_hfr_entry_4x</item>
+    </string-array>
+
     <string-array name="pref_camera_hfr_entryvalues" translatable="false">
         <item>off</item>
         <item>60</item>
         <item>90</item>
         <item>120</item>
+    </string-array>
+
+    <string-array name="pref_camera_hfr_icons" translatable="false">
+        <item>@drawable/ic_hfr_off</item>
+        <item>@drawable/ic_hfr_60</item>
+        <item>@drawable/ic_hfr_90</item>
+        <item>@drawable/ic_hfr_120</item>
     </string-array>
 
     <!-- Camera Preferences Histogram dialog box entries -->
