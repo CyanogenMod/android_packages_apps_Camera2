@@ -31,10 +31,6 @@
     <!-- Cancel autofocus if preview stopped. If camera HAL does not support
         it set this value to false -->
     <bool name="cancelAutoFocusOnPreviewStopped">true</bool>
-    <!-- Samsung Camcorder Mode -->
-    <bool name="needsSamsungCamMode">false</bool>
-    <!-- HTC Camcorder Mode -->
-    <bool name="needsHTCCamMode">false</bool>
 
     <!-- Ordered list of detected scene modes
          This should reference the list in camera_asd_values and
