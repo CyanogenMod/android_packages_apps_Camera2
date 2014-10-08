@@ -385,7 +385,10 @@ public class BottomBar extends FrameLayout {
     private void setupShutterBackgroundForModeIndex(int index) {
         LayerDrawable shutterBackground = mShutterButtonBackgrounds[index];
         mShutterButton.setBackground(shutterBackground);
-        mCancelButton.setBackground(shutterBackground.getConstantState().newDrawable());
+        // FIXME this is crashing NPE on getConstantState()
+        // reverting for now
+        // b/559979
+        //mCancelButton.setBackground(shutterBackground.getConstantState().newDrawable());
 
         Drawable d = shutterBackground.getDrawable(0);
         mAnimatedCircleDrawable = null;
