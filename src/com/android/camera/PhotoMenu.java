@@ -38,7 +38,8 @@ public class PhotoMenu extends PieController
         implements MoreSettingPopup.Listener,
         CountdownTimerPopup.Listener,
         ListPrefSettingPopup.Listener {
-    private static String TAG = "CAM_photomenu";
+
+    private static String TAG = "CAM_PhotoMenu";
 
     private final String mSettingOff;
 
@@ -69,34 +70,65 @@ public class PhotoMenu extends PieController
         PieItem item = null;
         final Resources res = mActivity.getResources();
         Locale locale = res.getConfiguration().locale;
-        // the order is from left to right in the menu
+        // The order is from left to right in the menu.
 
-        // exposure compensation
+        // Advanced submenu
+        PieItem advanced = makeItem(R.drawable.ic_advanced);
+        advanced.setLabel(res.getString(R.string.camera_menu_advanced_label));
+        mRenderer.addItem(advanced);
+
+        // Exposure compensation
         if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
             item = makeItem(CameraSettings.KEY_EXPOSURE);
             item.setLabel(res.getString(R.string.pref_exposure_label));
-            mRenderer.addItem(item);
+            advanced.addItem(item);
         }
-        // enhance
+
+        // White balance
+        final ListPreference whiteBalancePref =
+                group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
+        if (whiteBalancePref != null) {
+            item = makeListItem(CameraSettings.KEY_WHITE_BALANCE);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(whiteBalancePref);
+                }
+            });
+            advanced.addItem(item);
+        }
+
+        // ISO
+        final ListPreference isoPref = group.findPreference(CameraSettings.KEY_ISO);
+        if (isoPref != null) {
+            item = makeListItem(CameraSettings.KEY_ISO);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(isoPref);
+                }
+            });
+            advanced.addItem(item);
+        }
+
+        // Enhance submenu
         PieItem enhance = makeItem(R.drawable.ic_enhance);
         enhance.setLabel(res.getString(R.string.camera_menu_enhance_label));
         mRenderer.addItem(enhance);
 
-        // HDR+ (GCam).
-        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR_PLUS) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR_PLUS, true);
-        }
-        // hdr
+        // HDR
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
             item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR, true);
             enhance.addItem(item);
         }
-        // beautify
+
+        // Beautify
         if (group.findPreference(CameraSettings.KEY_BEAUTY_MODE) != null) {
             item = makeSwitchItem(CameraSettings.KEY_BEAUTY_MODE, true);
             enhance.addItem(item);
         }
-        // slow shutter
+
+        // Slow shutter
         final ListPreference slowShutterPref =
                 group.findPreference(CameraSettings.KEY_SLOW_SHUTTER);
         if (slowShutterPref != null) {
@@ -109,12 +141,14 @@ public class PhotoMenu extends PieController
             });
             enhance.addItem(item);
         }
-        // auto scene detection
+
+        // Auto scene detection
         if (group.findPreference(CameraSettings.KEY_ASD) != null) {
             item = makeSwitchItem(CameraSettings.KEY_ASD, true);
             enhance.addItem(item);
         }
-        // color effect
+
+        // Color effect
         final ListPreference colorPref = group.findPreference(CameraSettings.KEY_COLOR_EFFECT);
         if (colorPref != null) {
             item = makeListItem(CameraSettings.KEY_COLOR_EFFECT);
@@ -127,17 +161,117 @@ public class PhotoMenu extends PieController
             enhance.addItem(item);
         }
 
-        // more settings
+        // Scene mode
+        final ListPreference scenePref = group.findPreference(CameraSettings.KEY_SCENE_MODE);
+        if (scenePref != null) {
+            item = makeListItem(CameraSettings.KEY_SCENE_MODE);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(scenePref);
+                }
+            });
+            enhance.addItem(item);
+        }
+
+        // Settings submenu
         PieItem more = makeItem(R.drawable.ic_settings_holo_light);
         more.setLabel(res.getString(R.string.camera_menu_settings_label));
         mRenderer.addItem(more);
-        // flash
+
+        // Location
+        if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
+            more.addItem(item);
+            if (mActivity.isSecureCamera()) {
+                // Prevent location preference from getting changed in secure camera mode
+                item.setEnabled(false);
+            }
+        }
+
+        // Countdown timer
+        final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
+        final ListPreference beeppref =
+                group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
+        item = makeItem(R.drawable.ic_timer);
+        item.setLabel(res.getString(R.string.pref_camera_timer_title).toUpperCase(locale));
+        item.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(PieItem item) {
+                CountdownTimerPopup timerPopup =
+                        (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
+                        R.layout.countdown_setting_popup, null, false);
+                timerPopup.initialize(ctpref, beeppref);
+                timerPopup.setSettingChangedListener(PhotoMenu.this);
+                mUI.dismissPopup();
+                mPopup = timerPopup;
+                mUI.showPopup(mPopup);
+            }
+        });
+        more.addItem(item);
+
+        // Image size
+        final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
+        if (sizePref != null) {
+            item = makeListItem(CameraSettings.KEY_PICTURE_SIZE);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(sizePref);
+                }
+            });
+            more.addItem(item);
+        }
+
+        // Burst mode
+        final ListPreference burstPref = group.findPreference(CameraSettings.KEY_BURST_MODE);
+        if (burstPref != null) {
+            item = makeListItem(CameraSettings.KEY_BURST_MODE);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(burstPref);
+                }
+            });
+            more.addItem(item);
+            mUI.updateBurstModeIcon(Integer.valueOf(burstPref.getValue()));
+        }
+
+        // More settings popup
+        mSettingsKeys = new String[] {
+                CameraSettings.KEY_STORAGE,
+                CameraSettings.KEY_POWER_SHUTTER,
+                CameraSettings.KEY_FOCUS_MODE,
+                CameraSettings.KEY_FOCUS_TIME,
+                CameraSettings.KEY_JPEG_QUALITY,
+                CameraSettings.KEY_AUTOEXPOSURE,
+                CameraSettings.KEY_ANTIBANDING,
+                CameraSettings.KEY_DENOISE,
+                CameraSettings.KEY_HISTOGRAM,
+                CameraSettings.KEY_SUPERZOOM
+        };
+        PieItem settings = makeItem(R.drawable.ic_settings_holo_light);
+        settings.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
+        settings.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(PieItem item) {
+                if (mSettingsPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
+                    initializeSettingsPopup();
+                    mPopupStatus = POPUP_FIRST_LEVEL;
+                }
+                mUI.showPopup(mSettingsPopup);
+            }
+        });
+        more.addItem(settings);
+
+        // Flash
         if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
             item = makeItem(CameraSettings.KEY_FLASH_MODE);
             item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
             mRenderer.addItem(item);
         }
-        // camera switcher
+
+        // Camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
             final PieItem fitem = item;
@@ -159,103 +293,6 @@ public class PhotoMenu extends PieController
             });
             mRenderer.addItem(item);
         }
-        // location
-        if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
-            more.addItem(item);
-            if (mActivity.isSecureCamera()) {
-                // Prevent location preference from getting changed in secure camera mode
-                item.setEnabled(false);
-            }
-        }
-        // countdown timer
-        final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
-        final ListPreference beeppref =
-                group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
-        item = makeItem(R.drawable.ic_timer);
-        item.setLabel(res.getString(R.string.pref_camera_timer_title).toUpperCase(locale));
-        item.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                CountdownTimerPopup timerPopup =
-                        (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
-                        R.layout.countdown_setting_popup, null, false);
-                timerPopup.initialize(ctpref, beeppref);
-                timerPopup.setSettingChangedListener(PhotoMenu.this);
-                mUI.dismissPopup();
-                mPopup = timerPopup;
-                mUI.showPopup(mPopup);
-            }
-        });
-        more.addItem(item);
-        // image size
-        final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
-        if (sizePref != null) {
-            item = makeListItem(CameraSettings.KEY_PICTURE_SIZE);
-            item.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(PieItem item) {
-                    showListPopup(sizePref);
-                }
-            });
-            more.addItem(item);
-        }
-        // white balance
-        final ListPreference whiteBalancePref =
-                group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
-        if (whiteBalancePref != null) {
-            item = makeListItem(CameraSettings.KEY_WHITE_BALANCE);
-            item.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(PieItem item) {
-                    showListPopup(whiteBalancePref);
-                }
-            });
-            more.addItem(item);
-        }
-        // scene mode
-        final ListPreference scenePref = group.findPreference(CameraSettings.KEY_SCENE_MODE);
-        if (scenePref != null) {
-            item = makeListItem(CameraSettings.KEY_SCENE_MODE);
-            item.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(PieItem item) {
-                    showListPopup(scenePref);
-                }
-            });
-            enhance.addItem(item);
-        }
-        // extra settings popup
-        mSettingsKeys = new String[] {
-                CameraSettings.KEY_STORAGE,
-                CameraSettings.KEY_POWER_SHUTTER,
-                CameraSettings.KEY_FOCUS_MODE,
-                CameraSettings.KEY_FOCUS_TIME,
-                CameraSettings.KEY_ISO,
-                CameraSettings.KEY_JPEG_QUALITY,
-                CameraSettings.KEY_AUTOEXPOSURE,
-                CameraSettings.KEY_ANTIBANDING,
-                CameraSettings.KEY_DENOISE,
-                CameraSettings.KEY_BURST_MODE,
-                CameraSettings.KEY_HISTOGRAM,
-                CameraSettings.KEY_SUPERZOOM
-        };
-        PieItem settings = makeItem(R.drawable.ic_settings_holo_light);
-        settings.setLabel(res.getString(R.string.camera_menu_more_label).toUpperCase(locale));
-        settings.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                if (mSettingsPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
-                    initializeSettingsPopup();
-                    mPopupStatus = POPUP_FIRST_LEVEL;
-                }
-                mUI.showPopup(mSettingsPopup);
-            }
-        });
-        more.addItem(settings);
-        // burst mode
-        final ListPreference burstPref = group.findPreference(CameraSettings.KEY_BURST_MODE);
-        mUI.updateBurstModeIcon(Integer.valueOf(burstPref.getValue()));
     }
 
     public void popupDismissed() {
