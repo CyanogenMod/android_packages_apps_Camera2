@@ -43,7 +43,7 @@ public class LocalDataUtil {
      * @return Whether the MIME is a video type.
      */
     public static boolean isMimeTypeVideo(String mimeType) {
-        return mimeType.startsWith("video/");
+        return mimeType != null && mimeType.startsWith("video/");
     }
 
     /**
@@ -51,7 +51,7 @@ public class LocalDataUtil {
      * @return Whether the MIME is a image type.
      */
     public static boolean isMimeTypeImage(String mimeType) {
-        return mimeType.startsWith("image/");
+        return mimeType != null && mimeType.startsWith("image/");
     }
 
     /**
