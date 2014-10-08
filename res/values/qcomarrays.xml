@@ -364,26 +364,54 @@
     </string-array>
 
     <!-- Camera Preferences ISO dialog box entries -->
-     <string-array name="pref_camera_iso_entries" translatable="false">
-         <item>@string/pref_camera_iso_entry_auto</item>
-         <item>@string/pref_camera_iso_entry_isodeblur</item>
-         <item>@string/pref_camera_iso_entry_iso100</item>
-         <item>@string/pref_camera_iso_entry_iso200</item>
-         <item>@string/pref_camera_iso_entry_iso400</item>
-         <item>@string/pref_camera_iso_entry_iso800</item>
-         <item>@string/pref_camera_iso_entry_iso1600</item>
+    <string-array name="pref_camera_iso_entries" translatable="false">
+        <item>@string/pref_camera_iso_entry_auto</item>
+        <item>@string/pref_camera_iso_entry_isodeblur</item>
+        <item>@string/pref_camera_iso_entry_iso50</item>
+        <item>@string/pref_camera_iso_entry_iso100</item>
+        <item>@string/pref_camera_iso_entry_iso125</item>
+        <item>@string/pref_camera_iso_entry_iso200</item>
+        <item>@string/pref_camera_iso_entry_iso250</item>
+        <item>@string/pref_camera_iso_entry_iso320</item>
+        <item>@string/pref_camera_iso_entry_iso400</item>
+        <item>@string/pref_camera_iso_entry_iso500</item>
+        <item>@string/pref_camera_iso_entry_iso640</item>
+        <item>@string/pref_camera_iso_entry_iso800</item>
+        <item>@string/pref_camera_iso_entry_iso1000</item>
+        <item>@string/pref_camera_iso_entry_iso1200</item>
+        <item>@string/pref_camera_iso_entry_iso1250</item>
+        <item>@string/pref_camera_iso_entry_iso1600</item>
+        <item>@string/pref_camera_iso_entry_iso2000</item>
+        <item>@string/pref_camera_iso_entry_iso2500</item>
+        <item>@string/pref_camera_iso_entry_iso3200</item>
+        <item>@string/pref_camera_iso_entry_iso6400</item>
+        <item>@string/pref_camera_iso_entry_iso12800</item>
     </string-array>
 
     <!-- Do not localize entryvalues -->
     <string-array name="pref_camera_iso_entryvalues" translatable="false">
-         <item>@string/pref_camera_iso_value_auto</item>
-         <item>@string/pref_camera_iso_value_isodeblur</item>
-         <item>@string/pref_camera_iso_value_iso100</item>
-         <item>@string/pref_camera_iso_value_iso200</item>
-         <item>@string/pref_camera_iso_value_iso400</item>
-         <item>@string/pref_camera_iso_value_iso800</item>
-         <item>@string/pref_camera_iso_value_iso1600</item>
-     </string-array>
+        <item>auto</item>
+        <item>ISO_HJR</item>
+        <item>ISO50</item>
+        <item>ISO100</item>
+        <item>ISO125</item>
+        <item>ISO200</item>
+        <item>ISO250</item>
+        <item>ISO320</item>
+        <item>ISO400</item>
+        <item>ISO500</item>
+        <item>ISO640</item>
+        <item>ISO800</item>
+        <item>ISO1000</item>
+        <item>ISO1200</item>
+        <item>ISO1250</item>
+        <item>ISO1600</item>
+        <item>ISO2000</item>
+        <item>ISO2500</item>
+        <item>ISO3200</item>
+        <item>ISO6400</item>
+        <item>ISO12800</item>
+    </string-array>
 
     <!-- Camera Preferences Anti Banding dialog box entries -->
      <string-array name="pref_camera_antibanding_entries" translatable="false">
