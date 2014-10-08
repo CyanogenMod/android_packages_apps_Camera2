@@ -319,7 +319,8 @@ public class CameraSettings {
         ListPreference jpegQuality = group.findPreference(KEY_JPEG_QUALITY);
         ListPreference videoSnapSize = group.findPreference(KEY_VIDEO_SNAPSHOT_SIZE);
         ListPreference pictureFormat = group.findPreference(KEY_PICTURE_FORMAT);
-        ListPreference hfr = group.findPreference(KEY_VIDEO_HIGH_FRAME_RATE);
+        IconListPreference hfr =
+                (IconListPreference) group.findPreference(KEY_VIDEO_HIGH_FRAME_RATE);
 
         if (!mParameters.isPowerModeSupported() && powerMode != null) {
             removePreference(group, powerMode.getKey());
@@ -415,6 +416,7 @@ public class CameraSettings {
         if (hfr != null) {
             filterUnsupportedOptions(group,
                     hfr, mParameters.getSupportedVideoHighFrameRateModes());
+            hfr.setUseSingleIcon(true);
         }
     }
 
@@ -422,7 +424,7 @@ public class CameraSettings {
         ListPreference videoQuality = group.findPreference(KEY_VIDEO_QUALITY);
         ListPreference timeLapseInterval = group.findPreference(KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL);
         ListPreference pictureSize = group.findPreference(KEY_PICTURE_SIZE);
-        ListPreference whiteBalance =  group.findPreference(KEY_WHITE_BALANCE);
+        ListPreference whiteBalance = group.findPreference(KEY_WHITE_BALANCE);
         ListPreference sceneMode = group.findPreference(KEY_SCENE_MODE);
         ListPreference flashMode = group.findPreference(KEY_FLASH_MODE);
         ListPreference focusMode = group.findPreference(KEY_FOCUS_MODE);
@@ -443,6 +445,8 @@ public class CameraSettings {
         ListPreference storage = group.findPreference(KEY_STORAGE);
         ListPreference superZoom = group.findPreference(KEY_SUPERZOOM);
         ListPreference videoHdr = group.findPreference(KEY_VIDEO_HDR);
+        IconListPreference burst =
+                (IconListPreference) group.findPreference(KEY_BURST_MODE);
 
         // Since the screen could be loaded from different resources, we need
         // to check if the preference is available here
@@ -521,6 +525,9 @@ public class CameraSettings {
         }
         if (superZoom != null && !isSuperZoomSupported(mParameters)) {
             removePreference(group, superZoom.getKey());
+        }
+        if (burst != null) {
+            burst.setUseSingleIcon(true);
         }
         qcomInitPreferences(group);
     }

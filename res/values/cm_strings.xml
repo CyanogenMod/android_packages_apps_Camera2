@@ -146,6 +146,13 @@
     <string name="pref_camera_burst_entry_15">15 shots</string>
     <string name="pref_camera_burst_entry_20">20 shots</string>
 
+    <!-- Settings screen, Burst mode labels -->
+    <string name="pref_camera_burst_label_off">OFF</string>
+    <string name="pref_camera_burst_label_5">5 SHOTS</string>
+    <string name="pref_camera_burst_label_10">10 SHOTS</string>
+    <string name="pref_camera_burst_label_15">15 SHOTS</string>
+    <string name="pref_camera_burst_label_20">20 SHOTS</string>
+
     <!-- Touch-to-focus duration settings -->
     <string name="pref_camera_focustime_title">Touch focus duration</string>
     <string name="pref_camera_focustime_default" translatable="false">5000</string>
@@ -189,6 +196,8 @@
     <string name="camera_menu_enhance_label">ENHANCE</string>
     <string name="camera_menu_beauty_mode_label">BEAUTIFY</string>
     <string name="camera_menu_asd_label">SMART SCENE</string>
+
+    <string name="camera_menu_advanced_label">ADVANCED</string>
 
     <!-- More Settings screen, power button title -->
     <string name="pref_camera_power_shutter_title">Power shutter</string>

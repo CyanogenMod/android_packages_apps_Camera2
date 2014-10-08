@@ -34,6 +34,14 @@
         <item>@string/pref_camera_burst_entry_20</item>
     </string-array>
 
+    <string-array name="pref_camera_burst_mode_labels" translatable="false">
+        <item>@string/pref_camera_burst_label_off</item>
+        <item>@string/pref_camera_burst_label_5</item>
+        <item>@string/pref_camera_burst_label_10</item>
+        <item>@string/pref_camera_burst_label_15</item>
+        <item>@string/pref_camera_burst_label_20</item>
+    </string-array>
+
     <string-array name="pref_camera_burst_mode_values" translatable="false">
         <item>1</item>
         <item>5</item>
@@ -41,6 +49,14 @@
         <item>15</item>
         <item>20</item>
      </string-array>
+
+    <array name="pref_camera_burst_mode_icons" translatable="false">
+        <item>@drawable/ic_burst_off</item>
+        <item>@drawable/ic_burst_5</item>
+        <item>@drawable/ic_burst_10</item>
+        <item>@drawable/ic_burst_15</item>
+        <item>@drawable/ic_burst_20</item>
+    </array>
 
     <!-- Camera Preferences for timer duration -->
     <string-array name="pref_camera_focustime_duration_entries" translatable="false">
