@@ -177,11 +177,13 @@
     <string-array name="pref_camera_picturesize_entries" translatable="false">
         <item>@string/pref_camera_picturesize_entry_20_7mp</item>
         <item>@string/pref_camera_picturesize_entry_18mp</item>
+        <item>@string/pref_camera_picturesize_entry_15_9mp</item>
         <item>@string/pref_camera_picturesize_entry_13mp</item>
         <item>@string/pref_camera_picturesize_entry_13mp</item>
         <item>@string/pref_camera_picturesize_entry_12_8mp</item>
         <item>@string/pref_camera_picturesize_entry_12_7mp</item>
         <item>@string/pref_camera_picturesize_entry_12mp</item>
+        <item>@string/pref_camera_picturesize_entry_11_9mp</item>
         <item>@string/pref_camera_picturesize_entry_11_5mp</item>
         <item>@string/pref_camera_picturesize_entry_10_4mp</item>
         <item>@string/pref_camera_picturesize_entry_10mp</item>
@@ -226,11 +228,13 @@
     <string-array name="pref_camera_picturesize_entryvalues" translatable="false">
         <item>5248x3936</item>
         <item>4992x3744</item>
+        <item>5312x2988</item>
         <item>4208x3120</item>
         <item>4160x3120</item>
         <item>4128x3096</item>
         <item>4128x3088</item>
         <item>4000x3000</item>
+        <item>3984x2988</item>
         <item>3920x2940</item>
         <item>4128x2528</item>
         <item>4320x2432</item>
