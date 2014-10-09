@@ -102,7 +102,7 @@
     <color name="focus_outer_ring_color">#4CFFFFFF</color>
     <color name="fullscreen_dialog_background_color">@color/main_color_global</color>
     <color name="dialog_button_color">#FF76A7F9</color>
-    <color name="dialog_text_color">#DF000000</color>
+    <color name="dialog_text_color">@android:color/white</color>
 
     <color name="settings_cling_color">#2962FF</color>
 
