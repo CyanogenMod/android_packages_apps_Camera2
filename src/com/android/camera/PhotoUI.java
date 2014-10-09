@@ -218,6 +218,29 @@ public class PhotoUI implements PieListener,
         }
     }
 
+    private class SettingsPopup extends PopupWindow {
+        public SettingsPopup(View popup) {
+            super(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            setOutsideTouchable(true);
+            setFocusable(true);
+            popup.setVisibility(View.VISIBLE);
+            setContentView(popup);
+            showAtLocation(mRootView, Gravity.CENTER, 0, 0);
+        }
+
+        public void dismiss() {
+            super.dismiss();
+            popupDismissed();
+            showUI();
+            mMenu.popupDismissed();
+
+            // Switch back into fullscreen/lights-out mode after popup
+            // is dimissed.
+            mActivity.setSystemBarsVisibility(false);
+        }
+    }
+
     public PhotoUI(CameraActivity activity, PhotoController controller, View parent) {
         mActivity = activity;
         mController = controller;
@@ -669,33 +692,20 @@ public class PhotoUI implements PieListener,
     public void showPopup(AbstractSettingPopup popup) {
         hideUI();
 
-        if (mPopup == null) {
-            mPopup = new PopupWindow(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            mPopup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            mPopup.setOutsideTouchable(true);
-            mPopup.setFocusable(true);
-            mPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                @Override
-                public void onDismiss() {
-                    mPopup = null;
-                    mMenu.popupDismissed();
-                    showUI();
-
-                    // Switch back into fullscreen/lights-out mode after popup
-                    // is dimissed.
-                    mActivity.setSystemBarsVisibility(false);
-                }
-            });
+        if (mPopup != null) {
+            mPopup.dismiss();
         }
-        popup.setVisibility(View.VISIBLE);
-        mPopup.setContentView(popup);
-        mPopup.showAtLocation(mRootView, Gravity.CENTER, 0, 0);
+        mPopup = new SettingsPopup(popup);
     }
 
     public void dismissPopup() {
         if (mPopup != null && mPopup.isShowing()) {
             mPopup.dismiss();
         }
+    }
+
+    private void popupDismissed() {
+        mPopup = null;
     }
 
     public void onShowSwitcherPopup() {

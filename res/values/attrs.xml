@@ -30,6 +30,7 @@
         <attr name="entryValues" format="reference" />
         <attr name="entries" format="reference" />
         <attr name="labelList" format="reference" />
+        <attr name="icon" format="reference" />
     </declare-styleable>
     <declare-styleable name="IconIndicator">
         <attr name="icons" format="reference" />

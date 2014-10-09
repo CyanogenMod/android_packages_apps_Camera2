@@ -433,7 +433,8 @@ public class VideoUI implements PieRenderer.PieListener,
         ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
-    public void overrideSettings(final String... keyvalues) {
+    public void overrideSettings(final String ... keyvalues) {
+        if (mVideoMenu == null) return;
         mVideoMenu.overrideSettings(keyvalues);
     }
 
@@ -556,6 +557,15 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
+    public void showPopup(AbstractSettingPopup popup) {
+        hideUI();
+
+        if (mPopup != null) {
+            mPopup.dismiss();
+        }
+        mPopup = new SettingsPopup(popup);
+    }
+
     public void dismissPopup() {
         // In review mode, we do not want to bring up the camera UI
         if (mController.isInReviewMode()) return;
@@ -566,15 +576,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     private void popupDismissed() {
         mPopup = null;
-    }
-
-    public void showPopup(AbstractSettingPopup popup) {
-        hideUI();
-
-        if (mPopup != null) {
-            mPopup.dismiss();
-        }
-        mPopup = new SettingsPopup(popup);
     }
 
     public void onShowSwitcherPopup() {
