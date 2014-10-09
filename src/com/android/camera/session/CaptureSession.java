@@ -131,10 +131,11 @@ public interface CaptureSession {
     public void finishWithFailure(CharSequence reason);
 
     /**
-     * Returns the path to the final output of this session. This is only
-     * available after startSession has been called.
+     * Returns the path to where the final output of this session should be
+     * stored. This is only available after startSession has been called and
+     * will become unavailable after finish() was called.
      */
-    public String getPath();
+    public String getTempOutputPath();
 
     /**
      * Returns the URI to the final output of this session. This is only available
@@ -151,11 +152,11 @@ public interface CaptureSession {
     public Uri getContentUri();
 
     /**
-     * Whether this session already has a path. This is the case once it has
-     * been started. False is returned, if the session has not been started yet
-     * and no path is available.
+     * Whether this session has been started. Once it has been started it will
+     * have a valid path and can be processed. False is returned, if the session
+     * has not been started yet and no path is available.
      */
-    public boolean hasPath();
+    public boolean isStarted();
 
     /**
      * Updates the preview from a file. {@link #onPreviewAvailable()} will be

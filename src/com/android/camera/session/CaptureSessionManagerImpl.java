@@ -51,7 +51,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private Uri mUri;
         /** The title of the item being processed. */
         private final String mTitle;
-        /** The location this session was created at. Used for media store.*/
+        /** The location this session was created at. Used for media store. */
         private Location mLocation;
         /** The current progress of this session in percent. */
         private int mProgressPercent = 0;
@@ -65,18 +65,25 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private final HashSet<ProgressListener> mProgressListeners =
                 new HashSet<ProgressListener>();
         private final long mSessionStartMillis;
+        /**
+         * The path that can be used to write the final JPEG output temporarily,
+         * before it is copied to the final location.
+         */
+        private final String mTempOutputPath;
 
         /**
          * Creates a new {@link CaptureSession}.
          *
          * @param title the title of this session.
-         * @param sessionStartMillis the timestamp of this capture session (since epoch).
+         * @param sessionStartMillis the timestamp of this capture session
+         *            (since epoch).
          * @param location the location of this session, used for media store.
          */
         private CaptureSessionImpl(String title, long sessionStartMillis, Location location) {
             mTitle = title;
             mSessionStartMillis = sessionStartMillis;
             mLocation = location;
+            mTempOutputPath = createTempOutputPath(mTitle);
         }
 
         @Override
@@ -151,7 +158,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         @Override
         public synchronized void cancel() {
-            if (mUri != null) {
+            if (isStarted()) {
                 removeSession(mUri.toString());
             }
         }
@@ -186,14 +193,12 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                         "Cannot call finish without calling startSession first.");
             }
 
-            final String path = this.getPath();
-
             AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                 @Override
                 public void run() {
                     byte[] jpegDataTemp;
                     try {
-                        jpegDataTemp = FileUtil.readFileToByteArray(new File(path));
+                        jpegDataTemp = FileUtil.readFileToByteArray(new File(mTempOutputPath));
                     } catch (IOException e) {
                         return;
                     }
@@ -221,28 +226,52 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public String getPath() {
-            if (mUri == null) {
+        public String getTempOutputPath() {
+            if (!isStarted()) {
                 throw new IllegalStateException("Cannot retrieve URI of not started session.");
             }
+            return mTempOutputPath;
+        }
 
+        /**
+         * Initializes the directories for storing the final output temporarily
+         * before it is copied to the final location after calling
+         * {@link #finish()}.
+         * <p>
+         * This method will make sure the directories and file exists and is
+         * writeable, otherwise it will throw an exception.
+         *
+         * @param title the title of this session. Will be used to create a
+         *            unique sub-directory.
+         * @return The path to a JPEG file which can be used to write the final
+         *         output to.
+         */
+        private String createTempOutputPath(String title) {
             File tempDirectory = null;
             try {
                 tempDirectory = new File(
-                        getSessionDirectory(TEMP_SESSIONS), mTitle);
+                        getSessionDirectory(TEMP_SESSIONS), title);
             } catch (IOException e) {
                 Log.e(TAG, "Could not get temp session directory", e);
                 throw new RuntimeException("Could not get temp session directory", e);
             }
-            tempDirectory.mkdirs();
-            File tempFile = new File(tempDirectory, mTitle  + ".jpg");
+            if (!tempDirectory.mkdirs()) {
+                throw new IllegalStateException("Could not create output data directory.");
+            }
+            File tempFile = new File(tempDirectory, mTitle + ".jpg");
             try {
                 if (!tempFile.exists()) {
-                    tempFile.createNewFile();
+                    if (!tempFile.createNewFile()) {
+                        throw new IllegalStateException("Could not create output data file.");
+                    }
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Could not create temp session file", e);
                 throw new RuntimeException("Could not create temp session file", e);
+            }
+
+            if (!tempFile.canWrite()) {
+                throw new RuntimeException("Temporary output file is not writeable.");
             }
             return tempFile.getPath();
         }
@@ -258,7 +287,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public boolean hasPath() {
+        public boolean isStarted() {
             return mUri != null;
         }
 
@@ -269,9 +298,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
         @Override
         public void updatePreview(String previewPath) {
-
-            final String path = this.getPath();
-
+            final String path = this.getTempOutputPath();
             AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -289,7 +316,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                     int width = options.outWidth;
                     int height = options.outHeight;
 
-                    mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, jpegData, width, height);
+                    mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, jpegData, width,
+                            height);
                     onPreviewAvailable();
                 }
             });
@@ -372,14 +400,14 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
     @Override
     public void putSession(Uri sessionUri, CaptureSession session) {
-        synchronized (mSessions)  {
+        synchronized (mSessions) {
             mSessions.put(sessionUri.toString(), session);
         }
     }
 
     @Override
     public CaptureSession getSession(Uri sessionUri) {
-        synchronized (mSessions)  {
+        synchronized (mSessions) {
             return mSessions.get(sessionUri.toString());
         }
     }
@@ -408,7 +436,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
     @Override
     public File getSessionDirectory(String subDirectory) throws IOException {
-      return mSessionStorageManager.getSessionDirectory(subDirectory);
+        return mSessionStorageManager.getSessionDirectory(subDirectory);
     }
 
     private void removeSession(String sessionUri) {
@@ -486,8 +514,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     /**
-     * Notifies all task listeners that the task with the given URI has
-     * changed its progress message.
+     * Notifies all task listeners that the task with the given URI has changed
+     * its progress message.
      */
     private void notifyTaskProgressText(final Uri uri, final CharSequence message) {
         mMainHandler.post(new Runnable() {
