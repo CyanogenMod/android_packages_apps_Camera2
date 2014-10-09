@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +47,11 @@ public class PieController {
     protected OnPreferenceChangedListener mListener;
     protected PieRenderer mRenderer;
     private List<IconListPreference> mPreferences;
+    private List<ListPreference> mListPreferences;
     private Map<IconListPreference, PieItem> mPreferenceMap;
+    private Map<ListPreference, PieItem> mListPreferenceMap;
     private Map<IconListPreference, String> mOverrides;
+    private Map<ListPreference, String> mListOverrides;
 
     public void setListener(OnPreferenceChangedListener listener) {
         mListener = listener;
@@ -57,13 +61,17 @@ public class PieController {
         mActivity = activity;
         mRenderer = pie;
         mPreferences = new ArrayList<IconListPreference>();
+        mListPreferences = new ArrayList<ListPreference>();
         mPreferenceMap = new HashMap<IconListPreference, PieItem>();
+        mListPreferenceMap = new HashMap<ListPreference, PieItem>();
         mOverrides = new HashMap<IconListPreference, String>();
+        mListOverrides = new HashMap<ListPreference, String>();
     }
 
     public void initialize(PreferenceGroup group) {
         mRenderer.clearItems();
         mPreferenceMap.clear();
+        mListPreferenceMap.clear();
         setPreferenceGroup(group);
     }
 
@@ -132,6 +140,42 @@ public class PieController {
         return item;
     }
 
+    public PieItem makeListItem(final String prefKey, boolean addListener) {
+        final ListPreference pref =
+                (ListPreference) mPreferenceGroup.findPreference(prefKey);
+        if (pref == null) return null;
+        // The preference only has a single icon to represent it.
+        int resid = pref.getIcon();
+        int index = pref.findIndexOfValue(pref.getValue());
+        PieItem item = makeItem(resid);
+        item.setLabel(pref.getLabels()[index]);
+        item.setImageResource(mActivity, resid);
+        mListPreferences.add(pref);
+        mListPreferenceMap.put(pref, item);
+        if (addListener) {
+            final PieItem fitem = item;
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    if (!item.isEnabled()) {
+                        return;
+                    }
+                    ListPreference pref = (ListPreference) mPreferenceGroup
+                            .findPreference(prefKey);
+                    int index = pref.findIndexOfValue(pref.getValue());
+                    CharSequence[] values = pref.getEntryValues();
+                    index = (index + 1) % values.length;
+                    pref.setValueIndex(index);
+                    fitem.setLabel(pref.getLabels()[index]);
+                    fitem.setImageResource(mActivity,
+                            ((ListPreference) pref).getIcon());
+                    onSettingChanged(pref);
+                }
+            });
+        }
+        return item;
+    }
+
     public PieItem makeSwitchItem(final String prefKey, boolean addListener) {
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
@@ -175,7 +219,6 @@ public class PieController {
         }
         return item;
     }
-
 
     public PieItem makeDialItem(ListPreference pref, int iconId, float center, float sweep) {
         PieItem item = makeItem(iconId);
@@ -243,6 +286,9 @@ public class PieController {
         for (IconListPreference pref : mPreferenceMap.keySet()) {
             override(pref, keyvalues);
         }
+        for (ListPreference pref : mListPreferenceMap.keySet()) {
+            overrideList(pref, keyvalues);
+        }
     }
 
     private void override(IconListPreference pref, final String ... keyvalues) {
@@ -258,5 +304,19 @@ public class PieController {
             }
         }
         reloadPreference(pref);
+    }
+
+    private void overrideList(ListPreference pref, final String ... keyvalues) {
+        mListOverrides.remove(pref);
+        for (int i = 0; i < keyvalues.length; i += 2) {
+            String key = keyvalues[i];
+            String value = keyvalues[i + 1];
+            if (key.equals(pref.getKey())) {
+                mListOverrides.put(pref, value);
+                PieItem item = mListPreferenceMap.get(pref);
+                item.setEnabled(value == null);
+                break;
+            }
+        }
     }
 }
