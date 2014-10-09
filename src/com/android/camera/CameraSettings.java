@@ -995,11 +995,6 @@ public class CameraSettings {
                 !"0".equals(params.get("exposure-time"));
     }
 
-    public static boolean useZSLBurst(Parameters params) {
-        return CameraUtil.isZSLEnabled() &&
-                params.get("num-snaps-per-shutter") != null;
-    }
-
     public static void setSuperZoom(Parameters params, boolean on) {
         if (isSuperZoomSupported(params)) {
             params.set("high-resolution", on ? "1" : "0");
