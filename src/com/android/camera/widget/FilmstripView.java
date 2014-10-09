@@ -34,6 +34,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,6 +86,7 @@ public class FilmstripView extends ViewGroup {
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
     private static final int DECELERATION_FACTOR = 4;
+    private static final float MOUSE_SCROLL_FACTOR = 128f;
 
     private CameraActivity mActivity;
     private FilmstripGestureRecognizer mGestureRecognizer;
@@ -1622,6 +1624,12 @@ public class FilmstripView extends ViewGroup {
         return mGestureRecognizer.onTouchEvent(ev);
     }
 
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent ev) {
+        mGestureRecognizer.onGenericMotionEvent(ev);
+        return true;
+    }
+
     FilmstripGestureRecognizer.Listener getGestureListener() {
         return mGestureListener;
     }
@@ -2759,6 +2767,30 @@ public class FilmstripView extends ViewGroup {
                 mController.scroll((int) (deltaX * 1.2));
             }
             invalidate();
+
+            return true;
+        }
+
+        @Override
+        public boolean onMouseScroll(float hscroll, float vscroll) {
+            final float scroll;
+
+            hscroll *= MOUSE_SCROLL_FACTOR;
+            vscroll *= MOUSE_SCROLL_FACTOR;
+
+            if (vscroll != 0f) {
+                scroll = vscroll;
+            } else {
+                scroll = hscroll;
+            }
+
+            if (inFullScreen()) {
+                onFling(-scroll, 0f);
+            } else if (inZoomView()) {
+                onScroll(0f, 0f, hscroll, vscroll);
+            } else {
+                onScroll(0f, 0f, scroll, 0f);
+            }
 
             return true;
         }
