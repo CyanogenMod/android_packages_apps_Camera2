@@ -139,7 +139,7 @@ public class PieItem {
     }
 
     public void performClick() {
-        if (mOnClickListener != null) {
+        if (mOnClickListener != null && mEnabled) {
             mOnClickListener.onClick(this);
         }
     }
