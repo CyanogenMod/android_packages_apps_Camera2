@@ -433,7 +433,8 @@ public class VideoUI implements PieRenderer.PieListener,
         ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
-    public void overrideSettings(final String... keyvalues) {
+    public void overrideSettings(final String ... keyvalues) {
+        if (mVideoMenu == null) return;
         mVideoMenu.overrideSettings(keyvalues);
     }
 

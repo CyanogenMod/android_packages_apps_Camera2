@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
- * Copyright (C) 2013 The CyanogenMod Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,21 +88,11 @@ public class VideoMenu extends PieController
         final ListPreference colorPref =
                 group.findPreference(CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT);
         if (colorPref != null) {
-            item = makeItem(R.drawable.ic_tint);
-            item.setLabel(res.getString(
-                    R.string.pref_camera_coloreffect_title).toUpperCase(locale));
+            item = makeListItem(CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT);
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
-                    ListPrefSettingPopup popup =
-                            (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                            R.layout.list_pref_setting_popup, null, false);
-                    popup.initialize(colorPref);
-                    popup.setSettingChangedListener(VideoMenu.this);
-                    mUI.dismissPopup();
-                    mPopup = popup;
-                    mPopupStatus = POPUP_SECOND_LEVEL;
-                    mUI.showPopup(mPopup);
+                    showListPopup(colorPref);
                 }
             });
             enhance.addItem(item);
@@ -164,21 +154,11 @@ public class VideoMenu extends PieController
         // video size
         final ListPreference sizePref = group.findPreference(CameraSettings.KEY_VIDEO_QUALITY);
         if (sizePref != null) {
-            item = makeItem(R.drawable.ic_imagesize);
-            item.setLabel(res.getString(
-                    R.string.pref_video_quality_title).toUpperCase(locale));
+            item = makeListItem(CameraSettings.KEY_VIDEO_QUALITY);
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
-                    ListPrefSettingPopup popup =
-                            (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
-                            R.layout.list_pref_setting_popup, null, false);
-                    popup.initialize(sizePref);
-                    popup.setSettingChangedListener(VideoMenu.this);
-                    mUI.dismissPopup();
-                    mPopup = popup;
-                    mPopupStatus = POPUP_SECOND_LEVEL;
-                    mUI.showPopup(mPopup);
+                    showListPopup(sizePref);
                 }
             });
             more.addItem(item);
@@ -238,6 +218,19 @@ public class VideoMenu extends PieController
                 mPopup = null;
             }
         }
+    }
+
+    // Show a popup options list
+    public void showListPopup(ListPreference pref) {
+        ListPrefSettingPopup popup =
+                (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
+                R.layout.list_pref_setting_popup, null, false);
+        popup.initialize(pref);
+        popup.setSettingChangedListener(VideoMenu.this);
+        mUI.dismissPopup();
+        mPopup = popup;
+        mPopupStatus = POPUP_SECOND_LEVEL;
+        mUI.showPopup(mPopup);
     }
 
     @Override
