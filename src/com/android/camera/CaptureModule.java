@@ -1141,7 +1141,6 @@ public class CaptureModule extends CameraModule
                     - centerY);
 
             mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
-            mAppController.getCameraAppUI().hideLetterboxing();
             // if (mGcamProxy != null) {
             // mGcamProxy.postSetAspectRatio(mFinalAspectRatio);
             // }

@@ -42,6 +42,7 @@ public class ApiHelper {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
     public static final boolean HAS_CAMERA_HDR_PLUS = isKitKatOrHigher();
+    public static final boolean HDR_PLUS_CAN_USE_ARBITRARY_ASPECT_RATIOS = isKitKatMR2OrHigher();
     public static final boolean HAS_CAMERA_HDR =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     public static final boolean HAS_DISPLAY_LISTENER =
@@ -76,6 +77,12 @@ public class ApiHelper {
         // TODO: Remove CODENAME check as soon as VERSION_CODES.KITKAT is final.
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 || "KeyLimePie".equals(Build.VERSION.CODENAME);
+    }
+
+    public static boolean isKitKatMR2OrHigher() {
+        return isLOrHigher()
+                || (isKitKatOrHigher() &&
+                       ("4.4.4".equals(Build.VERSION.RELEASE) || "4.4.3".equals(Build.VERSION.RELEASE)));
     }
 
     public static boolean isLOrHigher() {

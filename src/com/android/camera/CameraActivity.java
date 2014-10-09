@@ -2164,7 +2164,6 @@ public class CameraActivity extends QuickActivity
 
         mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);
         mCameraAppUI.addShutterListener(mCurrentModule);
-        mCameraAppUI.hideLetterboxing();
         openModule(mCurrentModule);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera
