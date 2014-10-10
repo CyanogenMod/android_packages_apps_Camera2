@@ -1320,16 +1320,20 @@ public class CameraActivity extends QuickActivity
     private final CameraExceptionHandler.CameraExceptionCallback mCameraExceptionCallback
         = new CameraExceptionHandler.CameraExceptionCallback() {
                 @Override
+                public void onCameraError(int errorCode) {
+                    Log.e(TAG, "Camera error callback. error=" + errorCode);
+                }
+                @Override
                 public void onCameraException(RuntimeException ex) {
                     Log.e(TAG, "Camera Exception", ex);
-                    onFatalError(ex);
+                    onFatalError();
                 }
                 @Override
                 public void onDispatchThreadException(RuntimeException ex) {
                     Log.e(TAG, "DispatchThread Exception", ex);
-                    onFatalError(ex);
+                    onFatalError();
                 }
-                private void onFatalError(RuntimeException ex) {
+                private void onFatalError() {
                     mCameraFatalError = true;
                     // If the activity receives exception during onPause, just exit the app.
                     if (mPaused && !isFinishing()) {

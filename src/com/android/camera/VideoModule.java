@@ -129,8 +129,6 @@ public class VideoModule extends CameraModule
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
 
-    private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
-
     // Preference must be read before starting preview. We check this before starting
     // preview.
     private boolean mPreferenceRead;
@@ -898,7 +896,6 @@ public class VideoModule extends CameraModule
             return;
         }
 
-        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
         if (mPreviewing == true) {
             stopPreview();
         }
@@ -982,7 +979,6 @@ public class VideoModule extends CameraModule
             return;
         }
         mCameraDevice.setZoomChangeListener(null);
-        mCameraDevice.setErrorCallback(null, null);
         mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
         mCameraDevice = null;
         mPreviewing = false;
