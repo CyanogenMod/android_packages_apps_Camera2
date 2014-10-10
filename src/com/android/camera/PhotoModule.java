@@ -29,9 +29,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.media.AudioManager;
 import android.media.CameraProfile;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -1060,7 +1058,7 @@ public class PhotoModule
             mJpegPictureCallbackTime = 0;
 
             final ExifInterface exif = Exif.getExif(originalJpegData);
-
+            final NamedEntity name = mNamedImages.getNextNameEntity();
             if (mShouldResizeTo16x9) {
                 final ResizeBundle dataBundle = new ResizeBundle();
                 dataBundle.jpegData = originalJpegData;
@@ -1075,17 +1073,17 @@ public class PhotoModule
 
                     @Override
                     protected void onPostExecute(ResizeBundle result) {
-                        saveFinalPhoto(result.jpegData, result.exif, camera);
+                        saveFinalPhoto(result.jpegData, name, result.exif, camera);
                     }
                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataBundle);
 
             } else {
-                saveFinalPhoto(originalJpegData, exif, camera);
+                saveFinalPhoto(originalJpegData, name, exif, camera);
             }
         }
 
-        void saveFinalPhoto(final byte[] jpegData, final ExifInterface exif, CameraProxy camera) {
-
+        void saveFinalPhoto(final byte[] jpegData, NamedEntity name, final ExifInterface exif,
+                CameraProxy camera) {
             int orientation = Exif.getOrientation(exif);
 
             float zoomValue = 1.0f;
@@ -1099,7 +1097,7 @@ public class PhotoModule
             boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
-                    mNamedImages.mQueue.lastElement().title + ".jpg", exif,
+                    name.title + ".jpg", exif,
                     isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn,
                     (float) mTimerDuration, mShutterTouchCoordinate, mVolumeButtonClickedFlag);
             mShutterTouchCoordinate = null;
@@ -1124,7 +1122,6 @@ public class PhotoModule
                         height = s.width();
                     }
                 }
-                NamedEntity name = mNamedImages.getNextNameEntity();
                 String title = (name == null) ? null : name.title;
                 long date = (name == null) ? -1 : name.date;
 
