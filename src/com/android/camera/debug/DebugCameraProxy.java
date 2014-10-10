@@ -216,12 +216,6 @@ public class DebugCameraProxy extends CameraAgent.CameraProxy {
     }
 
     @Override
-    public void setErrorCallback(Handler handler, CameraAgent.CameraErrorCallback cb) {
-        log("setErrorCallback");
-        mProxy.setErrorCallback(handler, cb);
-    }
-
-    @Override
     public void setParameters(Camera.Parameters params) {
         log("setParameters");
         mProxy.setParameters(params);

@@ -222,8 +222,6 @@ public class PhotoModule
                     ? new AutoFocusMoveCallback()
                     : null;
 
-    private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
-
     private long mFocusStartTime;
     private long mShutterCallbackTime;
     private long mPostViewPictureCallbackTime;
@@ -1858,7 +1856,6 @@ public class PhotoModule
             stopFaceDetection();
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
-            mCameraDevice.setErrorCallback(null, null);
 
             mFaceDetectionStarted = false;
             mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
@@ -1931,7 +1928,6 @@ public class PhotoModule
             return;
         }
 
-        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
         setDisplayOrientation();
 
         if (!mSnapshotOnIdle) {
