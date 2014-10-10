@@ -129,7 +129,7 @@ import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.QuickActivity;
-import com.android.camera.util.ReleaseDialogHelper;
+import com.android.camera.util.ReleaseHelper;
 import com.android.camera.util.UsageStatistics;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera.widget.Preloader;
@@ -389,8 +389,8 @@ public class CameraActivity extends QuickActivity
                             fileAgeFromDataID(currentDataId));
                     // If applicable, show release information before this item
                     // is shared.
-                    if (ReleaseDialogHelper.shouldShowReleaseInfoDialogOnShare(data)) {
-                        ReleaseDialogHelper.showReleaseInfoDialog(CameraActivity.this,
+                    if (ReleaseHelper.shouldShowReleaseInfoDialogOnShare(data)) {
+                        ReleaseHelper.showReleaseInfoDialog(CameraActivity.this,
                                 new Callback<Void>() {
                                     @Override
                                     public void onCallback(Void result) {
@@ -1828,7 +1828,7 @@ public class CameraActivity extends QuickActivity
                 });
 
         mPanoramaViewHelper.onResume();
-        ReleaseDialogHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
+        ReleaseHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
         syncLocationManagerSetting();
 
         final int previewVisibility = getPreviewVisibility();
