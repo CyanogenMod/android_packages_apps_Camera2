@@ -955,7 +955,7 @@ public class FilmstripView extends ViewGroup {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.L)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setMaxElevation(View v) {
         v.setElevation(Float.MAX_VALUE);
     }
