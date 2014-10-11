@@ -160,13 +160,6 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     public void onCameraOpened(CameraAgent.CameraProxy camera) {
         Log.v(TAG, "onCameraOpened");
         if (mRequestingCameraId != camera.getCameraId()) {
-            // Not requesting any camera or not waiting for this one, so close
-            // it.
-            if (mUsingNewApi) {
-                mCameraAgentNg.closeCamera(camera, false);
-            } else {
-                mCameraAgent.closeCamera(camera, false);
-            }
             return;
         }
         mCameraProxy = camera;
@@ -288,10 +281,6 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
      * TODO: Make this method package private.
      */
     public void closeCamera(boolean synced) {
-        if (mCameraProxy == null) {
-            Log.v(TAG, "No camera open, not closing");
-            return;
-        }
         Log.v(TAG, "Closing camera");
         mCameraProxy = null;
         if (mUsingNewApi) {
