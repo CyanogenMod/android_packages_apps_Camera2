@@ -98,6 +98,7 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
 
         final long nowInMillis = System.currentTimeMillis();
         for (File sessionDir : sessionDirs) {
+            Log.v(TAG, "Check for potential clean-up: " + sessionDir.getAbsolutePath());
             if (sessionDir.lastModified() < (nowInMillis - MAX_SESSION_AGE_MILLIS)) {
                 if (!FileUtil.deleteDirectoryRecursively(sessionDir)) {
                     Log.w(TAG, "Could not clean up " + sessionDir.getAbsolutePath());
