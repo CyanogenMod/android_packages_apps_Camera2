@@ -347,4 +347,8 @@
     <string name="pref_camera_scenedetect_default" translatable="false">off</string>
 
     <string name="pref_camera_videosnapsize_default" translatable="false">1920x1080</string>
+
+    <!-- longshot value -->
+    <string name="pref_camera_longshot_default" translatable="false">off</string>
+    <string name="pref_camera_longshot_title">Continuous Shot</string>
 </resources>
