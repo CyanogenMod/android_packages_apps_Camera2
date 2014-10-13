@@ -1321,6 +1321,7 @@ public class CameraActivity extends QuickActivity
         = new CameraExceptionHandler.CameraExceptionCallback() {
                 @Override
                 public void onCameraError(int errorCode) {
+                    // Not a fatal error. only do Log.e().
                     Log.e(TAG, "Camera error callback. error=" + errorCode);
                 }
                 @Override
@@ -1334,14 +1335,19 @@ public class CameraActivity extends QuickActivity
                     onFatalError();
                 }
                 private void onFatalError() {
+                    if (mCameraFatalError) {
+                        return;
+                    }
                     mCameraFatalError = true;
+
                     // If the activity receives exception during onPause, just exit the app.
                     if (mPaused && !isFinishing()) {
-                        Log.v(TAG, "Fatal error during onPause, call Activity.finish()");
+                        Log.e(TAG, "Fatal error during onPause, call Activity.finish()");
                         finish();
+                    } else {
+                        CameraUtil.showErrorAndFinish(CameraActivity.this,
+                                R.string.cannot_connect_camera);
                     }
-                    CameraUtil.showErrorAndFinish(CameraActivity.this,
-                            R.string.cannot_connect_camera);
                 }
             };
 
@@ -1692,9 +1698,10 @@ public class CameraActivity extends QuickActivity
         if (mCameraFatalError && !isFinishing()) {
             Log.v(TAG, "onPause when camera is in fatal state, call Activity.finish()");
             finish();
+        } else {
+            // Close the camera and wait for the operation done.
+            mCameraController.closeCamera(true);
         }
-        // Close the camera and wait for the operation done.
-        mCameraController.closeCamera(true);
     }
 
     @Override
