@@ -456,6 +456,7 @@ public class PhotoModule
         }
         mAppController.getCameraAppUI().transitionToCapture();
         mAppController.getCameraAppUI().showModeOptions();
+        mAppController.setShutterEnabled(true);
     }
 
     @Override
@@ -1267,9 +1268,11 @@ public class PhotoModule
         // If we are already in the middle of taking a snapshot or the image
         // save request is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
-                || mCameraState == SWITCHING_CAMERA || !mAppController.isShutterEnabled()) {
+                || mCameraState == SWITCHING_CAMERA) {
             return false;
         }
+        setCameraState(SNAPSHOT_IN_PROGRESS);
+
         mCaptureStartTime = System.currentTimeMillis();
 
         mPostViewPictureCallbackTime = 0;
@@ -1293,9 +1296,6 @@ public class PhotoModule
         mJpegRotation = info.getJpegOrientation(orientation);
         mCameraDevice.setJpegOrientation(mJpegRotation);
 
-        // We don't want user to press the button again while taking a
-        // multi-second HDR photo.
-        mAppController.setShutterEnabled(false);
         mCameraDevice.takePicture(mHandler,
                 new ShutterCallback(!animateBefore),
                 mRawPictureCallback, mPostViewPictureCallback,
@@ -1304,7 +1304,6 @@ public class PhotoModule
         mNamedImages.nameNewImage(mCaptureStartTime);
 
         mFaceDetectionStarted = false;
-        setCameraState(SNAPSHOT_IN_PROGRESS);
         return true;
     }
 
@@ -1498,7 +1497,8 @@ public class PhotoModule
     @Override
     public void onShutterButtonClick() {
         if (mPaused || (mCameraState == SWITCHING_CAMERA)
-                || (mCameraState == PREVIEW_STOPPED)) {
+                || (mCameraState == PREVIEW_STOPPED)
+                || !mAppController.isShutterEnabled()) {
             mVolumeButtonClickedFlag = false;
             return;
         }
@@ -1512,6 +1512,8 @@ public class PhotoModule
         }
         Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState +
                 " mVolumeButtonClickedFlag=" + mVolumeButtonClickedFlag);
+
+        mAppController.setShutterEnabled(false);
 
         int countDownDuration = mActivity.getSettingsManager()
             .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
