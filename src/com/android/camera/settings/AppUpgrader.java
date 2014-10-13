@@ -43,6 +43,7 @@ public class AppUpgrader extends SettingsUpgrader {
     private static final String OLD_CAMERA_PREFERENCES_PREFIX = "_preferences_";
     private static final String OLD_MODULE_PREFERENCES_PREFIX = "_preferences_module_";
     private static final String OLD_GLOBAL_PREFERENCES_FILENAME = "_preferences_camera";
+    private static final String OLD_KEY_UPGRADE_VERSION = "pref_strict_upgrade_version";
 
     /**
      * With this version everyone was forced to choose their location settings
@@ -75,6 +76,12 @@ public class AppUpgrader extends SettingsUpgrader {
     private static final int CAMERA_SETTINGS_SELECTED_MODULE_INDEX = 5;
 
     /**
+     * With this version internal storage is changed to use only Strings, and
+     * a type conversion process should execute.
+     */
+    private static final int CAMERA_SETTINGS_STRINGS_UPGRADE = 5;
+
+    /**
      * Increment this value whenever new AOSP UpgradeSteps need to be executed.
      */
     public static final int APP_UPGRADE_VERSION = 6;
@@ -88,27 +95,34 @@ public class AppUpgrader extends SettingsUpgrader {
 
     @Override
     protected int getLastVersion(SettingsManager settingsManager) {
-        // Prior appwide versions were stored in the default preferences. If
-        // current
-        // state indicates this is still the case, port the version and then
-        // process
-        // all other known app settings to the new SettingsManager string
-        // scheme.
-        try {
-            return super.getLastVersion(settingsManager);
-        } catch (ClassCastException e) {
-            // We infer that a ClassCastException here means we have pre-String
-            // settings that need to be upgraded, so we hack in a full upgrade
-            // here.
-            upgradeTypesToStrings(settingsManager);
-            // Retrieve version as default now that we're sure it is converted
-            return super.getLastVersion(settingsManager);
+        // Prior upgrade versions were stored in the default preferences as int
+        // and String. We create a new version location for migration to String.
+        // If we don't have a version persisted in the new location, check for
+        // the prior value from the old location. We expect the old value to be
+        // processed during {@link #upgradeTypesToStrings}.
+        SharedPreferences defaultPreferences = settingsManager.getDefaultPreferences();
+        if (defaultPreferences.contains(OLD_KEY_UPGRADE_VERSION)) {
+            Map<String, ?> allPrefs = defaultPreferences.getAll();
+            Object oldVersion = allPrefs.get(OLD_KEY_UPGRADE_VERSION);
+            defaultPreferences.edit().remove(OLD_KEY_UPGRADE_VERSION).apply();
+            if (oldVersion instanceof Integer) {
+                return (Integer) oldVersion;
+            } else if (oldVersion instanceof String) {
+                return SettingsManager.convertToInt((String) oldVersion);
+            }
         }
+        return super.getLastVersion(settingsManager);
     }
 
     @Override
     public void upgrade(SettingsManager settingsManager, int lastVersion, int currentVersion) {
         Context context = mAppController.getAndroidContext();
+
+        // Do strings upgrade first before 'earlier' upgrades, since they assume
+        // valid storage of values.
+        if (lastVersion < CAMERA_SETTINGS_STRINGS_UPGRADE) {
+            upgradeTypesToStrings(settingsManager);
+        }
 
         if (lastVersion < FORCE_LOCATION_CHOICE_VERSION) {
             forceLocationChoice(settingsManager);
@@ -152,11 +166,6 @@ public class AppUpgrader extends SettingsUpgrader {
         SharedPreferences defaultPreferences = settingsManager.getDefaultPreferences();
         SharedPreferences oldGlobalPreferences =
                 settingsManager.openPreferences(OLD_GLOBAL_PREFERENCES_FILENAME);
-
-        // Strict upgrade version: Integer -> String, from default.
-        int strictUpgradeVersion = removeInteger(defaultPreferences, Keys.KEY_UPGRADE_VERSION);
-        settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_UPGRADE_VERSION,
-                strictUpgradeVersion);
 
         // Location: boolean -> String, from default.
         if (defaultPreferences.contains(Keys.KEY_RECORD_LOCATION)) {
