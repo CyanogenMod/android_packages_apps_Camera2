@@ -77,9 +77,7 @@ public class BottomBar extends FrameLayout {
     private final float mCircleRadius;
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
-    // for Android L, these backgrounds are RippleDrawables (ISA LayerDrawable)
-    // pre-L, they're plain old LayerDrawables
-    private final LayerDrawable[] mShutterButtonBackgrounds;
+    private final Drawable.ConstantState[] mShutterButtonBackgroundConstantStates;
     // a reference to the shutter background's first contained drawable
     // if it's an animated circle drawable (for video mode)
     private AnimatedCircleDrawable mAnimatedCircleDrawable;
@@ -102,25 +100,11 @@ public class BottomBar extends FrameLayout {
         TypedArray ar = context.getResources()
                 .obtainTypedArray(R.array.shutter_button_backgrounds);
         int len = ar.length();
-
-        mShutterButtonBackgrounds = new LayerDrawable[len];
+        mShutterButtonBackgroundConstantStates = new Drawable.ConstantState[len];
         for (int i = 0; i < len; i++) {
             int drawableId = ar.getResourceId(i, -1);
-            LayerDrawable shutterBackground = mShutterButtonBackgrounds[i] =
-                    (LayerDrawable) context.getResources().getDrawable(drawableId).mutate();
-
-            // the background for video has a circle_item drawable placeholder
-            // that gets replaced by an AnimatedCircleDrawable for the cool
-            // shrink-down-to-a-circle effect
-            // all other modes need not do this replace
-            Drawable d = shutterBackground.findDrawableByLayerId(R.id.circle_item);
-            if (d != null) {
-                Drawable animatedCircleDrawable =
-                        new AnimatedCircleDrawable((int) mCircleRadius);
-                animatedCircleDrawable.setLevel(DRAWABLE_MAX_LEVEL);
-                shutterBackground
-                        .setDrawableByLayerId(R.id.circle_item, animatedCircleDrawable);
-            }
+            mShutterButtonBackgroundConstantStates[i] =
+                    context.getResources().getDrawable(drawableId).getConstantState();
         }
         ar.recycle();
     }
@@ -382,13 +366,33 @@ public class BottomBar extends FrameLayout {
         }
     }
 
+    private LayerDrawable applyCircleDrawableToShutterBackground(LayerDrawable shutterBackground) {
+        // the background for video has a circle_item drawable placeholder
+        // that gets replaced by an AnimatedCircleDrawable for the cool
+        // shrink-down-to-a-circle effect
+        // all other modes need not do this replace
+        Drawable d = shutterBackground.findDrawableByLayerId(R.id.circle_item);
+        if (d != null) {
+            Drawable animatedCircleDrawable =
+                    new AnimatedCircleDrawable((int) mCircleRadius);
+            animatedCircleDrawable.setLevel(DRAWABLE_MAX_LEVEL);
+            shutterBackground
+                    .setDrawableByLayerId(R.id.circle_item, animatedCircleDrawable);
+        }
+
+        return shutterBackground;
+    }
+
+    private LayerDrawable newDrawableFromConstantState(Drawable.ConstantState constantState) {
+        return (LayerDrawable) constantState.newDrawable(getContext().getResources());
+    }
+
     private void setupShutterBackgroundForModeIndex(int index) {
-        LayerDrawable shutterBackground = mShutterButtonBackgrounds[index];
+        LayerDrawable shutterBackground = applyCircleDrawableToShutterBackground(
+                newDrawableFromConstantState(mShutterButtonBackgroundConstantStates[index]));
         mShutterButton.setBackground(shutterBackground);
-        // FIXME this is crashing NPE on getConstantState()
-        // reverting for now
-        // b/559979
-        //mCancelButton.setBackground(shutterBackground.getConstantState().newDrawable());
+        mCancelButton.setBackground(applyCircleDrawableToShutterBackground(
+                newDrawableFromConstantState(mShutterButtonBackgroundConstantStates[index])));
 
         Drawable d = shutterBackground.getDrawable(0);
         mAnimatedCircleDrawable = null;
