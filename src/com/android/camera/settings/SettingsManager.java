@@ -320,7 +320,13 @@ public class SettingsManager {
      */
     public String getString(String scope, String key, String defaultValue) {
         SharedPreferences preferences = getPreferencesFromScope(scope);
-        return preferences.getString(key, defaultValue);
+        try {
+            return preferences.getString(key, defaultValue);
+        } catch (ClassCastException e) {
+            Log.w(TAG, "existing preference with invalid type, removing and returning default", e);
+            preferences.edit().remove(key).apply();
+            return defaultValue;
+        }
     }
 
     /**
@@ -332,13 +338,13 @@ public class SettingsManager {
     }
 
     /**
-     * Retrieve a setting's value as an Integer, manually specifiying
+     * Retrieve a setting's value as an Integer, manually specifying
      * a default value.
      */
     public Integer getInteger(String scope, String key, Integer defaultValue) {
         String defaultValueString = Integer.toString(defaultValue);
         String value = getString(scope, key, defaultValueString);
-        return Integer.parseInt(value);
+        return convertToInt(value);
     }
 
     /**
@@ -356,7 +362,7 @@ public class SettingsManager {
     public boolean getBoolean(String scope, String key, boolean defaultValue) {
         String defaultValueString = defaultValue ? "1" : "0";
         String value = getString(scope, key, defaultValueString);
-        return (Integer.parseInt(value) != 0);
+        return convertToBoolean(value);
     }
 
     /**
@@ -515,6 +521,29 @@ public class SettingsManager {
     static String convert(int value) {
         return Integer.toString(value);
     }
+
+    /**
+     * Package private conversion method to turn String storage format into
+     * ints.
+     *
+     * @param value String to be converted to int
+     * @return int value of stored String
+     */
+    static int convertToInt(String value) {
+        return Integer.parseInt(value);
+    }
+
+    /**
+     * Package private conversion method to turn String storage format into
+     * booleans.
+     *
+     * @param value String to be converted to boolean
+     * @return boolean value of stored String
+     */
+    static boolean convertToBoolean(String value) {
+        return Integer.parseInt(value) != 0;
+    }
+
 
     /**
      * Package private conversion method to turn booleans into preferred
