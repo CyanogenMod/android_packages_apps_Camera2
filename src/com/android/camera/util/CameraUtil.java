@@ -301,6 +301,7 @@ public class CameraUtil {
         // appearing, so check to ensure that the activity is not shutting down
         // before attempting to attach a dialog to the window manager.
         if (!activity.isFinishing()) {
+            Log.e(TAG, "Show fatal error dialog");
             new AlertDialog.Builder(activity)
                     .setCancelable(false)
                     .setTitle(R.string.camera_error_title)
