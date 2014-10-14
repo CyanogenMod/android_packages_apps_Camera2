@@ -63,7 +63,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * {@link OneCamera} implementation directly on top of the Camera2 API.
+ * {@link OneCamera} implementation directly on top of the Camera2 API for
+ * cameras without API 2 FULL support (limited or legacy).
  */
 public class OneCameraImpl extends AbstractOneCamera {
 
@@ -94,7 +95,7 @@ public class OneCameraImpl extends AbstractOneCamera {
      * ImageFormat.YUV_420_888 to use the software encoder. No other image
      * formats are supported.
      */
-    private static final int sCaptureImageFormat = ImageFormat.YUV_420_888;
+    private static final int sCaptureImageFormat = ImageFormat.JPEG;
 
     /** Duration to hold after manual focus tap. */
     private static final int FOCUS_HOLD_MILLIS = Settings3A.getFocusHoldMillis();

@@ -70,7 +70,6 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * {@link OneCamera} implementation directly on top of the Camera2 API with zero
@@ -90,7 +89,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * TODO: Determine this number dynamically based on available memory and the
      * size of frames.
      */
-    private static final int MAX_CAPTURE_IMAGES = 20;
+    private static final int MAX_CAPTURE_IMAGES = 10;
     /**
      * True if zero-shutter-lag images should be captured. Some devices produce
      * lower-quality images for the high-frequency stream, so we may wish to
@@ -572,7 +571,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             return;
         }
         try {
-            mCaptureSession.abortCaptures();
+            mCaptureSession.stopRepeating();
         } catch (CameraAccessException e) {
             Log.e(TAG, "Could not abort captures in progress.");
         }
@@ -581,6 +580,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mCameraThread.quitSafely();
         mDevice.close();
         mCaptureManager.close();
+        mCaptureImageReader.close();
     }
 
     @Override

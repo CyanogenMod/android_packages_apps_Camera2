@@ -25,6 +25,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
@@ -39,8 +40,7 @@ public class ModulesInfo {
     private static final Log.Tag TAG = new Log.Tag("ModulesInfo");
 
     /** Selects CaptureModule if true, PhotoModule if false. */
-    private static final boolean ENABLE_CAPTURE_MODULE =
-            DebugPropertyHelper.isCaptureModuleEnabled();
+    private static final boolean ENABLE_CAPTURE_MODULE = ApiHelper.HAS_CAMERA_2_API;
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);

@@ -75,8 +75,7 @@ public abstract class OneCameraManager {
     }
 
     /**
-     * Creates a new camera manager that is based on Camera2 API, if available,
-     * or otherwise uses the portability API.
+     * Creates a new camera manager that is based on Camera2 API, if available.
      *
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
@@ -92,50 +91,11 @@ public abstract class OneCameraManager {
             cameraManager = null;
             Log.e(TAG, "Could not get camera service v2", ex);
         }
-        if (cameraManager != null && isCamera2Supported(cameraManager)) {
-            int maxMemoryMB = activity.getServices().getMemoryManager()
-                    .getMaxAllowedNativeMemoryAllocation();
-            return new com.android.camera.one.v2.OneCameraManagerImpl(
-                    activity.getApplicationContext(), cameraManager, maxMemoryMB,
-                    displayMetrics, activity.getSoundPlayer());
-        } else {
-            return new com.android.camera.one.v1.OneCameraManagerImpl();
-        }
-    }
-
-    /**
-     * Returns whether the device fully supports API2
-     *
-     * @param cameraManager the Camera2 API manager.
-     * @return If this device is only emulating Camera2 API on top of an older
-     *         HAL (such as the Nexus 4, 7 or 10), this method returns false. It
-     *         only returns true, if Camera2 is fully supported through newer
-     *         HALs.
-     * @throws OneCameraException Thrown if an error occurred while trying to
-     *             access the camera.
-     */
-    private static boolean isCamera2Supported(CameraManager cameraManager)
-            throws OneCameraException {
-        if (!ApiHelper.HAS_CAMERA_2_API) {
-            return false;
-        }
-        try {
-            String[] cameraIds = cameraManager.getCameraIdList();
-            if (cameraIds.length == 0) {
-                throw new OneCameraException("Camera 2 API supported but no devices available.");
-            }
-            final String id = cameraIds[0];
-            // TODO: We should check for all the flags we need to ensure the
-            // device is capable of taking Camera2 API shots. For now, let's
-            // accept all device that are either 'partial' or 'full' devices
-            // (but not legacy).
-            return cameraManager.getCameraCharacteristics(id).get(
-                    CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)
-                != CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY;
-        } catch (CameraAccessException ex) {
-            Log.e(TAG, "Could not access camera to determine hardware-level API support.");
-            return false;
-        }
+        int maxMemoryMB = activity.getServices().getMemoryManager()
+                .getMaxAllowedNativeMemoryAllocation();
+        return new com.android.camera.one.v2.OneCameraManagerImpl(
+                activity.getApplicationContext(), cameraManager, maxMemoryMB,
+                displayMetrics, activity.getSoundPlayer());
     }
 
     private static DisplayMetrics getDisplayMetrics(Context context) {
