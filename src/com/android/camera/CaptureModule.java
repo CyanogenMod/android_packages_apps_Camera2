@@ -1206,6 +1206,12 @@ public class CaptureModule extends CameraModule
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
         }
+        if (mCamera != null) {
+            // If the camera is already open, do nothing.
+            Log.d(TAG, "Camera already open, not re-opening.");
+            mCameraOpenCloseLock.release();
+            return;
+        }
         mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
                 new OpenCallback() {
                     @Override
