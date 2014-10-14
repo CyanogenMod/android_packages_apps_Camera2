@@ -34,5 +34,15 @@
   <string name="pref_camera_picturesize_entry_2_5mp">2,5M Pixelen</string>
   <string name="pref_camera_picturesize_entry_2_1mp">2,1M Pixelen</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1,9M Pixelen</string>
+  <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
+  <string name="pref_camera_picturesize_entry_xga">XGA</string>
+  <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
+  <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
+  <string name="pref_camera_scenemode_entry_beach">Plage</string>
   <string name="pref_camera_scenemode_entry_mix_illuminant">Gemëscht Luucht</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 Sekonnen</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 Sekonnen</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 Sekonnen</string>
 </resources>

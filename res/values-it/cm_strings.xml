@@ -18,9 +18,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 Mpixel</string>
   <string name="pref_camera_picturesize_entry_18mp">18 Mpixel</string>
+  <string name="pref_camera_picturesize_entry_15_9mp">15,9 Mpixel</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Mpixel</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 Mpixel</string>
   <string name="pref_camera_picturesize_entry_12mp">12 Mpixel</string>
+  <string name="pref_camera_picturesize_entry_11_9mp">11,9 Mpixel</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 Mpixel</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 Mpixel</string>
   <string name="pref_camera_picturesize_entry_10mp">10 Mpixel</string>
@@ -84,12 +86,14 @@
   <string name="pref_camera_scenemode_entry_text">Testo</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatro</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Lavagna bianca</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Continuo</string>
   <string name="pref_camera_focusmode_entry_extended">Esteso</string>
   <string name="pref_camera_focusmode_entry_facedetect">Rilevamento viso</string>
   <string name="pref_camera_focusmode_entry_facepriority">Priorità viso</string>
   <string name="pref_camera_focusmode_entry_fixed">Fisso</string>
   <string name="pref_camera_focusmode_entry_portrait">Ritratto</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Iperfocale</string>
+  <string name="pref_camera_focusmode_entry_manual">Manuale</string>
   <string name="pref_camera_coloreffect_entry_washed">Lavato</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Vintage, caldo</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Vintage, freddo</string>

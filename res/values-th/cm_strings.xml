@@ -84,12 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">ข้อความ</string>
   <string name="pref_camera_scenemode_entry_theatre">โรงละคร</string>
   <string name="pref_camera_scenemode_entry_whiteboard">กระดานดำ</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">ต่อเนื่อง</string>
   <string name="pref_camera_focusmode_entry_extended">ขยายออก</string>
   <string name="pref_camera_focusmode_entry_facedetect">ตรวจสอบใบหน้า</string>
   <string name="pref_camera_focusmode_entry_facepriority">ให้ใบหน้าสำคัญ</string>
   <string name="pref_camera_focusmode_entry_fixed">คงที่</string>
   <string name="pref_camera_focusmode_entry_portrait">ถ่ายภาพบุคคล</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">โฟกัสมากเกิน</string>
+  <string name="pref_camera_focusmode_entry_manual">ปรับเอง</string>
   <string name="pref_camera_coloreffect_entry_washed">ล้าง</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">วินเทจอบอุ่น</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">วินเทจเย็น</string>

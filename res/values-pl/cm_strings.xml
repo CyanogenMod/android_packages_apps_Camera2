@@ -24,6 +24,7 @@
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 Mpix</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 Mpix</string>
   <string name="pref_camera_picturesize_entry_10mp">10 Mpix</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9,7 Mpix</string>
   <string name="pref_camera_picturesize_entry_9mp">9 Mpix</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8,2 Mpix</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 Mpix</string>
@@ -83,12 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">Tekst</string>
   <string name="pref_camera_scenemode_entry_theatre">Teatr</string>
   <string name="pref_camera_scenemode_entry_whiteboard">Biała tablica</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">Ciągły</string>
   <string name="pref_camera_focusmode_entry_extended">Rozszerzony</string>
   <string name="pref_camera_focusmode_entry_facedetect">Wykrywanie twarzy</string>
   <string name="pref_camera_focusmode_entry_facepriority">Priorytet twarzy</string>
   <string name="pref_camera_focusmode_entry_fixed">Stały</string>
   <string name="pref_camera_focusmode_entry_portrait">Portret</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">Hyperfokalnie</string>
+  <string name="pref_camera_focusmode_entry_manual">Ręczny</string>
   <string name="pref_camera_coloreffect_entry_washed">Zmyty</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">Klasyczne ciepło</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">Klasyczne zimno</string>

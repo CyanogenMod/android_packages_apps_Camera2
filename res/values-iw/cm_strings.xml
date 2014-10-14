@@ -20,9 +20,11 @@
   <string name="pref_camera_picturesize_entry_18mp">18 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_12mp">12 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_10mp">10 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_9_7mp">9.7 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_9mp">9 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_8_2mp">8.2 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7 מגה פיקסל</string>
@@ -82,12 +84,14 @@
   <string name="pref_camera_scenemode_entry_text">טקסט</string>
   <string name="pref_camera_scenemode_entry_theatre">תיאטרון</string>
   <string name="pref_camera_scenemode_entry_whiteboard">לוח ציור</string>
+  <string name="pref_camera_focusmode_entry_continuouspicture">רציף</string>
   <string name="pref_camera_focusmode_entry_extended">מורחב</string>
   <string name="pref_camera_focusmode_entry_facedetect">זיהוי פנים</string>
   <string name="pref_camera_focusmode_entry_facepriority">עדיפות לפנים</string>
   <string name="pref_camera_focusmode_entry_fixed">קבוע</string>
   <string name="pref_camera_focusmode_entry_portrait">דיוקן</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">מיקוד יתר</string>
+  <string name="pref_camera_focusmode_entry_manual">ידני</string>
   <string name="pref_camera_coloreffect_entry_washed">שטוף</string>
   <string name="pref_camera_coloreffect_entry_vintage_warm">וינטאיג\' חם</string>
   <string name="pref_camera_coloreffect_entry_vintage_cold">וינטאיג\' קר</string>
@@ -119,6 +123,9 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 שניות</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 שניות</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 שניות</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 שניות</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 שניות</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 שניות</string>
   <string name="pref_camera_storage_title">זיכרון</string>
   <string name="camera_menu_enhance_label">שפר</string>
   <string name="camera_menu_beauty_mode_label">יפייף</string>
