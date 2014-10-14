@@ -563,12 +563,24 @@ public class CameraUtil {
                 }
             }
         }
+
         return optimalSizeIndex;
     }
 
-    /** Returns the largest picture size which matches the given aspect ratio. */
+    /**
+     * Returns the largest picture size which matches the given aspect ratio,
+     * except for the special WYSIWYG case where the picture size exactly matches
+     * the target size.
+     *
+     * @param sizes        a list of candidate sizes, available for use
+     * @param targetWidth  the ideal width of the video snapshot
+     * @param targetHeight the ideal height of the video snapshot
+     * @return the Optimal Video Snapshot Picture Size
+     */
     public static com.android.ex.camera2.portability.Size getOptimalVideoSnapshotPictureSize(
-            List<com.android.ex.camera2.portability.Size> sizes, double targetRatio) {
+            List<com.android.ex.camera2.portability.Size> sizes, int targetWidth,
+            int targetHeight) {
+
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.001;
         if (sizes == null) {
@@ -577,7 +589,17 @@ public class CameraUtil {
 
         com.android.ex.camera2.portability.Size optimalSize = null;
 
+        //  WYSIWYG Override
+        //  We assume that physical display constraints have already been
+        //  imposed on the variables sizes
+        for (com.android.ex.camera2.portability.Size size : sizes) {
+            if (size.height() == targetHeight && size.width() == targetWidth) {
+                return size;
+            }
+        }
+
         // Try to find a size matches aspect ratio and has the largest width
+        final double targetRatio = (double) targetWidth / targetHeight;
         for (com.android.ex.camera2.portability.Size size : sizes) {
             double ratio = (double) size.width() / size.height();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
