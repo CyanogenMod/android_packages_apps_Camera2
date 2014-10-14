@@ -29,7 +29,7 @@
     <string name="undo" msgid="5110048345890050107">"पूर्ववत करें"</string>
     <string name="details" msgid="4404020741542549488">"विवरण"</string>
     <string name="close" msgid="4826166926297479820">"बंद करें"</string>
-    <string name="show_on_map" msgid="8542853913632649160">"नक्शे पर दिखाएं"</string>
+    <string name="show_on_map" msgid="8542853913632649160">"मानचित्र पर दिखाएं"</string>
     <string name="rotate_left" msgid="2618440058490662604">"बाएं घुमाएं"</string>
     <string name="rotate_right" msgid="4896096424267838355">"दाएं घुमाएं"</string>
     <string name="edit" msgid="2776879395749004347">"संपादित करें"</string>
