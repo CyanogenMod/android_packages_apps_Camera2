@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 public class UsageStatistics {
     public static final long VIEW_TIMEOUT_MILLIS = 0;
+    public static final int NONE = -1;
 
     private static UsageStatistics sInstance;
 
@@ -66,7 +67,7 @@ public class UsageStatistics {
                                       Boolean volumeButtonShutter) {
     }
 
-    public void cameraFailure(int cause, String info) {
+    public void cameraFailure(int cause, String info, int agentAction, int agentState) {
     }
 
     public void changeScreen(int newScreen, Integer interactionCause) {
