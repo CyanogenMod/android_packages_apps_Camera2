@@ -50,6 +50,13 @@ import java.util.List;
  * Provides the settings UI for the Camera app.
  */
 public class CameraSettingsActivity extends FragmentActivity {
+    /**
+     * Used to denote a subsection of the preference tree to display in the
+     * Fragment. For instance, if 'Advanced' key is provided, the advanced
+     * preference section will be treated as the root for display. This is used
+     * to enable activity transitions between preference sections, and allows
+     * back/up stack to operate correctly.
+     */
     public static final String PREF_SCREEN_EXTRA = "pref_screen_extra";
 
     @Override
@@ -61,7 +68,10 @@ public class CameraSettingsActivity extends FragmentActivity {
         actionBar.setTitle(R.string.mode_settings);
 
         String prefKey = getIntent().getStringExtra(PREF_SCREEN_EXTRA);
-        CameraSettingsFragment dialog = new CameraSettingsFragment(prefKey);
+        CameraSettingsFragment dialog = new CameraSettingsFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putString(PREF_SCREEN_EXTRA, prefKey);
+        dialog.setArguments(bundle);
         getFragmentManager().beginTransaction().replace(android.R.id.content, dialog).commit();
     }
 
@@ -85,7 +95,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
         private String[] mCamcorderProfileNames;
         private CameraDeviceInfo mInfos;
-        private final String mPrefKey;
+        private String mPrefKey;
         private boolean mGetSubPrefAsRoot = true;
 
         // Selected resolutions for the different cameras and sizes.
@@ -96,13 +106,13 @@ public class CameraSettingsActivity extends FragmentActivity {
         private SelectedVideoQualities mVideoQualitiesBack;
         private SelectedVideoQualities mVideoQualitiesFront;
 
-        public CameraSettingsFragment(String prefKey) {
-            mPrefKey = prefKey;
-        }
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            Bundle arguments = getArguments();
+            if (arguments != null) {
+                mPrefKey = arguments.getString(PREF_SCREEN_EXTRA);
+            }
             Context context = this.getActivity().getApplicationContext();
             addPreferencesFromResource(R.xml.camera_preferences);
 
