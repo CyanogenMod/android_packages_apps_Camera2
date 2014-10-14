@@ -175,6 +175,7 @@ public class VideoMenu extends PieController
         mSettingsKeys = new String[] {
                 CameraSettings.KEY_STORAGE,
                 CameraSettings.KEY_POWER_SHUTTER,
+                CameraSettings.KEY_MAX_BRIGHTNESS,
                 CameraSettings.KEY_DIS,
                 CameraSettings.KEY_VIDEO_ENCODER,
                 CameraSettings.KEY_AUDIO_ENCODER,
