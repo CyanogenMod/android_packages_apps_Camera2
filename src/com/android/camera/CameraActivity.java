@@ -538,8 +538,9 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void onCameraDisabled(int cameraId) {
-        UsageStatistics.instance().cameraFailure(eventprotos.CameraFailure.FailureReason.SECURITY,
-                null);
+        UsageStatistics.instance().cameraFailure(
+                eventprotos.CameraFailure.FailureReason.SECURITY, null,
+                UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera disabled: " + cameraId);
         CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
     }
@@ -547,7 +548,8 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onDeviceOpenFailure(int cameraId, String info) {
         UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, info);
+                eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, info,
+                UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera open failure: " + info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
@@ -561,7 +563,8 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onReconnectionFailure(CameraAgent mgr, String info) {
         UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null);
+                eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null,
+                UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera reconnection failure:" + info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
     }
@@ -1325,13 +1328,20 @@ public class CameraActivity extends QuickActivity
                     Log.e(TAG, "Camera error callback. error=" + errorCode);
                 }
                 @Override
-                public void onCameraException(RuntimeException ex) {
+                public void onCameraException(
+                        RuntimeException ex, String commandHistory, int action, int state) {
                     Log.e(TAG, "Camera Exception", ex);
+                    UsageStatistics.instance().cameraFailure(
+                            eventprotos.CameraFailure.FailureReason.API_RUNTIME_EXCEPTION,
+                            commandHistory, action, state);
                     onFatalError();
                 }
                 @Override
                 public void onDispatchThreadException(RuntimeException ex) {
                     Log.e(TAG, "DispatchThread Exception", ex);
+                    UsageStatistics.instance().cameraFailure(
+                            eventprotos.CameraFailure.FailureReason.API_TIMEOUT,
+                            null, UsageStatistics.NONE, UsageStatistics.NONE);
                     onFatalError();
                 }
                 private void onFatalError() {
