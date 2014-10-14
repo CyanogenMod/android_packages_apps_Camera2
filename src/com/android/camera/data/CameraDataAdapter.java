@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.view.View;
 
 import com.android.camera.Storage;
@@ -41,7 +40,6 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private static final int DEFAULT_DECODE_SIZE = 1600;
 
     private final Context mContext;
-    private final Handler mCallbackHandler;
 
     private LocalDataList mImages;
 
@@ -55,9 +53,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     private LocalData mLocalDataToDelete;
 
-    public CameraDataAdapter(Context context, Handler callbackHandler, int placeholderResource) {
+    public CameraDataAdapter(Context context, int placeholderResource) {
         mContext = context;
-        mCallbackHandler = callbackHandler;
         mImages = new LocalDataList();
         mPlaceHolderResourceId = placeholderResource;
     }
@@ -147,17 +144,10 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void setListener(final Listener listener) {
+    public void setListener(Listener listener) {
         mListener = listener;
         if (mImages.size() != 0) {
-            mCallbackHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (listener != null) {
-                        listener.onDataLoaded();
-                    }
-                }
-            });
+            mListener.onDataLoaded();
         }
     }
 
@@ -170,8 +160,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public void removeData(final int dataID) {
-        final LocalData d = mImages.remove(dataID);
+    public void removeData(int dataID) {
+        LocalData d = mImages.remove(dataID);
         if (d == null) {
             return;
         }
@@ -179,14 +169,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         // Delete previously removed data first.
         executeDeletion();
         mLocalDataToDelete = d;
-        mCallbackHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mListener != null) {
-                    mListener.onDataRemoved(dataID, d);
-                }
-            }
-        });
+        mListener.onDataRemoved(dataID, d);
     }
 
     @Override
@@ -248,19 +231,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
             return;
         }
 
-        final LocalData data = mImages.get(pos);
+        LocalData data = mImages.get(pos);
         LocalData refreshedData = data.refresh(mContext);
 
         // Refresh failed. Probably removed already.
-        if (refreshedData == null) {
-            mCallbackHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mListener != null) {
-                        mListener.onDataRemoved(pos, data);
-                    }
-                }
-            });
+        if (refreshedData == null && mListener != null) {
+            mListener.onDataRemoved(pos, data);
             return;
         }
         updateData(pos, refreshedData);
@@ -269,27 +245,22 @@ public class CameraDataAdapter implements LocalDataAdapter {
     @Override
     public void updateData(final int pos, LocalData data) {
         mImages.set(pos, data);
-        mCallbackHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mListener != null) {
-                    mListener.onDataUpdated(new UpdateReporter() {
-                        @Override
-                        public boolean isDataRemoved(int dataID) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean isDataUpdated(int dataID) {
-                            return (dataID == pos);
-                        }
-                    });
+        if (mListener != null) {
+            mListener.onDataUpdated(new UpdateReporter() {
+                @Override
+                public boolean isDataRemoved(int dataID) {
+                    return false;
                 }
-            }
-        });
+
+                @Override
+                public boolean isDataUpdated(int dataID) {
+                    return (dataID == pos);
+                }
+            });
+        }
     }
 
-    private void insertData(final LocalData data) {
+    private void insertData(LocalData data) {
         // Since this function is mostly for adding the newest data,
         // a simple linear search should yield the best performance over a
         // binary search.
@@ -300,15 +271,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
             ;
         }
         mImages.add(pos, data);
-        final int fpos = pos;
-        mCallbackHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mListener != null) {
-                    mListener.onDataInserted(fpos, data);
-                }
-            }
-        });
+        if (mListener != null) {
+            mListener.onDataInserted(pos, data);
+        }
     }
 
     /** Update all the data */
@@ -317,14 +282,9 @@ public class CameraDataAdapter implements LocalDataAdapter {
             return;
         }
         mImages = list;
-        mCallbackHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mListener != null) {
-                    mListener.onDataLoaded();
-                }
-            }
-        });
+        if (mListener != null) {
+            mListener.onDataLoaded();
+        }
     }
 
     @Override
@@ -361,7 +321,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         return getTotalNumber();
     }
 
-    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, Void> {
+    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
 
         private final long mMinPhotoId;
 
@@ -372,29 +332,34 @@ public class CameraDataAdapter implements LocalDataAdapter {
         /**
          * Loads any new photos added to our storage directory since our last query.
          * @param contentResolvers {@link android.content.ContentResolver} to load data.
+         * @return An {@link java.util.ArrayList} containing any new data.
          */
         @Override
-        protected Void doInBackground(ContentResolver... contentResolvers) {
+        protected List<LocalData> doInBackground(ContentResolver... contentResolvers) {
             if (mMinPhotoId != LocalMediaData.QUERY_ALL_MEDIA_ID) {
                 final ContentResolver cr = contentResolvers[0];
-                List<LocalData> newPhotoData = LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
+                return LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
                         mMinPhotoId);
-                if (!newPhotoData.isEmpty()) {
-                    LocalData newestPhoto = newPhotoData.get(0);
-                    // We may overlap with another load task or a query task, in which case we want
-                    // to be sure we never decrement the oldest seen id.
-                    mLastPhotoId = Math.max(mLastPhotoId, newestPhoto.getContentId());
-                }
-                // We may add data that is already present, but if we do, it will be deduped in addData.
-                // addData does not dedupe session items, so we ignore them here
-                for (LocalData localData : newPhotoData) {
-                    Uri sessionUri = Storage.getSessionUriFromContentUri(localData.getUri());
-                    if (sessionUri == null) {
-                        addData(localData);
-                    }
+            }
+            return new ArrayList<LocalData>(0);
+        }
+
+        @Override
+        protected void onPostExecute(List<LocalData> newPhotoData) {
+            if (!newPhotoData.isEmpty()) {
+                LocalData newestPhoto = newPhotoData.get(0);
+                // We may overlap with another load task or a query task, in which case we want
+                // to be sure we never decrement the oldest seen id.
+                mLastPhotoId = Math.max(mLastPhotoId, newestPhoto.getContentId());
+            }
+            // We may add data that is already present, but if we do, it will be deduped in addData.
+            // addData does not dedupe session items, so we ignore them here
+            for (LocalData localData : newPhotoData) {
+                Uri sessionUri = Storage.getSessionUriFromContentUri(localData.getUri());
+                if (sessionUri == null) {
+                    addData(localData);
                 }
             }
-            return null;
         }
     }
 
