@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
- * Copyright (C) 2014 The CyanogenMod Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -502,6 +502,9 @@ public class PhotoModule
 
         // Power shutter
         mActivity.initPowerShutter(mPreferences);
+
+        // Max brightness
+        mActivity.initMaxBrightness(mPreferences);
 
         // we need to reset exposure for the preview
         resetExposureCompensation();
@@ -1908,6 +1911,9 @@ public class PhotoModule
         // Load the power shutter
         mActivity.initPowerShutter(mPreferences);
 
+        // Load max brightness
+        mActivity.initMaxBrightness(mPreferences);
+
         mNamedImages = null;
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
@@ -2892,6 +2898,7 @@ public class PhotoModule
             mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
                 mPreferences);
             mActivity.initPowerShutter(mPreferences);
+            mActivity.initMaxBrightness(mPreferences);
         } else {
             mHandler.sendEmptyMessage(SET_PHOTO_UI_PARAMS);
         }
