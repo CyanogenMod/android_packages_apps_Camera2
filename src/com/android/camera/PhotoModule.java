@@ -313,6 +313,10 @@ public class PhotoModule
     }
 
     private void checkDisplayRotation() {
+        // Need to just be a no-op for the quick resume-pause scenario.
+        if (mPaused) {
+            return;
+        }
         // Set the display orientation if display rotation has changed.
         // Sometimes this happens when the device is held upside
         // down and camera app is opened. Rotation animation will
