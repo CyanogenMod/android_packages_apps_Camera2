@@ -1462,7 +1462,7 @@ public class CameraActivity extends QuickActivity
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
         // Set up the camera preview first so the preview shows up ASAP.
-        mDataAdapter = new CameraDataAdapter(mAppContext, R.color.photo_placeholder);
+        mDataAdapter = new CameraDataAdapter(mAppContext, mMainHandler, R.color.photo_placeholder);
         mDataAdapter.setLocalDataListener(mLocalDataListener);
 
         mPreloader = new Preloader<Integer, AsyncTask>(FILMSTRIP_PRELOAD_AHEAD_ITEMS, mDataAdapter,
