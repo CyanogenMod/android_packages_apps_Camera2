@@ -54,6 +54,8 @@ public class eventprotos {
             public static final int SECURITY = 10000;
             public static final int OPEN_FAILURE = 10000;
             public static final int RECONNECT_FAILURE = 10000;
+            public static final int API_RUNTIME_EXCEPTION = 10000;
+            public static final int API_TIMEOUT = 10000;
         }
     }
 
