@@ -1370,15 +1370,20 @@ public class FilmstripView extends ViewGroup {
             // The end of the filmstrip might have been changed.
             // The mCenterX might be out of the bound.
             ViewItem currItem = mViewItem[mCurrentItem];
-            if (currItem.getId() == mDataAdapter.getTotalNumber() - 1
-                    && mCenterX > currItem.getCenterX()) {
-                int adjustDiff = currItem.getCenterX() - mCenterX;
-                mCenterX = currItem.getCenterX();
-                for (int i = 0; i < BUFFER_SIZE; i++) {
-                    if (mViewItem[i] != null) {
-                        mViewItem[i].translateXScaledBy(adjustDiff);
+            if(currItem!=null) {
+                if (currItem.getId() == mDataAdapter.getTotalNumber() - 1
+                        && mCenterX > currItem.getCenterX()) {
+                    int adjustDiff = currItem.getCenterX() - mCenterX;
+                    mCenterX = currItem.getCenterX();
+                    for (int i = 0; i < BUFFER_SIZE; i++) {
+                        if (mViewItem[i] != null) {
+                            mViewItem[i].translateXScaledBy(adjustDiff);
+                        }
                     }
                 }
+            } else {
+                // CurrItem should NOT be NULL, but if is, at least don't crash.
+                Log.w(TAG,"Caught invalid update in removal animation.");
             }
         } else {
             // fill the removed place by right shift
