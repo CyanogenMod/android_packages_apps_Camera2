@@ -377,11 +377,7 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onCountDownFinished() {
-        if (mIsImageCaptureIntent) {
-            mAppController.getCameraAppUI().transitionToIntentReviewLayout();
-        } else {
-            mAppController.getCameraAppUI().transitionToCapture();
-        }
+        mAppController.getCameraAppUI().transitionToCapture();
         mAppController.getCameraAppUI().showModeOptions();
         if (mPaused) {
             return;
