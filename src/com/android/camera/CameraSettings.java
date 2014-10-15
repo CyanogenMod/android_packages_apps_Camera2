@@ -133,9 +133,6 @@ public class CameraSettings {
     public static final String FLIP_MODE_VH = "flip-vh";
 
     private static final String KEY_QC_PICTURE_FORMAT = "picture-format-values";
-    private static final String VIDEO_QUALITY_HIGH = "high";
-    private static final String VIDEO_QUALITY_MMS = "mms";
-    private static final String VIDEO_QUALITY_YOUTUBE = "youtube";
 
     public static final String KEY_BURST_MODE = "pref_camera_burst_key";
     public static final String KEY_BEAUTY_MODE = "pref_camera_beauty_mode";
@@ -148,11 +145,6 @@ public class CameraSettings {
 
     public static final int CURRENT_VERSION = 7;
     public static final int CURRENT_LOCAL_VERSION = 3;
-
-    public static final int DEFAULT_VIDEO_DURATION = 0; // no limit
-    private static final int MMS_VIDEO_DURATION = (CamcorderProfile.get(CamcorderProfile.QUALITY_LOW) != null) ?
-          CamcorderProfile.get(CamcorderProfile.QUALITY_LOW).duration :30;
-    private static final int YOUTUBE_VIDEO_DURATION = 15 * 60; // 15 mins
 
     private static final String TAG = "CameraSettings";
 
@@ -936,15 +928,6 @@ public class CameraSettings {
               supported.add(Integer.toString(CamcorderProfile.QUALITY_QCIF));
            }
         }
-
-    }
-    public static int getVideoDurationInMillis(String quality) {
-        if (VIDEO_QUALITY_MMS.equals(quality)) {
-            return MMS_VIDEO_DURATION * 1000;
-        } else if (VIDEO_QUALITY_YOUTUBE.equals(quality)) {
-            return YOUTUBE_VIDEO_DURATION * 1000;
-        }
-        return DEFAULT_VIDEO_DURATION * 1000;
     }
 
     /**

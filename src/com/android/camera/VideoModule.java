@@ -744,39 +744,19 @@ public class VideoModule implements CameraModule,
 
     private void qcomReadVideoPreferences() {
         String videoEncoder = mPreferences.getString(
-               CameraSettings.KEY_VIDEO_ENCODER,
-               mActivity.getString(R.string.pref_camera_videoencoder_default));
+                CameraSettings.KEY_VIDEO_ENCODER,
+                mActivity.getString(R.string.pref_camera_videoencoder_default));
         mVideoEncoder = VIDEO_ENCODER_TABLE.get(videoEncoder);
 
-        Log.v(TAG, "Video Encoder selected = " +mVideoEncoder);
+        Log.v(TAG, "Video Encoder selected = " + mVideoEncoder);
 
         String audioEncoder = mPreferences.getString(
-               CameraSettings.KEY_AUDIO_ENCODER,
-               mActivity.getString(R.string.pref_camera_audioencoder_default));
+                CameraSettings.KEY_AUDIO_ENCODER,
+                mActivity.getString(R.string.pref_camera_audioencoder_default));
         mAudioEncoder = AUDIO_ENCODER_TABLE.get(audioEncoder);
 
-        Log.v(TAG, "Audio Encoder selected = " +mAudioEncoder);
-
-        String minutesStr = mPreferences.getString(
-              CameraSettings.KEY_VIDEO_DURATION,
-              mActivity.getString(R.string.pref_camera_video_duration_default));
-        int minutes = -1;
-        try {
-            minutes = Integer.parseInt(minutesStr);
-        } catch(NumberFormatException npe) {
-            // use default value continue
-            minutes = Integer.parseInt(mActivity.getString(
-                         R.string.pref_camera_video_duration_default));
-        }
-        if (minutes == -1) {
-            // User wants lowest, set 30s */
-            mMaxVideoDurationInMs = 30000;
-        } else {
-            // 1 minute = 60000ms
-            mMaxVideoDurationInMs = 60000 * minutes;
-        }
-
-   }
+        Log.v(TAG, "Audio Encoder selected = " + mAudioEncoder);
+    }
 
     private final class AutoFocusCallback
             implements CameraAFCallback {
@@ -797,12 +777,12 @@ public class VideoModule implements CameraModule,
         String videoQuality = mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY,
                         null);
         if (videoQuality == null) {
-             mParameters = mCameraDevice.getParameters();
+            mParameters = mCameraDevice.getParameters();
             String defaultQuality = mActivity.getResources().getString(
                     R.string.pref_video_quality_default);
             boolean hasProfile = CamcorderProfile.hasProfile(
-                     Integer.parseInt(defaultQuality));
-            if (hasProfile == true){
+                    Integer.parseInt(defaultQuality));
+            if (hasProfile == true) {
                 videoQuality = defaultQuality;
             } else {
                 // check for highest quality if default quality is not supported
@@ -832,7 +812,29 @@ public class VideoModule implements CameraModule,
                     intent.getIntExtra(MediaStore.EXTRA_DURATION_LIMIT, 0);
             mMaxVideoDurationInMs = 1000 * seconds;
         } else {
-            mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
+            String minutesStr = mPreferences.getString(
+                    CameraSettings.KEY_VIDEO_DURATION,
+                    mActivity.getString(R.string.pref_camera_video_duration_default));
+            int minutes = -1;
+
+            try {
+                minutes = Integer.parseInt(minutesStr);
+            } catch(NumberFormatException npe) {
+                // Use default value
+                minutes = Integer.parseInt(mActivity.getString(
+                        R.string.pref_camera_video_duration_default));
+            }
+
+            if (minutes == -1) {
+                // 30 seconds (MMS)
+                mMaxVideoDurationInMs = 30000;
+            } else if (minutes == 15) {
+                // 15 minutes (YouTube)
+                mMaxVideoDurationInMs = 15000 * 60;
+            } else {
+                // Max duration (usually unlimited)
+                mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
+            }
         }
 
         // Read time lapse recording interval.

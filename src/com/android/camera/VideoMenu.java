@@ -196,6 +196,7 @@ public class VideoMenu extends PieController
                 CameraSettings.KEY_DIS,
                 CameraSettings.KEY_VIDEO_ENCODER,
                 CameraSettings.KEY_AUDIO_ENCODER,
+                CameraSettings.KEY_VIDEO_DURATION,
                 CameraSettings.KEY_FOCUS_TIME,
                 CameraSettings.KEY_JPEG_QUALITY,
                 CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
