@@ -26,11 +26,11 @@ import java.util.List;
  * single listener to be invoked upon change in the conjunction (logical AND) of
  * all inputs.
  */
-public class ConjunctionListenerMux<Input extends Enum<Input>> {
+public class ListenerCombiner<Input extends Enum<Input>> {
     /**
      * Callback for listening to changes to the conjunction of all inputs.
      */
-    public static interface OutputChangeListener {
+    public static interface StateChangeListener {
         /**
          * Called whenever the conjunction of all inputs changes. Listeners MUST
          * NOT call {@link #setInput} while still registered as a listener, as
@@ -38,7 +38,7 @@ public class ConjunctionListenerMux<Input extends Enum<Input>> {
          *
          * @param state the conjunction of all input values.
          */
-        public void onOutputChange(boolean state);
+        public void onStateChange(boolean state);
     }
 
     /** Mutex for mValues and mState. */
@@ -51,14 +51,14 @@ public class ConjunctionListenerMux<Input extends Enum<Input>> {
      * The set of listeners to notify when the output (the conjunction of all
      * inputs) changes.
      */
-    private final List<OutputChangeListener> mListeners = Collections.synchronizedList(
-            new ArrayList<OutputChangeListener>());
+    private final List<StateChangeListener> mListeners = Collections.synchronizedList(
+            new ArrayList<StateChangeListener>());
 
-    public void addListener(OutputChangeListener listener) {
+    public void addListener(StateChangeListener listener) {
         mListeners.add(listener);
     }
 
-    public void removeListener(OutputChangeListener listener) {
+    public void removeListener(StateChangeListener listener) {
         mListeners.remove(listener);
     }
 
@@ -103,12 +103,12 @@ public class ConjunctionListenerMux<Input extends Enum<Input>> {
         }
     }
 
-    public ConjunctionListenerMux(Class<Input> clazz, OutputChangeListener listener) {
+    public ListenerCombiner(Class<Input> clazz, StateChangeListener listener) {
         this(clazz);
         addListener(listener);
     }
 
-    public ConjunctionListenerMux(Class<Input> clazz) {
+    public ListenerCombiner(Class<Input> clazz) {
         mInputs = new EnumMap<Input, Boolean>(clazz);
 
         for (Input i : clazz.getEnumConstants()) {
@@ -124,8 +124,8 @@ public class ConjunctionListenerMux<Input extends Enum<Input>> {
      */
     public void notifyListeners() {
         synchronized (mLock) {
-            for (OutputChangeListener listener : mListeners) {
-                listener.onOutputChange(mOutput);
+            for (StateChangeListener listener : mListeners) {
+                listener.onStateChange(mOutput);
             }
         }
     }

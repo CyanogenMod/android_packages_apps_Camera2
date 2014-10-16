@@ -56,7 +56,7 @@ import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.ConjunctionListenerMux;
+import com.android.camera.util.ListenerCombiner;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
 
@@ -196,7 +196,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * <li>We must not be in the process of capturing a single, high-quality,
      * image.</li>
      * </ol>
-     * See {@link ConjunctionListenerMux} and {@link #mReadyStateManager} for
+     * See {@link ListenerCombiner} and {@link #mReadyStateManager} for
      * details of how this is managed.
      */
     private static enum ReadyStateRequirement {
@@ -207,11 +207,11 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      * Handles the thread-safe logic of dispatching whenever the logical AND of
      * these constraints changes.
      */
-    private final ConjunctionListenerMux<ReadyStateRequirement>
-            mReadyStateManager = new ConjunctionListenerMux<ReadyStateRequirement>(
-                    ReadyStateRequirement.class, new ConjunctionListenerMux.OutputChangeListener() {
+    private final ListenerCombiner<ReadyStateRequirement>
+            mReadyStateManager = new ListenerCombiner<ReadyStateRequirement>(
+                    ReadyStateRequirement.class, new ListenerCombiner.StateChangeListener() {
                             @Override
-                        public void onOutputChange(boolean state) {
+                        public void onStateChange(boolean state) {
                             broadcastReadyState(state);
                         }
                     });
