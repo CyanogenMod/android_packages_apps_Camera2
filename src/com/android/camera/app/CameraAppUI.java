@@ -1025,7 +1025,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             @Override
             public void run() {
                 mModeTransitionView.hideModeCover(null);
-                showShimmyDelayed();
+                if (!mDisableAllUserInteractions) {
+                    showShimmyDelayed();
+                }
             }
         };
         mModeCoverState = COVER_SHOWN;
@@ -1402,6 +1404,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             disableModeOptions();
             setShutterButtonEnabled(false);
             setSwipeEnabled(false);
+            mModeListView.hideAnimated();
         } else {
             enableModeOptions();
             setShutterButtonEnabled(true);
