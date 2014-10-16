@@ -1031,6 +1031,7 @@ public class CaptureModule extends CameraModule
             mState = ModuleState.UPDATE_TRANSFORM_ON_NEXT_SURFACE_TEXTURE_UPDATE;
         }
         mAppController.onPreviewStarted();
+        onReadyStateChanged(true);
     }
 
     /**
