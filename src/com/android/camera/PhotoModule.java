@@ -1168,6 +1168,7 @@ public class PhotoModule
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
+                    Log.v(TAG, "showing UI");
                     mUI.showCapturedImageForReview(jpegData, orientation, mMirror);
                 } else {
                     onCaptureDone();
@@ -1269,6 +1270,7 @@ public class PhotoModule
 
     @Override
     public boolean capture() {
+        Log.i(TAG, "capture");
         // If we are already in the middle of taking a snapshot or the image
         // save request is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
@@ -1400,6 +1402,7 @@ public class PhotoModule
 
     @Override
     public void onCaptureDone() {
+        Log.i(TAG, "onCaptureDone");
         if (mPaused) {
             return;
         }
@@ -1564,11 +1567,7 @@ public class PhotoModule
 
     @Override
     public void onCountDownFinished() {
-        if (mIsImageCaptureIntent) {
-            mAppController.getCameraAppUI().transitionToIntentReviewLayout();
-        } else {
-            mAppController.getCameraAppUI().transitionToCapture();
-        }
+        mAppController.getCameraAppUI().transitionToCapture();
         mAppController.getCameraAppUI().showModeOptions();
         if (mPaused) {
             return;
@@ -1679,6 +1678,7 @@ public class PhotoModule
 
     @Override
     public void pause() {
+        Log.v(TAG, "pause");
         mPaused = true;
         getServices().getRemoteShutterListener().onModuleExit();
         SessionStatsCollector.instance().sessionActive(false);
