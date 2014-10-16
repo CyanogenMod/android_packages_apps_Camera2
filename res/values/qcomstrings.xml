@@ -71,12 +71,12 @@
 
     <!-- Settings screen, Video duration title -->
     <string name="pref_camera_video_duration_title">Video duration</string>
-    <string name="pref_camera_video_duration_default" translatable="false">10</string>
+    <string name="pref_camera_video_duration_default" translatable="false">0</string>
 
     <!-- Settings screen, Video duration dialog radio button choices -->
     <string name="pref_camera_video_duration_entry_mms">30 seconds (MMS)</string>
-    <string name="pref_camera_video_duration_entry_10">10 minutes</string>
-    <string name="pref_camera_video_duration_entry_30">30 minutes</string>
+    <string name="pref_camera_video_duration_entry_youtube">15 minutes (YouTube)</string>
+    <string name="pref_camera_video_duration_entry_unlimited">Unlimited</string>
 
     <!-- Settings screen, Select Skin Tone Enhancement title -->
     <string name="pref_camera_skinToneEnhancement_title">Skin tone enhancement</string>
@@ -92,6 +92,10 @@
     <string name="pref_camera_selectablezoneaf_entry_centerweighted">Center weighted</string>
     <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame average</string>
 
+    <!-- The message is shown in toast when HDR or scene mode is enabled -->
+    <string name="hdr_enable_message">HDR is enabled, only Auto scene mode is supported</string>
+    <string name="scene_enable_message">HDR is not supported in the scene mode other than Auto</string>
+
     <!-- Settings screen, setting title text for Video HDR-->
     <string name="pref_camera_video_hdr_title">Video HDR</string>
     <string name="pref_camera_video_hdr_default" translatable="false">off</string>
@@ -104,6 +108,9 @@
     <string name="pref_camera_redeyereduction_title">Red eye reduction</string>
     <string name="pref_camera_redeyereduction_default" translatable="false">disable</string>
 
+    <!-- The message is shown in toast when the app encounters an unsupported selection for HFR/HSR mode -->
+    <string name="error_app_unsupported_hfr_selection">HFR is not supported when video stabilization, time lapse or video HDR is on</string>
+
     <!-- The message is shown in dialog when the app encounters an unsupported resolution for HFR mode -->
     <string name="error_app_unsupported_hfr">HFR is not supported for selected resolution</string>
 
@@ -112,6 +119,9 @@
 
     <!-- The message is shown in dialog when the app encounters an unsupported video resolution-->
     <string name="error_app_unsupported">Unsupported video resolution for this codec type</string>
+
+    <!-- The message is shown in toast when the app encounters an unsupported resolution for DIS mode -->
+    <string name="error_app_unsupported_dis">Video stabilization is not supported for selected resolution</string>
 
     <!-- Settings screen, AE bracketing and HDR location dialog choices -->
     <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>

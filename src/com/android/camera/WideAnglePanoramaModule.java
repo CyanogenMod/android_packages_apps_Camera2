@@ -532,9 +532,11 @@ public class WideAnglePanoramaModule
                     float progressX, float progressY) {
                 float accumulatedHorizontalAngle = progressX * mHorizontalViewAngle;
                 float accumulatedVerticalAngle = progressY * mVerticalViewAngle;
+                boolean isRotated = !(mDeviceOrientationAtCapture == mDeviceOrientation);
                 if (isFinished
                         || (Math.abs(accumulatedHorizontalAngle) >= DEFAULT_SWEEP_ANGLE)
-                        || (Math.abs(accumulatedVerticalAngle) >= DEFAULT_SWEEP_ANGLE)) {
+                        || (Math.abs(accumulatedVerticalAngle) >= DEFAULT_SWEEP_ANGLE)
+                        || isRotated) {
                     stopCapture(false);
                 } else {
                     float panningRateXInDegree = panningRateX * mHorizontalViewAngle;
@@ -906,7 +908,7 @@ public class WideAnglePanoramaModule
 
         // Check if another panorama instance is using the mosaic frame processor.
         mUI.dismissAllDialogs();
-        if (!mThreadRunning && mMosaicFrameProcessor.isMosaicMemoryAllocated()) {
+        if (mThreadRunning && mMosaicFrameProcessor.isMosaicMemoryAllocated()) {
             mUI.showWaitingDialog(mDialogWaitingPreviousString);
             // If stitching is still going on, make sure switcher and shutter button
             // are not showing

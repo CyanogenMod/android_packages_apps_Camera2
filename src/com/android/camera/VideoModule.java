@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
- * Copyright (C) 2013 The CyanogenMod Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -242,7 +242,7 @@ public class VideoModule implements CameraModule,
             return;
         }
         mParameters = mCameraDevice.getParameters();
-        mPreviewFocused = true;
+        mPreviewFocused = arePreviewControlsVisible();
         initializeCapabilities();
     }
 
@@ -312,6 +312,7 @@ public class VideoModule implements CameraModule,
     boolean mUnsupportedResolution = false;
     private boolean mUnsupportedHFRVideoSize = false;
     private boolean mUnsupportedHFRVideoCodec = false;
+    private String mDefaultAntibanding = null;
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
         if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
@@ -443,6 +444,9 @@ public class VideoModule implements CameraModule,
 
         // Power shutter
         mActivity.initPowerShutter(mPreferences);
+
+        // Max brightness
+        mActivity.initMaxBrightness(mPreferences);
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -603,8 +607,10 @@ public class VideoModule implements CameraModule,
         if (mOrientation != newOrientation) {
             mOrientation = newOrientation;
             Log.v(TAG, "onOrientationChanged, update parameters");
-            if ((mParameters != null) && (true == mPreviewing) && !mMediaRecorderRecording){
-                setCameraParameters();
+            if ((mCameraDevice != null) && (mParameters != null)
+                    && (true == mPreviewing) && !mMediaRecorderRecording){
+                setFlipValue();
+                mCameraDevice.setParameters(mParameters);
             }
         }
 
@@ -744,39 +750,26 @@ public class VideoModule implements CameraModule,
 
     private void qcomReadVideoPreferences() {
         String videoEncoder = mPreferences.getString(
-               CameraSettings.KEY_VIDEO_ENCODER,
-               mActivity.getString(R.string.pref_camera_videoencoder_default));
+                CameraSettings.KEY_VIDEO_ENCODER,
+                mActivity.getString(R.string.pref_camera_videoencoder_default));
         mVideoEncoder = VIDEO_ENCODER_TABLE.get(videoEncoder);
 
-        Log.v(TAG, "Video Encoder selected = " +mVideoEncoder);
+        Log.v(TAG, "Video Encoder selected = " + mVideoEncoder);
 
         String audioEncoder = mPreferences.getString(
-               CameraSettings.KEY_AUDIO_ENCODER,
-               mActivity.getString(R.string.pref_camera_audioencoder_default));
+                CameraSettings.KEY_AUDIO_ENCODER,
+                mActivity.getString(R.string.pref_camera_audioencoder_default));
         mAudioEncoder = AUDIO_ENCODER_TABLE.get(audioEncoder);
 
-        Log.v(TAG, "Audio Encoder selected = " +mAudioEncoder);
+        Log.v(TAG, "Audio Encoder selected = " + mAudioEncoder);
 
-        String minutesStr = mPreferences.getString(
-              CameraSettings.KEY_VIDEO_DURATION,
-              mActivity.getString(R.string.pref_camera_video_duration_default));
-        int minutes = -1;
-        try {
-            minutes = Integer.parseInt(minutesStr);
-        } catch(NumberFormatException npe) {
-            // use default value continue
-            minutes = Integer.parseInt(mActivity.getString(
-                         R.string.pref_camera_video_duration_default));
+        // Set wavelet denoise mode
+        if (mParameters.getSupportedDenoiseModes() != null) {
+            String denoise = mPreferences.getString(CameraSettings.KEY_DENOISE,
+                    mActivity.getString(R.string.pref_camera_denoise_default));
+            mParameters.setDenoise(denoise);
         }
-        if (minutes == -1) {
-            // User wants lowest, set 30s */
-            mMaxVideoDurationInMs = 30000;
-        } else {
-            // 1 minute = 60000ms
-            mMaxVideoDurationInMs = 60000 * minutes;
-        }
-
-   }
+    }
 
     private final class AutoFocusCallback
             implements CameraAFCallback {
@@ -797,12 +790,12 @@ public class VideoModule implements CameraModule,
         String videoQuality = mPreferences.getString(CameraSettings.KEY_VIDEO_QUALITY,
                         null);
         if (videoQuality == null) {
-             mParameters = mCameraDevice.getParameters();
+            mParameters = mCameraDevice.getParameters();
             String defaultQuality = mActivity.getResources().getString(
                     R.string.pref_video_quality_default);
             boolean hasProfile = CamcorderProfile.hasProfile(
-                     Integer.parseInt(defaultQuality));
-            if (hasProfile == true){
+                    Integer.parseInt(defaultQuality));
+            if (hasProfile == true) {
                 videoQuality = defaultQuality;
             } else {
                 // check for highest quality if default quality is not supported
@@ -832,7 +825,29 @@ public class VideoModule implements CameraModule,
                     intent.getIntExtra(MediaStore.EXTRA_DURATION_LIMIT, 0);
             mMaxVideoDurationInMs = 1000 * seconds;
         } else {
-            mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
+            String minutesStr = mPreferences.getString(
+                    CameraSettings.KEY_VIDEO_DURATION,
+                    mActivity.getString(R.string.pref_camera_video_duration_default));
+            int minutes = -1;
+
+            try {
+                minutes = Integer.parseInt(minutesStr);
+            } catch(NumberFormatException npe) {
+                // Use default value
+                minutes = Integer.parseInt(mActivity.getString(
+                        R.string.pref_camera_video_duration_default));
+            }
+
+            if (minutes == -1) {
+                // 30 seconds (MMS)
+                mMaxVideoDurationInMs = 30000;
+            } else if (minutes == 15) {
+                // 15 minutes (YouTube)
+                mMaxVideoDurationInMs = 15000 * 60;
+            } else {
+                // Max duration (usually unlimited)
+                mMaxVideoDurationInMs = CameraSettings.getMaxVideoDuration(mActivity);
+            }
         }
 
         // Read time lapse recording interval.
@@ -1069,6 +1084,7 @@ public class VideoModule implements CameraModule,
         mCameraDevice.stopPreview();
         mPreviewing = false;
         mStopPrevPending = false;
+        mUI.enableShutter(false);
     }
 
     private void closeCamera() {
@@ -1506,7 +1522,11 @@ public class VideoModule implements CameraModule,
 
     private void saveVideo() {
         if (mVideoFileDescriptor == null) {
-            long duration = SystemClock.uptimeMillis() - mRecordingStartTime + mRecordingTotalTime;
+            long duration = 0L;
+            if (mMediaRecorderPausing == false)
+                duration = SystemClock.uptimeMillis() - mRecordingStartTime + mRecordingTotalTime;
+            else
+                duration = mRecordingTotalTime;
             if (duration > 0) {
                 if (mCaptureTimeLapse) {
                     duration = getTimeLapseVideoLength(duration);
@@ -1521,6 +1541,20 @@ public class VideoModule implements CameraModule,
                 mCurrentVideoValues = null;
                 return;
             }
+
+            /* Change the duration as per HFR selection */
+            String hfr = mParameters.getVideoHighFrameRate();
+            int defaultFps = 30;
+            int hfrRatio = 1;
+            if (!("off".equals(hfr))) {
+                try {
+                   int hfrFps = Integer.parseInt(hfr);
+                   hfrRatio = hfrFps / defaultFps;
+                } catch(Exception ex) {
+                    // Do nothing
+                }
+            }
+            duration = duration * hfrRatio;
 
             mActivity.getMediaSaveService().addVideo(mCurrentVideoFilename,
                     duration, mCurrentVideoValues,
@@ -1811,6 +1845,7 @@ public class VideoModule implements CameraModule,
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 fail ? UsageStatistics.ACTION_CAPTURE_FAIL :
                     UsageStatistics.ACTION_CAPTURE_DONE, "Video",
+                mMediaRecorderPausing ? mRecordingTotalTime :
                     SystemClock.uptimeMillis() - mRecordingStartTime + mRecordingTotalTime);
         mStopRecPending = false;
         return fail;
@@ -1941,75 +1976,7 @@ public class VideoModule implements CameraModule,
         return supported == null ? false : supported.indexOf(value) >= 0;
     }
 
-     private void qcomSetCameraParameters(){
-        // add QCOM Parameters here
-        // Set color effect parameter.
-        String colorEffect = mPreferences.getString(
-            CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT,
-            mActivity.getString(R.string.pref_camera_coloreffect_default));
-        Log.v(TAG, "Color effect value =" + colorEffect);
-        if (isSupported(colorEffect, mParameters.getSupportedColorEffects())) {
-            mParameters.setColorEffect(colorEffect);
-        }
-
-        String disMode = mPreferences.getString(
-                CameraSettings.KEY_DIS,
-                mActivity.getString(R.string.pref_camera_dis_default));
-        Log.v(TAG, "DIS value =" + disMode);
-        if (isSupported(disMode,
-                        CameraSettings.getSupportedDISModes(mParameters))) {
-            mParameters.set(CameraSettings.KEY_QC_DIS_MODE, disMode);
-        }
-
-        mUnsupportedHFRVideoSize = false;
-        mUnsupportedHFRVideoCodec = false;
-        // To set preview format as YV12 , run command
-        // "adb shell setprop "debug.camera.yv12" true"
-        String yv12formatset = SystemProperties.get("debug.camera.yv12");
-        if(yv12formatset.equals("true")) {
-            Log.v(TAG, "preview format set to YV12");
-            mParameters.setPreviewFormat (ImageFormat.YV12);
-        }
-
-        // Set High Frame Rate.
-        String highFrameRate = mPreferences.getString(
-            CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
-            mActivity. getString(R.string.pref_camera_hfr_default));
-        if(!("off".equals(highFrameRate))){
-            mUnsupportedHFRVideoSize = true;
-            String hfrsize = videoWidth+"x"+videoHeight;
-            Log.v(TAG, "current set resolution is : "+hfrsize);
-            try {
-                Size size = null;
-                if (isSupported(highFrameRate,mParameters.getSupportedVideoHighFrameRateModes())) {
-                    int index = mParameters.getSupportedVideoHighFrameRateModes().indexOf(
-                        highFrameRate);
-                    size = mParameters.getSupportedHfrSizes().get(index);
-                }
-                if (size != null) {
-                    Log.v(TAG, "supported hfr size : "+ size.width+ " "+size.height);
-                    if (videoWidth <= size.width && videoHeight <= size.height) {
-                        mUnsupportedHFRVideoSize = false;
-                        Log.v(TAG,"Current hfr resolution is supported");
-                    }
-                }
-            } catch (NullPointerException e){
-                Log.e(TAG, "supported hfr sizes is null");
-            }
-
-            if(mUnsupportedHFRVideoSize)
-                Log.v(TAG,"Unsupported hfr resolution");
-
-            if(mVideoEncoder != MediaRecorder.VideoEncoder.H264)
-                mUnsupportedHFRVideoCodec = true;
-        }
-        if (isSupported(highFrameRate,
-                mParameters.getSupportedVideoHighFrameRateModes()) &&
-                !mUnsupportedHFRVideoSize) {
-            mParameters.setVideoHighFrameRate(highFrameRate);
-        } else {
-            mParameters.setVideoHighFrameRate("off");
-        }
+    private void setFlipValue() {
 
         // Read Flip mode from adb command
         //value: 0(default) - FLIP_MODE_OFF
@@ -2053,6 +2020,121 @@ public class VideoModule implements CameraModule,
             mParameters.set(CameraSettings.KEY_QC_SNAPSHOT_PICTURE_FLIP, picture_flip);
         }
 
+
+    }
+
+     private void qcomSetCameraParameters(){
+        // add QCOM Parameters here
+        // Set color effect parameter.
+        String colorEffect = mPreferences.getString(
+            CameraSettings.KEY_VIDEOCAMERA_COLOR_EFFECT,
+            mActivity.getString(R.string.pref_camera_coloreffect_default));
+        Log.v(TAG, "Color effect value =" + colorEffect);
+        if (isSupported(colorEffect, mParameters.getSupportedColorEffects())) {
+            mParameters.setColorEffect(colorEffect);
+        }
+
+        String disMode = mPreferences.getString(
+                CameraSettings.KEY_DIS,
+                mActivity.getString(R.string.pref_camera_dis_default));
+        Log.v(TAG, "DIS value =" + disMode);
+        if (isSupported(disMode,
+                        CameraSettings.getSupportedDISModes(mParameters))) {
+            mParameters.set(CameraSettings.KEY_QC_DIS_MODE, disMode);
+        }
+
+        if (mDefaultAntibanding == null) {
+            mDefaultAntibanding = mParameters.getAntibanding();
+            Log.d(TAG, "default antibanding value = " + mDefaultAntibanding);
+        }
+
+        if (disMode.equals("enable")) {
+            Log.d(TAG, "dis is enabled, set antibanding to auto.");
+            if (isSupported(Parameters.ANTIBANDING_AUTO, mParameters.getSupportedAntibanding())) {
+                mParameters.setAntibanding(Parameters.ANTIBANDING_AUTO);
+            }
+        } else {
+            if (isSupported(mDefaultAntibanding, mParameters.getSupportedAntibanding())) {
+                mParameters.setAntibanding(mDefaultAntibanding);
+            }
+        }
+        Log.d(TAG, "antiBanding value = " + mParameters.getAntibanding());
+
+        mUnsupportedHFRVideoSize = false;
+        mUnsupportedHFRVideoCodec = false;
+        // To set preview format as YV12 , run command
+        // "adb shell setprop "debug.camera.yv12" true"
+        String yv12formatset = SystemProperties.get("debug.camera.yv12");
+        if(yv12formatset.equals("true")) {
+            Log.v(TAG, "preview format set to YV12");
+            mParameters.setPreviewFormat (ImageFormat.YV12);
+        }
+
+        // Set High Frame Rate.
+        String highFrameRate = mPreferences.getString(
+            CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
+            mActivity. getString(R.string.pref_camera_hfr_default));
+        if(!("off".equals(highFrameRate))){
+            mUnsupportedHFRVideoSize = true;
+            String hfrsize = videoWidth+"x"+videoHeight;
+            Log.v(TAG, "current set resolution is : "+hfrsize);
+            try {
+                Size size = null;
+                if (isSupported(highFrameRate,mParameters.getSupportedVideoHighFrameRateModes())) {
+                    int index = mParameters.getSupportedVideoHighFrameRateModes().indexOf(
+                        highFrameRate);
+                    size = mParameters.getSupportedHfrSizes().get(index);
+                }
+                if (size != null) {
+                    Log.v(TAG, "supported hfr size : "+ size.width+ " "+size.height);
+                    if (videoWidth <= size.width && videoHeight <= size.height) {
+                        mUnsupportedHFRVideoSize = false;
+                        Log.v(TAG,"Current hfr resolution is supported");
+                    }
+                }
+            } catch (NullPointerException e){
+                Log.e(TAG, "supported hfr sizes is null");
+            }
+
+            int hfrFps = Integer.parseInt(highFrameRate);
+            int inputBitrate = videoWidth*videoHeight*hfrFps;
+
+            //check if codec supports the resolution, otherwise throw toast
+            List<VideoEncoderCap> videoEncoders = EncoderCapabilities.getVideoEncoders();
+            for (VideoEncoderCap videoEncoder: videoEncoders) {
+                if (videoEncoder.mCodec == mVideoEncoder){
+                    int maxBitrate = (videoEncoder.mMaxHFRFrameWidth *
+                                     videoEncoder.mMaxHFRFrameHeight *
+                                     videoEncoder.mMaxHFRMode);
+                    if (inputBitrate > maxBitrate ){
+                            Log.e(TAG,"Selected codec "+mVideoEncoder+
+                                " does not support HFR " + highFrameRate + " with "+ videoWidth
+                                + "x" + videoHeight +" resolution");
+                            Log.e(TAG, "Codec capabilities: " +
+                                "mMaxHFRFrameWidth = " + videoEncoder.mMaxHFRFrameWidth + " , "+
+                                "mMaxHFRFrameHeight = " + videoEncoder.mMaxHFRFrameHeight + " , "+
+                                "mMaxHFRMode = " + videoEncoder.mMaxHFRMode);
+                            mUnsupportedHFRVideoSize = true;
+                    }
+                    break;
+                }
+            }
+
+            if(mUnsupportedHFRVideoSize)
+                Log.v(TAG,"Unsupported hfr resolution");
+
+            if(mVideoEncoder != MediaRecorder.VideoEncoder.H264)
+                mUnsupportedHFRVideoCodec = true;
+        }
+        if (isSupported(highFrameRate,
+                mParameters.getSupportedVideoHighFrameRateModes()) &&
+                !mUnsupportedHFRVideoSize) {
+            mParameters.setVideoHighFrameRate(highFrameRate);
+        } else {
+            mParameters.setVideoHighFrameRate("off");
+        }
+
+        setFlipValue();
         // Set Video HDR.
         String videoHDR = mPreferences.getString(
                 CameraSettings.KEY_VIDEO_HDR,
@@ -2062,6 +2144,39 @@ public class VideoModule implements CameraModule,
              mParameters.setVideoHDRMode(videoHDR);
         } else
              mParameters.setVideoHDRMode("off");
+
+        //HFR recording not supported with DIS,TimeLapse,HDR option
+        String hfr = mParameters.getVideoHighFrameRate();
+        String hdr = mParameters.getVideoHDRMode();
+        if ((hfr != null) && (!hfr.equals("off"))) {
+             // Read time lapse recording interval.
+             String frameIntervalStr = mPreferences.getString(
+                    CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
+                    mActivity.getString(R.string.pref_video_time_lapse_frame_interval_default));
+             int timeLapseInterval = Integer.parseInt(frameIntervalStr);
+             if ( (timeLapseInterval != 0) ||
+                  (disMode.equals("enable")) ||
+                  ((hdr != null) && (!hdr.equals("off"))) ) {
+                Log.v(TAG,"HDR/DIS/Time Lapse ON for HFR selection, turning HFR off");
+                Toast.makeText(mActivity, R.string.error_app_unsupported_hfr_selection,
+                          Toast.LENGTH_LONG).show();
+                mParameters.setVideoHighFrameRate("off");
+                mUI.overrideSettings(CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,"off");
+             }
+        }
+
+        //getSupportedPictureSizes will always send a sorted a list in descending order
+        Size biggestSize = mParameters.getSupportedPictureSizes().get(0);
+
+        if (biggestSize.width <= videoWidth || biggestSize.height <= videoHeight) {
+            if (disMode.equals("enable")) {
+                Log.v(TAG,"DIS is not supported for this video quality");
+                Toast.makeText(mActivity, R.string.error_app_unsupported_dis,
+                               Toast.LENGTH_LONG).show();
+                mParameters.set(CameraSettings.KEY_QC_DIS_MODE, "disable");
+                mUI.overrideSettings(CameraSettings.KEY_DIS,"disable");
+            }
+        }
     }
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
@@ -2076,9 +2191,6 @@ public class VideoModule implements CameraModule,
         } else {
             mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
         }
-
-        // Set video mode
-        CameraSettings.setVideoMode(mParameters, true);
 
         forceFlashOffIfSupported(!mPreviewFocused);
 
@@ -2241,6 +2353,7 @@ public class VideoModule implements CameraModule,
             }
             mUI.updateOnScreenIndicators(mParameters, mPreferences);
             mActivity.initPowerShutter(mPreferences);
+            mActivity.initMaxBrightness(mPreferences);
         }
     }
 

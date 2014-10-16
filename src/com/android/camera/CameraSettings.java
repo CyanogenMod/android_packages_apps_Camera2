@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
- * Copyright (C) 2013 The CyanogenMod Project
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,7 @@ public class CameraSettings {
     public static final String KEY_SUPERZOOM = "pref_camera_superzoom";
 
     public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
+    public static final String KEY_MAX_BRIGHTNESS = "pref_max_brightness";
     public static final String KEY_VIDEO_ENCODER = "pref_camera_videoencoder_key";
     public static final String KEY_AUDIO_ENCODER = "pref_camera_audioencoder_key";
     public static final String KEY_VIDEO_DURATION = "pref_camera_video_duration_key";
@@ -283,7 +284,7 @@ public class CameraSettings {
     private List<String> getSupportedPictureFormatLists() {
         String str = mParameters.get(KEY_QC_PICTURE_FORMAT);
         if (str == null) {
-            str = "jpeg,raw"; // if not set, fall back to default behavior
+            return null;
         }
         return split(str);
     }
@@ -963,21 +964,6 @@ public class CameraSettings {
 
     public static boolean isBeautyModeEnabled(Parameters params) {
         return isBeautyModeSupported(params) && (Integer.valueOf(params.get("face-beautify")) > 0);
-    }
-
-    /**
-     * Enable video mode for certain cameras.
-     *
-     * @param params
-     * @param on
-     */
-    public static void setVideoMode(Parameters params, boolean on) {
-        if (CameraUtil.useSamsungCamMode()) {
-            params.set("cam_mode", on ? "1" : "0");
-        }
-        if (CameraUtil.useHTCCamMode()) {
-            params.set("cam-mode", on ? "1" : "0");
-        }
     }
 
     public static List<String> getSupportedSlowShutter(Parameters params) {

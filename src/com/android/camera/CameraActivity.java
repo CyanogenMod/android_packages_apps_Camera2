@@ -170,6 +170,8 @@ public class CameraActivity extends Activity
     private boolean mInCameraApp = true;
     // Keep track of powershutter state
     public static boolean mPowerShutter = false;
+    // Keep track of max brightness state
+    public static boolean mMaxBrightness = false;
     // This is a hack to speed up the start of SecureCamera.
     private static boolean sFirstStartAfterScreenOn = true;
     private int mLastRawOrientation;
@@ -183,6 +185,7 @@ public class CameraActivity extends Activity
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
     private boolean mIsEditActivityInProgress = false;
+    protected boolean mIsModuleSwitchInProgress = false;
 
     private Uri[] mNfcPushUris = new Uri[1];
 
@@ -1327,9 +1330,7 @@ public class CameraActivity extends Activity
             // Prevent software keyboard or voice search from showing up.
             if (keyCode == KeyEvent.KEYCODE_SEARCH
                     || keyCode == KeyEvent.KEYCODE_MENU) {
-                if (event.isLongPress()) {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -1432,6 +1433,24 @@ public class CameraActivity extends Activity
         }
     }
 
+    protected void initMaxBrightness(ComboPreferences prefs) {
+        String val = prefs.getString(CameraSettings.KEY_MAX_BRIGHTNESS,
+                getResources().getString(R.string.pref_camera_max_brightness_default));
+
+        Window win = getWindow();
+        WindowManager.LayoutParams params = win.getAttributes();
+
+        mMaxBrightness = val.equals(CameraSettings.VALUE_ON);
+
+        if (mMaxBrightness && mInCameraApp) {
+            params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+        } else {
+            params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        }
+
+        win.setAttributes(params);
+    }
+
     protected void setResultEx(int resultCode) {
         mResultCodeForTesting = resultCode;
         setResult(resultCode);
@@ -1465,6 +1484,7 @@ public class CameraActivity extends Activity
             return;
         }
 
+        mIsModuleSwitchInProgress = true;
         CameraHolder.instance().keep();
         closeModule(mCurrentModule);
         setModuleFromIndex(moduleIndex);
@@ -1479,6 +1499,7 @@ public class CameraActivity extends Activity
         // starts up.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putInt(CameraSettings.KEY_STARTUP_MODULE_INDEX, moduleIndex).apply();
+        mIsModuleSwitchInProgress = false;
     }
 
     /**
