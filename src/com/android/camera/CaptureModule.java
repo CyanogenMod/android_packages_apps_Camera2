@@ -1351,11 +1351,6 @@ public class CaptureModule extends CameraModule
         // Important: Camera2 buffers are already rotated to the natural
         // orientation of the device (at least for the back-camera).
 
-        // TODO: Remove this hack for the front camera as soon as b/16637957 is
-        // fixed.
-        if (mCameraFacing == Facing.FRONT) {
-            deviceOrientationDegrees += 180;
-        }
         return (360 - deviceOrientationDegrees) % 360;
     }
 
