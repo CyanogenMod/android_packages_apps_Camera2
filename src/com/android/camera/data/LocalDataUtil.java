@@ -47,6 +47,8 @@ public class LocalDataUtil {
     }
 
     /**
+     * Checks whether the MIME type represents an image media item.
+     *
      * @param mimeType The MIME type to check.
      * @return Whether the MIME is a image type.
      */

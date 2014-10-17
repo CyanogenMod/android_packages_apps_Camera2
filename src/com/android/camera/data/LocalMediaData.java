@@ -34,9 +34,9 @@ import com.android.camera.Storage;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
-import com.bumptech.glide.BitmapRequestBuilder;
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -72,10 +72,6 @@ public abstract class LocalMediaData implements LocalData {
     protected final double mLatitude;
     protected final double mLongitude;
     protected final Bundle mMetaData;
-
-    private static final int JPEG_COMPRESS_QUALITY = 90;
-    private static final BitmapEncoder JPEG_ENCODER =
-            new BitmapEncoder(Bitmap.CompressFormat.JPEG, JPEG_COMPRESS_QUALITY);
 
     /**
      * Used for thumbnail loading optimization. True if this data has a
@@ -206,8 +202,6 @@ public abstract class LocalMediaData implements LocalData {
             LocalDataAdapter adapter, boolean isInProgress) {
         Glide.with(context)
             .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
-            .asBitmap()
-            .encoder(JPEG_ENCODER)
             .fitCenter()
             .placeholder(placeHolderResourceId)
             .into(v);
@@ -215,7 +209,6 @@ public abstract class LocalMediaData implements LocalData {
         v.setContentDescription(context.getResources().getString(
                 R.string.media_date_content_description,
                 getReadableDate(mDateModifiedInSeconds)));
-
         return v;
     }
 
@@ -385,7 +378,7 @@ public abstract class LocalMediaData implements LocalData {
 
         static List<LocalData> query(ContentResolver cr, Uri uri, long lastId) {
             return queryLocalMediaData(cr, uri, QUERY_PROJECTION, lastId, QUERY_ORDER,
-                    new PhotoDataBuilder());
+                new PhotoDataBuilder());
         }
 
         private static PhotoData buildFromCursor(Cursor c) {
@@ -540,7 +533,8 @@ public abstract class LocalMediaData implements LocalData {
 
             final int overrideWidth;
             final int overrideHeight;
-            final BitmapRequestBuilder<Uri, Bitmap> thumbnailRequest;
+
+            final DrawableRequestBuilder<Uri> thumbnailRequest;
             if (full) {
                 // Load up to the maximum size Bitmap we can render.
                 overrideWidth = Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE);
@@ -553,6 +547,7 @@ public abstract class LocalMediaData implements LocalData {
                     .override(thumbWidth, thumbHeight)
                     .fitCenter()
                     .thumbnail(loadMediaStoreThumb(context));
+
             } else {
                 // Load a medium quality thumbWidth/thumbHeight image.
                 overrideWidth = thumbWidth;
@@ -563,6 +558,7 @@ public abstract class LocalMediaData implements LocalData {
             }
 
             loadUri(context)
+                .diskCacheStrategy(full ? DiskCacheStrategy.NONE : DiskCacheStrategy.RESULT)
                 .placeholder(placeHolderResourceId)
                 .fitCenter()
                 .override(overrideWidth, overrideHeight)
@@ -570,18 +566,16 @@ public abstract class LocalMediaData implements LocalData {
                 .into(imageView);
         }
 
-        /** Loads a thumbnail with a size targeted to use MediaStore.Images.Thumbnails. */
-        private BitmapRequestBuilder<Uri, Bitmap> loadMediaStoreThumb(Context context) {
-            return loadUri(context)
-                .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
+        /** Loads an image using a MediaStore Uri with our default options. */
+        private DrawableRequestBuilder<Uri> loadUri(Context context) {
+            return Glide.with(context)
+                .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation);
         }
 
-        /** Loads an image using a MediaStore Uri with our default options. */
-        private BitmapRequestBuilder<Uri, Bitmap> loadUri(Context context) {
-            return Glide.with(context)
-                .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
-                .asBitmap()
-                .encoder(JPEG_ENCODER);
+        /** Loads a thumbnail with a size targeted to use MediaStore.Images.Thumbnails. */
+        private DrawableRequestBuilder<Uri> loadMediaStoreThumb(Context context) {
+            return loadUri(context)
+                .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
         }
 
         @Override
@@ -823,12 +817,8 @@ public abstract class LocalMediaData implements LocalData {
 
             Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
-                .asBitmap()
-                .encoder(JPEG_ENCODER)
                 .thumbnail(Glide.with(context)
                     .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
-                    .asBitmap()
-                    .encoder(JPEG_ENCODER)
                     .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
                 .placeholder(placeHolderResourceId)
                 .fitCenter()
@@ -898,7 +888,7 @@ public abstract class LocalMediaData implements LocalData {
 
         @Override
         public VideoData build(Cursor cursor) {
-            return LocalMediaData.VideoData.buildFromCursor(cursor);
+            return VideoData.buildFromCursor(cursor);
         }
     }
 
