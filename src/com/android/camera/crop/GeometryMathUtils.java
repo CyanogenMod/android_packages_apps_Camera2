@@ -102,7 +102,7 @@ public final class GeometryMathUtils {
     }
 
     public static float[] normalize(float[] a) {
-        float length = (float) Math.sqrt(a[0] * a[0] + a[1] * a[1]);
+        float length = (float) Math.hypot(a[0], a[1]);
         float[] b = {
                 a[0] / length, a[1] / length
         };
@@ -111,7 +111,7 @@ public final class GeometryMathUtils {
 
     // A onto B
     public static float scalarProjection(float[] a, float[] b) {
-        float length = (float) Math.sqrt(b[0] * b[0] + b[1] * b[1]);
+        float length = (float) Math.hypot(b[0], b[1]);
         return dotProduct(a, b) / length;
     }
 
@@ -126,7 +126,7 @@ public final class GeometryMathUtils {
         float[] p = {
                 point2[0] - point1[0], point2[1] - point1[1]
         };
-        float length = (float) Math.sqrt(p[0] * p[0] + p[1] * p[1]);
+        float length = (float) Math.hypot(p[0], p[1]);
         p[0] = p[0] / length;
         p[1] = p[1] / length;
         return p;
@@ -149,7 +149,7 @@ public final class GeometryMathUtils {
     }
 
     public static float vectorLength(float[] a) {
-        return (float) Math.sqrt(a[0] * a[0] + a[1] * a[1]);
+        return (float) Math.hypot(a[0], a[1]);
     }
 
     public static float scale(float oldWidth, float oldHeight, float newWidth, float newHeight) {
