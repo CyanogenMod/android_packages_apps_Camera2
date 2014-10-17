@@ -336,7 +336,7 @@ public class CameraUtil {
     public static float distance(float x, float y, float sx, float sy) {
         float dx = x - sx;
         float dy = y - sy;
-        return (float) Math.sqrt(dx * dx + dy * dy);
+        return (float) Math.hypot(dx, dy);
     }
 
     /**
