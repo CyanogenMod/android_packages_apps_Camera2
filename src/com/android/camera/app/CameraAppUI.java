@@ -1875,7 +1875,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         boolean flashBackCamera = mController.getSettingsManager().getBoolean(
             SettingsManager.SCOPE_GLOBAL, Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA);
         if (bottomBarSpec.hideFlash || !flashBackCamera) {
+            // Hide both flash and torch button in flash disable logic
             buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
+            buttonManager.hideButton(ButtonManager.BUTTON_TORCH);
         } else {
             if (hardwareSpec.isFlashSupported()) {
                 if (bottomBarSpec.enableFlash) {
@@ -1888,11 +1890,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
                         bottomBarSpec.flashCallback);
                 } else {
+                    // Hide both flash and torch button in flash disable logic
                     buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                    buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
                 }
             } else {
-                // Disable flash icon if not supported by the hardware.
+                // Disable both flash and torch icon if not supported
+                // by the chosen camera hardware.
                 buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
             }
         }
 
