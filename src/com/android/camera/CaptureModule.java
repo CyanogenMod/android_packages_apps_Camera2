@@ -547,8 +547,8 @@ public class CaptureModule extends CameraModule
     public void pause() {
         mPaused = true;
         cancelCountDown();
-        resetTextureBufferSize();
         closeCamera();
+        resetTextureBufferSize();
         mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
         mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
@@ -1297,8 +1297,8 @@ public class CaptureModule extends CameraModule
         }
         try {
             if (mCamera != null) {
-                mCamera.setFocusStateListener(null);
                 mCamera.close(null);
+                mCamera.setFocusStateListener(null);
                 mCamera = null;
             }
         } finally {
