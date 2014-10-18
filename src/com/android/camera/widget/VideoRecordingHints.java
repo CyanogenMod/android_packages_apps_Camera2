@@ -29,6 +29,8 @@ import android.view.View;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
+import java.lang.ref.WeakReference;
+
 /**
  * This class is designed to show the video recording hint when device is held in
  * portrait before video recording. The rotation device indicator will start rotating
@@ -58,6 +60,87 @@ public class VideoRecordingHints extends View {
     private int mCenterY = UNSET;
     private int mLastOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
+    private static class RotationAnimatorListener implements Animator.AnimatorListener {
+        private final WeakReference<VideoRecordingHints> mHints;
+        private boolean mCanceled = false;
+
+        public RotationAnimatorListener(VideoRecordingHints hint) {
+            mHints = new WeakReference<VideoRecordingHints>(hint);
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            mCanceled = false;
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            VideoRecordingHints hint = mHints.get();
+            if (hint == null) {
+                return;
+            }
+
+            hint.mRotation = ((int) hint.mRotation) % 360;
+            // If animation is canceled, do not restart it.
+            if (mCanceled) {
+                return;
+            }
+            hint.post(new Runnable() {
+                @Override
+                public void run() {
+                    VideoRecordingHints hint = mHints.get();
+                    if (hint != null) {
+                        hint.continueRotationAnimation();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+            mCanceled = true;
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+            // Do nothing.
+        }
+    }
+
+    private static class AlphaAnimatorListener implements Animator.AnimatorListener {
+        private final WeakReference<VideoRecordingHints> mHints;
+        AlphaAnimatorListener(VideoRecordingHints hint) {
+            mHints = new WeakReference<VideoRecordingHints>(hint);
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            VideoRecordingHints hint = mHints.get();
+            if (hint == null) {
+                return;
+            }
+
+            hint.invalidate();
+            hint.setAlpha(1f);
+            hint.mRotation = 0;
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+            // Do nothing.
+        }
+    }
+
     public VideoRecordingHints(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRotateArrows = getResources().getDrawable(R.drawable.rotate_arrows);
@@ -80,64 +163,11 @@ public class VideoRecordingHints extends View {
             }
         });
 
-        mRotationAnimation.addListener(new Animator.AnimatorListener() {
-            private boolean mCanceled = false;
-            @Override
-            public void onAnimationStart(Animator animation) {
-                mCanceled = false;
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mRotation = ((int) mRotation) % 360;
-                // If animation is canceled, do not restart it.
-                if (mCanceled) {
-                    return;
-                }
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        continueRotationAnimation();
-                    }
-                });
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                mCanceled = true;
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                // Do nothing.
-            }
-        });
+        mRotationAnimation.addListener(new RotationAnimatorListener(this));
 
         mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 1f, 0f);
         mAlphaAnimator.setDuration(FADE_OUT_DURATION_MS);
-        mAlphaAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                // Do nothing.
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                invalidate();
-                setAlpha(1f);
-                mRotation = 0;
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                // Do nothing.
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                // Do nothing.
-            }
-        });
+        mAlphaAnimator.addListener(new AlphaAnimatorListener(this));
         mIsDefaultToPortrait = CameraUtil.isDefaultToPortrait(context);
     }
 

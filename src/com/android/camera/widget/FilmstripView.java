@@ -813,7 +813,7 @@ public class FilmstripView extends ViewGroup {
 
         data.prepare();
         View recycled = getRecycledView(dataID);
-        View v = mDataAdapter.getView(mActivity, recycled, dataID);
+        View v = mDataAdapter.getView(mActivity.getAndroidContext(), recycled, dataID);
         if (v == null) {
             return null;
         }
@@ -1898,7 +1898,7 @@ public class FilmstripView extends ViewGroup {
 
         MyController(Context context) {
             TimeInterpolator decelerateInterpolator = new DecelerateInterpolator(1.5f);
-            mScroller = new MyScroller(mActivity,
+            mScroller = new MyScroller(mActivity.getAndroidContext(),
                     new Handler(mActivity.getMainLooper()),
                     mScrollerListener, decelerateInterpolator);
             mCanStopScroll = true;
