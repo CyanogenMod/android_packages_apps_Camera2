@@ -84,7 +84,7 @@
   <string name="rendering_photo_sphere">Photosphär gëtt gerendert</string>
   <string name="camera_error_title">Kamerafeeler</string>
   <string name="cannot_connect_camera">Keng Connectioun zur Kamera méiglech.</string>
-  <string name="camera_disabled">D\'Kamera gouf wéinst Sécherheetsriichtlinnen deaktivéiert.</string>
+  <string name="camera_disabled">D\'Kamera gouf wéinst Sécherheetsriichtlinnen desaktivéiert.</string>
   <string name="wait">Waart w.e.g.\u2026</string>
   <string name="no_storage" product="default">Maach eng SD-Kaart dran ier s du d\'Kamera benotzt.</string>
   <string name="preparing_sd" product="default">SD-Kaart gëtt preparéiert\u2026</string>

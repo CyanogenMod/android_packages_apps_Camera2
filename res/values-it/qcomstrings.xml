@@ -73,7 +73,7 @@
   <string name="pref_camera_iso_entry_iso2000">ISO2000</string>
   <string name="pref_camera_iso_entry_iso2500">ISO2500</string>
   <string name="pref_camera_iso_entry_iso3200">ISO 3200</string>
-  <string name="pref_camera_iso_entry_iso6400">6400</string>
+  <string name="pref_camera_iso_entry_iso6400">ISO6400</string>
   <string name="pref_camera_iso_entry_iso12800">ISO12800</string>
   <string name="pref_camera_antibanding_title">Antibanding</string>
   <string name="pref_camera_antibanding_entry_0">OFF</string>

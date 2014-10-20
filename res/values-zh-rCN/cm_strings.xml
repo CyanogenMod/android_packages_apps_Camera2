@@ -18,9 +18,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">2070 万像素</string>
   <string name="pref_camera_picturesize_entry_18mp">1800 万像素</string>
+  <string name="pref_camera_picturesize_entry_15_9mp">1590 万像素</string>
   <string name="pref_camera_picturesize_entry_12_8mp">1280 万像素</string>
   <string name="pref_camera_picturesize_entry_12_7mp">1270 万像素</string>
   <string name="pref_camera_picturesize_entry_12mp">1200 万像素</string>
+  <string name="pref_camera_picturesize_entry_11_9mp">1190 万象素</string>
   <string name="pref_camera_picturesize_entry_11_5mp">1150 万像素</string>
   <string name="pref_camera_picturesize_entry_10_4mp">1040 万像素</string>
   <string name="pref_camera_picturesize_entry_10mp">1000 万像素</string>

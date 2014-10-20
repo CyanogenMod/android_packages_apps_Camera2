@@ -18,9 +18,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7メガピクセル</string>
   <string name="pref_camera_picturesize_entry_18mp">18メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_15_9mp">15.9メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12mp">12メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_11_9mp">11.9メガピクセル</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5メガピクセル</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4メガピクセル</string>
   <string name="pref_camera_picturesize_entry_10mp">10メガピクセル</string>

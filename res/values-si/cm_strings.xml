@@ -18,9 +18,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">මෙගා පික්සල 20.7</string>
   <string name="pref_camera_picturesize_entry_18mp">මෙගා පික්සල 18</string>
+  <string name="pref_camera_picturesize_entry_15_9mp">මෙගා පික්සල 15.9</string>
   <string name="pref_camera_picturesize_entry_12_8mp">මෙගා පික්සල 12.8</string>
   <string name="pref_camera_picturesize_entry_12_7mp">මෙගා පික්සල 12.7</string>
   <string name="pref_camera_picturesize_entry_12mp">මෙගා පික්සල 12</string>
+  <string name="pref_camera_picturesize_entry_11_9mp">මෙගා පික්සල 11.9</string>
   <string name="pref_camera_picturesize_entry_11_5mp">මෙගා පික්සල 11.5</string>
   <string name="pref_camera_picturesize_entry_10_4mp">මෙගා පික්සල 10.4</string>
   <string name="pref_camera_picturesize_entry_10mp">මෙගා පික්සල 10</string>
