@@ -112,6 +112,45 @@ public class PhotoMenu extends PieController
             advanced.addItem(item);
         }
 
+        // Sharpness
+        final ListPreference sharpnessPref = group.findPreference(CameraSettings.KEY_SHARPNESS);
+        if (sharpnessPref != null) {
+            item = makeListItem(CameraSettings.KEY_SHARPNESS);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(sharpnessPref);
+                }
+            });
+            advanced.addItem(item);
+        }
+
+        // Contrast
+        final ListPreference contrastPref = group.findPreference(CameraSettings.KEY_CONTRAST);
+        if (contrastPref != null) {
+            item = makeListItem(CameraSettings.KEY_CONTRAST);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(contrastPref);
+                }
+            });
+            advanced.addItem(item);
+        }
+
+        // Saturation
+        final ListPreference saturationPref = group.findPreference(CameraSettings.KEY_SATURATION);
+        if (saturationPref != null) {
+            item = makeListItem(CameraSettings.KEY_SATURATION);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    showListPopup(saturationPref);
+                }
+            });
+            advanced.addItem(item);
+        }
+
         // Enhance submenu
         PieItem enhance = makeItem(R.drawable.ic_enhance);
         enhance.setLabel(res.getString(R.string.camera_menu_enhance_label));
