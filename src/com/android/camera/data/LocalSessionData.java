@@ -27,6 +27,8 @@ import com.android.camera.Storage;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.StringSignature;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -71,8 +73,9 @@ public class LocalSessionData implements LocalData {
         byte[] jpegData = Storage.getJpegForSession(mUri);
         int currentVersion = Storage.getJpegVersionForSession(mUri);
         Glide.with(context)
-            .loadFromImage(jpegData, mUri.toString() + currentVersion)
-            .skipDiskCache(true)
+            .load(jpegData)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .signature(new StringSignature(mUri.toString() + currentVersion))
             .fitCenter()
             .into(imageView);
 

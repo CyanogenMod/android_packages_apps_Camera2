@@ -206,6 +206,8 @@ public abstract class LocalMediaData implements LocalData {
             LocalDataAdapter adapter, boolean isInProgress) {
         Glide.with(context)
             .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, 0)
+            .asBitmap()
+            .encoder(JPEG_ENCODER)
             .fitCenter()
             .placeholder(placeHolderResourceId)
             .into(v);

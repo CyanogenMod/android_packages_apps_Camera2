@@ -141,7 +141,9 @@ import com.android.ex.camera2.portability.CameraSettings;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
+
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
 import com.google.common.logging.eventprotos.MediaInteraction;
@@ -1371,7 +1373,8 @@ public class CameraActivity extends QuickActivity
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
         if (!Glide.isSetup()) {
             Glide.setup(new GlideBuilder(this)
-                .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
+                    .setDecodeFormat(DecodeFormat.ALWAYS_ARGB_8888)
+                    .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
             Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);
         }
 
