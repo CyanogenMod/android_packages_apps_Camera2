@@ -2472,6 +2472,11 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void onOrientationChanged(int orientation) {
+        if (orientation != mLastRawOrientation) {
+            Log.v(TAG, "orientation changed (from:to) " + mLastRawOrientation +
+                    ":" + orientation);
+        }
+
         // We keep the last known orientation. So if the user first orient
         // the camera then point the camera to floor or sky, we still have
         // the correct orientation.

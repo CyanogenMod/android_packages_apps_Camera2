@@ -1302,6 +1302,10 @@ public class PhotoModule
         mJpegRotation = info.getJpegOrientation(orientation);
         mCameraDevice.setJpegOrientation(mJpegRotation);
 
+        Log.v(TAG, "capture orientation (display:device:used:jpeg) " +
+                mDisplayOrientation + ":" + mOrientation + ":" +
+                orientation + ":" + mJpegRotation);
+
         mCameraDevice.takePicture(mHandler,
                 new ShutterCallback(!animateBefore),
                 mRawPictureCallback, mPostViewPictureCallback,
@@ -1882,6 +1886,9 @@ public class PhotoModule
         if (mCameraDevice != null) {
             mCameraDevice.setDisplayOrientation(mDisplayRotation);
         }
+        Log.v(TAG, "setDisplayOrientation (rotation:orientation:display) " +
+                mDisplayRotation + ":" + mDisplayOrientation + ":" +
+                mDisplayOrientation);
     }
 
     /** Only called by UI thread. */
