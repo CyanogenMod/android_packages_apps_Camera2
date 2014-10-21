@@ -177,7 +177,7 @@
     <string-array name="pref_camera_picturesize_entries" translatable="false">
         <item>@string/pref_camera_picturesize_entry_20_7mp</item>
         <item>@string/pref_camera_picturesize_entry_18mp</item>
-        <item>@string/pref_camera_picturesize_entry_15_9mp</item>
+        <item>@string/pref_camera_picturesize_entry_15_9mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_13mp</item>
         <item>@string/pref_camera_picturesize_entry_13mp</item>
         <item>@string/pref_camera_picturesize_entry_12_8mp</item>
@@ -187,13 +187,13 @@
         <item>@string/pref_camera_picturesize_entry_11_5mp</item>
         <item>@string/pref_camera_picturesize_entry_10_4mp</item>
         <item>@string/pref_camera_picturesize_entry_10mp</item>
-        <item>@string/pref_camera_picturesize_entry_9_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_9_7mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_9mp</item>
-        <item>@string/pref_camera_picturesize_entry_8_2mp</item>
+        <item>@string/pref_camera_picturesize_entry_8_2mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_8mp</item>
         <item>@string/pref_camera_picturesize_entry_7_7mp</item>
         <item>@string/pref_camera_picturesize_entry_6_4mp</item>
-        <item>@string/pref_camera_picturesize_entry_6mp</item>
+        <item>@string/pref_camera_picturesize_entry_6mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_6mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
@@ -201,11 +201,11 @@
         <item>@string/pref_camera_picturesize_entry_4_5mp</item>
         <item>@string/pref_camera_picturesize_entry_4mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_4mp</item>
-        <item>@string/pref_camera_picturesize_entry_3_7mp</item>
+        <item>@string/pref_camera_picturesize_entry_3_7mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_3mp</item>
         <item>@string/pref_camera_picturesize_entry_3mp</item>
         <item>@string/pref_camera_picturesize_entry_2_5mp</item>
-        <item>@string/pref_camera_picturesize_entry_2_1mp</item>
+        <item>@string/pref_camera_picturesize_entry_2_1mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_2mp</item>
         <item>@string/pref_camera_picturesize_entry_2mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_1_9mp</item>
@@ -217,7 +217,7 @@
         <item>@string/pref_camera_picturesize_entry_svga</item>
         <item>@string/pref_camera_picturesize_entry_wvga</item>
         <item>@string/pref_camera_picturesize_entry_vga</item>
-        <item>@string/pref_camera_picturesize_entry_nhd</item>
+        <item>@string/pref_camera_picturesize_entry_nhd_wide</item>
         <item>@string/pref_camera_picturesize_entry_wqvga</item>
         <item>@string/pref_camera_picturesize_entry_qvga</item>
     </string-array>
