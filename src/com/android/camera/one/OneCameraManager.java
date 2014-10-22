@@ -96,7 +96,7 @@ public abstract class OneCameraManager {
             int maxMemoryMB = activity.getServices().getMemoryManager()
                     .getMaxAllowedNativeMemoryAllocation();
             return new com.android.camera.one.v2.OneCameraManagerImpl(
-                    activity.getApplicationContext(), cameraManager, maxMemoryMB,
+                    activity.getAndroidContext(), cameraManager, maxMemoryMB,
                     displayMetrics, activity.getSoundPlayer());
         } else {
             return new com.android.camera.one.v1.OneCameraManagerImpl();

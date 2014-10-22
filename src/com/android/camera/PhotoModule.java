@@ -256,6 +256,9 @@ public class PhotoModule
     private final float[] mR = new float[16];
     private int mHeading = -1;
 
+    /** Used to detect motion. We use this to release focus lock early. */
+    private MotionManager mMotionManager;
+
     /** True if all the parameters needed to start preview is ready. */
     private boolean mCameraPreviewParamsReady = false;
 
@@ -1663,9 +1666,9 @@ public class PhotoModule
                     new FocusOverlayManager(mAppController, defaultFocusModes,
                             mCameraCapabilities, this, mMirror, mActivity.getMainLooper(),
                             mUI.getFocusUI());
-            MotionManager motionManager = getServices().getMotionManager();
-            if (motionManager != null) {
-                motionManager.addListener(mFocusManager);
+            mMotionManager = getServices().getMotionManager();
+            if (mMotionManager != null) {
+                mMotionManager.addListener(mFocusManager);
             }
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
@@ -1718,6 +1721,11 @@ public class PhotoModule
 
         // Remove the messages and runnables in the queue.
         mHandler.removeCallbacksAndMessages(null);
+
+        if (mMotionManager != null) {
+            mMotionManager.removeListener(mFocusManager);
+            mMotionManager = null;
+        }
 
         closeCamera();
         mActivity.enableKeepScreenOn(false);
