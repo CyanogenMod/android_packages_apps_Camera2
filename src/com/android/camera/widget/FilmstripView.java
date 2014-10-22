@@ -1484,6 +1484,10 @@ public class FilmstripView extends ViewGroup {
                         getMeasuredWidth(), getMeasuredHeight());
         final int offsetX = dim.x + mViewGapInPixel;
         ViewItem viewItem = buildItemFromData(dataID);
+        if (viewItem == null) {
+            Log.w(TAG, "unable to build inserted item from data");
+            return;
+        }
 
         if (insertedItemId >= mCurrentItem) {
             if (insertedItemId == mCurrentItem) {
