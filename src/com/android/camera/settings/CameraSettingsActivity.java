@@ -254,6 +254,14 @@ public class CameraSettingsActivity extends FragmentActivity {
          * was found and removed.
          */
         private boolean recursiveDelete(PreferenceGroup group, Preference preference) {
+            if (group == null) {
+                Log.d(TAG, "attempting to delete from null preference group");
+                return false;
+            }
+            if (preference == null) {
+                Log.d(TAG, "attempting to delete null preference");
+                return false;
+            }
             if (group.removePreference(preference)) {
                 // Removal was successful.
                 return true;
