@@ -282,20 +282,14 @@ public class CameraActivity extends QuickActivity
         return mModuleManager;
     }
 
-    // close activity when secure app passes lock screen or screen turns off
+    /**
+     * Close activity when secure app passes lock screen or screen turns
+     * off.
+     */
     private final BroadcastReceiver mShutdownReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             finish();
-        }
-    };
-
-    private final ActionBar.OnMenuVisibilityListener mOnMenuVisibilityListener =
-            new ActionBar.OnMenuVisibilityListener() {
-        @Override
-        public void onMenuVisibilityChanged(boolean isVisible) {
-            // TODO: Remove this or bring back the original implementation: cancel
-            // auto-hide actionbar.
         }
     };
 
@@ -1322,6 +1316,10 @@ public class CameraActivity extends QuickActivity
         }
     }
 
+    /**
+     * Note: Make sure this callback is unregistered properly when the activity
+     * is destroyed since we're otherwise leaking the Activity reference.
+     */
     private final CameraExceptionHandler.CameraExceptionCallback mCameraExceptionCallback
         = new CameraExceptionHandler.CameraExceptionCallback() {
                 @Override
@@ -1371,15 +1369,16 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onCreateTasks(Bundle state) {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
+        mAppContext = getApplication().getBaseContext();
+
         if (!Glide.isSetup()) {
-            Glide.setup(new GlideBuilder(this)
+            Glide.setup(new GlideBuilder(getAndroidContext())
                     .setDecodeFormat(DecodeFormat.ALWAYS_ARGB_8888)
                     .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
-            Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);
+            Glide.get(getAndroidContext()).setMemoryCategory(MemoryCategory.HIGH);
         }
 
         mOnCreateTime = System.currentTimeMillis();
-        mAppContext = getApplicationContext();
         mSoundPlayer = new SoundPlayer(mAppContext);
 
         try {
@@ -1411,12 +1410,13 @@ public class CameraActivity extends QuickActivity
         } else {
             mActionBar.setBackgroundDrawable(new ColorDrawable(0x80000000));
         }
-        mActionBar.addOnMenuVisibilityListener(mOnMenuVisibilityListener);
 
         mMainHandler = new MainHandler(this, getMainLooper());
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
-                CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.API_1),
-                CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.AUTO));
+                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
+                        CameraAgentFactory.CameraApi.API_1),
+                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
+                        CameraAgentFactory.CameraApi.AUTO));
         mCameraController.setCameraExceptionHandler(
                 new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
 
@@ -1794,7 +1794,8 @@ public class CameraActivity extends QuickActivity
         mOrientationManager.resume();
         mPeekAnimationThread = new HandlerThread("Peek animation");
         mPeekAnimationThread.start();
-        mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper());
+        mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper(),
+                mMainHandler, mAboveFilmstripControlLayout);
 
         mCurrentModule.hardResetSettings(mSettingsManager);
         mCurrentModule.resume();
@@ -1916,9 +1917,9 @@ public class CameraActivity extends QuickActivity
         if (mSecureCamera) {
             unregisterReceiver(mShutdownReceiver);
         }
-        mActionBar.removeOnMenuVisibilityListener(mOnMenuVisibilityListener);
         mSettingsManager.removeAllListeners();
         mCameraController.removeCallbackReceiver();
+        mCameraController.setCameraExceptionHandler(null);
         getContentResolver().unregisterContentObserver(mLocalImagesObserver);
         getContentResolver().unregisterContentObserver(mLocalVideosObserver);
         getServices().getCaptureSessionManager().removeSessionListener(mSessionListener);
@@ -2716,7 +2717,7 @@ public class CameraActivity extends QuickActivity
         filmstripBottomPanel.setViewerButtonVisibility(viewButtonVisibility);
     }
 
-    private class PeekAnimationHandler extends Handler {
+    private static class PeekAnimationHandler extends Handler {
         private class DataAndCallback {
             LocalData mData;
             com.android.camera.util.Callback<Bitmap> mCallback;
@@ -2728,8 +2729,14 @@ public class CameraActivity extends QuickActivity
             }
         }
 
-        public PeekAnimationHandler(Looper looper) {
+        private final Handler mMainHandler;
+        private final FrameLayout mAboveFilmstripControlLayout;
+
+        public PeekAnimationHandler(Looper looper, Handler mainHandler,
+                FrameLayout aboveFilmstripControlLayout) {
             super(looper);
+            mMainHandler = mainHandler;
+            mAboveFilmstripControlLayout = aboveFilmstripControlLayout;
         }
 
         /**
