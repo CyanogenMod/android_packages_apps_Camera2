@@ -191,8 +191,6 @@ public class PhotoModule
     // The display rotation in degrees. This is only valid when mCameraState is
     // not PREVIEW_STOPPED.
     private int mDisplayRotation;
-    // The value for android.hardware.Camera.setDisplayOrientation.
-    private int mCameraDisplayOrientation;
     // The value for UI components like indicators.
     private int mDisplayOrientation;
     // The value for cameradevice.CameraSettings.setPhotoRotationDegrees.
@@ -1302,8 +1300,8 @@ public class PhotoModule
         mJpegRotation = info.getJpegOrientation(orientation);
         mCameraDevice.setJpegOrientation(mJpegRotation);
 
-        Log.v(TAG, "capture orientation (display:device:used:jpeg) " +
-                mDisplayOrientation + ":" + mOrientation + ":" +
+        Log.v(TAG, "capture orientation (screen:device:used:jpeg) " +
+                mDisplayRotation + ":" + mOrientation + ":" +
                 orientation + ":" + mJpegRotation);
 
         mCameraDevice.takePicture(mHandler,
@@ -1877,7 +1875,6 @@ public class PhotoModule
         Characteristics info =
                 mActivity.getCameraProvider().getCharacteristics(mCameraId);
         mDisplayOrientation = info.getPreviewOrientation(mDisplayRotation);
-        mCameraDisplayOrientation = mDisplayOrientation;
         mUI.setDisplayOrientation(mDisplayOrientation);
         if (mFocusManager != null) {
             mFocusManager.setDisplayOrientation(mDisplayOrientation);
@@ -1886,9 +1883,8 @@ public class PhotoModule
         if (mCameraDevice != null) {
             mCameraDevice.setDisplayOrientation(mDisplayRotation);
         }
-        Log.v(TAG, "setDisplayOrientation (rotation:orientation:display) " +
-                mDisplayRotation + ":" + mDisplayOrientation + ":" +
-                mDisplayOrientation);
+        Log.v(TAG, "setDisplayOrientation (screen:preview) " +
+                mDisplayRotation + ":" + mDisplayOrientation);
     }
 
     /** Only called by UI thread. */
