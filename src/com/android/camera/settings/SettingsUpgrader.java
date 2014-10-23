@@ -88,7 +88,12 @@ public abstract class SettingsUpgrader {
      * modules to upgrade their boolean settings to Strings.
      */
     protected boolean removeBoolean(SharedPreferences oldPreferencesLocation, String key) {
-        boolean value = oldPreferencesLocation.getBoolean(key, false);
+        boolean value = false;
+        try {
+            value = oldPreferencesLocation.getBoolean(key, value);
+        } catch (ClassCastException e) {
+            Log.e(TAG, "error reading old value, removing and returning default", e);
+        }
         oldPreferencesLocation.edit().remove(key).apply();
         return value;
     }
@@ -102,7 +107,12 @@ public abstract class SettingsUpgrader {
      * modules to upgrade their Integer settings to Strings.
      */
     protected int removeInteger(SharedPreferences oldPreferencesLocation, String key) {
-        int value = oldPreferencesLocation.getInt(key, 0);
+        int value = 0;
+        try {
+            value = oldPreferencesLocation.getInt(key, value);
+        } catch (ClassCastException e) {
+            Log.e(TAG, "error reading old value, removing and returning default", e);
+        }
         oldPreferencesLocation.edit().remove(key).apply();
         return value;
     }
@@ -116,7 +126,12 @@ public abstract class SettingsUpgrader {
      * modules to upgrade their boolean settings to Strings.
      */
     protected String removeString(SharedPreferences oldPreferencesLocation, String key) {
-        String value = oldPreferencesLocation.getString(key, null);
+        String value = null;
+        try {
+            value = oldPreferencesLocation.getString(key, value);
+        } catch (ClassCastException e) {
+            Log.e(TAG, "error reading old value, removing and returning default", e);
+        }
         oldPreferencesLocation.edit().remove(key).apply();
         return value;
     }
