@@ -193,8 +193,8 @@
         <item>@string/pref_camera_picturesize_entry_8mp</item>
         <item>@string/pref_camera_picturesize_entry_7_7mp</item>
         <item>@string/pref_camera_picturesize_entry_6_4mp</item>
-        <item>@string/pref_camera_picturesize_entry_6mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_6mp</item>
+        <item>@string/pref_camera_picturesize_entry_6mp_wide</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
         <item>@string/pref_camera_picturesize_entry_5mp</item>
