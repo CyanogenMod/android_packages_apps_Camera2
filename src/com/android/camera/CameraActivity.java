@@ -282,8 +282,8 @@ public class CameraActivity extends QuickActivity
         return mModuleManager;
     }
 
-    // close activity when screen turns off
-    private final BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
+    // close activity when secure app passes lock screen or screen turns off
+    private final BroadcastReceiver mShutdownReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             finish();
@@ -1453,10 +1453,17 @@ public class CameraActivity extends QuickActivity
             win.setAttributes(params);
 
             // Filter for screen off so that we can finish secure camera
-            // activity
-            // when screen is off.
-            IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
-            registerReceiver(mScreenOffReceiver, filter);
+            // activity when screen is off.
+            IntentFilter filter_screen_off = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+            registerReceiver(mShutdownReceiver, filter_screen_off);
+
+            // Filter for phone unlock so that we can finish secure camera
+            // via this UI path:
+            //    1. from secure lock screen, user starts secure camera
+            //    2. user presses home button
+            //    3. user unlocks phone
+            IntentFilter filter_user_unlock = new IntentFilter(Intent.ACTION_USER_PRESENT);
+            registerReceiver(mShutdownReceiver, filter_user_unlock);
         }
         mCameraAppUI = new CameraAppUI(this,
                 (MainActivityLayout) findViewById(R.id.activity_root_view), isCaptureIntent());
@@ -1907,7 +1914,7 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onDestroyTasks() {
         if (mSecureCamera) {
-            unregisterReceiver(mScreenOffReceiver);
+            unregisterReceiver(mShutdownReceiver);
         }
         mActionBar.removeOnMenuVisibilityListener(mOnMenuVisibilityListener);
         mSettingsManager.removeAllListeners();
