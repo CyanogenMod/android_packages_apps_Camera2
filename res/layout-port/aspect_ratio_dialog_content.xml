@@ -27,8 +27,7 @@
         android:layout_margin="28dp"
         android:gravity="center"
         android:text="@string/photo_size_selection_title"
-        android:textSize="22sp"
-        android:textColor="@color/dialog_text_color" />
+        style="@style/fullscreen_dialog_title" />
     <include
         layout="@layout/aspect_ratio_selector"
         android:layout_width="match_parent"
