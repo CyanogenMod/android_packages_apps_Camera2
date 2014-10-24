@@ -293,6 +293,10 @@ public class MultiToggleImageButton extends ImageButton {
                 ids.recycle();
             }
         }
+
+        if (mState >= 0 && mState < mImageIds.length) {
+            setImageByState(mState);
+        }
     }
 
     /**
