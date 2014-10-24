@@ -69,15 +69,6 @@
     <string name="pref_camera_audioencoder_entry_0" translatable="false">AMR-NB</string>
     <string name="pref_camera_audioencoder_entry_1" translatable="false">AAC</string>
 
-    <!-- Settings screen, Video duration title -->
-    <string name="pref_camera_video_duration_title">Video duration</string>
-    <string name="pref_camera_video_duration_default" translatable="false">10</string>
-
-    <!-- Settings screen, Video duration dialog radio button choices -->
-    <string name="pref_camera_video_duration_entry_mms">30 seconds (MMS)</string>
-    <string name="pref_camera_video_duration_entry_10">10 minutes</string>
-    <string name="pref_camera_video_duration_entry_30">30 minutes</string>
-
     <!-- Settings screen, Select Skin Tone Enhancement title -->
     <string name="pref_camera_skinToneEnhancement_title">Skin tone enhancement</string>
     <string name="pref_camera_skinToneEnhancement_default" translatable="false">disable</string>
