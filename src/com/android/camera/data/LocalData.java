@@ -17,8 +17,10 @@
 package com.android.camera.data;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 
@@ -32,6 +34,14 @@ import java.util.Comparator;
  * can guarantee thread safety for LocalData.
  */
 public interface LocalData extends ImageData {
+    /**
+     * An action callback to be used for actions on the local media data items.
+     */
+    public static interface ActionCallback {
+        /** Plays the video with the given URI and title. */
+        public void playVideo(Uri uri, String title);
+    }
+
     static final Log.Tag TAG = new Log.Tag("LocalData");
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";
@@ -79,7 +89,8 @@ public interface LocalData extends ImageData {
      * @param adapter Data adapter for this data item.
      */
     View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
-        int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress);
+            int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress,
+            ActionCallback actionCallback);
 
     /** Returns a unique identifier for the view created by this data so that the view
      * can be reused.

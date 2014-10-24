@@ -21,6 +21,7 @@ import android.animation.AnimatorSet;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -43,6 +44,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.data.LocalData.ActionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.FilmstripController;
@@ -53,11 +55,39 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 
 public class FilmstripView extends ViewGroup {
+    /**
+     * An action callback to be used for actions on the local media data items.
+     */
+    public static class ActionCallbackImpl implements ActionCallback {
+        private final WeakReference<Activity> mActivity;
+
+        /**
+         * The given activity is used to start intents. It is wrapped in a weak
+         * reference to prevent leaks.
+         */
+        public ActionCallbackImpl(Activity activity) {
+            mActivity = new WeakReference<Activity>(activity);
+        }
+
+        /**
+         * Fires an intent to play the video with the given URI and title.
+         */
+        @Override
+        public void playVideo(Uri uri, String title) {
+            Activity activity = mActivity.get();
+            if (activity != null) {
+              CameraUtil.playVideo(activity, uri, title);
+            }
+        }
+    }
+
+
     private static final Log.Tag TAG = new Log.Tag("FilmstripView");
 
     private static final int BUFFER_SIZE = 5;
@@ -89,6 +119,7 @@ public class FilmstripView extends ViewGroup {
     private static final float MOUSE_SCROLL_FACTOR = 128f;
 
     private CameraActivity mActivity;
+    private ActionCallback mActionCallback;
     private FilmstripGestureRecognizer mGestureRecognizer;
     private FilmstripGestureRecognizer.Listener mGestureListener;
     private DataAdapter mDataAdapter;
@@ -587,6 +618,7 @@ public class FilmstripView extends ViewGroup {
     private void init(CameraActivity cameraActivity) {
         setWillNotDraw(false);
         mActivity = cameraActivity;
+        mActionCallback = new ActionCallbackImpl(mActivity);
         mScale = 1.0f;
         mDataIdOnUserScrolling = 0;
         mController = new MyController(cameraActivity);
@@ -815,7 +847,8 @@ public class FilmstripView extends ViewGroup {
 
         data.prepare();
         View recycled = getRecycledView(dataID);
-        View v = mDataAdapter.getView(mActivity.getAndroidContext(), recycled, dataID);
+        View v = mDataAdapter.getView(mActivity.getAndroidContext(), recycled, dataID,
+                mActionCallback);
         if (v == null) {
             return null;
         }

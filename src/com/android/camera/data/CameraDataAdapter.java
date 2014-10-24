@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.view.View;
 
 import com.android.camera.Storage;
+import com.android.camera.data.LocalData.ActionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.Callback;
@@ -125,14 +126,15 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public View getView(Context context, View recycled, int dataID) {
+    public View getView(Context context, View recycled, int dataID,
+            ActionCallback actionCallback) {
         if (dataID >= mImages.size() || dataID < 0) {
             return null;
         }
 
         return mImages.get(dataID).getView(
                 context, recycled, mSuggestedWidth, mSuggestedHeight,
-                mPlaceHolderResourceId, this, /* inProgress */ false);
+                mPlaceHolderResourceId, this, /* inProgress */ false, actionCallback);
     }
 
     @Override
