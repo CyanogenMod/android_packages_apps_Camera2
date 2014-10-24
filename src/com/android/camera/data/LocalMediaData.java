@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -32,7 +31,6 @@ import android.widget.ImageView;
 
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
-import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -219,7 +217,8 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
-            int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress) {
+            int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress,
+            ActionCallback actionCallback) {
         final ImageView imageView;
         if (recycled != null) {
             imageView = (ImageView) recycled;
@@ -842,7 +841,8 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public View getView(final Context context, View recycled,
                 int thumbWidth, int thumbHeight, int placeHolderResourceId,
-                LocalDataAdapter adapter, boolean isInProgress) {
+                LocalDataAdapter adapter, boolean isInProgress,
+                final ActionCallback actionCallback) {
 
             final VideoViewHolder viewHolder;
             final View result;
@@ -865,9 +865,7 @@ public abstract class LocalMediaData implements LocalData {
             viewHolder.mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: refactor this into activities to avoid this class
-                    // conversion.
-                    CameraUtil.playVideo((Activity) context, getUri(), mTitle);
+                    actionCallback.playVideo(getUri(), mTitle);
                 }
             });
 

@@ -26,7 +26,6 @@ import android.widget.ImageView;
 import com.android.camera.Storage;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +36,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class LocalSessionData implements LocalData {
 
-    private Uri mUri;
+    private final Uri mUri;
     // Units are GMT epoch milliseconds.
-    private long mDateTaken;
+    private final long mDateTaken;
     protected final Bundle mMetaData;
     private int mWidth;
     private int mHeight;
@@ -59,7 +58,8 @@ public class LocalSessionData implements LocalData {
 
     @Override
     public View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
-            int placeholderResourcedId, LocalDataAdapter adapter, boolean isInProgress) {
+            int placeholderResourcedId, LocalDataAdapter adapter, boolean isInProgress,
+            ActionCallback actionCallback) {
         final ImageView imageView;
         if (recycled != null) {
             imageView = (ImageView) recycled;

@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 
+import com.android.camera.data.LocalData.ActionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.ImageData;
@@ -110,12 +111,12 @@ public class FixedFirstDataAdapter extends AbstractLocalDataAdapterWrapper
     }
 
     @Override
-    public View getView(Context context, View recycled, int dataID) {
+    public View getView(Context context, View recycled, int dataID, ActionCallback actionCallback) {
         if (dataID == 0) {
-            return mFirstData.getView(
-                    context, recycled, mSuggestedWidth, mSuggestedHeight, 0, null, false);
+            return mFirstData.getView(context, recycled, mSuggestedWidth, mSuggestedHeight, 0,
+                    null, false, actionCallback);
         }
-        return mAdapter.getView(context, recycled, dataID - 1);
+        return mAdapter.getView(context, recycled, dataID - 1, actionCallback);
     }
 
     @Override
