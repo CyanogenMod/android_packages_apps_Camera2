@@ -278,6 +278,10 @@ public class PhotoUI implements PieListener,
 
         mOrientationResize = false;
         mPrevOrientationResize = false;
+
+        try {
+            mActivity.updateInterfaceOrientation(mActivity);
+        } catch (NullPointerException ignored) {}
     }
 
      public void cameraOrientationPreviewResize(boolean orientation){
@@ -984,7 +988,7 @@ public class PhotoUI implements PieListener,
     @Override
     public void onDisplayChanged() {
         Log.d(TAG, "Device flip detected.");
-        mCameraControls.checkLayoutFlip();
+        //mCameraControls.checkLayoutFlip();
         mController.updateCameraOrientation();
     }
 
@@ -995,7 +999,7 @@ public class PhotoUI implements PieListener,
         }
         String[] values = mActivity.getResources().getStringArray(R.array.camera_asd_values);
         int i = 0;
-        for (i = 0; i < values.length; i++) {
+        for (; i < values.length; i++) {
             if (values[i].equals(scene)) {
                 break;
             }

@@ -197,6 +197,7 @@ public class VideoUI implements PieRenderer.PieListener,
         mAnimationManager = new AnimationManager();
         mOrientationResize = false;
         mPrevOrientationResize = false;
+        mActivity.updateInterfaceOrientation(mActivity);
     }
 
     public void cameraOrientationPreviewResize(boolean orientation){

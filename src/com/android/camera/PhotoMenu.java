@@ -20,7 +20,9 @@ package com.android.camera;
 import android.content.Context;
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
-import android.view.LayoutInflater;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.OrientationEventListener;
 import android.widget.Toast;
 
 import com.android.camera.ui.AbstractSettingPopup;
@@ -31,6 +33,7 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 
+import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import java.util.Locale;
@@ -54,12 +57,64 @@ public class PhotoMenu extends PieController
     private int mPopupStatus;
 
     private CameraActivity mActivity;
+    private MyOrientationEventListener mOrientationListener;
+
+    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;;
+    private int mOrientationCompensation = 0;
+
+    private boolean mPopupUp = false;
+
+    public void updateInterfaceOrientation() {
+        Log.i("updateInterfaceOrientation", "called");
+        if(mPopupUp && Settings.System.getInt(mActivity.getContentResolver(),
+                    Settings.System.ACCELEROMETER_ROTATION, 0) != 0) {
+            mPopup.setRotation(mOrientationCompensation);
+        }
+    }
+
+    // This listens to the device orientation, so we can update the compensation.
+    private class MyOrientationEventListener
+            extends OrientationEventListener {
+        public MyOrientationEventListener(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onOrientationChanged(int orientation) {
+            // We keep the last known orientation. So if the user first orient
+            // the camera then point the camera to floor or sky, we still have
+            // the correct orientation.
+            if (orientation == ORIENTATION_UNKNOWN) {
+                return;
+            }
+
+            mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+
+            int orientationCompensation = mOrientation;
+            if (orientationCompensation == 90)
+                orientationCompensation += 180;
+            else if (orientationCompensation == 270)
+                orientationCompensation -= 180;
+
+            if (mOrientationCompensation != orientationCompensation) {
+                // Avoid turning all around
+                float angleDelta = orientationCompensation - mOrientationCompensation;
+                if (angleDelta >= 270)
+                    orientationCompensation -= 360;
+
+                mOrientationCompensation = orientationCompensation;
+                updateInterfaceOrientation();
+            }
+        }
+    }
 
     public PhotoMenu(CameraActivity activity, PhotoUI ui, PieRenderer pie) {
         super(activity, pie);
         mUI = ui;
         mSettingOff = activity.getString(R.string.setting_off_value);
         mActivity = activity;
+        mOrientationListener = new MyOrientationEventListener(mActivity);
+        mOrientationListener.enable();
     }
 
     public void initialize(PreferenceGroup group) {
@@ -243,6 +298,7 @@ public class PhotoMenu extends PieController
                 if (mSettingsPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
                     initializeSettingsPopup();
                     mPopupStatus = POPUP_FIRST_LEVEL;
+                    mPopupUp = true;
                 }
                 mUI.showPopup(mSettingsPopup);
             }
@@ -267,6 +323,7 @@ public class PhotoMenu extends PieController
                 mPopup = null;
             }
         }
+        mPopupUp = false;
     }
 
     @Override

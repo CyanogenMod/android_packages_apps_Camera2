@@ -60,6 +60,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -165,7 +166,6 @@ public class CameraActivity extends Activity
     private OnScreenHint mStorageHint;
     private String mStoragePath;
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
-    private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
     private boolean mInCameraApp = true;
     // Keep track of powershutter state
@@ -196,12 +196,68 @@ public class CameraActivity extends Activity
     private LocalMediaObserver mLocalImagesObserver;
     private LocalMediaObserver mLocalVideosObserver;
 
-    private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
     private boolean mPendingDeletion = false;
+
+    public String mCurrentModuleName = "PhotoModule";
 
     private Intent mVideoShareIntent;
     private Intent mImageShareIntent;
+
+    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
+    private int mOrientationCompensation = 0;
+
+    public boolean itIsCamView = true;
+
+    public void updateInterfaceOrientation(Activity activity) {
+        if(itIsCamView)
+        {
+            if(mCurrentModuleName.equals("WideAnglePanoramaModule"))
+            {
+                if (Settings.System.getInt(getContentResolver(),
+                        Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+                }
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                View switcher = activity.findViewById(R.id.camera_switcher);
+                View shutter = activity.findViewById(R.id.shutter_button);
+                View menu = activity.findViewById(R.id.menu);
+                View indicators = activity.findViewById(R.id.on_screen_indicators);
+                View preview = activity.findViewById(R.id.preview_thumb);
+                View sceneDetect = activity.findViewById(R.id.scene_detect_icon);
+                View burstMode = activity.findViewById(R.id.burst_mode_icon);
+                View spinner = activity.findViewById(R.id.wait_spinner);
+
+                setViewRotation(switcher, mOrientationCompensation);
+                setViewRotation(shutter, mOrientationCompensation);
+                setViewRotation(menu, mOrientationCompensation);
+                setViewRotation(indicators, mOrientationCompensation);
+                setViewRotation(preview, mOrientationCompensation);
+                setViewRotation(sceneDetect, mOrientationCompensation);
+                setViewRotation(burstMode, mOrientationCompensation);
+                setViewRotation(spinner, mOrientationCompensation);
+
+                switcher.bringToFront();
+                shutter.bringToFront();
+                menu.bringToFront();
+                indicators.bringToFront();
+                preview.bringToFront();
+                sceneDetect.bringToFront();
+                burstMode.bringToFront();
+                spinner.bringToFront();
+            }
+        } else {
+            if (Settings.System.getInt(getContentResolver(),
+                    Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+            }
+        }
+    }
 
     private class MyOrientationEventListener
             extends OrientationEventListener {
@@ -219,7 +275,30 @@ public class CameraActivity extends Activity
             }
             mLastRawOrientation = orientation;
             mCurrentModule.onOrientationChanged(orientation);
+
+            mOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+
+            int orientationCompensation = mOrientation;
+            if (orientationCompensation == 90)
+                orientationCompensation += 180;
+            else if (orientationCompensation == 270)
+                orientationCompensation -= 180;
+
+            if (mOrientationCompensation != orientationCompensation) {
+                // Avoid turning all around
+                float angleDelta = orientationCompensation - mOrientationCompensation;
+                if (angleDelta >= 270)
+                    orientationCompensation -= 360;
+
+                mOrientationCompensation = orientationCompensation;
+                updateInterfaceOrientation(CameraActivity.this);
+            }
         }
+    }
+
+    public static void setViewRotation(View v, float rotation) {
+        v.animate().rotation(rotation).setDuration(200)
+                .setInterpolator(new DecelerateInterpolator()).start();
     }
 
     private MediaSaveService mMediaSaveService;
@@ -387,6 +466,8 @@ public class CameraActivity extends Activity
                 @Override
                 public void onCurrentDataCentered(int dataID) {
                     if (dataID != 0 && !mFilmStripView.isCameraPreview()) {
+                        itIsCamView = false;
+                        CameraActivity.this.updateInterfaceOrientation(CameraActivity.this);
                         // For now, We ignore all items that are not the camera preview.
                         return;
                     }
@@ -394,18 +475,24 @@ public class CameraActivity extends Activity
                     if(!arePreviewControlsVisible()) {
                         setPreviewControlsVisibility(true);
                         CameraActivity.this.setSystemBarsVisibility(false);
+                        itIsCamView = true;
+                        CameraActivity.this.updateInterfaceOrientation(CameraActivity.this);
                     }
                 }
 
                 @Override
                 public void onCurrentDataOffCentered(int dataID) {
                     if (dataID != 0 && !mFilmStripView.isCameraPreview()) {
+                        itIsCamView = false;
+                        CameraActivity.this.updateInterfaceOrientation(CameraActivity.this);
                         // For now, We ignore all items that are not the camera preview.
                         return;
                     }
 
                     if (arePreviewControlsVisible()) {
                         setPreviewControlsVisibility(false);
+                        itIsCamView = true;
+                        CameraActivity.this.updateInterfaceOrientation(CameraActivity.this);
                     }
                 }
 
@@ -524,7 +611,8 @@ public class CameraActivity extends Activity
         mMainHandler.removeMessages(HIDE_ACTION_BAR);
 
         int currentSystemUIVisibility = mAboveFilmstripControlLayout.getSystemUiVisibility();
-        int newSystemUIVisibility = DEFAULT_SYSTEM_UI_VISIBILITY |
+        int newSystemUIVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
                 (visible ? View.SYSTEM_UI_FLAG_VISIBLE :
                         View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN);
         if (newSystemUIVisibility != currentSystemUIVisibility) {
@@ -1026,13 +1114,9 @@ public class CameraActivity extends Activity
     }
 
     private boolean isCaptureIntent() {
-        if (MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())
+        return MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())
                 || MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
-            return true;
-        } else {
-            return false;
-        }
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction());
     }
 
     @Override
@@ -1053,12 +1137,9 @@ public class CameraActivity extends Activity
         // Check if this is in the secure camera mode.
         Intent intent = getIntent();
         String action = intent.getAction();
-        if (INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)
-                || ACTION_IMAGE_CAPTURE_SECURE.equals(action)) {
-            mSecureCamera = true;
-        } else {
-            mSecureCamera = intent.getBooleanExtra(SECURE_CAMERA_EXTRA, false);
-        }
+        mSecureCamera = INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)
+                || ACTION_IMAGE_CAPTURE_SECURE.equals(action)
+                || intent.getBooleanExtra(SECURE_CAMERA_EXTRA, false);
 
         if (mSecureCamera) {
             // Change the window flags so that secure camera can show when locked
@@ -1194,11 +1275,9 @@ public class CameraActivity extends Activity
     }
 
     private void setRotationAnimation() {
-        int rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_ROTATE;
-        rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_CROSSFADE;
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
-        winParams.rotationAnimation = rotationAnimation;
+        winParams.rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_CROSSFADE;
         win.setAttributes(winParams);
     }
 
@@ -1248,17 +1327,6 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
-        // TODO: Handle this in OrientationManager.
-        // Auto-rotate off
-        if (Settings.System.getInt(getContentResolver(),
-                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            mAutoRotateScreen = false;
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-            mAutoRotateScreen = true;
-        }
-
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
@@ -1341,10 +1409,8 @@ public class CameraActivity extends Activity
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (mFilmStripView.inCameraFullscreen() && mCurrentModule.onKeyUp(keyCode, event)) {
-            return true;
-        }
-        return super.onKeyUp(keyCode, event);
+        return mFilmStripView.inCameraFullscreen()
+                && mCurrentModule.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event);
     }
 
     @Override
@@ -1355,10 +1421,6 @@ public class CameraActivity extends Activity
         } else if (!mCurrentModule.onBackPressed()) {
             super.onBackPressed();
         }
-    }
-
-    public boolean isAutoRotateScreen() {
-        return mAutoRotateScreen;
     }
 
     protected boolean setStoragePath(SharedPreferences prefs) {
@@ -1513,29 +1575,47 @@ public class CameraActivity extends Activity
         switch (moduleIndex) {
             case ModuleSwitcher.VIDEO_MODULE_INDEX:
                 mCurrentModule = new VideoModule();
+                mCurrentModuleName = "VideoModule";
                 break;
 
             case ModuleSwitcher.PHOTO_MODULE_INDEX:
                 mCurrentModule = new PhotoModule();
+                mCurrentModuleName = "PhotoModule";
                 break;
 
             case ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX:
                 mCurrentModule = new WideAnglePanoramaModule();
+                mCurrentModuleName = "WideAnglePanoramaModule";
                 break;
 
             case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = PhotoSphereHelper.createPanoramaModule();
+                mCurrentModuleName = "PhotoSphereHelper.createPanoramaModule";
                 break;
             case ModuleSwitcher.GCAM_MODULE_INDEX:
                 // Force immediate release of Camera instance
                 CameraHolder.instance().strongRelease();
                 mCurrentModule = GcamHelper.createGcamModule();
+                mCurrentModuleName = "GcamHelper.createGcamModule";
                 break;
             default:
                 // Fall back to photo mode.
                 mCurrentModule = new PhotoModule();
                 mCurrentModuleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
+                mCurrentModuleName = "PhotoModule";
                 break;
+        }
+        if(mCurrentModuleName.equals("WideAnglePanoramaModule"))
+        {
+            if (Settings.System.getInt(getContentResolver(),
+                    Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+            }
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
