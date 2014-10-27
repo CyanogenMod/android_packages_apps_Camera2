@@ -18,7 +18,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">මෙගා පික්සල 20.7</string>
   <string name="pref_camera_picturesize_entry_18mp">මෙගා පික්සල 18</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">මෙගා පික්සල 15.9</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">මෙගා පික්සල 15.9 (16:9)</string>
   <string name="pref_camera_picturesize_entry_12_8mp">මෙගා පික්සල 12.8</string>
   <string name="pref_camera_picturesize_entry_12_7mp">මෙගා පික්සල 12.7</string>
   <string name="pref_camera_picturesize_entry_12mp">මෙගා පික්සල 12</string>
@@ -26,22 +26,22 @@
   <string name="pref_camera_picturesize_entry_11_5mp">මෙගා පික්සල 11.5</string>
   <string name="pref_camera_picturesize_entry_10_4mp">මෙගා පික්සල 10.4</string>
   <string name="pref_camera_picturesize_entry_10mp">මෙගා පික්සල 10</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">මෙගා පික්සල 9.7</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">මෙගා පික්සල 9.7 (16:9)</string>
   <string name="pref_camera_picturesize_entry_9mp">මෙගා පික්සල 9</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">මෙගා පික්සල 8.2</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">මෙගා පික්සල 8.2 (16:9)</string>
   <string name="pref_camera_picturesize_entry_7_7mp">මෙගා පික්සල 7.7</string>
   <string name="pref_camera_picturesize_entry_6_4mp">මෙගා පික්සල 6.4</string>
-  <string name="pref_camera_picturesize_entry_6mp">මෙගා පික්සල 6</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">මෙගා පික්සල 6 (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">මෙගා පික්සල 4.5</string>
   <string name="pref_camera_picturesize_entry_4mp">මෙගා පික්සල 4</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">මෙගා පික්සල 3.7</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">මෙගා පික්සල 3.7 (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">මෙගා පික්සල 2.5</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">මෙගා පික්සල 2.1</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">මෙගා පික්සල 2.1 (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">මෙගා පික්සල 1.9</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">චලන අවිශදතාව අඩුකිරීම</string>
@@ -133,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">ලස්සණ කිරීම</string>
   <string name="camera_menu_asd_label">දැකුම්කලු දර්ශනය</string>
   <string name="pref_camera_power_shutter_title">බල ශටරය</string>
+  <string name="pref_camera_max_brightness_title">දීප්තිමත් තිරය</string>
   <string name="pref_superzoom_title">විශාලනය කරන්න</string>
 </resources>

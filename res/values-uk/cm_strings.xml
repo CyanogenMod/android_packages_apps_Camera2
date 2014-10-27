@@ -18,7 +18,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_18mp">18 Мпікс.</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">15,9 Мпікс</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_12mp">12 Мпікс</string>
@@ -26,22 +25,16 @@
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_10mp">10 Мпікс.</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">9,7 Мпікс</string>
   <string name="pref_camera_picturesize_entry_9mp">9 Мпікс.</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8,2 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6,4 Мпікс.</string>
-  <string name="pref_camera_picturesize_entry_6mp">6 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4,5 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_4mp">4 Мпікс.</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3,7 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2,5 Мпікс.</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2,1 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1,9 Мпікс.</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">Зменшення розмиття руху</string>
@@ -133,5 +126,6 @@
   <string name="camera_menu_beauty_mode_label">ПОКРАЩЕННЯ</string>
   <string name="camera_menu_asd_label">РОЗПІЗНАВАННЯ УМОВИ ЗЙОМКИ</string>
   <string name="pref_camera_power_shutter_title">Зйомка кноп. живлення</string>
+  <string name="pref_camera_max_brightness_title">Яскравий екран</string>
   <string name="pref_superzoom_title">Збільшення</string>
 </resources>

@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Мерење места</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Притиснут центар</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Просек оквира</string>
+  <string name="hdr_enable_message">HDR је омогућен, само аутоматски режим сцене је подржан</string>
+  <string name="scene_enable_message">HDR није подржан у моду сцене осим у Ауто</string>
   <string name="pref_camera_video_hdr_title">HDR Видео</string>
   <string name="pref_camera_facedetection_title">Детекција лица</string>
   <string name="pref_camera_redeyereduction_title">Редукција црвених очију</string>
+  <string name="error_app_unsupported_hfr_selection">HFR није подржан када је видео стабилизација, проток времена или видео HDR укључен</string>
   <string name="error_app_unsupported_hfr">HFR није подржан за изабрану резолуцију</string>
   <string name="error_app_unsupported_hfr_codec">Само H.264 видео кодирање је подржано када је HFR укључен</string>
   <string name="error_app_unsupported">Неподржана видео резолуција за овај тип кодека</string>
+  <string name="error_app_unsupported_dis">Видео стабилизација није подржана за одабрану резолуцију</string>
   <string name="pref_camera_ae_bracket_hdr_title">Држање аутоматске експозиције</string>
   <string name="pref_camera_hfr_title">Успорено кретање (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Искључено</string>

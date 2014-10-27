@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spotmåling</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Centervægtet</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Rammegennemsnit</string>
+  <string name="hdr_enable_message">HDR er aktiveret, kun automatisk scenetilstand understøttes</string>
+  <string name="scene_enable_message">HDR understøttes ikke i anden scenetilstand end automatisk</string>
   <string name="pref_camera_video_hdr_title">Video-HDR</string>
   <string name="pref_camera_facedetection_title">Ansigtsgenkendelse</string>
   <string name="pref_camera_redeyereduction_title">Røjøjereduktion</string>
+  <string name="error_app_unsupported_hfr_selection">HFR er ikke understøttet når videostabilisering, tidsforkort eller video HDR er slået til</string>
   <string name="error_app_unsupported_hfr">HFR understøttes ikke for den valgte opløsning</string>
   <string name="error_app_unsupported_hfr_codec">Kun H.264-videokodning understøttes med HFR aktiveret</string>
   <string name="error_app_unsupported">Ikke understøttet videoopløsning for denne codectype</string>
+  <string name="error_app_unsupported_dis">Videostabilisering understøttes ikke for valgte opløsning</string>
   <string name="pref_camera_ae_bracket_hdr_title">Autoeksponerings-bracketing</string>
   <string name="pref_camera_hfr_title">Slowmotion (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Fra</string>

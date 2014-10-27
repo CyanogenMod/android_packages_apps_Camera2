@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Σημειακή μέτρηση</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Βάρος προς το κέντρο</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Μέσος όρος κάδρου</string>
+  <string name="hdr_enable_message">Το HDR είναι ενεργό, υποστηρίζεται μόνο η αυτόματη λειτουργία σκηνής</string>
+  <string name="scene_enable_message">Το HDR δεν υποστηρίζεται σε λειτουργία σκηνής διαφορετική από την αυτόματη</string>
   <string name="pref_camera_video_hdr_title">Video HDR</string>
   <string name="pref_camera_facedetection_title">Εντοπισμός προσώπου</string>
   <string name="pref_camera_redeyereduction_title">Μείωση κόκκινων ματιών</string>
+  <string name="error_app_unsupported_hfr_selection">Το HFR δεν υποστηρίζεται όταν είναι ενεργή η σταθεροποίηση βίντεο, η παρέλευση χρόνου ή το video HDR</string>
   <string name="error_app_unsupported_hfr">Δεν υποστηρίζεται βίντεο υψηλού ρυθμού καρέ στην επιλεγμένη ανάλυση</string>
   <string name="error_app_unsupported_hfr_codec">Υποστηρίζεται μόνο η κωδικοποίηση H.264 κατά τη λήψη βίντεο υψηλού ρυθμού καρέ</string>
   <string name="error_app_unsupported">Μη υποστηριζόμενη ανάλυση βίντεο για αυτόν τον τύπο κωδικοποιητή</string>
+  <string name="error_app_unsupported_dis">Η σταθεροποίηση βίντεο δεν υποστηρίζεται στην επιλεγμένη ανάλυση</string>
   <string name="pref_camera_ae_bracket_hdr_title">Bracketing αυτόματης έκθεσης</string>
   <string name="pref_camera_hfr_title">Αργή κίνηση (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Ανενεργό</string>

@@ -18,7 +18,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7M pixels</string>
   <string name="pref_camera_picturesize_entry_18mp">18M pixels</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">15.9M pixels</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">15.9M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8M pixels</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7M pixels</string>
   <string name="pref_camera_picturesize_entry_12mp">12M pixels</string>
@@ -26,22 +26,22 @@
   <string name="pref_camera_picturesize_entry_11_5mp">11.5M pixels</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4M pixels</string>
   <string name="pref_camera_picturesize_entry_10mp">10M pixels</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">9.7M pixels</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">9.7M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_9mp">9M pixels</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8.2M pixels</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">8.2M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7M pixels</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4M pixels</string>
-  <string name="pref_camera_picturesize_entry_6mp">6M pixels</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">6M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5M pixels</string>
   <string name="pref_camera_picturesize_entry_4mp">4M pixels</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3.7M pixels</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">3.7M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2.5M pixels</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1M pixels</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">2.1M pixels (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1.9M pixels</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">Reductor de desenfoque</string>
@@ -133,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">EMBELLECER</string>
   <string name="camera_menu_asd_label">ESCENA INTELIXENTE</string>
   <string name="pref_camera_power_shutter_title">Disparador c/botón d\'encendíu</string>
+  <string name="pref_camera_max_brightness_title">Pantalla brillante</string>
   <string name="pref_superzoom_title">Ampliar</string>
 </resources>

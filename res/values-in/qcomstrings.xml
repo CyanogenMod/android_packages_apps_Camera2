@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Pengukuran titik</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Pusat tertimbang</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Frame rata-rata</string>
+  <string name="hdr_enable_message">HDR diaktifkan, hanya mode adegan Auto yang didukung</string>
+  <string name="scene_enable_message">HDR tidak didukung pada mode adegan selain Auto</string>
   <string name="pref_camera_video_hdr_title">Video HDR</string>
   <string name="pref_camera_facedetection_title">Deteksi wajah</string>
   <string name="pref_camera_redeyereduction_title">Reduksi mata merah</string>
+  <string name="error_app_unsupported_hfr_selection">HFR tidak didukung ketika stabilisasi video, video selang waktu atau video HDR aktif</string>
   <string name="error_app_unsupported_hfr">HFR tidak didukung untuk resolusi yang dipilih</string>
   <string name="error_app_unsupported_hfr_codec">Hanya enkoding video H.264 yang didukung ketika HFR</string>
   <string name="error_app_unsupported">Resolusi video tidak didukung untuk jenis codec ini</string>
+  <string name="error_app_unsupported_dis">Stabilisasi video tidak didukung untuk resolusi yang dipilih</string>
   <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
   <string name="pref_camera_hfr_title">Gerakan lambat (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Nonaktif</string>

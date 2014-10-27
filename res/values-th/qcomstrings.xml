@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">จุดวัดแสง</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">ศูนย์ถ่วงน้ำหนัก</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">ค่าเฉลี่ยของเฟรม</string>
+  <string name="hdr_enable_message">เปิดใช้งาน HDR ,ลองรับเฉพาะรูปแบบซีนอัตโนมัติเท่านั้น</string>
+  <string name="scene_enable_message">HDR ไม่รองรับรูปแบบซีนอื่นนอกจากอัตโนมัติ</string>
   <string name="pref_camera_video_hdr_title">วิดีโอ HDR</string>
   <string name="pref_camera_facedetection_title">ตรวจจับใบหน้า</string>
   <string name="pref_camera_redeyereduction_title">ลดตาแดง</string>
+  <string name="error_app_unsupported_hfr_selection">HFR ไม่สามารถใช้งานได้ขณะใช้งานลดกานสั่นวิดีโอ Time lapse หรือวิดีโอ HDR อยู่</string>
   <string name="error_app_unsupported_hfr">HFR ไม่สนับสนุนความละเอียดที่เลือก</string>
   <string name="error_app_unsupported_hfr_codec">เข้ารหัสได้เฉพาะ H.264 เมื่อเปิด HFR</string>
   <string name="error_app_unsupported">ไม่รองรับขนาดที่เลือกสำหรับการเข้ารหัสนี้</string>
+  <string name="error_app_unsupported_dis">ลดการสั่นของวิดีโอไม่สามารถใช้งานได้ในความละเอียดนี้</string>
   <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
   <string name="pref_camera_hfr_title">Slow Motion (HFR)</string>
   <string name="pref_camera_hfr_entry_off">ปิด</string>

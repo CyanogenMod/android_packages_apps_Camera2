@@ -18,7 +18,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">2070만 화소</string>
   <string name="pref_camera_picturesize_entry_18mp">1800만 화소</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">1590만 화소</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">1590만 화소 (16:9)</string>
   <string name="pref_camera_picturesize_entry_12_8mp">1280만 화소</string>
   <string name="pref_camera_picturesize_entry_12_7mp">1270만 화소</string>
   <string name="pref_camera_picturesize_entry_12mp">1200만 화소</string>
@@ -26,22 +26,22 @@
   <string name="pref_camera_picturesize_entry_11_5mp">1150만 화소</string>
   <string name="pref_camera_picturesize_entry_10_4mp">1040만 화소</string>
   <string name="pref_camera_picturesize_entry_10mp">1000만 화소</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">970만 화소</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">970만 화소 (16:9)</string>
   <string name="pref_camera_picturesize_entry_9mp">900만 화소</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">820만 화소</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">820만 화소 (16:9)</string>
   <string name="pref_camera_picturesize_entry_7_7mp">770만 화소</string>
   <string name="pref_camera_picturesize_entry_6_4mp">640만 화소</string>
-  <string name="pref_camera_picturesize_entry_6mp">600만 화소</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">600만 화소 (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">450만 화소</string>
   <string name="pref_camera_picturesize_entry_4mp">400만 화소</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">370만 화소</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">370만 화소 (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">250만 화소</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">210만 화소</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">210만 화소 (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">190만 화소</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">모션 블러 감소</string>
@@ -133,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">피부 보정</string>
   <string name="camera_menu_asd_label">스마트 씬</string>
   <string name="pref_camera_power_shutter_title">전원 셔터</string>
+  <string name="pref_camera_max_brightness_title">밝은 화면</string>
   <string name="pref_superzoom_title">확대</string>
 </resources>
