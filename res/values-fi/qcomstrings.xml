@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Pisteeseen kohdistettu</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Keskelle painotettu</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Kehysten keskiarvo</string>
+  <string name="hdr_enable_message">HDR on käytössä, vain automaattinen tila on käytettävissä</string>
+  <string name="scene_enable_message">HDR:ää ei tueta kuin automaattisessa tilassa</string>
   <string name="pref_camera_video_hdr_title">Video HDR</string>
   <string name="pref_camera_facedetection_title">Kasvojentunnistus</string>
   <string name="pref_camera_redeyereduction_title">Punasilmäisyyden vähentäminen</string>
+  <string name="error_app_unsupported_hfr_selection">HFR ei tuettu kun videon vakauttaminen, viivästys tai video HDR on käytössä</string>
   <string name="error_app_unsupported_hfr">HFR:ää ei tueta valitulla resoluutiolla</string>
   <string name="error_app_unsupported_hfr_codec">Vain H.264 videokoodaus on tuettu kun HFR on käytössä</string>
   <string name="error_app_unsupported">Videon resoluutiota ei tueta tällä koodaustyypillä</string>
+  <string name="error_app_unsupported_dis">Videon vakauttamista ei tueta valitulla resoluutiolla</string>
   <string name="pref_camera_ae_bracket_hdr_title">Automaattisen valotuksen kiinnitys</string>
   <string name="pref_camera_hfr_title">Hidastus (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Pois käytöstä</string>

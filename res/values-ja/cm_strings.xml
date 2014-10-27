@@ -18,7 +18,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7メガピクセル</string>
   <string name="pref_camera_picturesize_entry_18mp">18メガピクセル</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">15.9メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">15.9メガピクセル（16:9）</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7メガピクセル</string>
   <string name="pref_camera_picturesize_entry_12mp">12メガピクセル</string>
@@ -26,22 +26,22 @@
   <string name="pref_camera_picturesize_entry_11_5mp">11.5メガピクセル</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4メガピクセル</string>
   <string name="pref_camera_picturesize_entry_10mp">10メガピクセル</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">9.7メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">9.7メガピクセル（16:9）</string>
   <string name="pref_camera_picturesize_entry_9mp">9メガピクセル</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8.2メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">8.2メガピクセル（16:9）</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7メガピクセル</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4メガピクセル</string>
-  <string name="pref_camera_picturesize_entry_6mp">6メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">6メガピクセル（16:9）</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5メガピクセル</string>
   <string name="pref_camera_picturesize_entry_4mp">4メガピクセル</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3.7メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">3.7メガピクセル（16:9）</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2.5メガピクセル</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2.1メガピクセル</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">2.1メガピクセル（16:9）</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1.9メガピクセル</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD（16:9）</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">被写体ブレ軽減</string>
@@ -133,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">ビューティー化</string>
   <string name="camera_menu_asd_label">スマートシーン</string>
   <string name="pref_camera_power_shutter_title">電源シャッター</string>
+  <string name="pref_camera_max_brightness_title">明るい画面</string>
   <string name="pref_superzoom_title">拡大</string>
 </resources>

@@ -40,12 +40,15 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spot</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Mittenbetont</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Integral</string>
+  <string name="scene_enable_message">HDR wird nur im automatischen Szenenmodus unterstützt</string>
   <string name="pref_camera_video_hdr_title">Video (HDR)</string>
   <string name="pref_camera_facedetection_title">Gesichtserkennung</string>
   <string name="pref_camera_redeyereduction_title">Rote-Augen</string>
+  <string name="error_app_unsupported_hfr_selection">HFR wird nicht unterstützt, wenn Videostabilisierung, Zeitraffer oder Video-HDR aktiviert ist</string>
   <string name="error_app_unsupported_hfr">Bei der gewählten Auflösung wird HFR nicht unterstützt</string>
   <string name="error_app_unsupported_hfr_codec">Im HFR-Modus wird nur die Videokodierung in H264 unterstützt</string>
   <string name="error_app_unsupported">Die gewählte Auflösung wird von diesem Encoder nicht unterstützt</string>
+  <string name="error_app_unsupported_dis">Videostabilisierung wird für die gewählte Auflösung nicht unterstützt</string>
   <string name="pref_camera_ae_bracket_hdr_title">Belichtungsreihe</string>
   <string name="pref_camera_hfr_title">Zeitlupe (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Aus</string>

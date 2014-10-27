@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Punto singolo</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Pesata al centro</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Media immagine</string>
+  <string name="hdr_enable_message">HDR é attivo, solo la modalità scena automatica é supportata</string>
+  <string name="scene_enable_message">HDR non è supportato in nessuna modalità scena ad esclusione di quella automatica</string>
   <string name="pref_camera_video_hdr_title">HDR video</string>
   <string name="pref_camera_facedetection_title">Rilevamento volti</string>
   <string name="pref_camera_redeyereduction_title">Riduzione occhi rossi</string>
+  <string name="error_app_unsupported_hfr_selection">HFR non è supportato quando sono attivi stabilizzazione del video, time lapse o HDR</string>
   <string name="error_app_unsupported_hfr">HFR non è supportato per la risoluzione selezionata</string>
   <string name="error_app_unsupported_hfr_codec">Quando HFR è attivo è consentita solo la codifica H.264 per il video</string>
   <string name="error_app_unsupported">Risoluzione non supportata per questo codec video</string>
+  <string name="error_app_unsupported_dis">La stabilizzazione video non è supportata con la risoluzione selezionata</string>
   <string name="pref_camera_ae_bracket_hdr_title">Auto Exposure Bracketing</string>
   <string name="pref_camera_hfr_title">Rallentatore (HFR)</string>
   <string name="pref_camera_hfr_entry_off">OFF</string>

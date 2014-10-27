@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Bodové meranie</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Na stred</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Priemer rámu</string>
+  <string name="hdr_enable_message">HDR je povolené, podporovaný je iba Automatickom režime scény</string>
+  <string name="scene_enable_message">HDR nie je podporované v režime scény inej ako Automatickej</string>
   <string name="pref_camera_video_hdr_title">HDR video</string>
   <string name="pref_camera_facedetection_title">Detekcia tvárí</string>
   <string name="pref_camera_redeyereduction_title">Redukcia červených očí</string>
+  <string name="error_app_unsupported_hfr_selection">HFR nie je podporované pri stabilizácii videa, časového oneskorenia alebo pri zapnutom HDR videu</string>
   <string name="error_app_unsupported_hfr">HFR nie je podporované pre vybrané rozlíšenie</string>
   <string name="error_app_unsupported_hfr_codec">Kódovanie videa H.264 je podporované iba pri zapnutom HFR</string>
   <string name="error_app_unsupported">Nepodporované rozlíšenie videa pre tento typ kodeka</string>
+  <string name="error_app_unsupported_dis">Stabilizácia videa nie je podporovaná pre vybraté rozlíšenie</string>
   <string name="pref_camera_ae_bracket_hdr_title">Automatické posúvanie expozície</string>
   <string name="pref_camera_hfr_title">Spomalenie (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Vypnuté</string>

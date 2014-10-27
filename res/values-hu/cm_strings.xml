@@ -18,7 +18,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20,7 megapixel</string>
   <string name="pref_camera_picturesize_entry_18mp">18 megapixel</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">15,9 megapixel</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">15,9 MP (16:9)</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12,8 megapixel</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12,7 megapixel</string>
   <string name="pref_camera_picturesize_entry_12mp">12 megapixel</string>
@@ -26,22 +26,22 @@
   <string name="pref_camera_picturesize_entry_11_5mp">11,5 megapixel</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10,4 megapixel</string>
   <string name="pref_camera_picturesize_entry_10mp">10 megapixel</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">9,7 megapixel</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">9,7 MP (16:9)</string>
   <string name="pref_camera_picturesize_entry_9mp">9 megapixel</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">8,2 megapixel</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">8,2 MP (16:9)</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7,7 megapixel</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6,4 megapixel</string>
-  <string name="pref_camera_picturesize_entry_6mp">6 megapixel</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">6 MP (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4,5 megapixel</string>
   <string name="pref_camera_picturesize_entry_4mp">4 megapixel</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">3,7 megapixel</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">3,7 MP (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2,5 megapixel</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">2,1 megapixel</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">2,1 MP (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1,9 megapixel</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">Elmosódás csökkentés</string>
@@ -133,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">EFFEKTEK</string>
   <string name="camera_menu_asd_label">OKOS KÉP</string>
   <string name="pref_camera_power_shutter_title">Bekapcsoló gombbal exponálás</string>
+  <string name="pref_camera_max_brightness_title">Világos képernyő</string>
   <string name="pref_superzoom_title">Nagyítás</string>
 </resources>

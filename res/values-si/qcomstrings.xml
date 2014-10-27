@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">තැන මානනය</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">මධ්‍ය භරිත</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">රාමු සාමාන්‍යය</string>
+  <string name="hdr_enable_message">HDR සබලයි, ස්වයං දර්ශන ප්‍රකාරය පමණක් සහාය දක්වයි</string>
+  <string name="scene_enable_message">දර්ශන ප්‍රකාරයේ ස්වයං ප්‍රකාරයට අමතරව HDR සහාය නොදක්වයි</string>
   <string name="pref_camera_video_hdr_title">වීඩියෝ HDR</string>
   <string name="pref_camera_facedetection_title">මුහුණ අබික්සුම</string>
   <string name="pref_camera_redeyereduction_title">රතු ඇස අවකරණය</string>
+  <string name="error_app_unsupported_hfr_selection">වීඩියෝ ස්ථාවරකිරීම, වේලා දෝෂය හෝ වීඩියෝ HDR සක්‍රීය විට HFR සහාය නොදක්වයි</string>
   <string name="error_app_unsupported_hfr">තෝරාගත් විභේදනය සඳහා HFR සහාය නොදක්වයි</string>
   <string name="error_app_unsupported_hfr_codec">HFR සක්‍රීය විට H.264 වීඩියෝ සංකේතනය පමණක් සහාය දක්වයි</string>
   <string name="error_app_unsupported">මෙම කොඩෙක් ආකාරය සඳහා සහාය නොදක්වන වීඩියෝ විභේදනයකි</string>
+  <string name="error_app_unsupported_dis">තෝරාගත් විභේදනය සඳහා වීඩියෝ ස්ථාවරකිරීම සහාය නොදක්වයි</string>
   <string name="pref_camera_ae_bracket_hdr_title">ස්වයං නිරාවරණ සවිකිරීම</string>
   <string name="pref_camera_hfr_title">මන්ද චලනය (HFR)</string>
   <string name="pref_camera_hfr_entry_off">අක්‍රීයයි</string>

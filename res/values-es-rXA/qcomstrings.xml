@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Midición puntual</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Ponderáu al centru</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Media de marcos</string>
+  <string name="hdr_enable_message">El HDR ta activáu. Namái ta sofitáu\'l mou d\'escena automáticu</string>
+  <string name="scene_enable_message">HDR namái ta sofitáu nel mou d\'escena automáticu</string>
   <string name="pref_camera_video_hdr_title">Videu HDR</string>
   <string name="pref_camera_facedetection_title">Detección de cares</string>
   <string name="pref_camera_redeyereduction_title">Amenorgamientu de güeyos bermeyos</string>
+  <string name="error_app_unsupported_hfr_selection">HFR nun ta sofitáu cuando tán activaos la estabilización de videu, lapsu de tiempu o videu HDR</string>
   <string name="error_app_unsupported_hfr">El videu d\'alta velocidá nun ta sofitáu pa la resolución esbillada</string>
   <string name="error_app_unsupported_hfr_codec">Cuando\'l HFR ta activáu, namái ta sofitada la codificación de videu H.264</string>
   <string name="error_app_unsupported">Resolución de videu non sofitada nesti tipu de codificador</string>
+  <string name="error_app_unsupported_dis">La estabilización de videu nun ta sofitada pa la resolución esbillada</string>
   <string name="pref_camera_ae_bracket_hdr_title">Esposición HDR automática</string>
   <string name="pref_camera_hfr_title">Cámara lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Desactiváu</string>

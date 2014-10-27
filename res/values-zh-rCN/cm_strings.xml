@@ -18,7 +18,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">2070 万像素</string>
   <string name="pref_camera_picturesize_entry_18mp">1800 万像素</string>
-  <string name="pref_camera_picturesize_entry_15_9mp">1590 万像素</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">1590 万像素 (16:9)</string>
   <string name="pref_camera_picturesize_entry_12_8mp">1280 万像素</string>
   <string name="pref_camera_picturesize_entry_12_7mp">1270 万像素</string>
   <string name="pref_camera_picturesize_entry_12mp">1200 万像素</string>
@@ -26,22 +26,22 @@
   <string name="pref_camera_picturesize_entry_11_5mp">1150 万像素</string>
   <string name="pref_camera_picturesize_entry_10_4mp">1040 万像素</string>
   <string name="pref_camera_picturesize_entry_10mp">1000 万像素</string>
-  <string name="pref_camera_picturesize_entry_9_7mp">970 万像素</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">970 万像素 (16:9)</string>
   <string name="pref_camera_picturesize_entry_9mp">900 万像素</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">820 万像素</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">820 万像素 (16:9)</string>
   <string name="pref_camera_picturesize_entry_7_7mp">770 万像素</string>
   <string name="pref_camera_picturesize_entry_6_4mp">640 万像素</string>
-  <string name="pref_camera_picturesize_entry_6mp">600 万像素</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">600 万像素 (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">450 万像素</string>
   <string name="pref_camera_picturesize_entry_4mp">400 万像素</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">370 万像素</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">370 万像素 (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">250 万像素</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">210 万像素</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">210 万像素 (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">190 万像素</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">降低动态模糊</string>
@@ -133,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">美肤</string>
   <string name="camera_menu_asd_label">智能场景</string>
   <string name="pref_camera_power_shutter_title">电源键快门</string>
+  <string name="pref_camera_max_brightness_title">明亮的屏幕</string>
   <string name="pref_superzoom_title">放大</string>
 </resources>

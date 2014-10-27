@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Nokta ölçümlü</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Orta ağırlıklı</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Çerçeve ortalaması</string>
+  <string name="hdr_enable_message">HDR etkinleştirildi, sadece Otomatik mod destekleniyor</string>
+  <string name="scene_enable_message">HDR, Otomatik mod dışında sahne modunda desteklenmiyor</string>
   <string name="pref_camera_video_hdr_title">Video HDR</string>
   <string name="pref_camera_facedetection_title">Yüz tanıma</string>
   <string name="pref_camera_redeyereduction_title">Kırmızı göz giderme</string>
+  <string name="error_app_unsupported_hfr_selection">HFR, video görüntü sabitleme, hızlandırılmış çekim ya da video HDR açıkken desteklenmiyor</string>
   <string name="error_app_unsupported_hfr">HFR seçilen çözünürlükte desteklenmiyor</string>
   <string name="error_app_unsupported_hfr_codec">HFR açıkken sadece H.264 video kodlaması desteklenmektedir</string>
   <string name="error_app_unsupported">Bu kodlayıcı için desteklenmeyen video çözünürlüğü</string>
+  <string name="error_app_unsupported_dis">Video görüntü sabitleme seçilen çözünürlük için desteklenmiyor</string>
   <string name="pref_camera_ae_bracket_hdr_title">Otomatik Poz Tarama</string>
   <string name="pref_camera_hfr_title">Ağır Çekim (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Kapalı</string>

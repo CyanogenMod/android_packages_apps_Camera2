@@ -40,12 +40,16 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Puntual</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Ponderado al centro</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Matricial</string>
+  <string name="hdr_enable_message">El HDR está activado. Solo está soportado el modo de escena automático</string>
+  <string name="scene_enable_message">HDR solo está soportado en el modo de escena automático</string>
   <string name="pref_camera_video_hdr_title">Vídeo de alto rango dinámico</string>
   <string name="pref_camera_facedetection_title">Detección rostro</string>
   <string name="pref_camera_redeyereduction_title">Reducción ojos rojos</string>
+  <string name="error_app_unsupported_hfr_selection">HFR no está soportado cuando están activados la estabilización de vídeo, lapso de tiempo o vídeo HDR</string>
   <string name="error_app_unsupported_hfr">El vídeo de alta velocidad no está soportado para la resolución seleccionada</string>
   <string name="error_app_unsupported_hfr_codec">Solamente está soportado el códec H264 con el modo de vídeo de alta velocidad activado</string>
   <string name="error_app_unsupported">Resolución de vídeo no soportada para este tipo de códec</string>
+  <string name="error_app_unsupported_dis">La estabilización de vídeo no está soportada para la resolución seleccionada</string>
   <string name="pref_camera_ae_bracket_hdr_title">Exposición HDR automática</string>
   <string name="pref_camera_hfr_title">Cámara lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Desactivado</string>
