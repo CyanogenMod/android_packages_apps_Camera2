@@ -60,6 +60,9 @@ public class ApiHelper {
             && "hammerhead".equalsIgnoreCase(Build.DEVICE);
     public static final boolean IS_NEXUS_6 = "motorola".equalsIgnoreCase(Build.MANUFACTURER)
             && "shamu".equalsIgnoreCase(Build.DEVICE);
+    public static final boolean IS_NEXUS_9 = "htc".equalsIgnoreCase(Build.MANUFACTURER)
+            && ("flounder".equalsIgnoreCase(Build.DEVICE)
+                 || "flounder_lte".equalsIgnoreCase(Build.DEVICE));
 
     public static final boolean HAS_CAMERA_2_API = isLOrHigher();
 
