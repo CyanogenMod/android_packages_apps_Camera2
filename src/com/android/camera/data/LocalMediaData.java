@@ -333,8 +333,10 @@ public abstract class LocalMediaData implements LocalData {
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        private static final String QUERY_ORDER = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC, "
-                + MediaStore.Images.ImageColumns._ID + " DESC";
+        // Sort all data by ID. This must be aligned with
+        // {@link CameraDataAdapter.QueryTask} which relies on the highest ID
+        // being first in any data returned.
+        private static final String QUERY_ORDER = MediaStore.Images.ImageColumns._ID + " DESC";
         /**
          * These values should be kept in sync with column IDs (COL_*) above.
          */
