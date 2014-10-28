@@ -22,8 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/remember_location_title"
-        android:textSize="22sp"
-        android:textColor="@color/dialog_text_color"
+        style="@style/fullscreen_dialog_title"
         android:layout_margin="28dp" />
     <ImageView
         android:layout_width="wrap_content"
