@@ -40,7 +40,6 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
-import android.util.FloatMath;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -903,7 +902,7 @@ public class CameraUtil {
         float sigma = len;
         float sum = 0;
         for (int i = 0; i <= mid; i++) {
-            float ex = FloatMath.exp(-(i - mid) * (i - mid) / (mid * mid))
+            float ex = (float) Math.exp(-(i - mid) * (i - mid) / (mid * mid))
                     / (2 * sigma * sigma);
             int symmetricIndex = len - 1 - i;
             mask[i] = ex;
