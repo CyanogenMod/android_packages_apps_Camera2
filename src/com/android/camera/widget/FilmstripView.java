@@ -1256,18 +1256,22 @@ public class FilmstripView extends ViewGroup {
                 // It's in full-screen mode.
                 fadeAndScaleRightViewItem(itemID);
             } else {
-                if (curr.getVisibility() == INVISIBLE) {
-                    curr.setVisibility(VISIBLE);
-                }
+                boolean setToVisible = (curr.getVisibility() == INVISIBLE);
+
                 if (itemID == mCurrentItem + 1) {
                     curr.setAlpha(1f - scaleFraction);
                 } else {
                     if (scaleFraction == 0f) {
                         curr.setAlpha(1f);
                     } else {
-                        curr.setVisibility(INVISIBLE);
+                        setToVisible = false;
                     }
                 }
+
+                if (setToVisible) {
+                    curr.setVisibility(VISIBLE);
+                }
+
                 curr.setTranslationX(
                         (mViewItem[mCurrentItem].getLeftPosition() - curr.getLeftPosition()) *
                                 scaleFraction);
