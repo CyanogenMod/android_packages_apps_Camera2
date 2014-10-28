@@ -259,9 +259,8 @@ public class PreviewOverlay extends View
         }
 
         public void layout(int l, int t, int r, int b) {
-            // TODO: Needs to be centered in preview TextureView
-            mCenterX = (r - l) / 2;
-            mCenterY = (b - t) / 2;
+            mCenterX = (r + l) / 2;
+            mCenterY = (b + t) / 2;
             // UI will extend from 20% to 80% of maximum inset circle.
             float insetCircleDiameter = Math.min(getWidth(), getHeight());
             mOuterRadius = insetCircleDiameter * 0.5f * ZOOM_UI_SIZE;
