@@ -19,7 +19,6 @@ package com.android.camera;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -460,8 +459,9 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onRemoteShutterPress() {
+        Log.d(TAG, "onRemoteShutterPress");
         // TODO: Check whether shutter is enabled.
-        onShutterButtonClick();
+        takePictureNow();
     }
 
     @Override
@@ -546,6 +546,7 @@ public class CaptureModule extends CameraModule
     @Override
     public void pause() {
         mPaused = true;
+        getServices().getRemoteShutterListener().onModuleExit();
         cancelCountDown();
         closeCamera();
         resetTextureBufferSize();
@@ -848,8 +849,8 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onThumbnailResult(Bitmap bitmap) {
-        // TODO
+    public void onThumbnailResult(byte[] jpegData) {
+        getServices().getRemoteShutterListener().onPictureTaken(jpegData);
     }
 
     @Override

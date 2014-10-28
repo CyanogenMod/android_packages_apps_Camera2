@@ -17,7 +17,6 @@
 package com.android.camera.one;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.view.Surface;
@@ -159,7 +158,7 @@ public interface OneCamera {
          * Called when a thumbnail image is provided before the final image is
          * finished.
          */
-        public void onThumbnailResult(Bitmap bitmap);
+        public void onThumbnailResult(byte[] jpegData);
 
         /**
          * Called when the final picture is done taking
