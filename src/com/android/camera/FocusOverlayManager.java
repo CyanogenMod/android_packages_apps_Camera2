@@ -146,6 +146,10 @@ public class FocusOverlayManager {
         mUI = ui;
     }
 
+    public void setPhotoUI(FocusUI ui) {
+        mUI = ui;
+    }
+
     public void setParameters(Parameters parameters) {
         // parameters can only be null when onConfigurationChanged is called
         // before camera is open. We will just return in this case, because
@@ -541,7 +545,9 @@ public class FocusOverlayManager {
         if (!mInitialized) return;
 
         // Put focus indicator to the center. clear reset position
-        mUI.clearFocus();
+        if (mUI != null) {
+            mUI.clearFocus();
+        }
         // Initialize mFocusArea.
         mFocusArea = null;
         // Initialize mMeteringArea.
