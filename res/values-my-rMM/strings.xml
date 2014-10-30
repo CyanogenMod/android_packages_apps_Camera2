@@ -90,7 +90,7 @@
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"ကင်မရာရိုက်ကူးမှုဆက်တင်များ"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"ပုံအရွယ်အစား"</string>
     <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"ကြီးမားသော"</string>
-    <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"အလယ်အလတ်"</string>
+    <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"အတော်အသင့်"</string>
     <string name="pref_camera_picturesize_entry_small" msgid="2991239656622539068">"သေးငယ်သော"</string>
     <string name="pref_camera_focusmode_title" msgid="3637702747984180030">"အာရုံစိုက်နေခြင်း"</string>
     <string name="pref_camera_focusmode_entry_auto" msgid="8977409813328199501">"အလိုအလျောက်"</string>
@@ -152,7 +152,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"အရှေ့ကင်မရာ"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"နောက်ကင်မရာ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ကောင်းပြီ"</string>
-    <string name="dialog_cancel" msgid="692365061128351656">"နေတော့"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"ထားတော့"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD ကဒ်တွင် နေရာလွတ် နည်းနေပါပြီ။ ကွာလတီ ဆက်တင် ပြောင်းခြင်း သို့မဟုတ် ပုံအချို့ သို့မဟုတ် တခြားဖိုင်များအား ဖျက်ခြင်းလုပ်ပါ"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"အရွယ်ကန့်သတ်မှုကျော်လွန်"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"အရမ်းမြန်"</string>
@@ -182,7 +182,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"အသုံးမကျသောမျက်နှာများ"</string>
     <string name="effect_background" msgid="1358432220077975015">"နောက်ခံ"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"ရှပ်တာ"</string>
-    <string name="accessibility_cancel_button" msgid="5679989494636116448">"နေတော့"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"ထားတော့"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"မီနူးခလုတ်"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s မှတ်သားကွက်"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"ဓာတ်ပုံသို့ပြောင်းရန်"</string>
@@ -285,7 +285,7 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"ကြားမြင့်ချိန်"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"ထောင့်ကျယ်"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"မြင်ကွင်းကျယ်"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"မှန်ဘလူးအားဝေဝါးခြင်း"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"မှန်ဘီလူးဝါးဝါး"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"ကင်မရာစနစ်အားပြောင်းရန်"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"ဗီဒီယိုကင်မရာသို့ပြောင်းရန်"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Photo Sphereစနစ်အားပြောင်းရန်"</string>
@@ -313,7 +313,7 @@
     <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၃ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၁၀ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ပိုမိုရွေးချယ်စရာများ"</string>
-    <string name="cancel_button_description" msgid="3801167024006905033">"နေတော့"</string>
+    <string name="cancel_button_description" msgid="3801167024006905033">"ထားတော့"</string>
     <string name="done_button_description" msgid="1334963435441544592">"ပြီးပါပြီ"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ပြန်ရိုက်ကူးပါ"</string>
     <string name="share_button_description" msgid="5108508790540832053">"မျှဝေခြင်း"</string>
@@ -349,8 +349,8 @@
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
-    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s မီဂါပီဇယ်များ"</string>
-    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s မီဂါပီဇယ်များ"</string>
+    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s မီဂါပစ်ဇယ်"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s မီဂါပစ်ဇယ်"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ဆုံချက် ပြန်ညှိရန် ဒီမှာ ထိပါ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"အဆင့်မြင့်"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"လက်ဖြင့် အလင်းပေး"</string>

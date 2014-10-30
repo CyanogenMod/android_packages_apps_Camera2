@@ -76,7 +76,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"කැමරාව තෝරන්න"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"ආපසු"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"ඉදිරිපස"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ස්ථානය ස්ථානය සුරකින්න"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ස්ථානය සුරකින්න"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ස්ථානය"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"ආපස්සට ගණන් කිරීමේ කාල ගණකය"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -263,7 +263,7 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"කාලය ඉකුත්වීමේ විශේෂාංගය අක්‍රියයි. කාල අන්තරය පිහිටුවීමට එය සක්‍රිය කරන්න."</string>
     <string name="set_duration" msgid="1638453882581604341">"තත්පර වලින් කාල පරාස සකසන්න"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ඡායාරූපයක් ගැනීමට ආපස්සට ගණන් කෙරේ"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"ඡායාරූප ස්ථාන මතකද?"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"ඡායාරූප ස්ථාන මතක තියාගන්නද?"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"ඔබගේ ඡායාරූප සහ වීඩියෝ ඒවා ගත් ස්ථානය සමගින් ටැග් කරන්න.\n\nවෙනත් යෙදුම් වලට ඔබගේ සුරැකි පින්තුර සමගින් මෙම තොරතුරු වෙත ප්‍රවේශ විය හැක."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"එපා ස්තූතියි"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ඔව්"</string>
