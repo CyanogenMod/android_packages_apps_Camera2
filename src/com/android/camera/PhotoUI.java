@@ -292,12 +292,10 @@ public class PhotoUI implements PieListener,
             ratio = 1 / ratio;
         }
 
-        if (mAspectRatio != ratio) {
-            Log.d(TAG,"setAspectRatio() ratio["+ratio+"] mAspectRatio["+mAspectRatio+"]");
-            mAspectRatio = ratio;
-            mAspectRatioResize = true;
-            mTextureView.requestLayout();
-        }
+        Log.d(TAG,"setAspectRatio() ratio["+ratio+"] mAspectRatio["+mAspectRatio+"]");
+        mAspectRatio = ratio;
+        mAspectRatioResize = true;
+        mTextureView.requestLayout();
     }
 
     public void setSurfaceTextureSizeChangedListener(SurfaceTextureSizeChangedListener listener) {
