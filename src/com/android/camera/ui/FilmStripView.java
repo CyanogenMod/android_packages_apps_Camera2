@@ -1858,6 +1858,7 @@ public class FilmStripView extends ViewGroup implements BottomControlsListener {
             return;
         }
         if (reporter.isDataUpdated(dataId)) {
+            resetZoomView();
             updateViewItem(mCurrentItem);
             final ImageData data = mDataAdapter.getImageData(dataId);
             if (!mIsUserScrolling && !mController.isScrolling()) {
