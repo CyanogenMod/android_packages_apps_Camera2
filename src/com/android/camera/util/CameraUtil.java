@@ -513,7 +513,15 @@ public class CameraUtil {
     public static int getOptimalPreviewSizeIndex(Context context,
             List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
-        final double ASPECT_TOLERANCE = 0.01;
+        final double ASPECT_TOLERANCE;
+        // HTC 4:3 ratios is over .01 from true 4:3, targeted fix for those
+        // devices here, see b/18241645
+        if (ApiHelper.IS_HTC && targetRatio > 1.3433 && targetRatio < 1.35) {
+            Log.w(TAG, "4:3 ratio out of normal tolerance, increasing tolerance to 0.02");
+            ASPECT_TOLERANCE = 0.02;
+        } else {
+            ASPECT_TOLERANCE = 0.01;
+        }
         if (sizes == null) {
             return -1;
         }
@@ -552,7 +560,7 @@ public class CameraUtil {
         // Cannot find the one match the aspect ratio. This should not happen.
         // Ignore the requirement.
         if (optimalSizeIndex == -1) {
-            Log.w(TAG, "No preview size match the aspect ratio");
+            Log.w(TAG, "No preview size match the aspect ratio. available sizes: " + sizes);
             minDiff = Double.MAX_VALUE;
             for (int i = 0; i < sizes.size(); i++) {
                 Size size = sizes.get(i);
