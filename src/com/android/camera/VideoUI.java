@@ -307,15 +307,11 @@ public class VideoUI implements PieRenderer.PieListener,
             }
         } else {
             if (width > height) {
-                scaledTextureWidth = Math.max(width,
-                        (int) (height * mAspectRatio));
-                scaledTextureHeight = Math.max(height,
-                        (int)(width / mAspectRatio));
+                scaledTextureWidth = Math.max(width, height * mAspectRatio);
+                scaledTextureHeight = Math.max(height, width / mAspectRatio);
             } else {
-                scaledTextureWidth = Math.max(width,
-                        (int) (height / mAspectRatio));
-                scaledTextureHeight = Math.max(height,
-                        (int) (width * mAspectRatio));
+                scaledTextureWidth = Math.max(width, height / mAspectRatio);
+                scaledTextureHeight = Math.max(height, width * mAspectRatio);
             }
         }
 
@@ -433,7 +429,8 @@ public class VideoUI implements PieRenderer.PieListener,
         ((CameraRootView) mRootView).removeDisplayChangeListener();
     }
 
-    public void overrideSettings(final String... keyvalues) {
+    public void overrideSettings(final String ... keyvalues) {
+        if (mVideoMenu == null) return;
         mVideoMenu.overrideSettings(keyvalues);
     }
 
@@ -556,6 +553,15 @@ public class VideoUI implements PieRenderer.PieListener,
         }
     }
 
+    public void showPopup(AbstractSettingPopup popup) {
+        hideUI();
+
+        if (mPopup != null) {
+            mPopup.dismiss();
+        }
+        mPopup = new SettingsPopup(popup);
+    }
+
     public void dismissPopup() {
         // In review mode, we do not want to bring up the camera UI
         if (mController.isInReviewMode()) return;
@@ -566,15 +572,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     private void popupDismissed() {
         mPopup = null;
-    }
-
-    public void showPopup(AbstractSettingPopup popup) {
-        hideUI();
-
-        if (mPopup != null) {
-            mPopup.dismiss();
-        }
-        mPopup = new SettingsPopup(popup);
     }
 
     public void onShowSwitcherPopup() {
@@ -674,6 +671,8 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     private void setShowMenu(boolean show) {
+        if (mController.isVideoCaptureIntent())
+            return;
         if (mOnScreenIndicators != null) {
             mOnScreenIndicators.setVisibility(show ? View.VISIBLE : View.GONE);
         }

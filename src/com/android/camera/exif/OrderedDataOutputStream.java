@@ -24,6 +24,7 @@ import java.nio.ByteOrder;
 
 class OrderedDataOutputStream extends FilterOutputStream {
     private final ByteBuffer mByteBuffer = ByteBuffer.allocate(4);
+    private int mSize = 0;
 
     public OrderedDataOutputStream(OutputStream out) {
         super(out);
@@ -38,6 +39,7 @@ class OrderedDataOutputStream extends FilterOutputStream {
         mByteBuffer.rewind();
         mByteBuffer.putShort(value);
         out.write(mByteBuffer.array(), 0, 2);
+        mSize += 2;
         return this;
     }
 
@@ -45,6 +47,7 @@ class OrderedDataOutputStream extends FilterOutputStream {
         mByteBuffer.rewind();
         mByteBuffer.putInt(value);
         out.write(mByteBuffer.array());
+        mSize += 4;
         return this;
     }
 
@@ -52,5 +55,9 @@ class OrderedDataOutputStream extends FilterOutputStream {
         writeInt((int) rational.getNumerator());
         writeInt((int) rational.getDenominator());
         return this;
+    }
+
+    public int size() {
+        return mSize;
     }
 }

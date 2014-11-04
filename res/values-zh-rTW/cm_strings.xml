@@ -24,19 +24,14 @@
   <string name="pref_camera_picturesize_entry_10_4mp">1040 萬像素</string>
   <string name="pref_camera_picturesize_entry_10mp">1000 萬像素</string>
   <string name="pref_camera_picturesize_entry_9mp">900 萬像素</string>
-  <string name="pref_camera_picturesize_entry_8_2mp">820 萬像素</string>
   <string name="pref_camera_picturesize_entry_7_7mp">770 萬像素</string>
   <string name="pref_camera_picturesize_entry_6_4mp">640 萬像素</string>
-  <string name="pref_camera_picturesize_entry_6mp">600 萬像素</string>
   <string name="pref_camera_picturesize_entry_4_5mp">450 萬像素</string>
-  <string name="pref_camera_picturesize_entry_3_7mp">370 萬像素</string>
   <string name="pref_camera_picturesize_entry_2_5mp">250 萬像素</string>
-  <string name="pref_camera_picturesize_entry_2_1mp">210 萬像素</string>
   <string name="pref_camera_picturesize_entry_1_9mp">190 萬像素</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
-  <string name="pref_camera_picturesize_entry_nhd">nHD</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_ar">增強實景</string>
@@ -68,6 +63,7 @@
   <string name="pref_camera_focusmode_entry_facedetect">臉部偵測</string>
   <string name="pref_camera_focusmode_entry_facepriority">臉部優先</string>
   <string name="pref_camera_focusmode_entry_hyperfocal">超焦距</string>
+  <string name="pref_camera_burst_title">連拍模式</string>
   <string name="pref_camera_burst_entry_off">關閉</string>
   <string name="pref_camera_burst_entry_5">5 連拍</string>
   <string name="pref_camera_burst_entry_10">10 連拍</string>
@@ -90,6 +86,9 @@
   <string name="pref_camera_slow_shutter_entry_2s">2 秒</string>
   <string name="pref_camera_slow_shutter_entry_4s">4 秒</string>
   <string name="pref_camera_slow_shutter_entry_8s">8 秒</string>
+  <string name="pref_camera_slow_shutter_entry_16s">16 秒</string>
+  <string name="pref_camera_slow_shutter_entry_32s">32 秒</string>
+  <string name="pref_camera_slow_shutter_entry_64s">64 秒</string>
   <string name="pref_camera_storage_title">儲存空間</string>
   <string name="pref_camera_power_shutter_title">電源快門</string>
   <string name="pref_superzoom_title">放大</string>

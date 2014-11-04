@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2014 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +34,7 @@ import java.util.Map;
 
 public class PieController {
 
-    private static String TAG = "CAM_piecontrol";
+    private static String TAG = "CAM_PieController";
 
     protected static final int MODE_PHOTO = 0;
     protected static final int MODE_VIDEO = 1;
@@ -46,8 +47,11 @@ public class PieController {
     protected OnPreferenceChangedListener mListener;
     protected PieRenderer mRenderer;
     private List<IconListPreference> mPreferences;
+    private List<ListPreference> mListPreferences;
     private Map<IconListPreference, PieItem> mPreferenceMap;
+    private Map<ListPreference, PieItem> mListPreferenceMap;
     private Map<IconListPreference, String> mOverrides;
+    private Map<ListPreference, String> mListOverrides;
 
     public void setListener(OnPreferenceChangedListener listener) {
         mListener = listener;
@@ -57,14 +61,20 @@ public class PieController {
         mActivity = activity;
         mRenderer = pie;
         mPreferences = new ArrayList<IconListPreference>();
+        mListPreferences = new ArrayList<ListPreference>();
         mPreferenceMap = new HashMap<IconListPreference, PieItem>();
+        mListPreferenceMap = new HashMap<ListPreference, PieItem>();
         mOverrides = new HashMap<IconListPreference, String>();
+        mListOverrides = new HashMap<ListPreference, String>();
     }
 
     public void initialize(PreferenceGroup group) {
         mRenderer.clearItems();
         mPreferenceMap.clear();
+        mListPreferenceMap.clear();
         setPreferenceGroup(group);
+        mPreferences.clear();
+        mOverrides.clear();
     }
 
     public void onSettingChanged(ListPreference pref) {
@@ -132,6 +142,18 @@ public class PieController {
         return item;
     }
 
+    public PieItem makeListItem(final String prefKey) {
+        final ListPreference pref =
+                (ListPreference) mPreferenceGroup.findPreference(prefKey);
+        if (pref == null) return null;
+        // The preference only has a single icon to represent it.
+        PieItem item = makeItem(pref.getIcon());
+        item.setLabel(pref.getTitle().toUpperCase());
+        mListPreferences.add(pref);
+        mListPreferenceMap.put(pref, item);
+        return item;
+    }
+
     public PieItem makeSwitchItem(final String prefKey, boolean addListener) {
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
@@ -175,7 +197,6 @@ public class PieController {
         }
         return item;
     }
-
 
     public PieItem makeDialItem(ListPreference pref, int iconId, float center, float sweep) {
         PieItem item = makeItem(iconId);
@@ -243,6 +264,9 @@ public class PieController {
         for (IconListPreference pref : mPreferenceMap.keySet()) {
             override(pref, keyvalues);
         }
+        for (ListPreference pref : mListPreferenceMap.keySet()) {
+            overrideList(pref, keyvalues);
+        }
     }
 
     private void override(IconListPreference pref, final String ... keyvalues) {
@@ -258,5 +282,19 @@ public class PieController {
             }
         }
         reloadPreference(pref);
+    }
+
+    private void overrideList(ListPreference pref, final String ... keyvalues) {
+        mListOverrides.remove(pref);
+        for (int i = 0; i < keyvalues.length; i += 2) {
+            String key = keyvalues[i];
+            String value = keyvalues[i + 1];
+            if (key.equals(pref.getKey())) {
+                mListOverrides.put(pref, value);
+                PieItem item = mListPreferenceMap.get(pref);
+                item.setEnabled(value == null);
+                break;
+            }
+        }
     }
 }

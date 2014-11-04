@@ -39,26 +39,18 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Calculare punct</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Centrat</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Media cadrului</string>
-  <string name="pref_camera_video_hdr_entry_off">Dezactivat</string>
-  <string name="pref_camera_video_hdr_entry_on">Activat</string>
   <string name="pref_camera_video_hdr_title">Video HDR</string>
   <string name="pref_camera_facedetection_title">Detectare față</string>
-  <string name="pref_camera_facedetection_entry_off">Dezactivat</string>
-  <string name="pref_camera_facedetection_entry_on">Activat</string>
   <string name="pref_camera_redeyereduction_title">Reducere ochi roșii</string>
   <string name="error_app_unsupported_hfr">HFR nu este acceptată pentru rezoluția selectată</string>
   <string name="error_app_unsupported_hfr_codec">Numai codarea video H.264 este acceptată atunci când HFR este pornit</string>
   <string name="error_app_unsupported">Rezoluția video nu este acceptată de acest tip de codec</string>
   <string name="pref_camera_ae_bracket_hdr_title">Rafală cu expunere automată</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_on">Activat</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_off">Dezactivat</string>
   <string name="pref_camera_hfr_title">Miscare lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Dezactivat</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
-  <string name="pref_camera_denoise_entry_off">Dezactivat</string>
-  <string name="pref_camera_denoise_entry_on">Activat</string>
   <string name="pref_camera_iso_title">ISO</string>
   <string name="pref_camera_iso_entry_auto">Auto</string>
   <string name="pref_camera_iso_entry_isodeblur">Auto (HJR)</string>
@@ -89,13 +81,8 @@
   <string name="pref_camera_coloreffect_entry_bluetint">Tentă albastră</string>
   <string name="pref_camera_coloreffect_entry_greentint">Tentă verde</string>
   <string name="pref_camera_touchafaec_title">Atingeți AF/AEC</string>
-  <string name="pref_camera_touchafaec_entry_off">Dezactivat</string>
-  <string name="pref_camera_touchafaec_entry_on">Activat</string>
-  <string name="pref_camera_dis_entry_off">Dezactivat</string>
-  <string name="pref_camera_dis_entry_on">Activat</string>
   <string name="pref_camera_facerc_title">Recunoașterea feței</string>
-  <string name="pref_camera_facerc_entry_off">Dezactivat</string>
-  <string name="pref_camera_facerc_entry_on">Activat</string>
+  <string name="pref_camera_sharpness_title">Claritate</string>
   <string name="pref_camera_sharpness_entry_level0">Nivel 0</string>
   <string name="pref_camera_sharpness_entry_level1">Nivel 1</string>
   <string name="pref_camera_sharpness_entry_level2">Nivel 2 (implicit)</string>
@@ -103,6 +90,7 @@
   <string name="pref_camera_sharpness_entry_level4">Nivel 4</string>
   <string name="pref_camera_sharpness_entry_level5">Nivel 5</string>
   <string name="pref_camera_sharpness_entry_level6">Nivel 6</string>
+  <string name="pref_camera_contrast_title">Contrast</string>
   <string name="pref_camera_contrast_entry_level0">Nivel 0</string>
   <string name="pref_camera_contrast_entry_level1">Nivel 1</string>
   <string name="pref_camera_contrast_entry_level2">Nivel 2</string>
@@ -114,6 +102,7 @@
   <string name="pref_camera_contrast_entry_level8">Nivel 8</string>
   <string name="pref_camera_contrast_entry_level9">Nivel 9</string>
   <string name="pref_camera_contrast_entry_level10">Nivel 10</string>
+  <string name="pref_camera_saturation_title">Saturație</string>
   <string name="pref_camera_saturation_entry_level0">Nivel 0</string>
   <string name="pref_camera_saturation_entry_level1">Nivel 1</string>
   <string name="pref_camera_saturation_entry_level2">Nivel 2</string>
@@ -125,9 +114,6 @@
   <string name="pref_camera_saturation_entry_level8">Nivel 8</string>
   <string name="pref_camera_saturation_entry_level9">Nivel 9</string>
   <string name="pref_camera_saturation_entry_level10">Nivel 10</string>
-  <string name="pref_camera_sharpness_title">Claritate</string>
-  <string name="pref_camera_contrast_title">Contrast</string>
-  <string name="pref_camera_saturation_title">Saturație</string>
   <string name="pref_camera_picture_format_title">Formatul pozei</string>
   <string name="pref_camera_jpegquality_title">Calitatea imaginii</string>
   <string name="pref_camera_jpegquality_entry_0">55%</string>
@@ -138,6 +124,4 @@
   <string name="pref_camera_jpegquality_entry_5">100%</string>
   <string name="pref_camera_histogram_title">Histogramă</string>
   <string name="pref_camera_scenedetect_title">Detectare automată a scenei</string>
-  <string name="pref_camera_scenedetect_entry_on">Activat</string>
-  <string name="pref_camera_scenedetect_entry_off">Dezactivat</string>
 </resources>

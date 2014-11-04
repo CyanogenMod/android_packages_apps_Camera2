@@ -26,17 +26,10 @@
   <string name="pref_camera_video_duration_entry_30">30 分鐘</string>
   <string name="pref_camera_selectablezoneaf_title">自動對焦區域</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">自動</string>
-  <string name="pref_camera_video_hdr_entry_off">關閉</string>
-  <string name="pref_camera_video_hdr_entry_on">開啟</string>
-  <string name="pref_camera_facedetection_entry_off">關閉</string>
-  <string name="pref_camera_facedetection_entry_on">開啟</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_on">開啟</string>
-  <string name="pref_camera_ae_bracket_hdr_entry_off">關閉</string>
   <string name="pref_camera_hfr_entry_off">關閉</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
-  <string name="pref_camera_denoise_entry_off">關閉</string>
   <string name="pref_camera_iso_title">ISO</string>
   <string name="pref_camera_iso_entry_auto">自動</string>
   <string name="pref_camera_iso_entry_isodeblur">自動 (HJR)</string>
@@ -51,10 +44,6 @@
   <string name="pref_camera_coloreffect_title">色彩效果</string>
   <string name="pref_camera_coloreffect_entry_none">無</string>
   <string name="pref_camera_coloreffect_entry_sepia">棕褐色</string>
-  <string name="pref_camera_dis_entry_off">關閉</string>
-  <string name="pref_camera_dis_entry_on">開啟</string>
-  <string name="pref_camera_facerc_entry_off">關閉</string>
-  <string name="pref_camera_facerc_entry_on">開啟</string>
   <string name="pref_camera_picture_format_title">圖片格式</string>
   <string name="pref_camera_jpegquality_entry_0">55%</string>
   <string name="pref_camera_jpegquality_entry_1">65% (一般)</string>
@@ -62,6 +51,4 @@
   <string name="pref_camera_jpegquality_entry_3">85% (超級精細)</string>
   <string name="pref_camera_jpegquality_entry_4">95%</string>
   <string name="pref_camera_jpegquality_entry_5">100%</string>
-  <string name="pref_camera_scenedetect_entry_on">開啟</string>
-  <string name="pref_camera_scenedetect_entry_off">關閉</string>
 </resources>
