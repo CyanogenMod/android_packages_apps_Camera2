@@ -1953,9 +1953,14 @@ public class PhotoModule
             }
             mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
         }
-        setCameraParameters(UPDATE_PARAM_ALL);
 
+        // Nexus 4 must have picture size set to > 640x480 before other
+        // parameters are set in setCameraParameters, b/18227551. This call to
+        // updateParametersPictureSize should occur before setCameraParameters
+        // to address the issue.
         updateParametersPictureSize();
+
+        setCameraParameters(UPDATE_PARAM_ALL);
 
         mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
