@@ -54,6 +54,17 @@ public class CaptureModuleUtil {
      */
     public static Size getOptimalPreviewSize(Context context, Size[] sizes,
             double targetRatio) {
+        return getOptimalPreviewSize(context, sizes, targetRatio, null );
+    }
+
+    /**
+     * Returns the best preview size based on the current display resolution,
+     * the available preview sizes, the target aspect ratio (typically the
+     * aspect ratio of the picture to be taken) as well as a maximum allowed
+     * tolerance. If tolerance is 'null', a default tolerance will be used.
+     */
+    public static Size getOptimalPreviewSize(Context context, Size[] sizes,
+            double targetRatio, Double aspectRatioTolerance) {
         // TODO(andyhuibers): Don't hardcode this but use device's measurements.
         final int MAX_ASPECT_HEIGHT = 1080;
 
@@ -74,7 +85,8 @@ public class CaptureModuleUtil {
         }
 
         int optimalIndex = CameraUtil
-                .getOptimalPreviewSizeIndex(context, camera1Sizes, targetRatio);
+                .getOptimalPreviewSizeIndex(context, camera1Sizes, targetRatio,
+                        aspectRatioTolerance);
 
         if (optimalIndex == -1) {
             return null;
@@ -110,7 +122,7 @@ public class CaptureModuleUtil {
         }
 
         Size pick = CaptureModuleUtil.getOptimalPreviewSize(context, supportedPreviewSizes,
-                bestPreviewAspectRatio);
+                bestPreviewAspectRatio, null);
         Log.d(TAG, "Picked buffer size: " + pick.toString());
         return pick;
     }

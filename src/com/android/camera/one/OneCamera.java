@@ -342,9 +342,9 @@ public interface OneCamera {
     public void close(CloseCallback closeCallback);
 
     /**
-     * @return A list of all supported resolutions.
+     * @return A list of all supported preview resolutions.
      */
-    public Size[] getSupportedSizes();
+    public Size[] getSupportedPreviewSizes();
 
     /**
      * @return The aspect ratio of the full size capture (usually the native

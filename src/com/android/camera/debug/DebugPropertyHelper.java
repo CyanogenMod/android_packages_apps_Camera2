@@ -38,6 +38,8 @@ public class DebugPropertyHelper {
     private static final String PROP_FORCE_LEGACY_ONE_CAMERA = PREFIX + ".legacy";
     /** Write data about each capture request to disk. */
     private static final String PROP_WRITE_CAPTURE_DATA = PREFIX + ".capture_write";
+    /** Is RAW support enabled. */
+    private static final String PROP_CAPTURE_DNG = PREFIX + ".capture_dng";
 
     private static boolean isPropertyOn(String property) {
         return ON_VALUE.equals(SystemProperties.get(property, OFF_VALUE));
@@ -61,5 +63,9 @@ public class DebugPropertyHelper {
 
     public static boolean writeCaptureData() {
         return isPropertyOn(PROP_WRITE_CAPTURE_DATA);
+    }
+
+    public static boolean isCaptureDngEnabled() {
+        return isPropertyOn(PROP_CAPTURE_DNG);
     }
 }

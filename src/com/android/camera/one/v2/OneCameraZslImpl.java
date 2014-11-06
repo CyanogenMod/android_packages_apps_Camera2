@@ -584,7 +584,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     }
 
     @Override
-    public Size[] getSupportedSizes() {
+    public Size[] getSupportedPreviewSizes() {
         StreamConfigurationMap config =
                 mCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         return Size.convert(config.getOutputSizes(sCaptureImageFormat));
@@ -1061,7 +1061,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             pictureSize = getDefaultPictureSize();
         }
         float pictureAspectRatio = pictureSize.getWidth() / (float) pictureSize.getHeight();
-        return CaptureModuleUtil.getOptimalPreviewSize(context, getSupportedSizes(),
+        return CaptureModuleUtil.getOptimalPreviewSize(context, getSupportedPreviewSizes(),
                 pictureAspectRatio);
     }
 

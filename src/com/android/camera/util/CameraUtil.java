@@ -203,9 +203,9 @@ public class CameraUtil {
      * we round up the sample size to avoid OOM.
      */
     public static int computeSampleSize(BitmapFactory.Options options,
-    int minSideLength, int maxNumOfPixels) {
+            int minSideLength, int maxNumOfPixels) {
         int initialSize = computeInitialSampleSize(options, minSideLength,
-      maxNumOfPixels);
+                maxNumOfPixels);
 
         int roundedSize;
         if (initialSize <= 8) {
@@ -377,26 +377,25 @@ public class CameraUtil {
 
     /**
      * Given (nx, ny) \in [0, 1]^2, in the display's portrait coordinate system,
-     * returns normalized sensor coordinates \in [0, 1]^2 depending on how
-     * the sensor's orientation \in {0, 90, 180, 270}.
-     *
+     * returns normalized sensor coordinates \in [0, 1]^2 depending on how the
+     * sensor's orientation \in {0, 90, 180, 270}.
      * <p>
      * Returns null if sensorOrientation is not one of the above.
      * </p>
      */
     public static PointF normalizedSensorCoordsForNormalizedDisplayCoords(
-        float nx, float ny, int sensorOrientation) {
+            float nx, float ny, int sensorOrientation) {
         switch (sensorOrientation) {
-        case 0:
-            return new PointF(nx, ny);
-        case 90:
-            return new PointF(ny, 1.0f - nx);
-        case 180:
-            return new PointF(1.0f - nx, 1.0f - ny);
-        case 270:
-            return new PointF(1.0f - ny, nx);
-        default:
-            return null;
+            case 0:
+                return new PointF(nx, ny);
+            case 90:
+                return new PointF(ny, 1.0f - nx);
+            case 180:
+                return new PointF(1.0f - nx, 1.0f - ny);
+            case 270:
+                return new PointF(1.0f - ny, nx);
+            default:
+                return null;
         }
     }
 
@@ -510,20 +509,62 @@ public class CameraUtil {
         }
     }
 
+    /**
+     * Returns the index into 'sizes' that is most optimal given the current
+     * screen and target aspect ratio..
+     * <p>
+     * This is using a default aspect ratio tolerance. If the tolerance is to be
+     * given you should call
+     * {@link #getOptimalPreviewSizeIndex(Context, List, double, Double)}
+     *
+     * @param context used to get the screen dimensions. TODO: Refactor to take
+     *            in screen dimensions directly
+     * @param previewSizes the available preview sizes
+     * @param targetRatio the target aspect ratio, typically the aspect ratio of
+     *            the picture size
+     * @return The index into 'previewSizes' for the optimal size, or -1, if no
+     *         matching size was found.
+     */
     public static int getOptimalPreviewSizeIndex(Context context,
             List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
-        final double ASPECT_TOLERANCE;
+        final double aspectRatioTolerance;
         // HTC 4:3 ratios is over .01 from true 4:3, targeted fix for those
         // devices here, see b/18241645
         if (ApiHelper.IS_HTC && targetRatio > 1.3433 && targetRatio < 1.35) {
             Log.w(TAG, "4:3 ratio out of normal tolerance, increasing tolerance to 0.02");
-            ASPECT_TOLERANCE = 0.02;
+            aspectRatioTolerance = 0.02;
         } else {
-            ASPECT_TOLERANCE = 0.01;
+            aspectRatioTolerance = 0.01;
         }
-        if (sizes == null) {
+        return getOptimalPreviewSizeIndex(context, sizes, targetRatio, aspectRatioTolerance);
+    }
+
+    /**
+     * Returns the index into 'sizes' that is most optimal given the current
+     * screen, target aspect ratio and tolerance.
+     *
+     * @param context used to get the screen dimensions. TODO: Refactor to take
+     *            in screen dimensions directly
+     * @param previewSizes the available preview sizes
+     * @param targetRatio the target aspect ratio, typically the aspect ratio of
+     *            the picture size
+     * @param aspectRatioTolerance the tolerance we allow between the selected
+     *            preview size's aspect ratio and the target ratio. If this is
+     *            set to 'null', the default value is used.
+     * @return The index into 'previewSizes' for the optimal size, or -1, if no
+     *         matching size was found.
+     */
+    public static int getOptimalPreviewSizeIndex(Context context,
+            List<Size> previewSizes, double targetRatio, Double aspectRatioTolerance) {
+        if (previewSizes == null) {
             return -1;
+        }
+
+        // If no particular aspect ratio tolerance is set, use the default
+        // value.
+        if (aspectRatioTolerance == null) {
+            return getOptimalPreviewSizeIndex(context, previewSizes, targetRatio);
         }
 
         int optimalSizeIndex = -1;
@@ -537,10 +578,10 @@ public class CameraUtil {
         Size defaultDisplaySize = getDefaultDisplaySize(context);
         int targetHeight = Math.min(defaultDisplaySize.getWidth(), defaultDisplaySize.getHeight());
         // Try to find an size match aspect ratio and size
-        for (int i = 0; i < sizes.size(); i++) {
-            Size size = sizes.get(i);
+        for (int i = 0; i < previewSizes.size(); i++) {
+            Size size = previewSizes.get(i);
             double ratio = (double) size.getWidth() / size.getHeight();
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
+            if (Math.abs(ratio - targetRatio) > aspectRatioTolerance) {
                 continue;
             }
 
@@ -560,10 +601,10 @@ public class CameraUtil {
         // Cannot find the one match the aspect ratio. This should not happen.
         // Ignore the requirement.
         if (optimalSizeIndex == -1) {
-            Log.w(TAG, "No preview size match the aspect ratio. available sizes: " + sizes);
+            Log.w(TAG, "No preview size match the aspect ratio. available sizes: " + previewSizes);
             minDiff = Double.MAX_VALUE;
-            for (int i = 0; i < sizes.size(); i++) {
-                Size size = sizes.get(i);
+            for (int i = 0; i < previewSizes.size(); i++) {
+                Size size = previewSizes.get(i);
                 if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
                     optimalSizeIndex = i;
                     minDiff = Math.abs(size.getHeight() - targetHeight);
@@ -576,11 +617,11 @@ public class CameraUtil {
 
     /**
      * Returns the largest picture size which matches the given aspect ratio,
-     * except for the special WYSIWYG case where the picture size exactly matches
-     * the target size.
+     * except for the special WYSIWYG case where the picture size exactly
+     * matches the target size.
      *
-     * @param sizes        a list of candidate sizes, available for use
-     * @param targetWidth  the ideal width of the video snapshot
+     * @param sizes a list of candidate sizes, available for use
+     * @param targetWidth the ideal width of the video snapshot
      * @param targetHeight the ideal height of the video snapshot
      * @return the Optimal Video Snapshot Picture Size
      */
@@ -596,9 +637,9 @@ public class CameraUtil {
 
         com.android.ex.camera2.portability.Size optimalSize = null;
 
-        //  WYSIWYG Override
-        //  We assume that physical display constraints have already been
-        //  imposed on the variables sizes
+        // WYSIWYG Override
+        // We assume that physical display constraints have already been
+        // imposed on the variables sizes
         for (com.android.ex.camera2.portability.Size size : sizes) {
             if (size.height() == targetHeight && size.width() == targetWidth) {
                 return size;
@@ -1094,7 +1135,7 @@ public class CameraUtil {
 
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
-            CameraActivity cameraActivity = (CameraActivity)activity;
+            CameraActivity cameraActivity = (CameraActivity) activity;
             boolean isSecureCamera = cameraActivity.isSecureCamera();
             if (!isSecureCamera) {
                 Intent intent = IntentHelper.getVideoPlayerIntent(uri)
