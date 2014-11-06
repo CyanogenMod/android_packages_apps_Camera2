@@ -19,7 +19,9 @@ package com.android.camera.stress;
 import com.android.camera.CameraActivity;
 
 import android.app.Instrumentation;
+import android.content.Intent;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
@@ -60,6 +62,12 @@ public class CameraLatency extends ActivityInstrumentationTestCase2 <CameraActiv
 
     @Override
     protected void setUp() throws Exception {
+        // Make sure camera starts with still picture capturing mode
+        Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClass(getInstrumentation().getTargetContext(),
+                CameraActivity.class);
+        setActivityIntent(intent);
         getActivity();
         super.setUp();
     }
