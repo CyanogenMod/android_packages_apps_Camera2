@@ -42,11 +42,14 @@ import android.view.View.OnLayoutChangeListener;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
+import com.android.camera.gl.FrameDistributor.FrameConsumer;
+import com.android.camera.gl.FrameDistributorImpl;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
+import com.android.camera.gl.SurfaceTextureConsumer;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
@@ -75,6 +78,8 @@ import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
 import java.io.File;
 import java.util.concurrent.Semaphore;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -116,6 +121,7 @@ public class CaptureModule extends CameraModule
                 int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
+            mPreviewConsumer.setSize(width, height);
             updatePreviewTransform(width, height, false);
         }
     };
@@ -155,10 +161,6 @@ public class CaptureModule extends CameraModule
      */
     private final boolean mStickyGcamCamera;
 
-    /**
-     * Lock for race conditions in the SurfaceTextureListener callbacks.
-     */
-    private final Object mSurfaceLock = new Object();
     /** Controller giving us access to other services. */
     private final AppController mAppController;
     /** The applications settings manager. */
@@ -176,9 +178,6 @@ public class CaptureModule extends CameraModule
     private Facing mCameraFacing = Facing.BACK;
     /** Whether HDR is currently enabled. */
     private boolean mHdrEnabled = false;
-
-    /** The texture used to render the preview in. */
-    private SurfaceTexture mPreviewTexture;
 
     /** State by the module state machine. */
     private static enum ModuleState {
@@ -261,6 +260,12 @@ public class CaptureModule extends CameraModule
     /** A directory to store debug information in during development. */
     private final File mDebugDataDir;
 
+    /** Used to distribute camera frames to consumers. */
+    private FrameDistributorImpl mFrameDistributor;
+
+    /** The frame consumer that renders frames to the preview. */
+    private final SurfaceTextureConsumer mPreviewConsumer;
+
     /** CLEAN UP START */
     // private boolean mFirstLayout;
     // private int[] mTargetFPSRanges;
@@ -283,6 +288,8 @@ public class CaptureModule extends CameraModule
         mSettingsManager.addListener(this);
         mDebugDataDir = mContext.getExternalCacheDir();
         mStickyGcamCamera = stickyHdr;
+
+        mPreviewConsumer = new SurfaceTextureConsumer();
     }
 
     @Override
@@ -301,7 +308,13 @@ public class CaptureModule extends CameraModule
         mUI = new CaptureModuleUI(activity, this, mAppController.getModuleLayoutRoot(),
                 mLayoutListener);
         mAppController.setPreviewStatusListener(mUI);
-        mPreviewTexture = mAppController.getCameraAppUI().getSurfaceTexture();
+
+        // Set the preview texture from UI for the SurfaceTextureConsumer.
+        mPreviewConsumer.setSurfaceTexture(
+                mAppController.getCameraAppUI().getSurfaceTexture(),
+                mAppController.getCameraAppUI().getSurfaceWidth(),
+                mAppController.getCameraAppUI().getSurfaceHeight());
+
         mSensorManager = (SensorManager) (mContext.getSystemService(Context.SENSOR_SERVICE));
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -470,11 +483,16 @@ public class CaptureModule extends CameraModule
         // Force to re-apply transform matrix here as a workaround for
         // b/11168275
         updatePreviewTransform(width, height, true);
-        initSurface(surface);
+        initSurfaceTextureConsumer(surface, width, height);
     }
 
-    public void initSurface(final SurfaceTexture surface) {
-        mPreviewTexture = surface;
+    private void initSurfaceTextureConsumer(SurfaceTexture surface, int width, int height) {
+        if (mPreviewConsumer.getSurfaceTexture() != surface) {
+            mPreviewConsumer.setSurfaceTexture(surface, width, height);
+        } else if (mPreviewConsumer.getWidth() != width
+                || mPreviewConsumer.getHeight() != height) {
+            mPreviewConsumer.setSize(width, height);
+        }
         closeCamera();
         openCameraAndStartPreview();
     }
@@ -482,14 +500,14 @@ public class CaptureModule extends CameraModule
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         Log.d(TAG, "onSurfaceTextureSizeChanged");
-        resetDefaultBufferSize();
+        updateFrameDistributorBufferSize();
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         Log.d(TAG, "onSurfaceTextureDestroyed");
-        mPreviewTexture = null;
         closeCamera();
+
         return true;
     }
 
@@ -503,6 +521,22 @@ public class CaptureModule extends CameraModule
         }
     }
 
+    private void initializeFrameDistributor() {
+        // Currently, there is only one consumer to FrameDistributor for
+        // rendering the frames to the preview texture.
+        // TODO: Add burst as a consumer as well.
+        List<FrameConsumer> frameConsumers = new ArrayList<FrameConsumer>();
+        frameConsumers.add(mPreviewConsumer);
+        mFrameDistributor = new FrameDistributorImpl(frameConsumers);
+    }
+
+    private void updateFrameDistributorBufferSize() {
+        if (mFrameDistributor.getInputSurfaceTexture() != null) {
+            mFrameDistributor.getInputSurfaceTexture().setDefaultBufferSize(mPreviewBufferWidth,
+                    mPreviewBufferHeight);
+        }
+    }
+
     @Override
     public String getModuleStringIdentifier() {
         return PHOTO_MODULE_STRING_ID;
@@ -513,7 +547,8 @@ public class CaptureModule extends CameraModule
         mPaused = false;
         mAppController.getCameraAppUI().onChangeCamera();
         mAppController.addPreviewAreaSizeChangedListener(this);
-        resetDefaultBufferSize();
+        initializeFrameDistributor();
+        updateFrameDistributorBufferSize();
         getServices().getRemoteShutterListener().onModuleReady(this);
         // TODO: Check if we can really take a photo right now (memory, camera
         // state, ... ).
@@ -535,8 +570,10 @@ public class CaptureModule extends CameraModule
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
         // have to open the camera and start the preview here.
-        if (mPreviewTexture != null) {
-            initSurface(mPreviewTexture);
+        if (mPreviewConsumer.getSurfaceTexture() != null) {
+            initSurfaceTextureConsumer(mPreviewConsumer.getSurfaceTexture(),
+                    mAppController.getCameraAppUI().getSurfaceWidth(),
+                    mAppController.getCameraAppUI().getSurfaceHeight());
         }
 
         mCountdownSoundPlayer.loadSound(R.raw.timer_final_second);
@@ -550,6 +587,8 @@ public class CaptureModule extends CameraModule
         cancelCountDown();
         closeCamera();
         resetTextureBufferSize();
+        mFrameDistributor.close();
+        mFrameDistributor = null;
         mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
         mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
@@ -1171,17 +1210,7 @@ public class CaptureModule extends CameraModule
         Size previewBufferSize = mCamera.pickPreviewSize(pictureSize, mContext);
         mPreviewBufferWidth = previewBufferSize.getWidth();
         mPreviewBufferHeight = previewBufferSize.getHeight();
-    }
-
-    /**
-     * Resets the default buffer size to the initially calculated size.
-     */
-    private void resetDefaultBufferSize() {
-        synchronized (mSurfaceLock) {
-            if (mPreviewTexture != null) {
-                mPreviewTexture.setDefaultBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
-            }
-        }
+        updateFrameDistributorBufferSize();
     }
 
     /**
@@ -1230,17 +1259,21 @@ public class CaptureModule extends CameraModule
                     public void onCameraOpened(final OneCamera camera) {
                         Log.d(TAG, "onCameraOpened: " + camera);
                         mCamera = camera;
+
+                        mFrameDistributor.start();
+                        mFrameDistributor.waitForCommand();
+
                         updatePreviewBufferDimension();
 
                         // If the surface texture is not destroyed, it may have
                         // the last frame lingering. We need to hold off setting
                         // transform until preview is started.
-                        resetDefaultBufferSize();
+                        updateFrameDistributorBufferSize();
                         mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
                         Log.d(TAG, "starting preview ...");
 
                         // TODO: Consider rolling these two calls into one.
-                        camera.startPreview(new Surface(mPreviewTexture),
+                        camera.startPreview(new Surface(mFrameDistributor.getInputSurfaceTexture()),
                                 new CaptureReadyCallback() {
                                     @Override
                                     public void onSetupFailed() {
@@ -1294,7 +1327,7 @@ public class CaptureModule extends CameraModule
     private void closeCamera() {
         try {
             mCameraOpenCloseLock.acquire();
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
         }
         try {
@@ -1322,7 +1355,7 @@ public class CaptureModule extends CameraModule
     private static boolean isResumeFromLockscreen(Activity activity) {
         String action = activity.getIntent().getAction();
         return (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
-        || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action));
+                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action));
     }
 
     /**
@@ -1334,7 +1367,9 @@ public class CaptureModule extends CameraModule
         }
         cancelCountDown();
         mAppController.freezeScreenUntilPreviewReady();
-        initSurface(mPreviewTexture);
+        initSurfaceTextureConsumer(mPreviewConsumer.getSurfaceTexture(),
+                mAppController.getCameraAppUI().getSurfaceWidth(),
+                mAppController.getCameraAppUI().getSurfaceHeight());
 
         // TODO: Un-comment once we have focus back.
         // if (mFocusManager != null) {
@@ -1367,9 +1402,6 @@ public class CaptureModule extends CameraModule
     }
 
     private void resetTextureBufferSize() {
-        // Reset the default buffer sizes on the shared SurfaceTexture
-        // so they are not scaled for gcam.
-        //
         // According to the documentation for
         // SurfaceTexture.setDefaultBufferSize,
         // photo and video based image producers (presumably only Camera 1 api),
@@ -1377,10 +1409,7 @@ public class CaptureModule extends CameraModule
         // SurfaceTexture must have these buffer sizes reset manually. Otherwise
         // the SurfaceTexture cannot be transformed by matrix set on the
         // TextureView.
-        if (mPreviewTexture != null) {
-            mPreviewTexture.setDefaultBufferSize(mAppController.getCameraAppUI().getSurfaceWidth(),
-                    mAppController.getCameraAppUI().getSurfaceHeight());
-        }
+        updateFrameDistributorBufferSize();
     }
 
     /**

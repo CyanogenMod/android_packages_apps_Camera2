@@ -14,6 +14,8 @@
 
 package com.android.camera.burst;
 
+import com.android.camera.gl.FrameDistributor.FrameConsumer;
+
 /**
  * Controls the interactions with burst.
  * <p/>
@@ -85,7 +87,6 @@ public interface BurstController {
      * analyzing preview frames. Preview frames should have exact timestamps as
      * the high-res images held in the internal image buffer.
      */
-   // TODO: Change the return value to FrameDistributor.FrameConsumer is
-   // checked in.
-   public Object getPreviewFrameConsumer();
+    public FrameConsumer getPreviewFrameConsumer();
+
 }
