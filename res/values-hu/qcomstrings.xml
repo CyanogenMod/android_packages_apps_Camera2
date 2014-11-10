@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Spot mérés</string>
   <string name="pref_camera_videoencoder_title">Videó tömörítő</string>
   <string name="pref_camera_audioencoder_title">Audió tömörítő</string>
-  <string name="pref_camera_video_duration_title">Videó hossza</string>
-  <string name="pref_camera_video_duration_entry_mms">30 másodperc (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 perc</string>
-  <string name="pref_camera_video_duration_entry_30">30 perc</string>
   <string name="pref_camera_skinToneEnhancement_title">Bőrszín fokozás</string>
   <string name="pref_camera_selectablezoneaf_title">Választható fókusz módok</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Automatikus</string>

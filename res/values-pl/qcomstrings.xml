@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Pomiar punktowy</string>
   <string name="pref_camera_videoencoder_title">Kodek wideo</string>
   <string name="pref_camera_audioencoder_title">Kodek audio</string>
-  <string name="pref_camera_video_duration_title">Czas trwania video</string>
-  <string name="pref_camera_video_duration_entry_mms">30 sekund (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 minut</string>
-  <string name="pref_camera_video_duration_entry_30">30 minut</string>
   <string name="pref_camera_skinToneEnhancement_title">Poprawa koloru skóry</string>
   <string name="pref_camera_selectablezoneaf_title">Strefa automatycznego wyostrzenia</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Automatyczne</string>

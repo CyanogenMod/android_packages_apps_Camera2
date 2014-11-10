@@ -30,16 +30,13 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Spot</string>
   <string name="pref_camera_videoencoder_title">Video-Encoder</string>
   <string name="pref_camera_audioencoder_title">Audio-Encoder</string>
-  <string name="pref_camera_video_duration_title">Videodauer</string>
-  <string name="pref_camera_video_duration_entry_mms">30 Sekunden (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 Minuten</string>
-  <string name="pref_camera_video_duration_entry_30">30 Minuten</string>
   <string name="pref_camera_skinToneEnhancement_title">Hauttöne verbessern</string>
   <string name="pref_camera_selectablezoneaf_title">Autofokus</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Automatisch</string>
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Spot</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Mittenbetont</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Integral</string>
+  <string name="hdr_enable_message">HDR ist aktiviert. Nur der automatische Szenenmodus wird unterstützt</string>
   <string name="scene_enable_message">HDR wird nur im automatischen Szenenmodus unterstützt</string>
   <string name="pref_camera_video_hdr_title">Video (HDR)</string>
   <string name="pref_camera_facedetection_title">Gesichtserkennung</string>

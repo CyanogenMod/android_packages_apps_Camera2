@@ -34,11 +34,14 @@
   <string name="pref_camera_picturesize_entry_6mp_wide">6 megapixel (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4,5 megapixel</string>
   <string name="pref_camera_picturesize_entry_4mp">4 megapixel</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">3,7 megapixel (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2,5 megapixel</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">2,1 megapixel (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1,9 megapixel</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">Beweging verscherpen</string>
@@ -130,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">VERFRAAIEN</string>
   <string name="camera_menu_asd_label">AUTO-SCÈNE</string>
   <string name="pref_camera_power_shutter_title">Aan/uit-knop</string>
+  <string name="pref_camera_max_brightness_title">Helder scherm</string>
   <string name="pref_superzoom_title">Superzoom</string>
 </resources>

@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Punto singolo</string>
   <string name="pref_camera_videoencoder_title">Codec video</string>
   <string name="pref_camera_audioencoder_title">Codec audio</string>
-  <string name="pref_camera_video_duration_title">Durata video</string>
-  <string name="pref_camera_video_duration_entry_mms">30 secondi (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 minuti</string>
-  <string name="pref_camera_video_duration_entry_30">30 minuti</string>
   <string name="pref_camera_skinToneEnhancement_title">Esaltazione toni della pelle</string>
   <string name="pref_camera_selectablezoneaf_title">Regione autofocus</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Automatico</string>

@@ -69,7 +69,7 @@
   <string name="pref_camera_scenemode_entry_highsensitivity">高感光度</string>
   <string name="pref_camera_scenemode_entry_indoor">室内</string>
   <string name="pref_camera_scenemode_entry_landscape">風景</string>
-  <string name="pref_camera_scenemode_entry_mix_illuminant">混合光線</string>
+  <string name="pref_camera_scenemode_entry_mix_illuminant">混合光綫</string>
   <string name="pref_camera_scenemode_entry_mood">意境</string>
   <string name="pref_camera_scenemode_entry_nightportrait">夜晚肖像</string>
   <string name="pref_camera_scenemode_entry_nightindoor">夜間室內</string>
@@ -82,7 +82,7 @@
   <string name="pref_camera_scenemode_entry_spotlight">射燈</string>
   <string name="pref_camera_scenemode_entry_steadyphoto">平穩相片</string>
   <string name="pref_camera_scenemode_entry_supernight">漆黑深夜</string>
-  <string name="pref_camera_scenemode_entry_sweepstitch">掃描線跡</string>
+  <string name="pref_camera_scenemode_entry_sweepstitch">掃描綫跡</string>
   <string name="pref_camera_scenemode_entry_text">文字</string>
   <string name="pref_camera_scenemode_entry_theatre">劇院</string>
   <string name="pref_camera_scenemode_entry_whiteboard">白板</string>

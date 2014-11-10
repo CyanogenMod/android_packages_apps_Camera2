@@ -44,7 +44,7 @@
     <item quantity="one">%1$d ausgewielt</item>
     <item quantity="other">%1$d ausgewielt</item>
   </plurals>
-  <string name="show_on_map">Op der Kaart weisen</string>
+  <string name="show_on_map">Op der Kaart uweisen</string>
   <string name="rotate_left">Lénks rotéieren</string>
   <string name="rotate_right">Riets rotéieren</string>
   <string name="edit">Änneren</string>
@@ -91,7 +91,7 @@
   <string name="access_sd_fail" product="default">Keen Zougrëff op USB-Späicher méiglech.</string>
   <string name="time_lapse_title">Zäitrafferopnam</string>
   <string name="capturing">Gëtt opgeholl</string>
-  <string name="pref_camera_id_title">Kamera wielen</string>
+  <string name="pref_camera_id_title">Kamera auswielen</string>
   <string name="pref_camera_id_entry_back">Hannen</string>
   <string name="pref_camera_id_entry_front">Vir</string>
   <string name="pref_camera_recordlocation_title">Plaz späicheren</string>

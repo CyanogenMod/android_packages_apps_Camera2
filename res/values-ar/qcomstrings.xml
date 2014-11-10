@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">بقعة القياس</string>
   <string name="pref_camera_videoencoder_title">ترميز الفيديو</string>
   <string name="pref_camera_audioencoder_title">ترميز الصوت</string>
-  <string name="pref_camera_video_duration_title">مدة الفيديو</string>
-  <string name="pref_camera_video_duration_entry_mms">30 ثانية (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 دقائق</string>
-  <string name="pref_camera_video_duration_entry_30">30دقيقه</string>
   <string name="pref_camera_skinToneEnhancement_title">تعزيز لون البشرة</string>
   <string name="pref_camera_selectablezoneaf_title">Autofocus منطقة</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">تلقائي</string>

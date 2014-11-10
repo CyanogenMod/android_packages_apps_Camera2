@@ -21,9 +21,6 @@
     limitations under the License.
 -->
 <resources>
-  <string name="pref_camera_video_duration_entry_mms">30 秒 (多媒體簡訊)</string>
-  <string name="pref_camera_video_duration_entry_10">10 分鐘</string>
-  <string name="pref_camera_video_duration_entry_30">30 分鐘</string>
   <string name="pref_camera_selectablezoneaf_title">自動對焦區域</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">自動</string>
   <string name="pref_camera_hfr_entry_off">關閉</string>

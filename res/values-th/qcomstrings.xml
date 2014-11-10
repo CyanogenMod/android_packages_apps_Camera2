@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">จุดวัดแสง</string>
   <string name="pref_camera_videoencoder_title">ตัวแปลงสัญญาณวิดีโอ</string>
   <string name="pref_camera_audioencoder_title">ตัวแปลงสัญญาณเสียง</string>
-  <string name="pref_camera_video_duration_title">ระยะเวลาวิดีโอ</string>
-  <string name="pref_camera_video_duration_entry_mms">30 วินาที (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 นาที</string>
-  <string name="pref_camera_video_duration_entry_30">30 นาที</string>
   <string name="pref_camera_skinToneEnhancement_title">ปรับโทนสีผิว</string>
   <string name="pref_camera_selectablezoneaf_title">บริเวณโฟกัสอัตโนมัติ</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">อัตโนมัติ</string>

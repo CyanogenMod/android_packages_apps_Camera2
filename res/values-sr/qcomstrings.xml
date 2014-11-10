@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Мерење места</string>
   <string name="pref_camera_videoencoder_title">Видео кодек</string>
   <string name="pref_camera_audioencoder_title">Аудио кодек</string>
-  <string name="pref_camera_video_duration_title">Трајање видеа</string>
-  <string name="pref_camera_video_duration_entry_mms">30 секунди (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 минута</string>
-  <string name="pref_camera_video_duration_entry_30">30 минута</string>
   <string name="pref_camera_skinToneEnhancement_title">Унапређење тона коже</string>
   <string name="pref_camera_selectablezoneaf_title">Зона аутофокуса</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Аутоматски</string>

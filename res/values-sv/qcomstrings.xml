@@ -29,10 +29,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Punktmätning</string>
   <string name="pref_camera_videoencoder_title">Videokodek</string>
   <string name="pref_camera_audioencoder_title">Ljudkodek</string>
-  <string name="pref_camera_video_duration_title">Videolängd</string>
-  <string name="pref_camera_video_duration_entry_mms">30 sekunder (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 minuter</string>
-  <string name="pref_camera_video_duration_entry_30">30 minuter</string>
   <string name="pref_camera_skinToneEnhancement_title">Hudfärgsförstärkning</string>
   <string name="pref_camera_selectablezoneaf_title">Autofokuszon</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>
