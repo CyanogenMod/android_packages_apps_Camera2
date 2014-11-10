@@ -594,6 +594,11 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void enableShutter(boolean enable) {
         if (mShutterButton != null) {
+            if (enable) {
+                Log.v(TAG, "Shutter Button enabled !!");
+            } else {
+                Log.v(TAG, "Shutter Button disabled !!");
+            }
             mShutterButton.setEnabled(enable);
         }
     }
