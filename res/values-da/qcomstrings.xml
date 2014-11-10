@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Spotmåling</string>
   <string name="pref_camera_videoencoder_title">Video-codec</string>
   <string name="pref_camera_audioencoder_title">Lyd-codec</string>
-  <string name="pref_camera_video_duration_title">Varighed for video</string>
-  <string name="pref_camera_video_duration_entry_mms">30 sekunder (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 minutter</string>
-  <string name="pref_camera_video_duration_entry_30">30 minutter</string>
   <string name="pref_camera_skinToneEnhancement_title">Hudfarveforbedring</string>
   <string name="pref_camera_selectablezoneaf_title">Autofokus-zone</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Auto</string>

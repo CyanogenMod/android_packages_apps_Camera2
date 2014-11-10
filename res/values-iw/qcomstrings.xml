@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">אזור מדידה</string>
   <string name="pref_camera_videoencoder_title">קידוד וידאו</string>
   <string name="pref_camera_audioencoder_title">קידוד שמע</string>
-  <string name="pref_camera_video_duration_title">משך וידאו</string>
-  <string name="pref_camera_video_duration_entry_mms">30 שניות (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 דקות</string>
-  <string name="pref_camera_video_duration_entry_30">30 דקות</string>
   <string name="pref_camera_skinToneEnhancement_title">שיפור גוון</string>
   <string name="pref_camera_selectablezoneaf_title">אשור פוקוס אוטומטי</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">אוטומטי</string>

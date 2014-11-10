@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Точковий</string>
   <string name="pref_camera_videoencoder_title">Відео кодек</string>
   <string name="pref_camera_audioencoder_title">Аудіо кодек</string>
-  <string name="pref_camera_video_duration_title">Тривалість відео</string>
-  <string name="pref_camera_video_duration_entry_mms">30 секунд (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 хвилин</string>
-  <string name="pref_camera_video_duration_entry_30">30 хвилин</string>
   <string name="pref_camera_skinToneEnhancement_title">Кращий тон шкіри</string>
   <string name="pref_camera_selectablezoneaf_title">Зона афтофокусу</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Авто</string>

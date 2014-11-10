@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">Pisteeseen kohdistettu</string>
   <string name="pref_camera_videoencoder_title">Videon pakkaus</string>
   <string name="pref_camera_audioencoder_title">Audion pakkaus</string>
-  <string name="pref_camera_video_duration_title">Videon kesto</string>
-  <string name="pref_camera_video_duration_entry_mms">30 sekuntia (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10 minuuttia</string>
-  <string name="pref_camera_video_duration_entry_30">30 minuuttia</string>
   <string name="pref_camera_skinToneEnhancement_title">Ihonvärin muutos</string>
   <string name="pref_camera_selectablezoneaf_title">Automaattitarkennusalue</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">Automaattinen</string>

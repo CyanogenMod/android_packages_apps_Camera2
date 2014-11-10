@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">스팟 측광</string>
   <string name="pref_camera_videoencoder_title">비디오 코덱</string>
   <string name="pref_camera_audioencoder_title">오디오 코덱</string>
-  <string name="pref_camera_video_duration_title">비디오 길이</string>
-  <string name="pref_camera_video_duration_entry_mms">30초 (MMS)</string>
-  <string name="pref_camera_video_duration_entry_10">10분</string>
-  <string name="pref_camera_video_duration_entry_30">30분</string>
   <string name="pref_camera_skinToneEnhancement_title">피부 색 개선</string>
   <string name="pref_camera_selectablezoneaf_title">자동 초점 영역</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">자동</string>

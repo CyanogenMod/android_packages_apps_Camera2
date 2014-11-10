@@ -30,10 +30,6 @@
   <string name="pref_camera_autoexposure_entry_spotmetering">مه‌ترکردنی نیشانه‌</string>
   <string name="pref_camera_videoencoder_title">لێده‌ری ڤیدیۆ</string>
   <string name="pref_camera_audioencoder_title">لێده‌ری ده‌نگ</string>
-  <string name="pref_camera_video_duration_title">ماوه‌ی ڤیدیۆ</string>
-  <string name="pref_camera_video_duration_entry_mms">30 چرکه‌ (ئێم ئێم ئیس)</string>
-  <string name="pref_camera_video_duration_entry_10">10 خوله‌ک</string>
-  <string name="pref_camera_video_duration_entry_30">30 خوله‌ک</string>
   <string name="pref_camera_skinToneEnhancement_title">زیادکردنی جوانکاری ده‌موچاو</string>
   <string name="pref_camera_selectablezoneaf_title">خۆکارانه‌ سه‌رنجدان</string>
   <string name="pref_camera_selectablezoneaf_entry_auto">خۆکارانه‌</string>
