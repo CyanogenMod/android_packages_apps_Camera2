@@ -1779,6 +1779,7 @@ public class VideoModule implements CameraModule,
             //because cameraservice will disable picture related messages. Hence reset the
             //flag here so that we can take liveshots in the next recording session.
             mSnapshotInProgress = false;
+            showVideoSnapshotUI(false);
 
             mOrientationManager.unlockOrientation();
 
