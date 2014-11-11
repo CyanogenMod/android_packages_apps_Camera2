@@ -43,4 +43,5 @@
     <bool name="enableHDRWithZSL">false</bool>
     <!-- Enable histogram support -->
     <bool name="enableHistogram">false</bool>
+    <bool name="enableThreadedCameraStartup">true</bool>
 </resources>
