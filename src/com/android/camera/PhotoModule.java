@@ -237,6 +237,28 @@ public class PhotoModule
     }
 
     private OpenCameraThread mOpenCameraThread = null;
+    private boolean mEnableThreadedCameraStartup = true;
+
+    private void startOpenCameraThread() {
+        mOpenCameraThread = new OpenCameraThread();
+        if (mEnableThreadedCameraStartup) {
+             mOpenCameraThread.run();
+        } else {
+             mOpenCameraThread.start();
+        }
+    }
+
+    private void stopOpenCameraThread() {
+        if (mOpenCameraThread != null && mEnableThreadedCameraStartup) {
+            try {
+                mOpenCameraThread.join();
+            } catch (InterruptedException ex) {
+                // ignore
+            }
+        }
+        mOpenCameraThread = null;
+    }
+
     /**
      * An unpublished intent flag requesting to return as soon as capturing
      * is completed.
@@ -521,8 +543,7 @@ public class PhotoModule
         mActivity.initMaxBrightness(mPreferences);
 
         if (mOpenCameraThread == null && !mActivity.mIsModuleSwitchInProgress) {
-            mOpenCameraThread = new OpenCameraThread();
-            mOpenCameraThread.start();
+            startOpenCameraThread();
         }
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
@@ -537,6 +558,7 @@ public class PhotoModule
         LeftValue = (TextView)mRootView.findViewById(R.id.skintoneleft);
 
         mASDModes = mActivity.getResources().getStringArray(R.array.asdModes);
+        mEnableThreadedCameraStartup = mActivity.getResources().getBoolean(R.bool.enableThreadedCameraStartup);
     }
 
     private void initializeControlByIntent() {
@@ -1886,8 +1908,7 @@ public class PhotoModule
         if (mOpenCameraFail || mCameraDisabled) return;
 
         if (mOpenCameraThread == null) {
-            mOpenCameraThread = new OpenCameraThread();
-            mOpenCameraThread.start();
+            startOpenCameraThread();
         }
 
         mJpegPictureCallbackTime = 0;
@@ -1950,14 +1971,8 @@ public class PhotoModule
         Log.v(TAG, "On pause.");
         mUI.showPreviewCover();
 
-        try {
-            if (mOpenCameraThread != null) {
-                mOpenCameraThread.join();
-            }
-        } catch (InterruptedException ex) {
-            // ignore
-        }
-        mOpenCameraThread = null;
+        stopOpenCameraThread();
+
         // Reset the focus first. Camera CTS does not guarantee that
         // cancelAutoFocus is allowed after preview stops.
         if (mCameraDevice != null && mCameraState != PREVIEW_STOPPED) {
