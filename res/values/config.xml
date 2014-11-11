@@ -43,4 +43,8 @@
     <bool name="enableHDRWithZSL">false</bool>
     <!-- Enable histogram support -->
     <bool name="enableHistogram">false</bool>
+
+    <!-- Controls whether or not the HAL allows a multi-threaded
+         camera startup -->
+    <bool name="enableThreadedCameraStartup">true</bool>
 </resources>
