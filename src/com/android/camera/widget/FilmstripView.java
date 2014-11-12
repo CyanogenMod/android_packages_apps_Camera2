@@ -794,6 +794,12 @@ public class FilmstripView extends ViewGroup {
     }
 
     private ViewItem buildItemFromData(int dataID) {
+        if (mActivity.isDestroyed()) {
+            // Loading item data is call from multiple AsyncTasks and the
+            // activity may be finished when buildItemFromData is called.
+            Log.d(TAG, "Activity destroyed, don't load data");
+            return null;
+        }
         ImageData data = mDataAdapter.getImageData(dataID);
         if (data == null) {
             return null;
