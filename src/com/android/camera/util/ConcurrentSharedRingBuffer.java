@@ -70,6 +70,16 @@ public class ConcurrentSharedRingBuffer<E> {
          * @param existingElement the element to be updated.
          */
         public void update(E existingElement);
+
+        /**
+         * Returns the key of the element that the ring buffer should prefer
+         * when considering a swapping candidate. If the returned key is not an
+         * unpinned element then ring buffer will replace the element with least
+         * key.
+         *
+         * @return a key of an existing unpinned element or a negative value.
+         */
+        public long getSwapKey();
     }
 
     /**
@@ -119,6 +129,29 @@ public class ConcurrentSharedRingBuffer<E> {
         }
     }
 
+    /**
+     * A Semaphore that allows to reduce permits to negative values.
+     */
+    private static class NegativePermitsSemaphore extends Semaphore {
+        public NegativePermitsSemaphore(int permits) {
+            super(permits);
+        }
+
+        /**
+         * Reduces the number of permits by <code>permits</code>.
+         * <p/>
+         * This method can only be called when number of available permits is
+         * zero.
+         */
+        @Override
+        public void reducePermits(int permits) {
+            if (availablePermits() != 0) {
+                throw new IllegalStateException("Called without draining the semaphore.");
+            }
+            super.reducePermits(permits);
+        }
+    }
+
     /** Allow only one swapping operation at a time. */
     private final Object mSwapLock = new Object();
     /**
@@ -137,7 +170,7 @@ public class ConcurrentSharedRingBuffer<E> {
     /** Used to acquire space in mElements. */
     private final Semaphore mCapacitySemaphore;
     /** This must be acquired while an element is pinned. */
-    private final Semaphore mPinSemaphore;
+    private final NegativePermitsSemaphore mPinSemaphore;
     private boolean mClosed = false;
 
     private Handler mPinStateHandler = null;
@@ -159,7 +192,7 @@ public class ConcurrentSharedRingBuffer<E> {
         // Start with -1 permits to pin elements since we must always have at
         // least one unpinned
         // element available to swap out as the head of the buffer.
-        mPinSemaphore = new Semaphore(-1);
+        mPinSemaphore = new NegativePermitsSemaphore(-1);
     }
 
     /**
@@ -239,20 +272,36 @@ public class ConcurrentSharedRingBuffer<E> {
                     if (mClosed) {
                         return false;
                     }
-
-                    Map.Entry<Long, Pinnable<E>> toSwapEntry = mUnpinnedElements.pollFirstEntry();
-
-                    if (toSwapEntry == null) {
-                        // We should never get here.
-                        throw new RuntimeException("No unpinned element available.");
+                    Pair<Long, Pinnable<E>> toSwapEntry = null;
+                    long swapKey = swapper.getSwapKey();
+                    // If swapKey is same as the inserted key return early.
+                    if (swapKey == newKey) {
+                        return false;
                     }
 
-                    toSwap = toSwapEntry.getValue();
+                    if (mUnpinnedElements.containsKey(swapKey)) {
+                        toSwapEntry = Pair.create(swapKey, mUnpinnedElements.remove(swapKey));
+                    } else {
+                        // The returned key from getSwapKey was not found in the
+                        // unpinned elements use the least entry from the
+                        // unpinned elements.
+                        Map.Entry<Long, Pinnable<E>> swapEntry = mUnpinnedElements.pollFirstEntry();
+                        if (swapEntry != null) {
+                            toSwapEntry = Pair.create(swapEntry.getKey(), swapEntry.getValue());
+                        }
+                    }
+
+                    if (toSwapEntry == null) {
+                        // We can get here if no unpinned element was found.
+                        return false;
+                    }
+
+                    toSwap = toSwapEntry.second;
 
                     // We must remove the element from both mElements and
                     // mUnpinnedElements because it must be re-added after the
                     // swap to be placed in the correct order with newKey.
-                    mElements.remove(toSwapEntry.getKey());
+                    mElements.remove(toSwapEntry.first);
                 }
 
                 try {
@@ -335,7 +384,8 @@ public class ConcurrentSharedRingBuffer<E> {
             Pinnable<E> element = mElements.get(key);
 
             if (element == null) {
-                throw new InvalidParameterException("No entry found for the given key.");
+                throw new InvalidParameterException(
+                        "No entry found for the given key: " + key + ".");
             }
 
             if (!element.isPinned()) {
@@ -458,11 +508,114 @@ public class ConcurrentSharedRingBuffer<E> {
 
         for (Pinnable<E> element : mElements.values()) {
             task.run(element.mElement);
+            // Release the capacity permits.
+            mCapacitySemaphore.release();
         }
 
         mUnpinnedElements.clear();
 
         mElements.clear();
+    }
+
+    /**
+     * Attempts to get a pinned element for the given key.
+     *
+     * @param key the key of the pinned element.
+     * @return (key, value) pair if found otherwise null.
+     */
+    public Pair<Long, E> tryGetPinned(long key) {
+        synchronized (mLock) {
+            if (mClosed) {
+                return null;
+            }
+            for (java.util.Map.Entry<Long, Pinnable<E>> element : mElements.entrySet()) {
+                if (element.getKey() == key) {
+                    if (element.getValue().isPinned()) {
+                        return Pair.create(element.getKey(), element.getValue().getElement());
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reopens previously closed buffer.
+     * <p/>
+     * Buffer should be closed before calling this method. If called with an
+     * open buffer an {@link IllegalStateException} is thrown.
+     *
+     * @param unpinnedReservedSlotCount a non-negative integer for number of
+     *            slots to reserve for unpinned elements. These slots can never
+     *            be pinned and will always be available for swapping.
+     * @throws InterruptedException
+     */
+    public void reopenBuffer(int unpinnedReservedSlotCount)
+            throws InterruptedException {
+        if (unpinnedReservedSlotCount < 0
+                || unpinnedReservedSlotCount >= mCapacitySemaphore.availablePermits()) {
+            throw new IllegalArgumentException("Invalid unpinned reserved slot count: " +
+                    unpinnedReservedSlotCount);
+        }
+
+        // Ensure that any pending swap tasks complete before closing.
+        synchronized (mSwapLock) {
+            synchronized (mLock) {
+                if (!mClosed) {
+                    throw new IllegalStateException(
+                            "Attempt to reopen the buffer when it is not closed.");
+                }
+
+                mPinSemaphore.drainPermits();
+                mPinSemaphore.reducePermits(unpinnedReservedSlotCount);
+                mClosed = false;
+            }
+        }
+    }
+
+    /**
+     * Releases a pinned element for the given key.
+     * <p/>
+     * If element is unpinned, it is not released.
+     *
+     * @param key the key of the element, if the element is not present an
+     *            {@link IllegalArgumentException} is thrown.
+     */
+    public void releaseIfPinned(long key) {
+        synchronized (mLock) {
+            Pinnable<E> element = mElements.get(key);
+
+            if (element == null) {
+                throw new IllegalArgumentException("Invalid key." + key);
+            }
+
+            if (element.isPinned()) {
+                release(key);
+            }
+        }
+    }
+
+    /**
+     * Releases all pinned elements in the buffer.
+     * <p/>
+     * Note: it only calls {@link #release(long)} only once on a pinned element.
+     */
+    public void releaseAll() {
+        synchronized (mSwapLock) {
+            synchronized (mLock) {
+                if (mClosed || mElements.isEmpty()
+                        || mElements.size() == mUnpinnedElements.size()) {
+                    return;
+                }
+                for (java.util.Map.Entry<Long, Pinnable<E>> entry : mElements.entrySet()) {
+                    if (entry.getValue().isPinned()) {
+                        release(entry.getKey());
+                    }
+                }
+            }
+        }
     }
 
     private void notifyPinStateChange(final boolean pinsAvailable) {

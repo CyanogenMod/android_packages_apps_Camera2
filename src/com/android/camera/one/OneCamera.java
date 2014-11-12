@@ -21,6 +21,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.view.Surface;
 
+import com.android.camera.burst.BurstConfiguration;
+import com.android.camera.burst.ResultsAccessor;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
@@ -215,9 +217,37 @@ public interface OneCamera {
     }
 
     /**
+     * Parameters to be given to capture requests.
+     */
+    public static abstract class CaptureParameters {
+        /** The device orientation so we can compute the right JPEG rotation. */
+        public int orientation = Integer.MIN_VALUE;
+
+        /** The location of this capture. */
+        public Location location = null;
+
+        /** Set this to provide a debug folder for this capture. */
+        public File debugDataFolder;
+
+        protected static void checkRequired(int num) {
+            if (num == Integer.MIN_VALUE) {
+                throw new RuntimeException("Photo capture parameter missing.");
+            }
+        }
+
+        protected static void checkRequired(Object obj) {
+            if (obj == null) {
+                throw new RuntimeException("Photo capture parameter missing.");
+            }
+        }
+
+        public abstract void checkSanity();
+    }
+
+    /**
      * Parameters to be given to photo capture requests.
      */
-    public static final class PhotoCaptureParameters {
+    public static class PhotoCaptureParameters extends CaptureParameters {
         /**
          * Flash modes.
          * <p>
@@ -231,26 +261,20 @@ public interface OneCamera {
         public String title = null;
         /** Called when the capture is completed or failed. */
         public PictureCallback callback = null;
-        /** The device orientation so we can compute the right JPEG rotation. */
-        public int orientation = Integer.MIN_VALUE;
         /** The heading of the device at time of capture. In degrees. */
         public int heading = Integer.MIN_VALUE;
         /** Flash mode for this capture. */
         public Flash flashMode = Flash.AUTO;
-        /** The location of this capture. */
-        public Location location = null;
         /** Zoom value. */
         public float zoom = 1f;
         /** Timer duration in seconds or null for no timer. */
         public Float timerSeconds = null;
 
-        /** Set this to provide a debug folder for this capture. */
-        public File debugDataFolder;
-
         /**
          * Checks whether all required values are set. If one is missing, it
          * throws a {@link RuntimeException}.
          */
+        @Override
         public void checkSanity() {
             checkRequired(title);
             checkRequired(callback);
@@ -258,16 +282,34 @@ public interface OneCamera {
             checkRequired(heading);
         }
 
-        private void checkRequired(int num) {
-            if (num == Integer.MIN_VALUE) {
-                throw new RuntimeException("Photo capture parameter missing.");
-            }
-        }
+    }
 
-        private void checkRequired(Object obj) {
-            if (obj == null) {
-                throw new RuntimeException("Photo capture parameter missing.");
-            }
+    /**
+     * The callback to be invoked when results are available.
+     */
+    public interface BurstResultsCallback {
+        void onBurstComplete(ResultsAccessor resultAccessor);
+    }
+
+    /**
+     * Parameters to be given to burst requests.
+     */
+    public static class BurstParameters extends CaptureParameters {
+        /** The title/filename (without suffix) for this capture. */
+        public String title = null;
+        public BurstConfiguration burstConfiguration;
+        public BurstResultsCallback callback;
+
+        /**
+         * Checks whether all required values are set. If one is missing, it
+         * throws a {@link RuntimeException}.
+         */
+        @Override
+        public void checkSanity() {
+            checkRequired(title);
+            checkRequired(callback);
+            checkRequired(burstConfiguration);
+
         }
     }
 
@@ -289,6 +331,21 @@ public interface OneCamera {
      * @param session the capture session for this picture.
      */
     public void takePicture(PhotoCaptureParameters params, CaptureSession session);
+
+    /**
+     * Call this to take a burst.
+     *
+     * @param params parameters for taking burst.
+     * @param session the capture session for this burst.
+     */
+
+    public void startBurst(BurstParameters params, CaptureSession session);
+
+    /**
+     * Call this to stop taking burst.
+     *
+     */
+    public void stopBurst();
 
     /**
      * Sets or replaces a listener that is called whenever the camera encounters

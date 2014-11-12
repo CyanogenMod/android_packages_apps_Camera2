@@ -39,10 +39,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.support.v4.util.Pools;
+import android.util.Pair;
 import android.view.Surface;
 
 import com.android.camera.CaptureModuleUtil;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
+import com.android.camera.burst.BurstImage;
+import com.android.camera.burst.ResultsAccessor;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.ExifInterface;
@@ -56,8 +59,8 @@ import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.ListenerCombiner;
 import com.android.camera.util.JpegUtilNative;
+import com.android.camera.util.ListenerCombiner;
 import com.android.camera.util.Size;
 
 import java.nio.ByteBuffer;
@@ -67,9 +70,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * {@link OneCamera} implementation directly on top of the Camera2 API with zero
@@ -84,12 +90,12 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private static final int JPEG_QUALITY =
             CameraProfile.getJpegEncodingQualityParameter(CameraProfile.QUALITY_HIGH);
     /**
-     * The maximum number of images to store in the full-size ZSL ring buffer. 
+     * The maximum number of images to store in the full-size ZSL ring buffer.
      * <br>
      * TODO: Determine this number dynamically based on available memory and the
      * size of frames.
      */
-    private static final int MAX_CAPTURE_IMAGES = 10;
+    private static final int MAX_CAPTURE_IMAGES = 12;
     /**
      * True if zero-shutter-lag images should be captured. Some devices produce
      * lower-quality images for the high-frequency stream, so we may wish to
@@ -187,6 +193,9 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private MeteringRectangle[] mAERegions = ZERO_WEIGHT_3A_REGION;
 
     private MediaActionSound mMediaActionSound = new MediaActionSound();
+
+    private final AtomicReference<BurstParameters>
+            mBurstParams = new AtomicReference<BurstParameters>();
 
     /**
      * Ready state (typically displayed by the UI shutter-button) depends on two
@@ -1078,5 +1087,71 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
     private Rect cropRegionForZoom(float zoom) {
         return AutoFocusHelper.cropRegionForZoom(mCharacteristics, zoom);
+    }
+
+    @Override
+    public void startBurst(BurstParameters params, CaptureSession session) {
+        params.checkSanity();
+        if (!mBurstParams.compareAndSet(null, params)) {
+            throw new IllegalStateException(
+                    "Attempting to start burst, when burst is already running.");
+        }
+        mCaptureManager.setBurstEvictionHandler(params.
+                burstConfiguration.getEvictionHandler());
+    }
+
+    private class ImageExtractor implements ResultsAccessor {
+        private final int mOrientation;
+
+        public ImageExtractor(int orientation) {
+            mOrientation = orientation;
+        }
+
+        @Override
+        public Future<BurstImage> extractImage(final long timestampToExtract) {
+            final Pair<Image, TotalCaptureResult> pinnedImageData =
+                    mCaptureManager.tryCapturePinnedImage(timestampToExtract);
+            return mImageSaverThreadPool.submit(new Callable<BurstImage>() {
+
+                @Override
+                public BurstImage call() throws Exception {
+                    BurstImage burstImage = null;
+                    Image image = pinnedImageData.first;
+                    if (image != null) {
+                        burstImage = new BurstImage();
+                        int degrees = CameraUtil.getJpegRotation(mOrientation, mCharacteristics);
+                        Size size = getImageSizeForOrientation(image.getWidth(),
+                                image.getHeight(),
+                                degrees);
+                        burstImage.width = size.getWidth();
+                        burstImage.height = size.getHeight();
+                        burstImage.data = acquireJpegBytes(image,
+                                degrees);
+                        burstImage.captureResult = pinnedImageData.second;
+                        burstImage.timestamp = timestampToExtract;
+                    } else {
+                        Log.e(TAG, "Failed to extract burst image for timestamp: "
+                                + timestampToExtract);
+                    }
+                    return burstImage;
+                }
+            });
+        }
+
+        @Override
+        public void close() {
+            mCaptureManager.resetCaptureState();
+        }
+    }
+
+    @Override
+    public void stopBurst() {
+        if (mBurstParams.get() == null) {
+            throw new IllegalStateException("Burst parameters should not be null.");
+        }
+        mCaptureManager.resetEvictionHandler();
+        mBurstParams.get().callback.onBurstComplete(
+                new ImageExtractor(mBurstParams.get().orientation));
+        mBurstParams.set(null);
     }
 }

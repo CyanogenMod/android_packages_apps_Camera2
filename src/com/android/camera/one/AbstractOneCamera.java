@@ -16,6 +16,8 @@
 
 package com.android.camera.one;
 
+import com.android.camera.session.CaptureSession;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -119,5 +121,15 @@ public abstract class AbstractOneCamera implements OneCamera {
     @Override
     public void setZoom(float zoom) {
         // If not implemented, no-op.
+    }
+
+    @Override
+    public void startBurst(BurstParameters params, CaptureSession session) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public void stopBurst() {
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 }

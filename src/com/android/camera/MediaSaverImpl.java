@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.provider.MediaStore.Video;
 
 import com.android.camera.app.MediaSaver;
+import com.android.camera.data.LocalData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 
@@ -58,13 +59,21 @@ public class MediaSaverImpl implements MediaSaver {
     public void addImage(final byte[] data, String title, long date, Location loc, int width,
             int height, int orientation, ExifInterface exif, OnMediaSavedListener l,
             ContentResolver resolver) {
+        addImage(data, title, date, loc, width, height, orientation, exif, l,
+                resolver, LocalData.MIME_TYPE_JPEG);
+    }
+
+    @Override
+    public void addImage(final byte[] data, String title, long date, Location loc, int width,
+            int height, int orientation, ExifInterface exif, OnMediaSavedListener l,
+            ContentResolver resolver, String mimeType) {
         if (isQueueFull()) {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
         }
         ImageSaveTask t = new ImageSaveTask(data, title, date,
                 (loc == null) ? null : new Location(loc),
-                width, height, orientation, exif, resolver, l);
+                width, height, orientation, mimeType, exif, resolver, l);
 
         mMemoryUse += data.length;
         if (isQueueFull()) {
@@ -78,14 +87,15 @@ public class MediaSaverImpl implements MediaSaver {
             ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver) {
         // When dimensions are unknown, pass 0 as width and height,
         // and decode image for width and height later in a background thread
-        addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver);
+        addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver,
+                LocalData.MIME_TYPE_JPEG);
     }
     @Override
     public void addImage(final byte[] data, String title, Location loc, int width, int height,
             int orientation, ExifInterface exif, OnMediaSavedListener l,
             ContentResolver resolver) {
         addImage(data, title, System.currentTimeMillis(), loc, width, height,
-                orientation, exif, l, resolver);
+                orientation, exif, l, resolver, LocalData.MIME_TYPE_JPEG);
     }
 
     @Override
@@ -124,13 +134,15 @@ public class MediaSaverImpl implements MediaSaver {
         private final Location loc;
         private int width, height;
         private final int orientation;
+        private final String mimeType;
         private final ExifInterface exif;
         private final ContentResolver resolver;
         private final OnMediaSavedListener listener;
 
         public ImageSaveTask(byte[] data, String title, long date, Location loc,
-                             int width, int height, int orientation, ExifInterface exif,
-                             ContentResolver resolver, OnMediaSavedListener listener) {
+                             int width, int height, int orientation, String mimeType,
+                             ExifInterface exif, ContentResolver resolver,
+                             OnMediaSavedListener listener) {
             this.data = data;
             this.title = title;
             this.date = date;
@@ -138,6 +150,7 @@ public class MediaSaverImpl implements MediaSaver {
             this.width = width;
             this.height = height;
             this.orientation = orientation;
+            this.mimeType = mimeType;
             this.exif = exif;
             this.resolver = resolver;
             this.listener = listener;
@@ -159,7 +172,8 @@ public class MediaSaverImpl implements MediaSaver {
                 height = options.outHeight;
             }
             return Storage.addImage(
-                    resolver, title, date, loc, orientation, exif, data, width, height);
+                    resolver, title, date, loc, orientation, exif, data, width, height,
+                    mimeType);
         }
 
         @Override

@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Pair;
 
+import com.android.camera.burst.BurstConfiguration.EvictionHandler;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.util.ConcurrentSharedRingBuffer;
@@ -44,13 +45,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Implements {@link android.media.ImageReader.OnImageAvailableListener} and
  * {@link android.hardware.camera2.CameraCaptureSession.CaptureListener} to
  * store the results of capture requests (both {@link Image}s and
- * {@link TotalCaptureResult}s in a ring-buffer from which they may be saved. 
+ * {@link TotalCaptureResult}s in a ring-buffer from which they may be saved.
  * <br>
  * This also manages the lifecycle of {@link Image}s within the application as
  * they are passed in from the lower-level camera2 API.
@@ -215,7 +218,49 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
         public TotalCaptureResult tryGetMetadata() {
             return mMetadata;
         }
+
+        /**
+         * Returs the timestamp of the image if present, -1 otherwise.
+         */
+        public long tryGetTimestamp() {
+            if (mImage != null) {
+                return mImage.getTimestamp();
+            }
+            if (mMetadata != null) {
+                return mMetadata.get(TotalCaptureResult.SENSOR_TIMESTAMP);
+            }
+            return -1;
+        }
     }
+
+    /**
+     * A stub implementation of eviction handler that returns -1 as timestamp of
+     * the frame to be dropped.
+     * <p/>
+     * This forces the ring buffer to use its default eviction strategy.
+     */
+    private static class DefaultEvictionHandler implements EvictionHandler {
+        @Override
+        public long selectFrameToDrop() {
+            return -1;
+        }
+
+        @Override
+        public void onFrameCaptureResultAvailable(long timestamp,
+                TotalCaptureResult captureResult) {
+        }
+
+        @Override
+        public void onFrameInserted(long timestamp) {
+        }
+
+        @Override
+        public void onFrameDropped(long timestamp) {
+        }
+    }
+
+    private static final EvictionHandler DEFAULT_EVICTION_HANDLER =
+            new DefaultEvictionHandler();
 
     private static final Tag TAG = new Tag("ZSLImageListener");
 
@@ -274,6 +319,10 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
      */
     private final Executor mImageCaptureListenerExecutor;
 
+    private final AtomicReference<EvictionHandler> mEvictionHandler =
+            new AtomicReference<EvictionHandler>(DEFAULT_EVICTION_HANDLER);
+    private final AtomicBoolean mIsCapturingBurst = new AtomicBoolean(false);
+
     /**
      * The set of constraints which must be satisfied for a newly acquired image
      * to be captured and sent to {@link #mPendingImageCaptureCallback}. null if
@@ -302,6 +351,12 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
      */
     private final Map<Key<?>, Set<MetadataChangeListener>>
             mMetadataChangeListeners = new ConcurrentHashMap<Key<?>, Set<MetadataChangeListener>>();
+
+    /**
+     * The lock for guarding installation and uninstallation of burst eviction
+     * handler.
+     */
+    private final Object mBurstLock = new Object();
 
     /**
      * @param maxImages the maximum number of images provided by the
@@ -433,34 +488,93 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
         // Find the CapturedImage in the ring-buffer and attach the
         // TotalCaptureResult to it.
         // See documentation for swapLeast() for details.
-        boolean swapSuccess = mCapturedImageBuffer.swapLeast(timestamp,
-                new SwapTask<CapturedImage>() {
-                @Override
-                    public CapturedImage create() {
-                        CapturedImage image = new CapturedImage();
-                        image.addMetadata(result);
-                        return image;
-                    }
-
-                @Override
-                    public CapturedImage swap(CapturedImage oldElement) {
-                        oldElement.reset();
-                        oldElement.addMetadata(result);
-                        return oldElement;
-                    }
-
-                @Override
-                    public void update(CapturedImage existingElement) {
-                        existingElement.addMetadata(result);
-                    }
-                });
-
+        boolean swapSuccess = doMetaDataSwap(result, timestamp);
         if (!swapSuccess) {
             // Do nothing on failure to swap in.
             Log.v(TAG, "Unable to add new image metadata to ring-buffer.");
         }
 
         tryExecutePendingCaptureRequest(timestamp);
+    }
+
+    private boolean doMetaDataSwap(final TotalCaptureResult newMetadata, final long timestamp) {
+        mEvictionHandler.get().onFrameCaptureResultAvailable(timestamp, newMetadata);
+
+        if (mIsCapturingBurst.get()) {
+            // In case of burst we do not swap metadata in the ring buffer. This
+            // is to avoid the following scenario. If image for frame with
+            // timestamp A arrives first and the eviction handler decides to
+            // evict timestamp A. But when metadata for timestamp A arrives
+            // the eviction handler chooses to keep timestamp A. In this case
+            // the image for A will never be available.
+            return false;
+        }
+
+        return mCapturedImageBuffer.swapLeast(timestamp,
+                new SwapTask<CapturedImage>() {
+                @Override
+                    public CapturedImage create() {
+                        CapturedImage image = new CapturedImage();
+                        image.addMetadata(newMetadata);
+                        return image;
+                    }
+
+                @Override
+                    public CapturedImage swap(CapturedImage oldElement) {
+                        oldElement.reset();
+                        oldElement.addMetadata(newMetadata);
+                        return oldElement;
+                    }
+
+                @Override
+                    public void update(CapturedImage existingElement) {
+                        existingElement.addMetadata(newMetadata);
+                    }
+
+                @Override
+                    public long getSwapKey() {
+                        return -1;
+                    }
+                });
+    }
+
+    private boolean doImageSwap(final Image newImage) {
+        return mCapturedImageBuffer.swapLeast(newImage.getTimestamp(),
+                new SwapTask<CapturedImage>() {
+                @Override
+                    public CapturedImage create() {
+                        mEvictionHandler.get().onFrameInserted(newImage.getTimestamp());
+                        CapturedImage image = new CapturedImage();
+                        image.addImage(newImage);
+                        return image;
+                    }
+
+                @Override
+                    public CapturedImage swap(CapturedImage oldElement) {
+                        mEvictionHandler.get().onFrameInserted(newImage.getTimestamp());
+                        long timestamp = oldElement.tryGetTimestamp();
+                        mEvictionHandler.get().onFrameDropped(timestamp);
+                        oldElement.reset();
+                        CapturedImage image = new CapturedImage();
+                        image.addImage(newImage);
+                        return image;
+                    }
+
+                @Override
+                    public void update(CapturedImage existingElement) {
+                        mEvictionHandler.get().onFrameInserted(newImage.getTimestamp());
+                        existingElement.addImage(newImage);
+                    }
+
+                @Override
+                    public long getSwapKey() {
+                    final long toDropTimestamp = mEvictionHandler.get().selectFrameToDrop();
+                        if (toDropTimestamp > 0) {
+                            mCapturedImageBuffer.releaseIfPinned(toDropTimestamp);
+                        }
+                        return toDropTimestamp;
+                    }
+                });
     }
 
     @Override
@@ -475,29 +589,9 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
                 Log.v(TAG, "Acquired an image. Number of open images = " + numOpenImages);
             }
 
+            long timestamp = img.getTimestamp();
             // Try to place the newly-acquired image into the ring buffer.
-            boolean swapSuccess = mCapturedImageBuffer.swapLeast(
-                    img.getTimestamp(), new SwapTask<CapturedImage>() {
-                            @Override
-                        public CapturedImage create() {
-                            CapturedImage image = new CapturedImage();
-                            image.addImage(img);
-                            return image;
-                        }
-
-                            @Override
-                        public CapturedImage swap(CapturedImage oldElement) {
-                            oldElement.reset();
-                            oldElement.addImage(img);
-                            return oldElement;
-                        }
-
-                            @Override
-                        public void update(CapturedImage existingElement) {
-                            existingElement.addImage(img);
-                        }
-                    });
-
+            boolean swapSuccess = doImageSwap(img);
             if (!swapSuccess) {
                 // If we were unable to save the image to the ring buffer, we
                 // must close it now.
@@ -507,9 +601,14 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
                 if (DEBUG_PRINT_OPEN_IMAGE_COUNT) {
                     Log.v(TAG, "Closed an image. Number of open images = " + numOpenImages);
                 }
+            } else {
+                if (mIsCapturingBurst.get()) {
+                    // In case of burst we pin every image.
+                    mCapturedImageBuffer.tryPin(timestamp);
+                }
             }
 
-            tryExecutePendingCaptureRequest(img.getTimestamp());
+            tryExecutePendingCaptureRequest(timestamp);
 
             long endTime = SystemClock.currentThreadTimeMillis();
             long totTime = endTime - startTime;
@@ -526,16 +625,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
      * s.
      */
     public void close() {
-        try {
-            mCapturedImageBuffer.close(new Task<CapturedImage>() {
-                    @Override
-                public void run(CapturedImage e) {
-                    e.reset();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        closeBuffer();
     }
 
     /**
@@ -690,6 +780,109 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
             }
 
             return true;
+        }
+    }
+
+    /**
+     * Tries to capture a pinned image for the given key from the ring-buffer.
+     *
+     * @return the pair of (image, captureResult) if image is found, null
+     *         otherwise.
+     */
+    public Pair<Image, TotalCaptureResult>
+            tryCapturePinnedImage(long timestamp) {
+        final Pair<Long, CapturedImage> toCapture =
+                mCapturedImageBuffer.tryGetPinned(timestamp);
+        Image pinnedImage = null;
+        TotalCaptureResult imageCaptureResult = null;
+        // Return an Image
+        if (toCapture != null && toCapture.second != null) {
+            pinnedImage = toCapture.second.tryGetImage();
+            imageCaptureResult = toCapture.second.tryGetMetadata();
+        }
+        return Pair.create(pinnedImage, imageCaptureResult);
+    }
+
+    /**
+     * Sets a new burst eviction handler for the internal buffer.
+     * <p/>
+     * Also clears the buffer. If there was an old burst eviction handler
+     * already installed this method will throw an exception.
+     *
+     * @param evictionHandler the handler to install on the internal image
+     *            buffer.
+     */
+    public void setBurstEvictionHandler(EvictionHandler evictionHandler) {
+        if (evictionHandler == null) {
+            throw new IllegalArgumentException("setBurstEvictionHandler: evictionHandler is null.");
+        }
+        synchronized (mBurstLock) {
+            if (mIsCapturingBurst.compareAndSet(false, true)) {
+                if (!mEvictionHandler.compareAndSet(DEFAULT_EVICTION_HANDLER,
+                        evictionHandler)) {
+                    throw new IllegalStateException(
+                            "Trying to set eviction handler before restoring the original.");
+                } else {
+                    clearCapturedImageBuffer(0);
+                }
+            } else {
+                throw new IllegalStateException("Trying to start burst when it was already running.");
+            }
+        }
+    }
+
+    /**
+     * Removes the burst eviction handler from the buffer.
+     */
+    public void resetEvictionHandler() {
+        synchronized (mBurstLock) {
+            mEvictionHandler.set(DEFAULT_EVICTION_HANDLER);
+        }
+    }
+
+    /**
+     * Clears the underlying buffer and reset the eviction handler.
+     */
+    public void resetCaptureState() {
+        synchronized (mBurstLock) {
+            if (mIsCapturingBurst.compareAndSet(true, false)) {
+                // By default the image buffer has 1 slot that is reserved for
+                // unpinned elements.
+                clearCapturedImageBuffer(1);
+                mEvictionHandler.set(DEFAULT_EVICTION_HANDLER);
+            }
+        }
+    }
+
+    /**
+     * Clear the buffer and reserves <code>unpinnedReservedSlots</code> in the buffer.
+     *
+     * @param unpinnedReservedSlots the number of unpinned slots that are never
+     *            allowed to be pinned.
+     */
+    private void clearCapturedImageBuffer(int unpinnedReservedSlots) {
+        mCapturedImageBuffer.releaseAll();
+        closeBuffer();
+        try {
+            mCapturedImageBuffer.reopenBuffer(unpinnedReservedSlots);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Closes the buffer and frees up any images in the buffer.
+     */
+    private void closeBuffer() {
+        try {
+            mCapturedImageBuffer.close(new Task<CapturedImage>() {
+                @Override
+                public void run(CapturedImage e) {
+                    e.reset();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

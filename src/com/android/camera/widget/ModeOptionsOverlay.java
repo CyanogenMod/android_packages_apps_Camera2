@@ -114,6 +114,11 @@ public class ModeOptionsOverlay extends FrameLayout
         // noop
     }
 
+    @Override
+    public void onShutterButtonLongPressed() {
+        // noop
+    }
+
     /**
      * Schedule (or re-schedule) the options menu to be closed after a number
      * of milliseconds.  If the options menu is already closed, nothing is

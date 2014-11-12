@@ -1372,6 +1372,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         // noop
     }
 
+    @Override
+    public void onShutterButtonLongPressed() {
+        // noop
+    }
+
     /**
      * Set the mode options toggle clickable.
      */

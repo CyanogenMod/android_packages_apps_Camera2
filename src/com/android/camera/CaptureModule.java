@@ -44,6 +44,8 @@ import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.burst.BurstFacade;
+import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
@@ -77,9 +79,9 @@ import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
 import java.io.File;
-import java.util.concurrent.Semaphore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -140,6 +142,7 @@ public class CaptureModule extends CameraModule
             }
         }
     };
+
 
     private static final Tag TAG = new Tag("CaptureModule");
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
@@ -225,7 +228,7 @@ public class CaptureModule extends CameraModule
     private int mHeading = -1;
 
     /** Used to fetch and embed the location into captured images. */
-    private LocationManager mLocationManager;
+    private final LocationManager mLocationManager;
     /** Plays sounds for countdown timer. */
     private SoundPlayer mCountdownSoundPlayer;
 
@@ -264,6 +267,9 @@ public class CaptureModule extends CameraModule
     /** The frame consumer that renders frames to the preview. */
     private final SurfaceTextureConsumer mPreviewConsumer;
 
+    /** The burst manager for controlling the burst. */
+    private final BurstFacade mBurstController;
+
     /** CLEAN UP START */
     // private boolean mFirstLayout;
     // private int[] mTargetFPSRanges;
@@ -286,9 +292,12 @@ public class CaptureModule extends CameraModule
         mSettingsManager.addListener(this);
         mDebugDataDir = mContext.getExternalCacheDir();
         mStickyGcamCamera = stickyHdr;
+        mLocationManager = mAppController.getLocationManager();
 
         mPreviewConsumer = new SurfaceTextureConsumer();
         mFrameDistributor = new FrameDistributorWrapper();
+        mBurstController = BurstFacadeFactory.create(mAppController, getServices().getMediaSaver(),
+                mLocationManager, mAppController.getOrientationManager(), mDebugDataDir);
     }
 
     @Override
@@ -299,7 +308,6 @@ public class CaptureModule extends CameraModule
         thread.start();
         mCameraHandler = new Handler(thread.getLooper());
         mCameraManager = mAppController.getCameraManager();
-        mLocationManager = mAppController.getLocationManager();
         mDisplayRotation = CameraUtil.getDisplayRotation(mContext);
         mCameraFacing = getFacingFromCameraId(mSettingsManager.getInteger(
                 mAppController.getModuleScope(),
@@ -308,6 +316,7 @@ public class CaptureModule extends CameraModule
                 mLayoutListener);
         mAppController.setPreviewStatusListener(mUI);
 
+        mBurstController.setContentResolver(activity.getContentResolver());
         // Set the preview texture from UI for the SurfaceTextureConsumer.
         mPreviewConsumer.setSurfaceTexture(
                 mAppController.getCameraAppUI().getSurfaceTexture(),
@@ -332,8 +341,16 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
+    public void onShutterButtonLongPressed() {
+        mBurstController.startBurst();
+    }
+
+    @Override
     public void onShutterButtonFocus(boolean pressed) {
-        // TODO Auto-generated method stub
+        if (!pressed) {
+            // the shutter button was released, stop any bursts.
+            mBurstController.stopBurst();
+        }
     }
 
     @Override
@@ -524,8 +541,8 @@ public class CaptureModule extends CameraModule
     private void initializeFrameDistributor() {
         // Currently, there is only one consumer to FrameDistributor for
         // rendering the frames to the preview texture.
-        // TODO: Add burst as a consumer as well.
         List<FrameConsumer> frameConsumers = new ArrayList<FrameConsumer>();
+        frameConsumers.add(mBurstController.getPreviewFrameConsumer());
         frameConsumers.add(mPreviewConsumer);
         mFrameDistributor.start(frameConsumers);
     }
@@ -581,6 +598,7 @@ public class CaptureModule extends CameraModule
     public void pause() {
         mPaused = true;
         getServices().getRemoteShutterListener().onModuleExit();
+        mBurstController.stopBurst();
         cancelCountDown();
         closeCamera();
         resetTextureBufferSize();
@@ -608,6 +626,7 @@ public class CaptureModule extends CameraModule
     @Override
     public void onLayoutOrientationChanged(boolean isLandscape) {
         Log.d(TAG, "onLayoutOrientationChanged");
+        mBurstController.stopBurst();
     }
 
     @Override
@@ -856,6 +875,10 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onReadyStateChanged(boolean readyForCapture) {
+        if (mBurstController.isBurstRunning()) {
+            return;
+        }
+
         if (readyForCapture) {
             mAppController.getCameraAppUI().enableModeOptions();
         }
@@ -1233,6 +1256,7 @@ public class CaptureModule extends CameraModule
                     @Override
                     public void onCameraClosed() {
                         mCamera = null;
+                        mBurstController.onCameraDetached();
                         mCameraOpenCloseLock.release();
                     }
 
@@ -1240,7 +1264,7 @@ public class CaptureModule extends CameraModule
                     public void onCameraOpened(final OneCamera camera) {
                         Log.d(TAG, "onCameraOpened: " + camera);
                         mCamera = camera;
-
+                        mBurstController.onCameraAttached(mCamera);
                         updatePreviewBufferDimension();
 
                         // If the surface texture is not destroyed, it may have
