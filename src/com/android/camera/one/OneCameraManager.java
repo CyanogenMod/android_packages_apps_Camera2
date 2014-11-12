@@ -20,7 +20,6 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -30,6 +29,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 /**
@@ -100,7 +100,7 @@ public abstract class OneCameraManager {
      *         HALs.
      */
     private static boolean isCamera2Supported(CameraManager cameraManager) {
-        if (Build.VERSION.SDK_INT < 21) {
+        if (!ApiHelper.HAS_CAMERA_2_API) {
             return false;
         }
         try {

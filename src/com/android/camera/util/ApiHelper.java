@@ -60,6 +60,8 @@ public class ApiHelper {
     public static final boolean IS_NEXUS_6 = "motorola".equalsIgnoreCase(Build.MANUFACTURER)
             && "shamu".equalsIgnoreCase(Build.DEVICE);
 
+    public static final boolean HAS_CAMERA_2_API = isLOrHigher();
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
