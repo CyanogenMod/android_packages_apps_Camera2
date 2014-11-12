@@ -1351,6 +1351,30 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         hideModeCover();
     }
 
+    @Override
+    public void onShutterButtonClick() {
+        /*
+         * Set the mode options toggle unclickable, generally
+         * throughout the app, whenever the shutter button is clicked.
+         *
+         * This could be done in the OnShutterButtonListener of the
+         * ModeOptionsOverlay, but since it is very important that we
+         * can clearly see when the toggle becomes clickable again,
+         * keep all of that logic at this level.
+         */
+        disableModeOptions();
+    }
+
+    @Override
+    public void onShutterCoordinate(TouchCoordinate coord) {
+        // Do nothing.
+    }
+
+    @Override
+    public void onShutterButtonFocus(boolean pressed) {
+        // noop
+    }
+
     /**
      * Set the mode options toggle clickable.
      */
@@ -1369,28 +1393,11 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mModeOptionsOverlay.setToggleClickable(true);
     }
 
-    @Override
-    public void onShutterButtonClick() {
-        /*
-         * Set the mode options toggle unclickable, generally
-         * throughout the app, whenever the shutter button is clicked.
-         *
-         * This could be done in the OnShutterButtonListener of the
-         * ModeOptionsOverlay, but since it is very important that we
-         * can clearly see when the toggle becomes clickable again,
-         * keep all of that logic at this level.
-         */
+    /**
+     * Set the mode options toggle not clickable.
+     */
+    public void disableModeOptions() {
         mModeOptionsOverlay.setToggleClickable(false);
-    }
-
-    @Override
-    public void onShutterCoordinate(TouchCoordinate coord) {
-        // Do nothing.
-    }
-
-    @Override
-    public void onShutterButtonFocus(boolean pressed) {
-        // noop
     }
 
     /**

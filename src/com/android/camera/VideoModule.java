@@ -694,8 +694,14 @@ public class VideoModule extends CameraModule
         boolean stop = mMediaRecorderRecording;
 
         if (stop) {
+            // CameraAppUI mishandles mode option enable/disable
+            // for video, override that
+            mAppController.getCameraAppUI().enableModeOptions();
             onStopVideoRecording();
         } else {
+            // CameraAppUI mishandles mode option enable/disable
+            // for video, override that
+            mAppController.getCameraAppUI().disableModeOptions();
             startVideoRecording();
         }
         mAppController.setShutterEnabled(false);
