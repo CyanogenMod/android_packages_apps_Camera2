@@ -33,7 +33,6 @@ import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -42,13 +41,14 @@ import android.view.View.OnLayoutChangeListener;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
-import com.android.camera.gl.FrameDistributor.FrameConsumer;
-import com.android.camera.gl.FrameDistributorWrapper;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
+import com.android.camera.gl.FrameDistributor.FrameConsumer;
+import com.android.camera.gl.FrameDistributorWrapper;
 import com.android.camera.gl.SurfaceTextureConsumer;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
@@ -188,8 +188,6 @@ public class CaptureModule extends CameraModule
 
     /** The current state of the module. */
     private ModuleState mState = ModuleState.IDLE;
-    /** Current orientation of the device. */
-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
     /** Current zoom value. */
     private float mZoomValue = 1f;
     /** Current duration of capture timer in seconds. */
@@ -377,7 +375,8 @@ public class CaptureModule extends CameraModule
         PhotoCaptureParameters params = new PhotoCaptureParameters();
         params.title = title;
         params.callback = this;
-        params.orientation = getOrientation();
+        params.orientation =
+                mAppController.getOrientationManager().getDeviceOrientation().getDegrees();
         params.flashMode = getFlashModeFromSettings();
         params.heading = mHeading;
         params.debugDataFolder = mDebugDataDir;
@@ -609,21 +608,6 @@ public class CaptureModule extends CameraModule
     @Override
     public void onLayoutOrientationChanged(boolean isLandscape) {
         Log.d(TAG, "onLayoutOrientationChanged");
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation) {
-        // We keep the last known orientation. So if the user first orient
-        // the camera then point the camera to floor or sky, we still have
-        // the correct orientation.
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            return;
-        }
-
-        // TODO: Document orientation compute logic and unify them in OrientationManagerImpl.
-        // b/17443789
-        // Flip to counter-clockwise orientation.
-        mOrientation = (360 - orientation) % 360;
     }
 
     @Override
@@ -1332,14 +1316,6 @@ public class CaptureModule extends CameraModule
             }
         } finally {
             mCameraOpenCloseLock.release();
-        }
-    }
-
-    private int getOrientation() {
-        if (mAppController.isAutoRotateScreen()) {
-            return mDisplayRotation;
-        } else {
-            return mOrientation;
         }
     }
 

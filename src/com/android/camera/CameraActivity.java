@@ -160,8 +160,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends QuickActivity
         implements AppController, CameraAgent.CameraOpenCallback,
-        ShareActionProvider.OnShareTargetSelectedListener,
-        OrientationManager.OnOrientationChangeListener {
+        ShareActionProvider.OnShareTargetSelectedListener {
 
     private static final Log.Tag TAG = new Log.Tag("CameraActivity");
 
@@ -224,7 +223,6 @@ public class CameraActivity extends QuickActivity
     private long mStorageSpaceBytes = Storage.LOW_STORAGE_THRESHOLD_BYTES;
     private boolean mAutoRotateScreen;
     private boolean mSecureCamera;
-    private int mLastRawOrientation;
     private OrientationManagerImpl mOrientationManager;
     private LocationManager mLocationManager;
     private ButtonManager mButtonManager;
@@ -1495,9 +1493,7 @@ public class CameraActivity extends QuickActivity
         }
 
         mLocationManager = new LocationManager(mAppContext);
-
-        mOrientationManager = new OrientationManagerImpl(this);
-        mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
+        mOrientationManager = new OrientationManagerImpl(this, mMainHandler);
 
         setModuleFromModeIndex(getModeIndex());
         mCameraAppUI.prepareModuleUI();
@@ -2197,7 +2193,6 @@ public class CameraActivity extends QuickActivity
         mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);
         mCameraAppUI.addShutterListener(mCurrentModule);
         openModule(mCurrentModule);
-        mCurrentModule.onOrientationChanged(mLastRawOrientation);
         // Store the module index so we can use it the next time the Camera
         // starts up.
         mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
@@ -2471,25 +2466,6 @@ public class CameraActivity extends QuickActivity
             } else {
                 mUndoDeletionBar.setVisibility(View.GONE);
             }
-        }
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation) {
-        if (orientation != mLastRawOrientation) {
-            Log.v(TAG, "orientation changed (from:to) " + mLastRawOrientation +
-                    ":" + orientation);
-        }
-
-        // We keep the last known orientation. So if the user first orient
-        // the camera then point the camera to floor or sky, we still have
-        // the correct orientation.
-        if (orientation == OrientationManager.ORIENTATION_UNKNOWN) {
-            return;
-        }
-        mLastRawOrientation = orientation;
-        if (mCurrentModule != null) {
-            mCurrentModule.onOrientationChanged(orientation);
         }
     }
 

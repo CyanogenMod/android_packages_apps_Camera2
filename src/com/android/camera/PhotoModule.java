@@ -52,6 +52,7 @@ import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.app.MotionManager;
+import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -156,9 +157,6 @@ public class PhotoModule
     private boolean mAeLockSupported;
     private boolean mAwbLockSupported;
     private boolean mContinuousFocusSupported;
-
-    // The degrees of the device rotated clockwise from its natural orientation.
-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
     private static final String sTempCropFilename = "crop-temp";
 
@@ -1298,14 +1296,14 @@ public class PhotoModule
         // Set JPEG orientation. Even if screen UI is locked in portrait, camera orientation should
         // still match device orientation (e.g., users should always get landscape photos while
         // capturing by putting device in landscape.)
-        int orientation = mActivity.isAutoRotateScreen() ? mDisplayRotation : mOrientation;
         Characteristics info = mActivity.getCameraProvider().getCharacteristics(mCameraId);
-        mJpegRotation = info.getJpegOrientation(orientation);
+        int sensorOrientation = info.getSensorOrientation();
+        int deviceOrientation =
+                mAppController.getOrientationManager().getDeviceOrientation().getDegrees();
+        boolean isFrontCamera = info.isFacingFront();
+        mJpegRotation =
+                CameraUtil.getImageRotation(sensorOrientation, deviceOrientation, isFrontCamera);
         mCameraDevice.setJpegOrientation(mJpegRotation);
-
-        Log.v(TAG, "capture orientation (screen:device:used:jpeg) " +
-                mDisplayRotation + ":" + mOrientation + ":" +
-                orientation + ":" + mJpegRotation);
 
         mCameraDevice.takePicture(mHandler,
                 new ShutterCallback(!animateBefore),
@@ -1342,18 +1340,6 @@ public class PhotoModule
         }
         settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FOCUS_MODE,
                 stringifier.stringify(focusMode));
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation) {
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            return;
-        }
-
-        // TODO: Document orientation compute logic and unify them in OrientationManagerImpl.
-        // b/17443789
-        // Flip to counter-clockwise orientation.
-        mOrientation = (360 - orientation) % 360;
     }
 
     @Override

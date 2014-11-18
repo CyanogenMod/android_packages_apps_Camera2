@@ -23,10 +23,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.OrientationEventListener;
 import android.view.View;
 
-import com.android.camera.util.CameraUtil;
+import com.android.camera.app.OrientationManager;
 import com.android.camera2.R;
 
 import java.lang.ref.WeakReference;
@@ -51,14 +50,12 @@ public class VideoRecordingHints extends View {
     private final Drawable mRotateArrows;
     private final Drawable mPhoneGraphic;
     private final int mPhoneGraphicHalfHeight;
-    private final boolean mIsDefaultToPortrait;
     private float mRotation = INITIAL_ROTATION;
     private final ValueAnimator mRotationAnimation;
     private final ObjectAnimator mAlphaAnimator;
     private boolean mIsInLandscape = false;
     private int mCenterX = UNSET;
     private int mCenterY = UNSET;
-    private int mLastOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
     private static class RotationAnimatorListener implements Animator.AnimatorListener {
         private final WeakReference<VideoRecordingHints> mHints;
@@ -168,7 +165,6 @@ public class VideoRecordingHints extends View {
         mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 1f, 0f);
         mAlphaAnimator.setDuration(FADE_OUT_DURATION_MS);
         mAlphaAnimator.addListener(new AlphaAnimatorListener(this));
-        mIsDefaultToPortrait = CameraUtil.isDefaultToPortrait(context);
     }
 
     /**
@@ -187,7 +183,7 @@ public class VideoRecordingHints extends View {
     @Override
     public void onVisibilityChanged(View v, int visibility) {
         super.onVisibilityChanged(v, visibility);
-        if (getVisibility() == VISIBLE && !isInLandscape()) {
+        if (getVisibility() == VISIBLE && !mIsInLandscape) {
             continueRotationAnimation();
         } else if (getVisibility() != VISIBLE) {
             mRotationAnimation.cancel();
@@ -230,19 +226,12 @@ public class VideoRecordingHints extends View {
     }
 
     /**
-     * Handles orientation change by starting/stopping the video hint based on the
-     * new orientation.
+     * Handles deviceOrientation change by starting/stopping the video hint based on the
+     * new deviceOrientation.
      */
-    public void onOrientationChanged(int orientation) {
-        if (mLastOrientation == orientation) {
-            return;
-        }
-        mLastOrientation = orientation;
-        if (mLastOrientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            return;
-        }
-
-        mIsInLandscape = isInLandscape();
+    public void onOrientationChanged(OrientationManager orientationManager,
+                                     OrientationManager.DeviceOrientation deviceOrientation) {
+        mIsInLandscape = orientationManager.isInLandscape();
         if (getVisibility() == VISIBLE) {
             if (mIsInLandscape) {
                 // Landscape.
@@ -257,14 +246,5 @@ public class VideoRecordingHints extends View {
                 continueRotationAnimation();
             }
         }
-    }
-
-    /**
-     * Returns whether the device is in landscape based on the natural orientation
-     * and rotation from natural orientation.
-     */
-    private boolean isInLandscape() {
-        return (mLastOrientation % 180 == 90 && mIsDefaultToPortrait)
-                || (mLastOrientation % 180 == 0 && !mIsDefaultToPortrait);
     }
 }

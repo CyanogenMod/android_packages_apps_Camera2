@@ -451,45 +451,6 @@ public class CameraUtil {
         return 0;
     }
 
-    /**
-     * Calculate the default orientation of the device based on the width and
-     * height of the display when rotation = 0 (i.e. natural width and height)
-     *
-     * @param context current context
-     * @return whether the default orientation of the device is portrait
-     */
-    public static boolean isDefaultToPortrait(Context context) {
-        Display currentDisplay = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay();
-        Point displaySize = new Point();
-        currentDisplay.getSize(displaySize);
-        int orientation = currentDisplay.getRotation();
-        int naturalWidth, naturalHeight;
-        if (orientation == Surface.ROTATION_0 || orientation == Surface.ROTATION_180) {
-            naturalWidth = displaySize.x;
-            naturalHeight = displaySize.y;
-        } else {
-            naturalWidth = displaySize.y;
-            naturalHeight = displaySize.x;
-        }
-        return naturalWidth < naturalHeight;
-    }
-
-    public static int roundOrientation(int orientation, int orientationHistory) {
-        boolean changeOrientation = false;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            changeOrientation = true;
-        } else {
-            int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min(dist, 360 - dist);
-            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
-        }
-        if (changeOrientation) {
-            return ((orientation + 45) / 90 * 90) % 360;
-        }
-        return orientationHistory;
-    }
-
     private static Size getDefaultDisplaySize(Context context) {
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -1371,20 +1332,40 @@ public class CameraUtil {
      * Given the device orientation and Camera2 characteristics, this returns
      * the required JPEG rotation for this camera.
      *
-     * @param deviceOrientationDegrees the device orientation in degrees.
-     * @return The JPEG orientation in degrees.
+     * @param deviceOrientationDegrees the clockwise angle of the device orientation from its
+     *                                 natural orientation in degrees.
+     * @return The angle to rotate image clockwise in degrees. It should be 0, 90, 180, or 270.
      */
     public static int getJpegRotation(int deviceOrientationDegrees,
-            CameraCharacteristics characteristics) {
+                                      CameraCharacteristics characteristics) {
         if (deviceOrientationDegrees == OrientationEventListener.ORIENTATION_UNKNOWN) {
             return 0;
         }
-        int facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        boolean isFrontCamera = characteristics.get(CameraCharacteristics.LENS_FACING) ==
+                CameraMetadata.LENS_FACING_FRONT;
         int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-        if (facing == CameraMetadata.LENS_FACING_FRONT) {
-            return (sensorOrientation + deviceOrientationDegrees) % 360;
-        } else {
-            return (sensorOrientation - deviceOrientationDegrees + 360) % 360;
+        return getImageRotation(sensorOrientation, deviceOrientationDegrees, isFrontCamera);
+    }
+
+    /**
+     * Given the camera sensor orientation and device orientation, this returns a clockwise angle
+     * which the final image needs to be rotated to be upright on the device screen.
+     *
+     * @param sensorOrientation Clockwise angle through which the output image needs to be rotated
+     *                          to be upright on the device screen in its native orientation.
+     * @param deviceOrientation Clockwise angle of the device orientation from its
+     *                          native orientation when front camera faces user.
+     * @param isFrontCamera True if the camera is front-facing.
+     * @return The angle to rotate image clockwise in degrees. It should be 0, 90, 180, or 270.
+     */
+    public static int getImageRotation(int sensorOrientation,
+                                       int deviceOrientation,
+                                       boolean isFrontCamera) {
+        int rotation = (sensorOrientation + deviceOrientation) % 360;
+        // The sensor of front camera faces in the opposite direction from back camera.
+        if (isFrontCamera) {
+            return (360 - rotation) % 360;
         }
+        return rotation;
     }
 }

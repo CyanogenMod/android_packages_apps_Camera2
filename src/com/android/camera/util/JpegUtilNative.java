@@ -69,6 +69,8 @@ public class JpegUtilNative {
      * @param pStride the stride between adjacent pixels in the same row of
      *            planeBuf
      * @param rStride the stride between adjacent rows in planeBuf
+     * @param outBitmap the output bitmap object
+     * @param rot90 the multiple of 90 degrees to rotate counterclockwise, one of {0, 1, 2, 3}.
      */
     private static native void copyImagePlaneToBitmap(int width, int height, Object planeBuf,
             int pStride, int rStride, Object outBitmap, int rot90);
@@ -165,7 +167,7 @@ public class JpegUtilNative {
      * @param img the image to compress
      * @param outBuf a direct byte buffer to hold the output jpeg.
      * @param quality the jpeg encoder quality (0 to 100)
-     * @param rotation the amount to rotate the image clockwise, in degrees.
+     * @param degrees the amount to rotate the image clockwise, in degrees.
      * @return The number of bytes written to outBuf
      */
     public static int compressJpegFromYUV420Image(Image img, ByteBuffer outBuf, int quality,
@@ -220,7 +222,9 @@ public class JpegUtilNative {
 
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
 
-            copyImagePlaneToBitmap(plane, bitmap, degrees / 90);
+            // TODO: Make copyImagePlaneToBitmap take clockwise angle to rotate the bitmap.
+            int counterClockwiseDegrees = (360 - degrees) % 360;
+            copyImagePlaneToBitmap(plane, bitmap, counterClockwiseDegrees / 90);
 
             Bitmap rotatedBitmap = bitmap;
 

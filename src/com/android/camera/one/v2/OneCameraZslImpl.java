@@ -610,8 +610,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private void savePicture(Image image, final PhotoCaptureParameters captureParams,
             CaptureSession session) {
         int heading = captureParams.heading;
+        int degrees = CameraUtil.getJpegRotation(captureParams.orientation, mCharacteristics);
 
-        int degrees = (captureParams.orientation + 270) % 360;
         ExifInterface exif = null;
 
         exif = new ExifInterface();
@@ -635,7 +635,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             exif.setTag(directionRefTag);
             exif.setTag(directionTag);
         }
-        // TODO Find out why this is off by -90 degrees.
         session.saveAndFinish(acquireJpegBytes(image, degrees),
                 size.getWidth(), size.getHeight(), 0, exif, new OnMediaSavedListener() {
                         @Override
@@ -972,7 +971,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      *
      * @param img the image from which to extract jpeg bytes or compress to
      *            jpeg.
-     * @param degrees the angle to rotate the image, in degrees. Rotation is
+     * @param degrees the angle to rotate the image clockwise, in degrees. Rotation is
      *            only applied to YUV images.
      * @return The bytes of the JPEG image. Newly allocated.
      */

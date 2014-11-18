@@ -21,10 +21,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Handler;
 import android.provider.Settings;
+import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
+import android.view.WindowManager;
 
 import com.android.camera.debug.Log;
 import com.android.camera.util.ApiHelper;
@@ -35,16 +38,25 @@ import java.util.List;
 /**
  * The implementation of {@link com.android.camera.app.OrientationManager}
  * by {@link android.view.OrientationEventListener}.
- * TODO: make this class package-private
  */
 public class OrientationManagerImpl implements OrientationManager {
     private static final Log.Tag TAG = new Log.Tag("OrientMgrImpl");
 
-    // Orientation hysteresis amount used in rounding, in degrees
+    // DeviceOrientation hysteresis amount used in rounding, in degrees
     private static final int ORIENTATION_HYSTERESIS = 5;
 
     private final Activity mActivity;
+
+    // The handler used to invoke listener callback.
+    private final Handler mHandler;
+
     private final MyOrientationEventListener mOrientationListener;
+
+    // We keep the last known orientation. So if the user first orient
+    // the camera then point the camera to floor or sky, we still have
+    // the correct orientation.
+    private DeviceOrientation mLastDeviceOrientation = DeviceOrientation.UNKNOWN;
+
     // If the framework orientation is locked.
     private boolean mOrientationLocked = false;
 
@@ -52,43 +64,22 @@ public class OrientationManagerImpl implements OrientationManager {
     // don't allow the orientation to be unlocked if the value is true.
     private boolean mRotationLockedSetting = false;
 
-    private final List<OrientationChangeCallback> mListeners =
-            new ArrayList<OrientationChangeCallback>();
+    private final List<OnOrientationChangeListener> mListeners =
+            new ArrayList<OnOrientationChangeListener>();
 
-    private static class OrientationChangeCallback {
-        private final Handler mHandler;
-        private final OnOrientationChangeListener mListener;
+    private final boolean mIsDefaultToPortrait;
 
-        OrientationChangeCallback(Handler handler, OnOrientationChangeListener listener) {
-            mHandler = handler;
-            mListener = listener;
-        }
-
-        public void postOrientationChangeCallback(final int orientation) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mListener.onOrientationChanged(orientation);
-                }
-            });
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o != null && o instanceof OrientationChangeCallback) {
-                OrientationChangeCallback c = (OrientationChangeCallback) o;
-                if (mHandler == c.mHandler && mListener == c.mListener) {
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        }
-    }
-
-    public OrientationManagerImpl(Activity activity) {
+    /**
+     * Instantiates a new orientation manager.
+     *
+     * @param activity The main activity object.
+     * @param handler The handler used to invoke listener callback.
+     */
+    public OrientationManagerImpl(Activity activity, Handler handler) {
         mActivity = activity;
         mOrientationListener = new MyOrientationEventListener(activity);
+        mHandler = handler;
+        mIsDefaultToPortrait = isDefaultToPortrait(activity);
     }
 
     public void resume() {
@@ -102,32 +93,44 @@ public class OrientationManagerImpl implements OrientationManager {
         mOrientationListener.disable();
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    //  Orientation handling
-    //
-    //  We can choose to lock the framework orientation or not. If we lock the
-    //  framework orientation, we calculate a a compensation value according to
-    //  current device orientation and send it to listeners. If we don't lock
-    //  the framework orientation, we always set the compensation value to 0.
-    ////////////////////////////////////////////////////////////////////////////
-
     @Override
-    public void addOnOrientationChangeListener(Handler handler,
-            OnOrientationChangeListener listener) {
-        OrientationChangeCallback callback = new OrientationChangeCallback(handler, listener);
-        if (mListeners.contains(callback)) {
-            return;
-        }
-        mListeners.add(callback);
+    public DeviceOrientation getDeviceOrientation() {
+        return mLastDeviceOrientation;
     }
 
     @Override
-    public void removeOnOrientationChangeListener(Handler handler,
-            OnOrientationChangeListener listener) {
-        OrientationChangeCallback callback = new OrientationChangeCallback(handler, listener);
-        if (!mListeners.remove(callback)) {
+    public void addOnOrientationChangeListener(OnOrientationChangeListener listener) {
+        if (mListeners.contains(listener)) {
+            return;
+        }
+        mListeners.add(listener);
+    }
+
+    @Override
+    public void removeOnOrientationChangeListener(OnOrientationChangeListener listener) {
+        if (!mListeners.remove(listener)) {
             Log.v(TAG, "Removing non-existing listener.");
         }
+    }
+
+    @Override
+    public boolean isInLandscape() {
+        int roundedOrientationDegrees = mLastDeviceOrientation.getDegrees();
+        if (mIsDefaultToPortrait) {
+            if (roundedOrientationDegrees % 180 == 90) {
+                return true;
+            }
+        } else {
+            if (roundedOrientationDegrees % 180 == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isInPortrait() {
+        return !isInLandscape();
     }
 
     @Override
@@ -159,7 +162,7 @@ public class OrientationManagerImpl implements OrientationManager {
     }
 
     private int calculateCurrentScreenOrientation() {
-        int displayRotation = getDisplayRotation();
+        int displayRotation = getDisplayRotation(mActivity);
         // Display rotation >= 180 means we need to use the REVERSE landscape/portrait
         boolean standard = displayRotation < 180;
         if (mActivity.getResources().getConfiguration().orientation
@@ -189,40 +192,54 @@ public class OrientationManagerImpl implements OrientationManager {
 
         @Override
         public void onOrientationChanged(int orientation) {
-            // We keep the last known orientation. So if the user first orient
-            // the camera then point the camera to floor or sky, we still have
-            // the correct orientation.
             if (orientation == ORIENTATION_UNKNOWN) {
                 return;
             }
-            // TODO: We have two copies of the rounding method: one is CameraUtil.roundOrientation
-            // and the other is OrientationManagerImpl.roundOrientation. The same computation is
-            // done twice when orientation is changed. We should remove the duplicate. b/17440795
-            final int roundedOrientation = roundOrientation(orientation, 0);
-            for (OrientationChangeCallback l : mListeners) {
-                l.postOrientationChangeCallback(roundedOrientation);
+
+            final DeviceOrientation roundedDeviceOrientation =
+                    roundOrientation(mLastDeviceOrientation, orientation);
+            if (roundedDeviceOrientation == mLastDeviceOrientation) {
+                return;
+            }
+            Log.v(TAG, "orientation changed (from:to) " + mLastDeviceOrientation +
+                    ":" + roundedDeviceOrientation);
+            mLastDeviceOrientation = roundedDeviceOrientation;
+
+            for (final OnOrientationChangeListener listener : mListeners) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onOrientationChanged(OrientationManagerImpl.this, roundedDeviceOrientation);
+                    }
+                });
             }
         }
     }
 
-    @Override
-    public int getDisplayRotation() {
-        return getDisplayRotation(mActivity);
-    }
-
-    private static int roundOrientation(int orientation, int orientationHistory) {
-        boolean changeOrientation = false;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            changeOrientation = true;
+    private static DeviceOrientation roundOrientation(DeviceOrientation oldDeviceOrientation,
+                                                      int newRawOrientation) {
+        boolean isOrientationChanged = false;
+        if (oldDeviceOrientation == DeviceOrientation.UNKNOWN) {
+            isOrientationChanged = true;
         } else {
-            int dist = Math.abs(orientation - orientationHistory);
+            int dist = Math.abs(newRawOrientation - oldDeviceOrientation.getDegrees());
             dist = Math.min(dist, 360 - dist);
-            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
+            isOrientationChanged = (dist >= 45 + ORIENTATION_HYSTERESIS);
         }
-        if (changeOrientation) {
-            return ((orientation + 45) / 90 * 90) % 360;
+        if (isOrientationChanged) {
+            int newRoundedOrientation = ((newRawOrientation + 45) / 90 * 90) % 360;
+            switch (newRoundedOrientation) {
+                case 0:
+                    return DeviceOrientation.CLOCKWISE_0;
+                case 90:
+                    return DeviceOrientation.CLOCKWISE_90;
+                case 180:
+                    return DeviceOrientation.CLOCKWISE_180;
+                case 270:
+                    return DeviceOrientation.CLOCKWISE_270;
+            }
         }
-        return orientationHistory;
+        return oldDeviceOrientation;
     }
 
     private static int getDisplayRotation(Activity activity) {
@@ -235,5 +252,29 @@ public class OrientationManagerImpl implements OrientationManager {
             case Surface.ROTATION_270: return 270;
         }
         return 0;
+    }
+
+    /**
+     * Calculate the default orientation of the device based on the width and
+     * height of the display when rotation = 0 (i.e. natural width and height)
+     *
+     * @param context current context
+     * @return whether the default orientation of the device is portrait
+     */
+    private static boolean isDefaultToPortrait(Context context) {
+        Display currentDisplay = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
+        Point displaySize = new Point();
+        currentDisplay.getSize(displaySize);
+        int orientation = currentDisplay.getRotation();
+        int naturalWidth, naturalHeight;
+        if (orientation == Surface.ROTATION_0 || orientation == Surface.ROTATION_180) {
+            naturalWidth = displaySize.x;
+            naturalHeight = displaySize.y;
+        } else {
+            naturalWidth = displaySize.y;
+            naturalHeight = displaySize.x;
+        }
+        return naturalWidth < naturalHeight;
     }
 }

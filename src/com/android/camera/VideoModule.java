@@ -45,7 +45,6 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.view.KeyEvent;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Toast;
 
@@ -55,6 +54,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
+import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.hardware.HardwareSpec;
@@ -87,11 +87,9 @@ import java.util.List;
 import java.util.Set;
 
 public class VideoModule extends CameraModule
-    implements ModuleController,
-    VideoController,
-    MemoryListener,
-    MediaRecorder.OnErrorListener,
-    MediaRecorder.OnInfoListener, FocusOverlayManager.Listener {
+        implements FocusOverlayManager.Listener, MediaRecorder.OnErrorListener,
+        MediaRecorder.OnInfoListener, MemoryListener,
+        OrientationManager.OnOrientationChangeListener, VideoController {
 
     private static final String VIDEO_MODULE_STRING_ID = "VideoModule";
 
@@ -177,9 +175,6 @@ public class VideoModule extends CameraModule
     private final Handler mHandler = new MainHandler();
     private VideoUI mUI;
     private CameraProxy mCameraDevice;
-
-    // The degrees of the device rotated clockwise from its natural orientation.
-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
     private float mZoomValue;  // The current zoom ratio.
 
@@ -488,20 +483,9 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    public void onOrientationChanged(int orientation) {
-        // We keep the last known orientation. So if the user first orient
-        // the camera then point the camera to floor or sky, we still have
-        // the correct orientation.
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            return;
-        }
-        int newOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
-
-        if (mOrientation != newOrientation) {
-            mOrientation = newOrientation;
-        }
-        mUI.onOrientationChanged(orientation);
-
+    public void onOrientationChanged(OrientationManager orientationManager,
+                                     OrientationManager.DeviceOrientation deviceOrientation) {
+        mUI.onOrientationChanged(orientationManager, deviceOrientation);
     }
 
     private final ButtonManager.ButtonCallback mFlashCallback =
@@ -1161,23 +1145,12 @@ public class VideoModule extends CameraModule
             // on the size restriction.
         }
 
-        // See com.android.camera.cameradevice.CameraSettings.setPhotoRotationDegrees
-        // for documentation.
-        // Note that mOrientation here is the device orientation, which is the opposite of
-        // what activity.getWindowManager().getDefaultDisplay().getRotation() would return,
-        // which is the orientation the graphics need to rotate in order to render correctly.
-        int rotation = 0;
-        if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
-            Characteristics info =
-                    mActivity.getCameraProvider().getCharacteristics(mCameraId);
-            if (isCameraFrontFacing()) {
-                rotation = (info.getSensorOrientation() - mOrientation + 360) % 360;
-            } else if (isCameraBackFacing()) {
-                rotation = (info.getSensorOrientation() + mOrientation) % 360;
-            } else {
-                Log.e(TAG, "Camera is facing unhandled direction");
-            }
-        }
+        int sensorOrientation =
+                mActivity.getCameraProvider().getCharacteristics(mCameraId).getSensorOrientation();
+        int deviceOrientation =
+                mAppController.getOrientationManager().getDeviceOrientation().getDegrees();
+        int rotation = CameraUtil.getImageRotation(
+                sensorOrientation, deviceOrientation, isCameraFrontFacing());
         mMediaRecorder.setOrientationHint(rotation);
 
         try {
@@ -1716,6 +1689,10 @@ public class VideoModule extends CameraModule
         mAppController.setShutterEnabled(false);
         mZoomValue = 1.0f;
 
+        OrientationManager orientationManager = mAppController.getOrientationManager();
+        orientationManager.addOnOrientationChangeListener(this);
+        mUI.onOrientationChanged(orientationManager, orientationManager.getDeviceOrientation());
+
         showVideoSnapshotUI(false);
 
         if (!mPreviewing) {
@@ -1742,6 +1719,8 @@ public class VideoModule extends CameraModule
     @Override
     public void pause() {
         mPaused = true;
+
+        mAppController.getOrientationManager().removeOnOrientationChangeListener(this);
 
         if (mFocusManager != null) {
             // If camera is not open when resume is called, focus manager will not

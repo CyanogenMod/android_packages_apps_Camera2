@@ -1,35 +1,68 @@
 package com.android.camera.app;
 
-import android.os.Handler;
-import android.view.OrientationEventListener;
-
 /**
  * An interface which defines the orientation manager.
  */
 public interface OrientationManager {
-    public final static int ORIENTATION_UNKNOWN = OrientationEventListener.ORIENTATION_UNKNOWN;
+    public static enum DeviceOrientation {
+        UNKNOWN(-1),
+        CLOCKWISE_0(0),
+        CLOCKWISE_90(90),
+        CLOCKWISE_180(180),
+        CLOCKWISE_270(270);
+
+        private final int mDegrees;
+
+        private DeviceOrientation(int degrees) {
+            mDegrees = degrees;
+        }
+
+        /**
+         * Returns the degree in clockwise.
+         */
+        public int getDegrees() {
+            return mDegrees;
+        }
+    }
 
     public interface OnOrientationChangeListener {
         /**
          * Called when the orientation changes.
          *
-         * @param orientation The current orientation.
+         * @param orientationManager The orientation manager detects the change.
+         * @param orientation The new rounded orientation.
          */
-        public void onOrientationChanged(int orientation);
+        public void onOrientationChanged(OrientationManager orientationManager,
+                                         DeviceOrientation orientation);
     }
 
     /**
      * Adds the
      * {@link com.android.camera.app.OrientationManager.OnOrientationChangeListener}.
      */
-    public void addOnOrientationChangeListener(
-            Handler handler, OnOrientationChangeListener listener);
+    public void addOnOrientationChangeListener(OnOrientationChangeListener listener);
 
     /**
      * Removes the listener.
      */
-    public void removeOnOrientationChangeListener(
-            Handler handler, OnOrientationChangeListener listener);
+    public void removeOnOrientationChangeListener(OnOrientationChangeListener listener);
+
+    /**
+     * Returns the current rounded device orientation.
+     */
+    public DeviceOrientation getDeviceOrientation();
+
+    /**
+     * Returns whether the device is in landscape based on the natural orientation
+     * and rotation from natural orientation.
+     */
+    public boolean isInLandscape();
+
+    /**
+     * Returns whether the device is in portrait based on the natural orientation
+     * and rotation from natural orientation.
+     */
+    public boolean isInPortrait();
 
     /**
      * Lock the framework orientation to the current device orientation
@@ -43,14 +76,8 @@ public interface OrientationManager {
      */
     void unlockOrientation();
 
-    /** @return Whether the orientation is locked by the app or the system. */
-    boolean isOrientationLocked();
-
     /**
-     * Returns the display rotation degrees relative to the natural orientation
-     * in clockwise.
-     *
-     * @return 0, 90, 180, or 270.
+     * Return whether the orientation is locked by the app or the system.
      */
-    int getDisplayRotation();
+    boolean isOrientationLocked();
 }

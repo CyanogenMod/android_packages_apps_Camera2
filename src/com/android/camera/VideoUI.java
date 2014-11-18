@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.FocusOverlay;
 import com.android.camera.ui.PreviewOverlay;
@@ -269,8 +270,9 @@ public class VideoUI implements PreviewStatusListener {
         return new Point(mRootView.getMeasuredWidth(), mRootView.getMeasuredHeight());
     }
 
-    public void onOrientationChanged(int orientation) {
-        mVideoHints.onOrientationChanged(orientation);
+    public void onOrientationChanged(OrientationManager orientationManager,
+                                     OrientationManager.DeviceOrientation deviceOrientation) {
+        mVideoHints.onOrientationChanged(orientationManager, deviceOrientation);
     }
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {
