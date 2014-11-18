@@ -43,7 +43,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
-import com.android.camera.gl.FrameDistributorImpl;
+import com.android.camera.gl.FrameDistributorWrapper;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.debug.DebugPropertyHelper;
@@ -261,7 +261,7 @@ public class CaptureModule extends CameraModule
     private final File mDebugDataDir;
 
     /** Used to distribute camera frames to consumers. */
-    private FrameDistributorImpl mFrameDistributor;
+    private final FrameDistributorWrapper mFrameDistributor;
 
     /** The frame consumer that renders frames to the preview. */
     private final SurfaceTextureConsumer mPreviewConsumer;
@@ -290,6 +290,7 @@ public class CaptureModule extends CameraModule
         mStickyGcamCamera = stickyHdr;
 
         mPreviewConsumer = new SurfaceTextureConsumer();
+        mFrameDistributor = new FrameDistributorWrapper();
     }
 
     @Override
@@ -527,14 +528,11 @@ public class CaptureModule extends CameraModule
         // TODO: Add burst as a consumer as well.
         List<FrameConsumer> frameConsumers = new ArrayList<FrameConsumer>();
         frameConsumers.add(mPreviewConsumer);
-        mFrameDistributor = new FrameDistributorImpl(frameConsumers);
+        mFrameDistributor.start(frameConsumers);
     }
 
     private void updateFrameDistributorBufferSize() {
-        if (mFrameDistributor.getInputSurfaceTexture() != null) {
-            mFrameDistributor.getInputSurfaceTexture().setDefaultBufferSize(mPreviewBufferWidth,
-                    mPreviewBufferHeight);
-        }
+        mFrameDistributor.updatePreviewBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
     }
 
     @Override
@@ -588,7 +586,6 @@ public class CaptureModule extends CameraModule
         closeCamera();
         resetTextureBufferSize();
         mFrameDistributor.close();
-        mFrameDistributor = null;
         mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
         mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
@@ -1259,9 +1256,6 @@ public class CaptureModule extends CameraModule
                     public void onCameraOpened(final OneCamera camera) {
                         Log.d(TAG, "onCameraOpened: " + camera);
                         mCamera = camera;
-
-                        mFrameDistributor.start();
-                        mFrameDistributor.waitForCommand();
 
                         updatePreviewBufferDimension();
 
