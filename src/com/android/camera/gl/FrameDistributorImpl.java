@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Size;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,17 +50,18 @@ import java.util.concurrent.locks.ReentrantLock;
  * <li>When all processing is complete, call {@link #stop()}.</li>
  * </ol>
  */
-public class FrameDistributorImpl implements FrameDistributor, AutoCloseable {
+class FrameDistributorImpl implements FrameDistributor, AutoCloseable {
 
-    private DistributionHandler mDistributionHandler;
+    private final DistributionHandler mDistributionHandler;
 
-    private HandlerThread mDistributionThread;
+    private final HandlerThread mDistributionThread;
 
     private static class DistributionHandler extends Handler implements OnFrameAvailableListener {
 
         public static final int MSG_SETUP = 1;
         public static final int MSG_RELEASE = 2;
         public static final int MSG_UPDATE_SURFACE = 3;
+        public static final int MSG_UPDATE_PREVIEW_BUFFER_SIZE = 4;
 
         private static final int DEFAULT_SURFACE_BUFFER_WIDTH = 1440;
         private static final int DEFAULT_SURFACE_BUFFER_HEIGHT = 1080;
@@ -103,6 +105,9 @@ public class FrameDistributorImpl implements FrameDistributor, AutoCloseable {
                         break;
                     case MSG_RELEASE:
                         release();
+                        break;
+                    case MSG_UPDATE_PREVIEW_BUFFER_SIZE:
+                        updatePreviewBufferSize((Size) message.obj);
                         break;
                     default:
                         throw new IllegalStateException("Unknown message: " + message + "!");
@@ -157,9 +162,20 @@ public class FrameDistributorImpl implements FrameDistributor, AutoCloseable {
             }
         }
 
+        private void updatePreviewBufferSize(Size size) {
+            if (size != null && mIsSetup) {
+                mSurfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+            }
+        }
+
         public void postMessageType(int kind) {
             mCommandDoneCondition.close();
             sendMessage(Message.obtain(this, kind));
+        }
+
+        public void postMessageType(int kind, Object params) {
+            mCommandDoneCondition.close();
+            sendMessage(Message.obtain(this, kind, params));
         }
 
         private void informListenersOfStart() {
@@ -311,4 +327,14 @@ public class FrameDistributorImpl implements FrameDistributor, AutoCloseable {
         return mDistributionHandler.getRenderTarget();
     }
 
+    /**
+     * Update the default buffer size of the input {@link SurfaceTexture}.
+     *
+     * @param width the new value of width of the preview buffer.
+     * @param height the new value of height of the preview buffer.
+     */
+    public void updatePreviewBufferSize(int width, int height) {
+        mDistributionHandler.postMessageType(DistributionHandler.MSG_UPDATE_PREVIEW_BUFFER_SIZE,
+                new Size(width, height));
+    }
 }
