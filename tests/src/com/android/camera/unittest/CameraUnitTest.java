@@ -25,50 +25,6 @@ import junit.framework.TestCase;
 
 @SmallTest
 public class CameraUnitTest extends TestCase {
-    public void testRoundOrientation() {
-        int h = CameraUtil.ORIENTATION_HYSTERESIS;
-        assertEquals(0, CameraUtil.roundOrientation(0, 0));
-        assertEquals(0, CameraUtil.roundOrientation(359, 0));
-        assertEquals(0, CameraUtil.roundOrientation(0 + 44 + h, 0));
-        assertEquals(90, CameraUtil.roundOrientation(0 + 45 + h, 0));
-        assertEquals(0, CameraUtil.roundOrientation(360 - 44 - h, 0));
-        assertEquals(270, CameraUtil.roundOrientation(360 - 45 - h, 0));
-
-        assertEquals(90, CameraUtil.roundOrientation(90, 90));
-        assertEquals(90, CameraUtil.roundOrientation(90 + 44 + h, 90));
-        assertEquals(180, CameraUtil.roundOrientation(90 + 45 + h, 90));
-        assertEquals(90, CameraUtil.roundOrientation(90 - 44 - h, 90));
-        assertEquals(0, CameraUtil.roundOrientation(90 - 45 - h, 90));
-
-        assertEquals(180, CameraUtil.roundOrientation(180, 180));
-        assertEquals(180, CameraUtil.roundOrientation(180 + 44 + h, 180));
-        assertEquals(270, CameraUtil.roundOrientation(180 + 45 + h, 180));
-        assertEquals(180, CameraUtil.roundOrientation(180 - 44 - h, 180));
-        assertEquals(90, CameraUtil.roundOrientation(180 - 45 - h, 180));
-
-        assertEquals(270, CameraUtil.roundOrientation(270, 270));
-        assertEquals(270, CameraUtil.roundOrientation(270 + 44 + h, 270));
-        assertEquals(0, CameraUtil.roundOrientation(270 + 45 + h, 270));
-        assertEquals(270, CameraUtil.roundOrientation(270 - 44 - h, 270));
-        assertEquals(180, CameraUtil.roundOrientation(270 - 45 - h, 270));
-
-        assertEquals(90, CameraUtil.roundOrientation(90, 0));
-        assertEquals(180, CameraUtil.roundOrientation(180, 0));
-        assertEquals(270, CameraUtil.roundOrientation(270, 0));
-
-        assertEquals(0, CameraUtil.roundOrientation(0, 90));
-        assertEquals(180, CameraUtil.roundOrientation(180, 90));
-        assertEquals(270, CameraUtil.roundOrientation(270, 90));
-
-        assertEquals(0, CameraUtil.roundOrientation(0, 180));
-        assertEquals(90, CameraUtil.roundOrientation(90, 180));
-        assertEquals(270, CameraUtil.roundOrientation(270, 180));
-
-        assertEquals(0, CameraUtil.roundOrientation(0, 270));
-        assertEquals(90, CameraUtil.roundOrientation(90, 270));
-        assertEquals(180, CameraUtil.roundOrientation(180, 270));
-    }
-
     public void testPrepareMatrix() {
         Matrix matrix = new Matrix();
         float[] points;
