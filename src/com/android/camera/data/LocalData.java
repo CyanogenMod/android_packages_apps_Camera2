@@ -45,6 +45,7 @@ public interface LocalData extends ImageData {
     static final Log.Tag TAG = new Log.Tag("LocalData");
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";
+    public static final String MIME_TYPE_GIF = "image/gif";
 
     // Data actions.
     public static final int DATA_ACTION_NONE = 0;

@@ -64,6 +64,11 @@ public interface MediaSaver {
     /**
      * Adds an image into {@link android.content.ContentResolver} and also
      * saves the file to the storage in the background.
+     * <p/>
+     * Equivalent to calling
+     * {@link #addImage(byte[], String, long, Location, int, int, int,
+     * ExifInterface, OnMediaSavedListener, ContentResolver, String)}
+     * with <code>image/jpeg</code> as <code>mimeType</code>.
      *
      * @param data The JPEG image data.
      * @param title The title of the image.
@@ -83,6 +88,31 @@ public interface MediaSaver {
      */
     void addImage(byte[] data, String title, long date, Location loc, int width, int height,
             int orientation, ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver);
+
+    /**
+     * Adds an image into {@link android.content.ContentResolver} and also
+     * saves the file to the storage in the background.
+     *
+     * @param data The image data.
+     * @param title The title of the image.
+     * @param date The date when the image is created.
+     * @param loc The location where the image is created. Can be {@code null}.
+     * @param width The width of the image data before the orientation is
+     *              applied.
+     * @param height The height of the image data before the orientation is
+     *               applied.
+     * @param orientation The orientation of the image. The value should be a
+     *                    degree of rotation in clockwise. Valid values are
+     *                    0, 90, 180 and 270.
+     * @param exif The EXIF data of this image.
+     * @param l A callback object used when the saving is done.
+     * @param resolver The {@link android.content.ContentResolver} to be
+     *                 updated.
+     * @param mimeType The mimeType of the image.
+     */
+    void addImage(byte[] data, String title, long date, Location loc, int width, int height,
+            int orientation, ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver,
+            String mimeType);
 
     /**
      * Adds an image into {@link android.content.ContentResolver} and also

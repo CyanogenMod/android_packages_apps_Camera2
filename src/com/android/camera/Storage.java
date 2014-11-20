@@ -45,6 +45,7 @@ public class Storage {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
     public static final String DIRECTORY = DCIM + "/Camera";
     public static final String JPEG_POSTFIX = ".jpg";
+    public static final String GIF_POSTFIX = ".gif";
     // Match the code in MediaProvider.computeBucketValues().
     public static final String BUCKET_ID =
             String.valueOf(DIRECTORY.toLowerCase().hashCode());
@@ -106,11 +107,11 @@ public class Storage {
      * @return The URI of the added image, or null if the image could not be
      *         added.
      */
-    private static Uri addImage(ContentResolver resolver, String title, long date,
+    static Uri addImage(ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] data, int width,
             int height, String mimeType) {
 
-        String path = generateFilepath(title);
+        String path = generateFilepath(title, mimeType);
         long fileLength = writeFile(path, data, exif);
         if (fileLength >= 0) {
             return addImageToMediaStore(resolver, title, date, location, orientation, fileLength,
@@ -238,7 +239,7 @@ public class Storage {
     public static Uri updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
            Location location, int orientation, ExifInterface exif,
            byte[] jpeg, int width, int height, String mimeType) {
-        String path = generateFilepath(title);
+        String path = generateFilepath(title, mimeType);
         writeFile(path, jpeg, exif);
         return updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
                 width, height, mimeType);
@@ -328,8 +329,16 @@ public class Storage {
         return resultUri;
     }
 
-    private static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+    private static String generateFilepath(String title, String mimeType) {
+        String extension = null;
+        if (LocalData.MIME_TYPE_JPEG.equals(mimeType)) {
+            extension = JPEG_POSTFIX;
+        } else if (LocalData.MIME_TYPE_GIF.equals(mimeType)) {
+            extension = GIF_POSTFIX;
+        } else {
+            throw new IllegalArgumentException("Invalid mimeType: " + mimeType);
+        }
+        return DIRECTORY + '/' + title + extension;
     }
 
     /**

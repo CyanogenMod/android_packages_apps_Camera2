@@ -44,7 +44,7 @@ import com.android.camera.gl.FrameDistributor.FrameConsumer;
  * Once post processing is complete, the burst module returns the final results
  * by calling {@link BurstResultsListener#onBurstCompleted(BurstResult)} method.
  */
-public interface BurstController {
+interface BurstController {
 
     /**
      * Starts the burst.

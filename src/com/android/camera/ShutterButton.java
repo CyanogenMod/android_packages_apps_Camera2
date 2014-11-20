@@ -17,8 +17,9 @@
 package com.android.camera;
 
 import android.content.Context;
-import android.text.method.Touch;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,8 +27,8 @@ import android.widget.ImageView;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.TouchCoordinate;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A button designed to be used for the on-screen shutter button.
@@ -40,6 +41,8 @@ public class ShutterButton extends ImageView {
     public static final float ALPHA_WHEN_DISABLED = 0.2f;
     private boolean mTouchEnabled = true;
     private TouchCoordinate mTouchCoordinate;
+    private final GestureDetector mGestureDetector;
+
     /**
      * A callback to be invoked when a ShutterButton's pressed state changes.
      */
@@ -52,6 +55,23 @@ public class ShutterButton extends ImageView {
         void onShutterButtonFocus(boolean pressed);
         void onShutterCoordinate(TouchCoordinate coord);
         void onShutterButtonClick();
+
+        /**
+         * Called when shutter button is held down for a long press.
+         */
+        void onShutterButtonLongPressed();
+    }
+
+    /**
+     * A gesture listener to detect long presses.
+     */
+    private class LongPressGestureListener extends SimpleOnGestureListener {
+        @Override
+        public void onLongPress(MotionEvent event) {
+            for (OnShutterButtonListener listener : mListeners) {
+                listener.onShutterButtonLongPressed();
+            }
+        }
     }
 
     private List<OnShutterButtonListener> mListeners
@@ -60,6 +80,8 @@ public class ShutterButton extends ImageView {
 
     public ShutterButton(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mGestureDetector = new GestureDetector(context, new LongPressGestureListener());
+        mGestureDetector.setIsLongpressEnabled(true);
     }
 
     /**
@@ -83,6 +105,7 @@ public class ShutterButton extends ImageView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
         if (mTouchEnabled) {
+            mGestureDetector.onTouchEvent(m);
             if (m.getActionMasked() == MotionEvent.ACTION_UP) {
                 mTouchCoordinate = new TouchCoordinate(m.getX(), m.getY(), this.getMeasuredWidth(),
                         this.getMeasuredHeight());
