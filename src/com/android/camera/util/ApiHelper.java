@@ -21,6 +21,9 @@ import android.os.Build;
 import java.lang.reflect.Field;
 
 public class ApiHelper {
+    // Documented value of CPU_ABI on x86 architectures
+    private static final String X86ABI = "x86";
+
     public static final boolean AT_LEAST_16 = Build.VERSION.SDK_INT >= 16;
 
     public static final boolean HAS_APP_GALLERY =
@@ -54,6 +57,10 @@ public class ApiHelper {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
 
     public static final boolean HAS_HIDEYBARS = isKitKatOrHigher();
+
+    // Don't use renderscript for x86 K, L is OK. See b/18435492
+    public static final boolean HAS_RENDERSCRIPT =
+            !(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT && X86ABI.equals(Build.CPU_ABI));
 
     public static final boolean IS_NEXUS_4 = "mako".equalsIgnoreCase(Build.DEVICE);
     public static final boolean IS_NEXUS_5 = "LGE".equalsIgnoreCase(Build.MANUFACTURER)
