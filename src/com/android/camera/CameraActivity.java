@@ -641,6 +641,7 @@ public class CameraActivity extends QuickActivity
                 @Override
                 public void onFilmstripShown() {
                     mFilmstripVisible = true;
+                    mCameraAppUI.hideCaptureIndicator();
                     UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
                             NavigationChange.InteractionCause.SWIPE_LEFT);
                     updateUiByData(mFilmstripController.getCurrentId());
@@ -1117,13 +1118,13 @@ public class CameraActivity extends QuickActivity
     }
 
     @Override
-    public void startPreCaptureAnimation(boolean shortFlash) {
-        mCameraAppUI.startPreCaptureAnimation(shortFlash);
+    public void startFlashAnimation(boolean shortFlash) {
+        mCameraAppUI.startFlashAnimation(shortFlash);
     }
 
     @Override
     public void startPreCaptureAnimation() {
-        mCameraAppUI.startPreCaptureAnimation(false);
+        // TODO: implement this
     }
 
     @Override
@@ -1193,7 +1194,8 @@ public class CameraActivity extends QuickActivity
         mPeekAnimationHandler.startDecodingJob(data, new Callback<Bitmap>() {
             @Override
             public void onCallback(Bitmap result) {
-                mCameraAppUI.startPeekAnimation(result, true, accessibilityString);
+                mCameraAppUI.startCaptureIndicatorRevealAnimation(accessibilityString);
+                mCameraAppUI.updateCaptureIndicatorThumbnail(result);
             }
         });
     }
@@ -1692,6 +1694,7 @@ public class CameraActivity extends QuickActivity
         mPeekAnimationHandler = null;
         mPeekAnimationThread.quitSafely();
         mPeekAnimationThread = null;
+        mCameraAppUI.hideCaptureIndicator();
 
         // Delete photos that are pending deletion
         performDeletion();
@@ -2213,6 +2216,15 @@ public class CameraActivity extends QuickActivity
     @Override
     public void freezeScreenUntilPreviewReady() {
         mCameraAppUI.freezeScreenUntilPreviewReady();
+    }
+
+    @Override
+    public int getModuleId(int modeIndex) {
+        ModuleManagerImpl.ModuleAgent agent = mModuleManager.getModuleAgent(modeIndex);
+        if (agent == null) {
+            return -1;
+        }
+        return agent.getModuleId();
     }
 
     /**

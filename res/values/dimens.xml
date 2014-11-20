@@ -206,4 +206,13 @@
     <dimen name="settings_cling_width">160dp</dimen>
     <dimen name="settings_cling_triangle_height">15dp</dimen>
     <dimen name="settings_cling_triangle_width">20dp</dimen>
+
+    <dimen name="rounded_thumbnail_padding">12dp</dimen>
+    <dimen name="rounded_thumbnail_diameter_normal">48dp</dimen>
+    <dimen name="rounded_thumbnail_diameter_min">24dp</dimen>
+    <dimen name="rounded_thumbnail_diameter_max">54dp</dimen>
+    <dimen name="rounded_thumbnail_ripple_ring_diameter_min">40dp</dimen>
+    <dimen name="rounded_thumbnail_ripple_ring_diameter_max">70dp</dimen>
+    <dimen name="rounded_thumbnail_ripple_ring_thick_max">5dp</dimen>
+    <dimen name="rounded_thumbnail_ripple_ring_thick_min">1dp</dimen>
 </resources>

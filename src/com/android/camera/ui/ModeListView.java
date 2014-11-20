@@ -908,6 +908,7 @@ public class ModeListView extends FrameLayout
     }
 
     public interface ModeSwitchListener {
+        public void onModeButtonPressed(int modeIndex);
         public void onModeSelected(int modeIndex);
         public int getCurrentModeIndex();
         public void onSettingsSelected();
@@ -1063,6 +1064,9 @@ public class ModeListView extends FrameLayout
      * @param selectedItem the item being clicked
      */
     private void onItemSelected(ModeSelectorItem selectedItem) {
+        int modeId = selectedItem.getModeId();
+        mModeSwitchListener.onModeButtonPressed(modeId);
+
         mCurrentStateManager.getCurrentState().onItemSelected(selectedItem);
     }
 
