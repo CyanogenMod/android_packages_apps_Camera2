@@ -43,9 +43,10 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
-import com.android.camera.app.OrientationManager;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
+import com.android.camera.burst.ToastingBurstFacadeDecorator;
+import com.android.camera.burst.ToastingBurstFacadeDecorator.BurstToaster;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
@@ -133,7 +134,6 @@ public class CaptureModule extends CameraModule
             }
         }
     };
-
 
     private static final Tag TAG = new Tag("CaptureModule");
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
@@ -278,8 +278,11 @@ public class CaptureModule extends CameraModule
 
         mPreviewConsumer = new SurfaceTextureConsumer();
         mFrameDistributor = new FrameDistributorWrapper();
-        mBurstController = BurstFacadeFactory.create(mAppController, getServices().getMediaSaver(),
+        BurstFacade burstController = BurstFacadeFactory.create(mAppController, getServices()
+                .getMediaSaver(),
                 mLocationManager, mAppController.getOrientationManager(), mDebugDataDir);
+        BurstToaster toaster = new BurstToaster(appController.getAndroidContext());
+        mBurstController = new ToastingBurstFacadeDecorator(burstController, toaster);
     }
 
     @Override
