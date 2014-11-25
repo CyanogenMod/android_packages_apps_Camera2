@@ -21,7 +21,7 @@ import java.util.Arrays;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 
-import com.android.camera.one.v2.async.BufferQueue;
+import com.android.camera.async.BufferQueue;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;

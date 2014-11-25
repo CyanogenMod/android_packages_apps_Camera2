@@ -16,9 +16,7 @@
 
 package com.android.camera.one.v2.core;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.android.camera.one.v2.async.RefCountBase;
+import com.android.camera.async.RefCountBase;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 /**

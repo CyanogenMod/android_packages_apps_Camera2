@@ -22,7 +22,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 
-import com.android.camera.one.v2.async.BufferQueue;
+import com.android.camera.async.BufferQueue;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.MetadataChangeResponseListener;
 import com.android.camera.one.v2.core.RequestBuilder;

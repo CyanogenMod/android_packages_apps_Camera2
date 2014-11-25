@@ -18,7 +18,7 @@ package com.android.camera.one.v2.core;
 
 import android.view.Surface;
 
-import com.android.camera.one.v2.async.BufferQueue;
+import com.android.camera.async.BufferQueue;
 
 /**
  * A {@link CaptureStream} which just registers a {@link Surface} without

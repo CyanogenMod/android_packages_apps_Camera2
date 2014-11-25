@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.async;
+package com.android.camera.async;
 
 /**
  * A {@link BufferQueue} of instances of a limited, managed resource. At any given

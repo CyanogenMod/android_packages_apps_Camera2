@@ -14,11 +14,28 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.async;
+package com.android.camera.async;
 
 /**
- * An {@link AutoCloseable} which should not throw in {@link #close}.
+ * An output stream of objects which can be closed from either the producer or
+ * the consumer.
  */
-public interface SafeCloseable extends AutoCloseable {
+public interface BufferQueueController<T> extends SafeCloseable {
+    /**
+     * Adds the given element to the stream. Streams must support calling this
+     * even after closed.
+     *
+     * @param element The element to add.
+     */
+    public void append(T element);
+
+    /**
+     * Closes the stream. Implementations must tolerate multiple calls to close.
+     */
     public void close();
+
+    /**
+     * @return Whether the stream is closed.
+     */
+    public boolean isClosed();
 }

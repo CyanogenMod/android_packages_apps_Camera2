@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.async;
+package com.android.camera.async;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -33,7 +33,7 @@ public interface BufferQueue<T> extends SafeCloseable {
      * @return The next available value.
      * @throws InterruptedException If interrupted while waiting for the next
      *             value.
-     * @throws com.android.camera.one.v2.async.BufferQueue.BufferQueueClosedException If the stream is closed and no more values
+     * @throws com.android.camera.async.BufferQueue.BufferQueueClosedException If the stream is closed and no more values
      *             will be available.
      */
     public T getNext() throws InterruptedException, BufferQueueClosedException;
@@ -46,7 +46,7 @@ public interface BufferQueue<T> extends SafeCloseable {
      * @return The next available value.
      * @throws InterruptedException If interrupted while waiting for the next
      *             value.
-     * @throws com.android.camera.one.v2.async.BufferQueue.BufferQueueClosedException If the stream is closed and no more values
+     * @throws com.android.camera.async.BufferQueue.BufferQueueClosedException If the stream is closed and no more values
      *             will be available.
      * @throws TimeoutException If no new value is made available within the
      *             specified time limit.

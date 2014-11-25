@@ -18,7 +18,7 @@ package com.android.camera.one.v2.core;
 
 import android.view.Surface;
 
-import com.android.camera.one.v2.async.BufferQueue;
+import com.android.camera.async.BufferQueue;
 
 /**
  * A generic Surface-holding object which can be attached to a {@link Request},
@@ -34,7 +34,7 @@ import com.android.camera.one.v2.async.BufferQueue;
  * </p>
  * <p>
  * Implementations should use the {@link CaptureStream#bind} method to kick off
- * a process of taking, as input, a {@link com.android.camera.one.v2.async.BufferQueue} of image timestamps as well
+ * a process of taking, as input, a {@link com.android.camera.async.BufferQueue} of image timestamps as well
  * as the images added to the {@link Surface}, and producing, as output, a
  * stream of useful handles to the image data.
  * </p>
