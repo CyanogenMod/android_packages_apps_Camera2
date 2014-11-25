@@ -1335,11 +1335,17 @@ public class PhotoModule
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
         if (!CameraCapabilities.FlashMode.NO_FLASH.equals(flashMode)) {
+            String flashModeString = stringifier.stringify(flashMode);
+            Log.v(TAG, "override flash setting to: " + flashModeString);
             settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FLASH_MODE,
-                    stringifier.stringify(flashMode));
+                    flashModeString);
+        } else {
+            Log.v(TAG, "skip setting flash mode on override due to NO_FLASH");
         }
+        String focusModeString = stringifier.stringify(focusMode);
+        Log.v(TAG, "override focus setting to: " + focusModeString);
         settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FOCUS_MODE,
-                stringifier.stringify(focusMode));
+                focusModeString);
     }
 
     @Override

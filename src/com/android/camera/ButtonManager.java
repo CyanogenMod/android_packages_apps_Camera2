@@ -358,6 +358,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
         }
 
+        showButton(buttonId);
         enableButton(buttonId);
     }
 
@@ -437,13 +438,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
         }
         button.setTag(R.string.tag_enabled_id, null);
-
-        if (button.getVisibility() != View.VISIBLE) {
-            button.setVisibility(View.VISIBLE);
-            if (mListener != null) {
-                mListener.onButtonVisibilityChanged(this, buttonId);
-            }
-        }
     }
 
     /**
@@ -458,13 +452,6 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
         }
         button.setTag(R.string.tag_enabled_id, buttonId);
-
-        if (button.getVisibility() != View.VISIBLE) {
-            button.setVisibility(View.VISIBLE);
-            if (mListener != null) {
-                mListener.onButtonVisibilityChanged(this, buttonId);
-            }
-        }
     }
 
     /**
@@ -508,6 +495,25 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
             }
         }
     }
+
+    /**
+     * Show a button by id.
+     */
+    public void showButton(int buttonId) {
+        View button;
+        try {
+            button = getButtonOrError(buttonId);
+        } catch (IllegalArgumentException e) {
+            button = getImageButtonOrError(buttonId);
+        }
+        if (button.getVisibility() != View.VISIBLE) {
+            button.setVisibility(View.VISIBLE);
+            if (mListener != null) {
+                mListener.onButtonVisibilityChanged(this, buttonId);
+            }
+        }
+    }
+
 
     public void setToInitialState() {
         mModeOptions.setMainBar(ModeOptions.BAR_STANDARD);
