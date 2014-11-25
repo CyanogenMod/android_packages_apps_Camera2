@@ -18,7 +18,7 @@ package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
 
-import com.android.camera.one.v2.async.SafeCloseable;
+import com.android.camera.async.SafeCloseable;
 
 /**
  * Wraps {@link android.media.Image} with a mockable interface.

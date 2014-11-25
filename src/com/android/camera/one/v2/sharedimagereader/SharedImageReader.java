@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import android.media.ImageReader;
 import android.view.Surface;
 
-import com.android.camera.one.v2.async.RefCountedBufferQueueController;
-import com.android.camera.one.v2.async.BufferQueue;
+import com.android.camera.async.RefCountedBufferQueueController;
+import com.android.camera.async.BufferQueue;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.CaptureStream;
 

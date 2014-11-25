@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.async;
+package com.android.camera.async;
 
 /**
  * Wraps an object with reference counting. When the reference count goes to 0

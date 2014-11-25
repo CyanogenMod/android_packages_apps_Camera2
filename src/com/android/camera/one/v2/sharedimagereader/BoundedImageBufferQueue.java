@@ -20,15 +20,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.android.camera.one.v2.async.BoundedBufferQueue;
-import com.android.camera.one.v2.async.ConcurrentBufferQueue;
-import com.android.camera.one.v2.async.BufferQueueController;
+import com.android.camera.async.BoundedBufferQueue;
+import com.android.camera.async.ConcurrentBufferQueue;
+import com.android.camera.async.BufferQueueController;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 /**
  * A {@link BoundedBufferQueue} of {@link ImageProxy}s for which only a finite
  * number of {@link ImageProxy}s may be retrieved before further requests, via
- * {@link com.android.camera.one.v2.async.BufferQueue#getNext()}, will block for
+ * {@link com.android.camera.async.BufferQueue#getNext()}, will block for
  * the closing of previously-retrieved {@link ImageProxy}s.
  * <p/>
  * The ability to acquire another image is represented by a logical "ticket".
@@ -48,7 +48,7 @@ import com.android.camera.one.v2.camera2proxy.ImageProxy;
  * <p/>
  * Note that it is the stream consumer's responsibility to explicitly close()
  * Images to avoid deadlocking when calling
- * {@link com.android.camera.one.v2.async.BufferQueue#getNext}.
+ * {@link com.android.camera.async.BufferQueue#getNext}.
  *
  * TODO Refactor ticket-pool logic into a separate class.
  */

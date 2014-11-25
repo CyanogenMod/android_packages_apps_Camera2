@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.android.camera.one.v2.async.BufferQueue;
-import com.android.camera.one.v2.async.BufferQueueController;
+import com.android.camera.async.BufferQueue;
+import com.android.camera.async.BufferQueueController;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.RefCountedImageProxy;
 import com.android.camera.one.v2.core.SingleCloseImageProxy;

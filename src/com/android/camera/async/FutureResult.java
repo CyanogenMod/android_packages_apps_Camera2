@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.async;
+package com.android.camera.async;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;

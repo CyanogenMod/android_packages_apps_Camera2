@@ -20,8 +20,8 @@ import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 
-import com.android.camera.one.v2.async.ConcurrentBufferQueue;
-import com.android.camera.one.v2.async.BufferQueue;
+import com.android.camera.async.ConcurrentBufferQueue;
+import com.android.camera.async.BufferQueue;
 
 /**
  * A {@link ResponseListener} which provides a stream of
