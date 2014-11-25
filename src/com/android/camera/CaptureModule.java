@@ -91,15 +91,6 @@ import java.util.concurrent.TimeUnit;
  * This has been a re-write with pieces taken and improved from GCamModule and
  * PhotoModule, which are to be retired eventually.
  * <p>
- * TODO:
- * <ul>
- * <li>Server-side logging
- * <li>Focusing (managed by OneCamera implementations)
- * <li>Show location dialog on first start
- * <li>Show resolution dialog on certain devices
- * <li>Store location
- * <li>Capture intent
- * </ul>
  */
 public class CaptureModule extends CameraModule
         implements MediaSaver.QueueListener,
@@ -270,15 +261,6 @@ public class CaptureModule extends CameraModule
     /** The burst manager for controlling the burst. */
     private final BurstFacade mBurstController;
 
-    /** CLEAN UP START */
-    // private boolean mFirstLayout;
-    // private int[] mTargetFPSRanges;
-    // private float mZoomValue;
-    // private int mSensorOrientation;
-    // private int mLensFacing;
-    // private String mFlashMode;
-    /** CLEAN UP END */
-
     public CaptureModule(AppController appController) {
         this(appController, false);
     }
@@ -387,19 +369,11 @@ public class CaptureModule extends CameraModule
         String title = CameraUtil.createJpegName(sessionTime);
         CaptureSession session = getServices().getCaptureSessionManager()
                 .createNewSession(title, sessionTime, location);
-
-        // Set up the parameters for this capture.
-        PhotoCaptureParameters params = new PhotoCaptureParameters();
-        params.title = title;
-        params.callback = this;
-        params.orientation =
-                mAppController.getOrientationManager().getDeviceOrientation().getDegrees();
-        params.flashMode = getFlashModeFromSettings();
-        params.heading = mHeading;
-        params.debugDataFolder = mDebugDataDir;
-        params.location = location;
-        params.zoom = mZoomValue;
-        params.timerSeconds = mTimerDuration > 0 ? (float) mTimerDuration : null;
+        int orientation = mAppController.getOrientationManager().getDeviceOrientation()
+                .getDegrees();
+        PhotoCaptureParameters params = new PhotoCaptureParameters(
+                title, orientation, location, mDebugDataDir, this, mHeading,
+                getFlashModeFromSettings(), mZoomValue, 0);
 
         mCamera.takePicture(params, session);
     }
@@ -912,7 +886,7 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onPictureTakenFailed() {
+    public void onPictureTakingFailed() {
     }
 
     @Override

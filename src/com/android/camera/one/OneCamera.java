@@ -179,7 +179,7 @@ public interface OneCamera {
         /**
          * Called when picture taking failed.
          */
-        public void onPictureTakenFailed();
+        public void onPictureTakingFailed();
 
         /**
          * Called when capture session is reporting a processing update. This
@@ -220,28 +220,25 @@ public interface OneCamera {
      * Parameters to be given to capture requests.
      */
     public static abstract class CaptureParameters {
+        /** The title/filename (without suffix) for this capture. */
+        public final String title;
+
         /** The device orientation so we can compute the right JPEG rotation. */
-        public int orientation = Integer.MIN_VALUE;
+        public final int orientation;
 
         /** The location of this capture. */
-        public Location location = null;
+        public final Location location;
 
         /** Set this to provide a debug folder for this capture. */
-        public File debugDataFolder;
+        public final File debugDataFolder;
 
-        protected static void checkRequired(int num) {
-            if (num == Integer.MIN_VALUE) {
-                throw new RuntimeException("Photo capture parameter missing.");
-            }
+        public CaptureParameters(String title, int orientation, Location location, File
+                debugDataFolder) {
+            this.title = title;
+            this.orientation = orientation;
+            this.location = location;
+            this.debugDataFolder = debugDataFolder;
         }
-
-        protected static void checkRequired(Object obj) {
-            if (obj == null) {
-                throw new RuntimeException("Photo capture parameter missing.");
-            }
-        }
-
-        public abstract void checkSanity();
     }
 
     /**
@@ -257,31 +254,27 @@ public interface OneCamera {
             AUTO, OFF, ON
         }
 
-        /** The title/filename (without suffix) for this capture. */
-        public String title = null;
         /** Called when the capture is completed or failed. */
-        public PictureCallback callback = null;
+        public final PictureCallback callback;
         /** The heading of the device at time of capture. In degrees. */
-        public int heading = Integer.MIN_VALUE;
+        public final int heading;
         /** Flash mode for this capture. */
-        public Flash flashMode = Flash.AUTO;
+        public final Flash flashMode;
         /** Zoom value. */
-        public float zoom = 1f;
-        /** Timer duration in seconds or null for no timer. */
-        public Float timerSeconds = null;
+        public final float zoom;
+        /** Timer duration in seconds or 0 for no timer. */
+        public final float timerSeconds;
 
-        /**
-         * Checks whether all required values are set. If one is missing, it
-         * throws a {@link RuntimeException}.
-         */
-        @Override
-        public void checkSanity() {
-            checkRequired(title);
-            checkRequired(callback);
-            checkRequired(orientation);
-            checkRequired(heading);
+        public PhotoCaptureParameters(String title, int orientation, Location location, File
+                debugDataFolder, PictureCallback callback, int heading,
+                Flash flashMode, float zoom, float timerSeconds) {
+            super(title, orientation, location, debugDataFolder);
+            this.callback = callback;
+            this.heading = heading;
+            this.flashMode = flashMode;
+            this.zoom = zoom;
+            this.timerSeconds = timerSeconds;
         }
-
     }
 
     /**
@@ -296,20 +289,15 @@ public interface OneCamera {
      */
     public static class BurstParameters extends CaptureParameters {
         /** The title/filename (without suffix) for this capture. */
-        public String title = null;
-        public BurstConfiguration burstConfiguration;
-        public BurstResultsCallback callback;
+        public final BurstConfiguration burstConfiguration;
+        public final BurstResultsCallback callback;
 
-        /**
-         * Checks whether all required values are set. If one is missing, it
-         * throws a {@link RuntimeException}.
-         */
-        @Override
-        public void checkSanity() {
-            checkRequired(title);
-            checkRequired(callback);
-            checkRequired(burstConfiguration);
-
+        public BurstParameters(String title, int orientation, Location location,
+                File debugDataFolder, BurstConfiguration burstConfiguration,
+                BurstResultsCallback callback) {
+            super(title, orientation, location, debugDataFolder);
+            this.burstConfiguration = burstConfiguration;
+            this.callback = callback;
         }
     }
 
@@ -367,28 +355,10 @@ public interface OneCamera {
 
     /**
      * Starts a preview stream and renders it to the given surface.
+     * @param Surface the surface on which to render preview frames
+     *                @param listener
      */
     public void startPreview(Surface surface, CaptureReadyCallback listener);
-
-    /**
-     * Sets the size of the viewfinder.
-     * <p>
-     * The preview size requested from the camera device will depend on this as
-     * well as the requested photo/video aspect ratio.
-     */
-    public void setViewfinderSize(int width, int height);
-
-    /**
-     * @return Whether this camera supports flash.
-     * @param if true, returns whether flash is supported in enhanced mode. If
-     *        false, whether flash is supported in normal capture mode.
-     */
-    public boolean isFlashSupported(boolean enhanced);
-
-    /**
-     * @return Whether this camera supports enhanced mode, such as HDR.
-     */
-    public boolean isSupportingEnhancedMode();
 
     /**
      * Closes the camera.
@@ -410,14 +380,9 @@ public interface OneCamera {
     public float getFullSizeAspectRatio();
 
     /**
-     * @return Whether this camera is facing to the back.
+     * @return The direction of the camera.
      */
-    public boolean isBackFacing();
-
-    /**
-     * @return Whether this camera is facing to the front.
-     */
-    public boolean isFrontFacing();
+    public Facing getDirection();
 
     /**
      * Get the maximum zoom value.

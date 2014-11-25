@@ -233,13 +233,9 @@ class BurstFacadeImpl implements BurstFacade {
                 CaptureSession session = null;
 
                 BurstConfiguration burstConfig = mBurstController.startBurst();
-                BurstParameters params = new BurstParameters();
-                params.callback = mBurstExtractsResultsCallback;
-                params.burstConfiguration = burstConfig;
-                params.title = title;
-                params.orientation = mOrientationManager.getDeviceOrientation().getDegrees();
-                params.debugDataFolder = mDebugDataDir;
-                params.location = location;
+                int orientation = mOrientationManager.getDeviceOrientation().getDegrees();
+                BurstParameters params = new BurstParameters(title, orientation, location,
+                        mDebugDataDir, burstConfig, mBurstExtractsResultsCallback);
 
                 // Disable the shutter button.
                 mAppController.setShutterEnabled(false);

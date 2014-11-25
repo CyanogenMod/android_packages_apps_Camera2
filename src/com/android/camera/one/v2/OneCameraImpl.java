@@ -52,6 +52,7 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.AbstractOneCamera;
+import com.android.camera.one.CameraDirectionProvider;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.Settings3A;
 import com.android.camera.session.CaptureSession;
@@ -74,7 +75,6 @@ import java.util.List;
  */
 @TargetApi(Build.VERSION_CODES.L)
 public class OneCameraImpl extends AbstractOneCamera {
-
     /** Captures that are requested but haven't completed yet. */
     private static class InFlightCapture {
         final PhotoCaptureParameters parameters;
@@ -249,6 +249,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     private final CameraCharacteristics mCharacteristics;
     /** The underlying Camera2 API camera device. */
     private final CameraDevice mDevice;
+    private final CameraDirectionProvider mDirectionProvider;
 
     /**
      * The aspect ratio (width/height) of the full resolution for this camera.
@@ -302,6 +303,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     OneCameraImpl(CameraDevice device, CameraCharacteristics characteristics, Size pictureSize) {
         mDevice = device;
         mCharacteristics = characteristics;
+        mDirectionProvider = new CameraDirectionProvider(characteristics);
         mFullSizeAspectRatio = calculateFullSizeAspectRatio(characteristics);
 
         // Override pictureSize for RAW (our picture size settings don't include
@@ -365,8 +367,6 @@ public class OneCameraImpl extends AbstractOneCamera {
     public void takePictureNow(PhotoCaptureParameters params, CaptureSession session) {
         long dt = SystemClock.uptimeMillis() - mTakePictureStartMillis;
         Log.v(TAG, "Taking shot with extra AF delay of " + dt + " ms.");
-        // This will throw a RuntimeException, if parameters are not sane.
-        params.checkSanity();
         try {
             // JPEG capture.
             CaptureRequest.Builder builder = mDevice
@@ -400,7 +400,7 @@ public class OneCameraImpl extends AbstractOneCamera {
         } catch (CameraAccessException e) {
             Log.e(TAG, "Could not access camera for still image capture.");
             broadcastReadyState(true);
-            params.callback.onPictureTakenFailed();
+            params.callback.onPictureTakingFailed();
             return;
         }
         synchronized (mCaptureQueue) {
@@ -412,21 +412,6 @@ public class OneCameraImpl extends AbstractOneCamera {
     public void startPreview(Surface previewSurface, CaptureReadyCallback listener) {
         mPreviewSurface = previewSurface;
         setupAsync(mPreviewSurface, listener);
-    }
-
-    @Override
-    public void setViewfinderSize(int width, int height) {
-        throw new RuntimeException("Not implemented yet.");
-    }
-
-    @Override
-    public boolean isFlashSupported(boolean enhanced) {
-        throw new RuntimeException("Not implemented yet.");
-    }
-
-    @Override
-    public boolean isSupportingEnhancedMode() {
-        throw new RuntimeException("Not implemented yet.");
     }
 
     @Override
@@ -461,15 +446,8 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     @Override
-    public boolean isFrontFacing() {
-        return mCharacteristics.get(CameraCharacteristics.LENS_FACING)
-                == CameraMetadata.LENS_FACING_FRONT;
-    }
-
-    @Override
-    public boolean isBackFacing() {
-        return mCharacteristics.get(CameraCharacteristics.LENS_FACING)
-                == CameraMetadata.LENS_FACING_BACK;
+    public Facing getDirection() {
+        return mDirectionProvider.getDirection();
     }
 
     private void saveJpegPicture(byte[] jpegData, final PhotoCaptureParameters captureParams,

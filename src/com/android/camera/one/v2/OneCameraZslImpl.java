@@ -52,6 +52,7 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.AbstractOneCamera;
+import com.android.camera.one.CameraDirectionProvider;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.Settings3A;
@@ -147,6 +148,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private final CameraCharacteristics mCharacteristics;
     /** The underlying Camera2 API camera device. */
     private final CameraDevice mDevice;
+    private final CameraDirectionProvider mDirection;
 
     /**
      * The aspect ratio (width/height) of the full resolution for this camera.
@@ -291,6 +293,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
         mDevice = device;
         mCharacteristics = characteristics;
+        mDirection = new CameraDirectionProvider(mCharacteristics);
         mFullSizeAspectRatio = calculateFullSizeAspectRatio(characteristics);
 
         mCameraThread = new HandlerThread("OneCamera2");
@@ -387,8 +390,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
      */
     @Override
     public void takePicture(final PhotoCaptureParameters params, final CaptureSession session) {
-        params.checkSanity();
-
         mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, false);
 
         boolean useZSL = ZSL_ENABLED;
@@ -559,21 +560,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     }
 
     @Override
-    public void setViewfinderSize(int width, int height) {
-        throw new RuntimeException("Not implemented yet.");
-    }
-
-    @Override
-    public boolean isFlashSupported(boolean enhanced) {
-        throw new RuntimeException("Not implemented yet.");
-    }
-
-    @Override
-    public boolean isSupportingEnhancedMode() {
-        throw new RuntimeException("Not implemented yet.");
-    }
-
-    @Override
     public void close(CloseCallback closeCallback) {
         if (mIsClosed) {
             Log.w(TAG, "Camera is already closed.");
@@ -604,17 +590,10 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         return mFullSizeAspectRatio;
     }
 
-    @Override
-    public boolean isFrontFacing() {
-        return mCharacteristics.get(CameraCharacteristics.LENS_FACING)
-                == CameraMetadata.LENS_FACING_FRONT;
-    }
+    public Facing getDirection() {
+        return mDirection.getDirection();
+   }
 
-    @Override
-    public boolean isBackFacing() {
-        return mCharacteristics.get(CameraCharacteristics.LENS_FACING)
-                == CameraMetadata.LENS_FACING_BACK;
-    }
 
     private void savePicture(Image image, final PhotoCaptureParameters captureParams,
             CaptureSession session) {
@@ -1091,7 +1070,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
     @Override
     public void startBurst(BurstParameters params, CaptureSession session) {
-        params.checkSanity();
         if (!mBurstParams.compareAndSet(null, params)) {
             throw new IllegalStateException(
                     "Attempting to start burst, when burst is already running.");
