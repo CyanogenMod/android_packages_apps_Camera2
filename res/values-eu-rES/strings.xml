@@ -37,7 +37,7 @@
     <string name="trim_action" msgid="4736803320203951827">"Moztu"</string>
     <string name="set_as" msgid="5469055085024870081">"Ezarri honela"</string>
     <string name="video_err" msgid="1562566029875081552">"Ezin da bideoa erreproduzitu."</string>
-    <string name="title" msgid="8061744305671964703">"Titulua"</string>
+    <string name="title" msgid="8061744305671964703">"Izena"</string>
     <string name="description" msgid="8193138501982849808">"Azalpena"</string>
     <string name="time" msgid="5248213506417024287">"Ordua"</string>
     <string name="location" msgid="564326205780827668">"Kokapena"</string>
