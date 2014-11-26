@@ -210,9 +210,8 @@ class BurstFacadeImpl implements BurstFacade {
     }
 
     @Override
-    public boolean isBurstRunning() {
-        return (mBurstModuleState.get() == BurstModuleState.RUNNING
-                || mBurstModuleState.get() == BurstModuleState.STOPPING);
+    public boolean isReady() {
+        return mBurstModuleState.get() == BurstModuleState.IDLE;
     }
 
     private void startBurstImpl() {
@@ -247,14 +246,16 @@ class BurstFacadeImpl implements BurstFacade {
     }
 
     @Override
-    public void stopBurst() {
+    public boolean stopBurst() {
         synchronized (mStartStopBurstLock) {
             if (mBurstModuleState.compareAndSet(BurstModuleState.RUNNING,
                     BurstModuleState.STOPPING)) {
                 if (mCamera != null) {
                     mCamera.stopBurst();
+                    return true;
                 }
             }
+            return false;
         }
     }
 

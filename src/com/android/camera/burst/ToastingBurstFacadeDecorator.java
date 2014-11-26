@@ -94,13 +94,18 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public boolean isBurstRunning() {
-        return mBurstFacade.isBurstRunning();
+    public boolean isReady() {
+        return mBurstFacade.isReady();
     }
 
     @Override
-    public void stopBurst() {
-        mBurstFacade.stopBurst();
-        mToaster.showToastBurstStopped();
+    public boolean stopBurst() {
+        boolean burstStopped = mBurstFacade.stopBurst();
+
+        // Only show the toast if a burst was actually stopped.
+        if (burstStopped) {
+            mToaster.showToastBurstStopped();
+        }
+        return burstStopped;
     }
 }

@@ -56,12 +56,15 @@ public interface BurstFacade {
     public void startBurst();
 
     /**
-     * Returns true if burst is running.
+     * @return Whether this burst controller is ready to start another burst.
      */
-    public boolean isBurstRunning();
+    public boolean isReady();
 
     /**
      * Stops the burst.
+     *
+     * @return Whether a burst was actually stopped. Returns false if no burst
+     *         was running at the time.
      */
-    public void stopBurst();
+    public boolean stopBurst();
 }

@@ -67,12 +67,14 @@ public class BurstFacadeFactory {
         public void startBurst() {}
 
         @Override
-        public boolean isBurstRunning() {
-            return false;
+        public boolean isReady() {
+            return true;
         }
 
         @Override
-        public void stopBurst() {}
+        public boolean stopBurst() {
+            return false;
+        }
     }
 
     /**

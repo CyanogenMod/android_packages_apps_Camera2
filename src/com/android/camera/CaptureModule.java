@@ -852,7 +852,7 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onReadyStateChanged(boolean readyForCapture) {
-        if (mBurstController.isBurstRunning()) {
+        if (!mBurstController.isReady()) {
             return;
         }
 
