@@ -38,8 +38,10 @@ public class MediaSaverImpl implements MediaSaver {
     private static final Log.Tag TAG = new Log.Tag("MediaSaverImpl");
     private static final String VIDEO_BASE_URI = "content://media/external/video/media";
 
-    /** The memory limit for unsaved image is 20MB. */
-    private static final int SAVE_TASK_MEMORY_LIMIT = 20 * 1024 * 1024;
+    /** The memory limit for unsaved image is 30MB. */
+    // TODO: Revert this back to 20 MB when CaptureSession API supports saving
+    // bursts.
+    private static final int SAVE_TASK_MEMORY_LIMIT = 30 * 1024 * 1024;
 
     private QueueListener mQueueListener;
 
