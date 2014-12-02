@@ -19,12 +19,13 @@ package com.android.camera.one.v2.core;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 /**
  * Wraps {@link ImageProxy} to filter out multiple calls to {@link #close}.
  */
-public class SingleCloseImageProxy extends ImageProxy {
+public class SingleCloseImageProxy extends ForwardingImageProxy {
     private final AtomicBoolean mClosed;
 
     /**

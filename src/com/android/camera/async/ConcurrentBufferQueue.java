@@ -130,7 +130,7 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
     }
 
     @Override
-    public void append(T element) {
+    public void update(T element) {
         boolean closed = false;
         synchronized (mLock) {
             closed = mClosed.get();

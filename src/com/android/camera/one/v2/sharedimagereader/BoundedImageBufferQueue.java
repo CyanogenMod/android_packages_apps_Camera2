@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.android.camera.async.BoundedBufferQueue;
 import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.async.BufferQueueController;
+import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 /**
@@ -66,7 +67,7 @@ public class BoundedImageBufferQueue implements BoundedBufferQueue<ImageProxy>,
      * An {@link ImageProxy} which overrides close() to release the logical
      * ticket associated with the image.
      */
-    private class TicketReleasingImageProxy extends ImageProxy {
+    private class TicketReleasingImageProxy extends ForwardingImageProxy {
         private final AtomicBoolean mClosed;
 
         public TicketReleasingImageProxy(ImageProxy image) {
@@ -187,7 +188,7 @@ public class BoundedImageBufferQueue implements BoundedBufferQueue<ImageProxy>,
     }
 
     @Override
-    public void append(ImageProxy image) {
+    public void update(ImageProxy image) {
         synchronized (mLock) {
             if (mClosed) {
                 image.close();
@@ -200,7 +201,7 @@ public class BoundedImageBufferQueue implements BoundedBufferQueue<ImageProxy>,
             }
 
             mTicketsAvailable--;
-            mImageSequence.append(new TicketReleasingImageProxy(image));
+            mImageSequence.update(new TicketReleasingImageProxy(image));
         }
     }
 

@@ -20,18 +20,20 @@ package com.android.camera.async;
  * An output stream of objects which can be closed from either the producer or
  * the consumer.
  */
-public interface BufferQueueController<T> extends SafeCloseable {
+public interface BufferQueueController<T> extends Updatable<T>, SafeCloseable {
     /**
      * Adds the given element to the stream. Streams must support calling this
      * even after closed.
      *
      * @param element The element to add.
      */
-    public void append(T element);
+    @Override
+    public void update(T element);
 
     /**
      * Closes the stream. Implementations must tolerate multiple calls to close.
      */
+    @Override
     public void close();
 
     /**

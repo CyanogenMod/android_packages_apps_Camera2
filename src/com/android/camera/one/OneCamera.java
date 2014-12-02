@@ -193,15 +193,6 @@ public interface OneCamera {
     }
 
     /**
-     * Classes implementing this interface will be called whenever the camera
-     * encountered an error.
-     */
-    public static interface CameraErrorListener {
-        /** Called when the camera encountered an error. */
-        public void onCameraError();
-    }
-
-    /**
      * Classes implementing this interface will be called when the state of the
      * focus changes. Guaranteed not to stay stuck in scanning state past some
      * reasonable timeout even if Camera API is stuck.
@@ -334,12 +325,6 @@ public interface OneCamera {
      *
      */
     public void stopBurst();
-
-    /**
-     * Sets or replaces a listener that is called whenever the camera encounters
-     * an error.
-     */
-    public void setCameraErrorListener(CameraErrorListener listener);
 
     /**
      * Sets or replaces a listener that is called whenever the focus state of

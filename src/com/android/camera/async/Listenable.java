@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.components;
+package com.android.camera.async;
 
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.util.Callback;
 
 /**
- * Interface for an image-saving object.
+ * Note: This interface, alone, does not provide a means of guaranteeing which
+ * thread the callback will be invoked on. Use
+ * {@link com.android.camera.async.ConcurrentState}, {@link BufferQueue}, or
+ * {@link java.util.concurrent.Future} instead to guarantee thread-safety.
  */
-public interface ImageSaver {
+public interface Listenable<T> extends SafeCloseable {
     /**
-     * Implementations should save the image to disk and close it.
+     * Sets the callback, removing any existing callback first.
      */
-    public void saveAndCloseImage(ImageProxy image);
+    public void setCallback(Callback<T> callback);
+
+    /**
+     * Removes any existing callback.
+     */
+    @Override
+    public void close();
 }

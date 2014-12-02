@@ -22,36 +22,21 @@ import android.hardware.camera2.TotalCaptureResult;
 
 import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.async.BufferQueue;
+import com.android.camera.async.Updatable;
 
 /**
  * A {@link ResponseListener} which provides a stream of
  * {@link TotalCaptureResult}s.
  */
-public class TotalCaptureResultResponseListener implements ResponseListener {
-    private final ConcurrentBufferQueue<TotalCaptureResult> mResults;
+public class TotalCaptureResultResponseListener extends ResponseListener {
+    private final Updatable<TotalCaptureResult> mResults;
 
-    public TotalCaptureResultResponseListener() {
-        mResults = new ConcurrentBufferQueue<>();
-    }
-
-    public BufferQueue<TotalCaptureResult> getResult() {
-        return mResults;
+    public TotalCaptureResultResponseListener(Updatable<TotalCaptureResult> results) {
+        mResults = results;
     }
 
     @Override
-    public void onStarted(long timestamp) {
-    }
-
-    @Override
-    public void onProgressed(long timestamp, CaptureResult partialResult) {
-    }
-
-    @Override
-    public void onCompleted(long timestamp, TotalCaptureResult result) {
-        mResults.append(result);
-    }
-
-    @Override
-    public void onFailed(CaptureFailure failure) {
+    public void onCompleted(TotalCaptureResult result) {
+        mResults.update(result);
     }
 }

@@ -30,7 +30,6 @@ import java.util.TimeZone;
  * class instead.
  */
 public abstract class AbstractOneCamera implements OneCamera {
-    protected CameraErrorListener mCameraErrorListener;
     protected FocusStateListener mFocusStateListener;
     protected ReadyStateChangedListener mReadyStateChangedListener;
 
@@ -39,11 +38,6 @@ public abstract class AbstractOneCamera implements OneCamera {
      * construct folder names for debugging output.
      */
     static final int DEBUG_FOLDER_SERIAL_LENGTH = 4;
-
-    @Override
-    public final void setCameraErrorListener(CameraErrorListener listener) {
-        mCameraErrorListener = listener;
-    }
 
     @Override
     public final void setFocusStateListener(FocusStateListener listener) {

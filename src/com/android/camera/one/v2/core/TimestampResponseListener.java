@@ -22,35 +22,20 @@ import android.hardware.camera2.TotalCaptureResult;
 
 import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.async.BufferQueue;
+import com.android.camera.async.Updatable;
 
 /**
  * A {@link ResponseListener} which provides a stream of timestamps.
  */
-public class TimestampResponseListener implements ResponseListener {
-    private final ConcurrentBufferQueue<Long> mTimestamps;
+public class TimestampResponseListener extends ResponseListener {
+    private final Updatable<Long> mTimestamps;
 
-    public TimestampResponseListener() {
-        mTimestamps = new ConcurrentBufferQueue<>();
-    }
-
-    public BufferQueue<Long> getTimestamps() {
-        return mTimestamps;
+    public TimestampResponseListener(Updatable<Long> timestamps) {
+        mTimestamps = timestamps;
     }
 
     @Override
     public void onStarted(long timestamp) {
-        mTimestamps.append(timestamp);
-    }
-
-    @Override
-    public void onProgressed(long timestamp, CaptureResult partialResult) {
-    }
-
-    @Override
-    public void onCompleted(long timestamp, TotalCaptureResult result) {
-    }
-
-    @Override
-    public void onFailed(CaptureFailure failure) {
+        mTimestamps.update(timestamp);
     }
 }

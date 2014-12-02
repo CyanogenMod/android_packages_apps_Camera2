@@ -17,13 +17,14 @@
 package com.android.camera.one.v2.core;
 
 import com.android.camera.async.RefCountBase;
+import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 /**
  * Wraps ImageProxy with reference counting, starting with a fixed number of
  * references.
  */
-public class RefCountedImageProxy extends ImageProxy {
+public class RefCountedImageProxy extends ForwardingImageProxy {
     private final RefCountBase<ImageProxy> mRefCount;
 
     /**

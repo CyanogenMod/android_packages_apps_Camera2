@@ -21,6 +21,8 @@ import java.util.concurrent.Semaphore;
 
 import android.hardware.camera2.CameraAccessException;
 
+import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
+
 /**
  * Provides thread-safe concurrent access to a camera.
  * <p>
@@ -35,6 +37,14 @@ public class FrameServer {
      * {@link Session#close} and no more requests may be submitted.
      */
     public static class SessionClosedException extends RuntimeException {
+    }
+
+    public static enum RequestType {
+        REPEATING, NON_REPEATING;
+
+        public boolean isRepeating() {
+            return equals(REPEATING);
+        }
     }
 
     /**
@@ -61,8 +71,9 @@ public class FrameServer {
          * @throws java.lang.InterruptedException if interrupted before the
          *             request is be submitted.
          */
-        public synchronized void submitRequest(List<Request> burstRequests, boolean repeating)
-                throws CameraAccessException, InterruptedException {
+        public synchronized void submitRequest(List<Request> burstRequests, RequestType type)
+                throws CameraAccessException, InterruptedException,
+                CameraCaptureSessionClosedException {
             try {
                 if (mClosed) {
                     throw new SessionClosedException();
@@ -74,7 +85,7 @@ public class FrameServer {
                     mCameraLock.acquire();
                 }
                 try {
-                    mCaptureSession.submitRequest(burstRequests, repeating);
+                    mCaptureSession.submitRequest(burstRequests, type.isRepeating());
                 } finally {
                     if (!mExclusive) {
                         mCameraLock.release();

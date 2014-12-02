@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import android.media.ImageReader;
 import android.view.Surface;
 
+import com.android.camera.async.BlockingCloseable;
 import com.android.camera.async.RefCountedBufferQueueController;
 import com.android.camera.async.BufferQueue;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
@@ -33,7 +34,7 @@ import com.android.camera.one.v2.core.CaptureStream;
  * Enables the creation of multiple logical image streams, each with their own
  * guaranteed capacity, over a single ImageReader.
  */
-public class SharedImageReader implements AutoCloseable {
+public class SharedImageReader implements BlockingCloseable {
     public class ImageCaptureBufferQueue implements CaptureStream, BufferQueue<ImageProxy> {
         private final int mCapacity;
         private final BoundedImageBufferQueue mImageStream;

@@ -23,147 +23,45 @@ import com.android.camera.async.SafeCloseable;
 /**
  * Wraps {@link android.media.Image} with a mockable interface.
  */
-public class ImageProxy implements SafeCloseable {
-    private final ImageProxy mImpl;
-
-    public ImageProxy(ImageProxy proxy) {
-        mImpl = proxy;
-    }
-
-    public ImageProxy(android.media.Image image) {
-        mImpl = new Impl(image);
-    }
-
-    private ImageProxy() {
-        mImpl = null;
-    }
-
+public interface ImageProxy extends SafeCloseable {
     /**
      * @see {@link android.media.Image#getCropRect}
      */
-    public Rect getCropRect() {
-        return mImpl.getCropRect();
-    }
+    public Rect getCropRect();
 
     /**
      * @see {@link android.media.Image#setCropRect}
      */
-    public void setCropRect(Rect cropRect) {
-        mImpl.setCropRect(cropRect);
-    }
+    public void setCropRect(Rect cropRect);
 
     /**
      * @see {@link android.media.Image#getFormat}
      */
-    public int getFormat() {
-        return mImpl.getFormat();
-    }
+    public int getFormat();
 
     /**
      * @see {@link android.media.Image#getHeight}
      */
-    public int getHeight() {
-        return mImpl.getHeight();
-    }
+    public int getHeight();
 
     /**
      * @see {@link android.media.Image#getPlanes}
      */
-    public android.media.Image.Plane[] getPlanes() {
-        return mImpl.getPlanes();
-    }
+    public android.media.Image.Plane[] getPlanes();
 
     /**
      * @see {@link android.media.Image#getTimestamp}
      */
-    public long getTimestamp() {
-        return mImpl.getTimestamp();
-    }
+    public long getTimestamp();
 
     /**
      * @see {@link android.media.Image#getWidth}
      */
-    public int getWidth() {
-        return mImpl.getWidth();
-    }
+    public int getWidth();
 
     /**
      * @see {@link android.media.Image#close}
      */
     @Override
-    public void close() {
-        mImpl.close();
-    }
-
-    private static class Impl extends ImageProxy {
-        private final android.media.Image mImage;
-
-        public Impl(android.media.Image image) {
-            mImage = image;
-        }
-
-        /**
-         * @see {@link android.media.Image#getCropRect}
-         */
-        @Override
-        public Rect getCropRect() {
-            return mImage.getCropRect();
-        }
-
-        /**
-         * @see {@link android.media.Image#setCropRect}
-         */
-        @Override
-        public void setCropRect(Rect cropRect) {
-            mImage.setCropRect(cropRect);
-        }
-
-        /**
-         * @see {@link android.media.Image#getFormat}
-         */
-        @Override
-        public int getFormat() {
-            return mImage.getFormat();
-        }
-
-        /**
-         * @see {@link android.media.Image#getHeight}
-         */
-        @Override
-        public int getHeight() {
-            return mImage.getHeight();
-        }
-
-        /**
-         * @see {@link android.media.Image#getPlanes}
-         */
-        @Override
-        public android.media.Image.Plane[] getPlanes() {
-            return mImage.getPlanes();
-        }
-
-        /**
-         * @see {@link android.media.Image#getTimestamp}
-         */
-        @Override
-        public long getTimestamp() {
-            return mImage.getTimestamp();
-        }
-
-        /**
-         * @see {@link android.media.Image#getWidth}
-         */
-        @Override
-        public int getWidth() {
-            return mImage.getWidth();
-        }
-
-        /**
-         * @see {@link android.media.Image#close}
-         */
-        @Override
-        public void close() {
-            mImage.close();
-        }
-    }
+    public void close();
 }
