@@ -1361,11 +1361,10 @@ public class CameraUtil {
     public static int getImageRotation(int sensorOrientation,
                                        int deviceOrientation,
                                        boolean isFrontCamera) {
-        int rotation = (sensorOrientation + deviceOrientation) % 360;
         // The sensor of front camera faces in the opposite direction from back camera.
         if (isFrontCamera) {
-            return (360 - rotation) % 360;
+            deviceOrientation = (360 - deviceOrientation) % 360;
         }
-        return rotation;
+        return (sensorOrientation + deviceOrientation) % 360;
     }
 }
