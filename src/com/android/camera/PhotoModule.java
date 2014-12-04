@@ -1323,8 +1323,11 @@ public class PhotoModule
 
     private void updateSceneMode() {
         // If scene mode is set, we cannot set flash mode, white balance, and
-        // focus mode, instead, we read it from driver
-        if (CameraCapabilities.SceneMode.AUTO != mSceneMode) {
+        // focus mode, instead, we read it from driver. Some devices don't have
+        // any scene modes, so we must check both NO_SCENE_MODE in addition to
+        // AUTO to check where there is no actual scene mode set.
+        if (!(CameraCapabilities.SceneMode.AUTO == mSceneMode ||
+                CameraCapabilities.SceneMode.NO_SCENE_MODE == mSceneMode)) {
             overrideCameraSettings(mCameraSettings.getCurrentFlashMode(),
                     mCameraSettings.getCurrentFocusMode());
         }
