@@ -69,15 +69,18 @@ class BurstFacadeImpl implements BurstFacade {
      * The format string of burst media item file name (without extension).
      * <p/>
      * An media item file name has the following format: "Burst_" + artifact
-     * type + "_" + index of artifact + "_" + timestamp
+     * type + "_" + index of artifact + "_" + index of media item + "_" +
+     * timestamp
      */
-    private static final String MEDIA_ITEM_FILENAME_FORMAT_STRING = "Burst_%s_%d_%d";
+    private static final String MEDIA_ITEM_FILENAME_FORMAT_STRING = "Burst_%s_%d_%d_%d";
     /**
      * The title of Capture session for Burst.
      * <p/>
      * Title is of format: Burst_timestamp
      */
     private static final String BURST_TITLE_FORMAT_STRING = "Burst_%d";
+
+    private static final TimeZone UTC_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     private final AtomicReference<BurstModuleState> mBurstModuleState =
             new AtomicReference<BurstModuleState>(BurstModuleState.IDLE);
@@ -298,22 +301,24 @@ class BurstFacadeImpl implements BurstFacade {
      */
     private void saveArtifacts(final BurstResult burstResult,
             final String artifactType) {
-        int index = 0;
-        for (BurstArtifact artifact : burstResult.getArtifactsByType(artifactType)) {
-            for (BurstMediaItem mediaItem : artifact.getMediaItems()) {
-                saveBurstMediaItem(mediaItem,
-                        artifactType, ++index);
+        List<BurstArtifact> artifactList = burstResult.getArtifactsByType(artifactType);
+        for (int artifactIndex = 0; artifactIndex < artifactList.size(); artifactIndex++) {
+            List<BurstMediaItem> mediaItems = artifactList.get(artifactIndex).getMediaItems();
+            for (int index = 0; index < mediaItems.size(); index++) {
+                saveBurstMediaItem(mediaItems.get(index),
+                        artifactType, artifactIndex + 1, index + 1);
             }
         }
     }
 
     private void saveBurstMediaItem(BurstMediaItem mediaItem,
             String artifactType,
+            int artifactIndex,
             int index) {
-        long timestamp = System.currentTimeMillis();
+        long timestamp = mediaItem.getTimestamp();
         final String mimeType = mediaItem.getMimeType();
         final String title = String.format(MEDIA_ITEM_FILENAME_FORMAT_STRING,
-                artifactType, index, timestamp);
+                artifactType, artifactIndex, index, timestamp);
         byte[] data = mediaItem.getData();
         ExifInterface exif = null;
         if (LocalData.MIME_TYPE_JPEG.equals(mimeType)) {
@@ -321,7 +326,7 @@ class BurstFacadeImpl implements BurstFacade {
             exif.addDateTimeStampTag(
                     ExifInterface.TAG_DATE_TIME,
                     timestamp,
-                    TimeZone.getDefault());
+                    UTC_TIMEZONE);
 
         }
         mMediaSaver.addImage(data,
