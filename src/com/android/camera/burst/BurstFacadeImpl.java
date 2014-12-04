@@ -24,6 +24,8 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
+import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.app.OrientationManager.OnOrientationChangeListener;
 import com.android.camera.data.LocalData;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
@@ -32,6 +34,7 @@ import com.android.camera.gl.FrameDistributor.FrameConsumer;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.BurstParameters;
 import com.android.camera.one.OneCamera.BurstResultsCallback;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.session.CaptureSession;
 
 import java.io.File;
@@ -141,6 +144,16 @@ class BurstFacadeImpl implements BurstFacade {
                 }
             };
 
+    private final OrientationManager.OnOrientationChangeListener
+            mOrientationChangeListener = new OnOrientationChangeListener() {
+                @Override
+                public void onOrientationChanged(OrientationManager orientationManager,
+                        DeviceOrientation orientation) {
+                    mBurstController.onOrientationChanged(orientation.getDegrees(),
+                            mCamera.getDirection() == Facing.FRONT);
+                }
+            };
+
     /** Camera instance for starting/stopping the burst. */
     private OneCamera mCamera;
 
@@ -231,8 +244,12 @@ class BurstFacadeImpl implements BurstFacade {
                 // intermediate results.
                 CaptureSession session = null;
 
-                BurstConfiguration burstConfig = mBurstController.startBurst();
+                mOrientationManager.addOnOrientationChangeListener(mOrientationChangeListener);
                 int orientation = mOrientationManager.getDeviceOrientation().getDegrees();
+                mBurstController.onOrientationChanged(orientation,
+                        mCamera.getDirection() == Facing.FRONT);
+
+                BurstConfiguration burstConfig = mBurstController.startBurst();
                 BurstParameters params = new BurstParameters(title, orientation, location,
                         mDebugDataDir, burstConfig, mBurstExtractsResultsCallback);
 
@@ -248,14 +265,16 @@ class BurstFacadeImpl implements BurstFacade {
     @Override
     public boolean stopBurst() {
         synchronized (mStartStopBurstLock) {
+            boolean wasStopped = false;
             if (mBurstModuleState.compareAndSet(BurstModuleState.RUNNING,
                     BurstModuleState.STOPPING)) {
+                mOrientationManager.removeOnOrientationChangeListener(mOrientationChangeListener);
                 if (mCamera != null) {
                     mCamera.stopBurst();
-                    return true;
+                    wasStopped = true;
                 }
             }
-            return false;
+            return wasStopped;
         }
     }
 
