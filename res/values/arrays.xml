@@ -506,6 +506,11 @@
         <item>@string/pref_video_quality_entry_1080p_notrans</item>
         <item>@string/pref_video_quality_entry_qvga_notrans</item>
         <item>@string/pref_video_quality_entry_2160p_notrans</item>
+        <item>@string/pref_video_quality_entry_fwvga_notrans</item>
+        <item>@string/pref_video_quality_entry_wvga_notrans</item>
+        <item>@string/pref_video_quality_entry_vga_notrans</item>
+        <item>@string/pref_video_quality_entry_wqvga_notrans</item>
+        <item>@string/pref_video_quality_entry_4kdci_notrans</item>
     </array>
 
     <array name="pref_default_boolean_entryvalues">
