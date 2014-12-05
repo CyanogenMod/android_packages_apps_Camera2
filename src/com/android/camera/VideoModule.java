@@ -485,7 +485,7 @@ public class VideoModule extends CameraModule
             }
             mFocusManager = new FocusOverlayManager(mAppController,
                     defaultFocusModes, mCameraCapabilities, this, mMirror,
-                    mActivity.getMainLooper(), mUI.getFocusUI());
+                    mActivity.getMainLooper(), mUI.getFocusRing());
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
     }
@@ -1324,7 +1324,7 @@ public class VideoModule extends CameraModule
         Log.i(TAG, "startVideoRecording: " + Thread.currentThread());
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
-        mUI.showFocusUI(false);
+        mUI.hidePassiveFocusIndicator();
         mUI.showVideoRecordingHints(false);
         mAppController.getCameraAppUI().hideCaptureIndicator();
 
@@ -1446,7 +1446,7 @@ public class VideoModule extends CameraModule
         Log.v(TAG, "stopVideoRecording");
 
         mUI.setSwipingEnabled(true);
-        mUI.showFocusUI(true);
+        mUI.showPassiveFocusIndicator();
         mUI.showVideoRecordingHints(true);
 
         boolean fail = false;

@@ -702,6 +702,9 @@ public class FilmstripView extends ViewGroup {
         if (recycledViewsForType != null) {
             result = recycledViewsForType.poll();
         }
+        if (result != null) {
+        result.setVisibility(View.GONE);
+        }
         return result;
     }
 

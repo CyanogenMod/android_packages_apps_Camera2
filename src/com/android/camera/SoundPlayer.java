@@ -32,6 +32,7 @@ public class SoundPlayer {
     private final SoundPool mSoundPool;
     /** Keeps a mapping from sound resource ID to sound ID */
     private final SparseIntArray mResourceToSoundId = new SparseIntArray();
+    private boolean mIsReleased = false;
 
     /**
      * Construct a new sound player.
@@ -78,7 +79,12 @@ public class SoundPlayer {
      * released and the object cannot be re-used.
      */
     public void release() {
+        mIsReleased = true;
         mSoundPool.release();
+    }
+
+    public boolean isReleased() {
+        return mIsReleased;
     }
 
     private static int getAudioTypeForSoundPool() {
@@ -86,5 +92,4 @@ public class SoundPlayer {
         return ApiHelper.getIntFieldIfExists(AudioManager.class,
                 "STREAM_SYSTEM_ENFORCED", null, AudioManager.STREAM_RING);
     }
-
 }

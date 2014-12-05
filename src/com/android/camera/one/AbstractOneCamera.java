@@ -32,6 +32,7 @@ import java.util.TimeZone;
 public abstract class AbstractOneCamera implements OneCamera {
     protected FocusStateListener mFocusStateListener;
     protected ReadyStateChangedListener mReadyStateChangedListener;
+    protected FocusDistanceListener mFocusDistanceListener;
 
     /**
      * Number of characters from the end of the device serial number used to
@@ -42,6 +43,11 @@ public abstract class AbstractOneCamera implements OneCamera {
     @Override
     public final void setFocusStateListener(FocusStateListener listener) {
         mFocusStateListener = listener;
+    }
+
+    @Override
+    public void setFocusDistanceListener(FocusDistanceListener listener) {
+        mFocusDistanceListener = listener;
     }
 
     @Override

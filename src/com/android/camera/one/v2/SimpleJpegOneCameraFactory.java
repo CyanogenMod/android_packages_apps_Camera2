@@ -16,18 +16,6 @@
 
 package com.android.camera.one.v2;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
@@ -57,6 +45,7 @@ import com.android.camera.async.SafeCloseable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.CameraDirectionProvider;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.FocusState;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
@@ -98,6 +87,18 @@ import com.android.camera.session.CaptureSession;
 import com.android.camera.util.ScopedFactory;
 import com.android.camera.util.Size;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 /**
  */
 public class SimpleJpegOneCameraFactory {
@@ -111,6 +112,7 @@ public class SimpleJpegOneCameraFactory {
         public final FutureResult<GenericOneCameraImpl.PictureTaker> pictureTaker;
         public final FutureResult<GenericOneCameraImpl.ManualAutoFocus> manualAutoFocus;
         public final ConcurrentState<Integer> afState;
+        public final ConcurrentState<FocusState> focusState;
         public final ConcurrentState<Boolean> readyState;
         public final ConcurrentState<Float> zoomState;
         public final ConcurrentState<Boolean> previewStartSuccess;
@@ -123,6 +125,7 @@ public class SimpleJpegOneCameraFactory {
                 FutureResult<GenericOneCameraImpl.PictureTaker> pictureTaker,
                 FutureResult<GenericOneCameraImpl.ManualAutoFocus> manualAutoFocus,
                 ConcurrentState<Integer> afState,
+                ConcurrentState<FocusState> focusState,
                 ConcurrentState<Boolean> readyState,
                 ConcurrentState<Float> zoomState,
                 ConcurrentState<Boolean> previewStartSuccess, Size pictureSize) {
@@ -132,6 +135,7 @@ public class SimpleJpegOneCameraFactory {
             this.pictureTaker = pictureTaker;
             this.manualAutoFocus = manualAutoFocus;
             this.afState = afState;
+            this.focusState = focusState;
             this.readyState = readyState;
             this.zoomState = zoomState;
             this.previewStartSuccess = previewStartSuccess;
@@ -175,12 +179,13 @@ public class SimpleJpegOneCameraFactory {
         FutureResult<GenericOneCameraImpl.PictureTaker> pictureTakerFutureResult = new FutureResult<>();
         FutureResult<GenericOneCameraImpl.ManualAutoFocus> manualAutoFocusFutureResult = new FutureResult<>();
         ConcurrentState<Integer> afState = new ConcurrentState<>();
+        ConcurrentState<FocusState> focusState = new ConcurrentState<>();
         ConcurrentState<Boolean> readyState = new ConcurrentState<>();
         ConcurrentState<Float> zoomState = new ConcurrentState<>();
         ConcurrentState<Boolean> previewStartSuccess = new ConcurrentState<>();
 
         return new CameraScope(device, characteristics, mainHandler, pictureTakerFutureResult,
-                manualAutoFocusFutureResult, afState,
+                manualAutoFocusFutureResult, afState, focusState,
                 readyState, zoomState, previewStartSuccess, pictureSize);
     }
 
@@ -214,6 +219,10 @@ public class SimpleJpegOneCameraFactory {
 
     private static Listenable<Integer> provideAFStateListenable(CameraScope scope) {
         return new ListenableConcurrentState<>(scope.afState, provideMainHandlerExecutor(scope));
+    }
+
+    private static Listenable<FocusState> provideFocusStateListenable(CameraScope scope) {
+        return new ListenableConcurrentState<>(scope.focusState, provideMainHandlerExecutor(scope));
     }
 
     private static Listenable<Boolean> provideReadyStateListenable(CameraScope scope) {
@@ -519,6 +528,7 @@ public class SimpleJpegOneCameraFactory {
         GenericOneCameraImpl.PictureTaker pictureTaker = providePictureTaker(scope);
         GenericOneCameraImpl.ManualAutoFocus manualAutoFocus = provideManualAutoFocus(scope);
         Listenable<Integer> afStateListenable = provideAFStateListenable(scope);
+        Listenable<FocusState> focusStateListenable = provideFocusStateListenable(scope);
         Listenable<Boolean> readyStateListenable = provideReadyStateListenable(scope);
         float maxZoom = provideMaxZoom(scope.characteristics);
         Updatable<Float> zoom = provideZoom(scope);
@@ -530,7 +540,7 @@ public class SimpleJpegOneCameraFactory {
         Listenable<Boolean> previewStartSuccessListenable = providePreviewStartSuccessListenable(scope);
 
         return new GenericOneCameraImpl(closeListeners, pictureTaker, manualAutoFocus,
-                afStateListenable, readyStateListenable, maxZoom, zoom,
+                afStateListenable, focusStateListenable, readyStateListenable, maxZoom, zoom,
                 supportedPreviewSizes, fullSizeAspectRatio, direction, previewSizeSelector,
                 previewStartSuccessListenable, surfaceRunnableScopedFactory);
     }

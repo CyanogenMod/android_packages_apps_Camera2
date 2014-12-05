@@ -24,7 +24,6 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.Face;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,13 +31,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.ui.focus.FocusRing;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GservicesHelper;
@@ -58,7 +57,7 @@ public class PhotoUI implements PreviewStatusListener,
     private static final float UNSET = 0f;
 
     private final PreviewOverlay mPreviewOverlay;
-    private final FocusUI mFocusUI;
+    private final FocusRing mFocusRing;
     private final CameraActivity mActivity;
     private final PhotoController mController;
 
@@ -232,7 +231,7 @@ public class PhotoUI implements PreviewStatusListener,
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                  moduleRoot, true);
         initIndicators();
-        mFocusUI = (FocusUI) mRootView.findViewById(R.id.focus_overlay);
+        mFocusRing = (FocusRing) mRootView.findViewById(R.id.focus_ring);
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
         // Show faces if we are in debug mode.
@@ -282,8 +281,8 @@ public class PhotoUI implements PreviewStatusListener,
     }
 
 
-    public FocusUI getFocusUI() {
-        return mFocusUI;
+    public FocusRing getFocusRing() {
+        return mFocusRing;
     }
 
     public void updatePreviewAspectRatio(float aspectRatio) {

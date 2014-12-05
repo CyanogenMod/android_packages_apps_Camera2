@@ -208,6 +208,33 @@ public interface OneCamera {
     }
 
     /**
+     * Classes implementing this interface will be called when the focus
+     * distance of the physical lens changes.
+     */
+    public static interface FocusDistanceListener {
+        /**
+         * Called when physical lens distance on the camera changes.
+         *
+         * @param diopter the lens diopter from the last known position.
+         * @param isActive whether the lens is moving.
+         */
+        public void onFocusDistance(float diopter, boolean isActive);
+    }
+
+    /**
+     * Single instance of the current camera AF state.
+     */
+    public static class FocusState {
+        public final float diopter;
+        public final boolean isActive;
+
+        public FocusState(float diopter, boolean isActive) {
+            this.diopter = diopter;
+            this.isActive = isActive;
+        }
+    }
+
+    /**
      * Parameters to be given to capture requests.
      */
     public static abstract class CaptureParameters {
@@ -331,6 +358,12 @@ public interface OneCamera {
      * the camera changes.
      */
     public void setFocusStateListener(FocusStateListener listener);
+
+    /**
+     * Sets or replaces a listener that is called whenever the focus state of
+     * the camera changes.
+     */
+    public void setFocusDistanceListener(FocusDistanceListener listener);
 
     /**
      * Sets or replaces a listener that is called whenever the state of the

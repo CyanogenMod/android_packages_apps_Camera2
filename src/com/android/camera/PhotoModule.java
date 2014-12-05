@@ -41,7 +41,6 @@ import android.os.MessageQueue;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
-import android.view.OrientationEventListener;
 import android.view.View;
 
 import com.android.camera.PhotoModule.NamedImages.NamedEntity;
@@ -52,7 +51,6 @@ import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryManager.MemoryListener;
 import com.android.camera.app.MotionManager;
-import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.exif.ExifTag;
@@ -1051,7 +1049,6 @@ public class PhotoModule
             Log.v(TAG, "mPictureDisplayedToJpegCallbackTime = "
                     + mPictureDisplayedToJpegCallbackTime + "ms");
 
-            mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
             if (!mIsImageCaptureIntent) {
                 setupPreview();
             }
@@ -1658,7 +1655,7 @@ public class PhotoModule
             mFocusManager =
                     new FocusOverlayManager(mAppController, defaultFocusModes,
                             mCameraCapabilities, this, mMirror, mActivity.getMainLooper(),
-                            mUI.getFocusUI());
+                            mUI.getFocusRing());
             mMotionManager = getServices().getMotionManager();
             if (mMotionManager != null) {
                 mMotionManager.addListener(mFocusManager);

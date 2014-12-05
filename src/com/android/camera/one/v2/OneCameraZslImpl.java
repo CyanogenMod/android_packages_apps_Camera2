@@ -355,6 +355,27 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mMediaActionSound.load(MediaActionSound.SHUTTER_CLICK);
     }
 
+    @Override
+    public void setFocusDistanceListener(FocusDistanceListener focusDistanceListener) {
+        if(mFocusDistanceListener == null) {
+            mCaptureManager.addMetadataChangeListener(CaptureResult.LENS_FOCUS_DISTANCE,
+                  new ImageCaptureManager.MetadataChangeListener() {
+                      @Override
+                      public void onImageMetadataChange(Key<?> key, Object oldValue,
+                            Object newValue,
+                            CaptureResult result) {
+                          Integer state = result.get(CaptureResult.LENS_STATE);
+                          if (newValue != null && state != null) {
+                              mFocusDistanceListener.onFocusDistance((float) newValue, state == 1);
+                          } else if (newValue != null) {
+                              mFocusDistanceListener.onFocusDistance((float) newValue, true);
+                          }
+                      }
+                  });
+        }
+        mFocusDistanceListener = focusDistanceListener;
+    }
+
     /**
      * @return The largest supported picture size.
      */

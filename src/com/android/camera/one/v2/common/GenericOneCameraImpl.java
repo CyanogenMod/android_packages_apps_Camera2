@@ -16,9 +16,6 @@
 
 package com.android.camera.one.v2.common;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import android.content.Context;
 import android.view.Surface;
 
@@ -31,6 +28,9 @@ import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Callback;
 import com.android.camera.util.ScopedFactory;
 import com.android.camera.util.Size;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A generic, composable {@link OneCamera}.
@@ -61,6 +61,7 @@ public class GenericOneCameraImpl implements OneCamera {
     private final PictureTaker mPictureTaker;
     private final ManualAutoFocus mManualAutoFocus;
     private final Listenable<Integer> mAFStateListenable;
+    private final Listenable<FocusState> mFocusStateListenable;
     private final Listenable<Boolean> mReadyStateListenable;
     private final float mMaxZoom;
     private final Updatable<Float> mZoom;
@@ -71,10 +72,17 @@ public class GenericOneCameraImpl implements OneCamera {
     private final Listenable<Boolean> mPreviewStartSuccessListenable;
     private final ScopedFactory<Surface, Runnable> mPreviewScopeEntrance;
 
-    public GenericOneCameraImpl(Set<SafeCloseable> closeListeners, PictureTaker pictureTaker,
-            ManualAutoFocus manualAutoFocus, Listenable<Integer> afStateProvider,
-            Listenable<Boolean> readyStateListenable, float maxZoom, Updatable<Float> zoom,
-            Size[] supportedPreviewSizes, float fullSizeAspectRatio, Facing direction,
+    public GenericOneCameraImpl(Set<SafeCloseable> closeListeners,
+            PictureTaker pictureTaker,
+            ManualAutoFocus manualAutoFocus,
+            Listenable<Integer> afStateProvider,
+            Listenable<FocusState> focusStateProvider,
+            Listenable<Boolean> readyStateListenable,
+            float maxZoom,
+            Updatable<Float> zoom,
+            Size[] supportedPreviewSizes,
+            float fullSizeAspectRatio,
+            Facing direction,
             PreviewSizeSelector previewSizeSelector,
             Listenable<Boolean> previewStartSuccessListenable,
             ScopedFactory<Surface, Runnable> previewScopeEntrance) {
@@ -89,6 +97,7 @@ public class GenericOneCameraImpl implements OneCamera {
         mPictureTaker = pictureTaker;
         mManualAutoFocus = manualAutoFocus;
         mAFStateListenable = afStateProvider;
+        mFocusStateListenable = focusStateProvider;
         mReadyStateListenable = readyStateListenable;
         mZoom = zoom;
     }
@@ -123,6 +132,16 @@ public class GenericOneCameraImpl implements OneCamera {
                 long frameNumber = -1;
                 listener.onFocusStatusUpdate(AutoFocusHelper.stateFromCamera2State(afState),
                         frameNumber);
+            }
+        });
+    }
+
+    @Override
+    public void setFocusDistanceListener(final FocusDistanceListener listener) {
+        mFocusStateListenable.setCallback(new Callback<FocusState>() {
+            @Override
+            public void onCallback(FocusState focusState) {
+                listener.onFocusDistance(focusState.diopter, focusState.isActive);
             }
         });
     }

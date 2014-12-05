@@ -93,6 +93,9 @@
     <dimen name="switcher_size">72dp</dimen>
     <dimen name="face_circle_stroke">1dip</dimen>
     <dimen name="focus_debug_stroke">1dip</dimen>
+    <dimen name="focus_circle_stroke">1.25dp</dimen>
+    <dimen name="focus_circle_min_size">24dp</dimen>
+    <dimen name="focus_circle_max_size">96dp</dimen>
     <dimen name="shutter_offset">-22dp</dimen>
     <dimen name="size_thumbnail">200dip</dimen>
     <dimen name="size_preview">400dip</dimen>

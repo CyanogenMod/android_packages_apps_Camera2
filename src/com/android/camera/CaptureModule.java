@@ -64,7 +64,6 @@ import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.OneCameraManager;
-import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.OneCameraManagerImpl;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
@@ -73,6 +72,8 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
+import com.android.camera.ui.focus.FocusController;
+import com.android.camera.ui.focus.FocusSound;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
@@ -122,21 +123,6 @@ public class CaptureModule extends CameraModule
         }
     };
 
-    /**
-     * Hide AF target UI element.
-     */
-    Runnable mHideAutoFocusTargetRunnable = new Runnable() {
-        @Override
-        public void run() {
-            // For debug UI off, showAutoFocusSuccess() just hides the AF UI.
-            if (mFocusedAtEnd) {
-                mUI.showAutoFocusSuccess();
-            } else {
-                mUI.showAutoFocusFailure();
-            }
-        }
-    };
-
     private static final Tag TAG = new Tag("CaptureModule");
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
     /** Enable additional debug output. */
@@ -175,7 +161,10 @@ public class CaptureModule extends CameraModule
     /** Whether HDR is currently enabled. */
     private boolean mHdrEnabled = false;
 
-    /** State by the module state machine. */
+    private FocusController mFocusController;
+
+
+  /** State by the module state machine. */
     private static enum ModuleState {
         IDLE,
         WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED,
@@ -223,7 +212,7 @@ public class CaptureModule extends CameraModule
     /** Used to fetch and embed the location into captured images. */
     private final LocationManager mLocationManager;
     /** Plays sounds for countdown timer. */
-    private SoundPlayer mCountdownSoundPlayer;
+    private SoundPlayer mSoundPlayer;
 
     /** Whether the module is paused right now. */
     private boolean mPaused;
@@ -306,6 +295,10 @@ public class CaptureModule extends CameraModule
                 mLayoutListener);
         mAppController.setPreviewStatusListener(mUI);
 
+        mSoundPlayer = new SoundPlayer(mContext);
+        FocusSound focusSound = new FocusSound(mSoundPlayer, R.raw.material_camera_focus);
+        mFocusController = new FocusController(mUI.getFocusRing(), focusSound, mMainHandler);
+
         // Set the preview texture from UI for the SurfaceTextureConsumer.
         mPreviewConsumer.setSurfaceTexture(
                 mAppController.getCameraAppUI().getSurfaceTexture(),
@@ -315,7 +308,7 @@ public class CaptureModule extends CameraModule
         mSensorManager = (SensorManager) (mContext.getSystemService(Context.SENSOR_SERVICE));
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        mCountdownSoundPlayer = new SoundPlayer(mContext);
+
 
         String action = activity.getIntent().getAction();
         mIsImageCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
@@ -417,9 +410,9 @@ public class CaptureModule extends CameraModule
     @Override
     public void onRemainingSecondsChanged(int remainingSeconds) {
         if (remainingSeconds == 1) {
-            mCountdownSoundPlayer.play(R.raw.timer_final_second, 0.6f);
+            mSoundPlayer.play(R.raw.timer_final_second, 0.6f);
         } else if (remainingSeconds == 2 || remainingSeconds == 3) {
-            mCountdownSoundPlayer.play(R.raw.timer_increment, 0.6f);
+            mSoundPlayer.play(R.raw.timer_increment, 0.6f);
         }
     }
 
@@ -590,8 +583,8 @@ public class CaptureModule extends CameraModule
                     mAppController.getCameraAppUI().getSurfaceHeight());
         }
 
-        mCountdownSoundPlayer.loadSound(R.raw.timer_final_second);
-        mCountdownSoundPlayer.loadSound(R.raw.timer_increment);
+        mSoundPlayer.loadSound(R.raw.timer_final_second);
+        mSoundPlayer.loadSound(R.raw.timer_increment);
     }
 
     @Override
@@ -603,8 +596,8 @@ public class CaptureModule extends CameraModule
         closeCamera();
         resetTextureBufferSize();
         mFrameDistributor.close();
-        mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
-        mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
+        mSoundPlayer.unloadSound(R.raw.timer_final_second);
+        mSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
         mMainHandler.removeCallbacksAndMessages(null);
 
@@ -619,7 +612,7 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void destroy() {
-        mCountdownSoundPlayer.release();
+        mSoundPlayer.release();
         mCameraHandler.getLooper().quitSafely();
     }
 
@@ -730,47 +723,36 @@ public class CaptureModule extends CameraModule
      * Focus sequence starts for zone around tap location for single tap.
      */
     @Override
-    public void onSingleTapUp(View view, int x, int y) {
-        Log.v(TAG, "onSingleTapUp x=" + x + " y=" + y);
+    public void onSingleTapUp(View view, int viewX, int viewY) {
+        Log.v(TAG, "onSingleTapUp x=" + viewX + " y=" + viewY);
         // TODO: This should query actual capability.
         if (mCameraFacing == Facing.FRONT) {
             return;
         }
-        triggerFocusAtScreenCoord(x, y);
+        startActiveFocusAt(viewX, viewY);
     }
 
     // TODO: Consider refactoring FocusOverlayManager.
     // Currently AF state transitions are controlled in OneCameraImpl.
     // PhotoModule uses FocusOverlayManager which uses API1/portability
     // logic and coordinates.
-    private void triggerFocusAtScreenCoord(int x, int y) {
+    private void startActiveFocusAt(int viewX, int viewY) {
         if (mCamera == null) {
             // If we receive this after the camera is closed, do nothing.
             return;
         }
 
-        mTapToFocusWaitForActiveScan = true;
-        // Show UI immediately even though scan has not started yet.
-        float minEdge = Math.min(mPreviewArea.width(), mPreviewArea.height());
-        mUI.setAutoFocusTarget(x, y, false,
-                (int) (Settings3A.getAutoFocusRegionWidth() * mZoomValue * minEdge),
-                (int) (Settings3A.getMeteringRegionWidth() * mZoomValue * minEdge));
-        mUI.showAutoFocusInProgress();
-
-        // Cancel any scheduled auto focus target UI actions.
-        mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-        // Timeout in case camera fails to stop (unlikely).
-        mMainHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mMainHandler.post(mHideAutoFocusTargetRunnable);
-            }
-        }, FOCUS_UI_TIMEOUT_MILLIS);
+        // TODO: make mFocusController final and remove null check.
+        if (mFocusController == null) {
+            Log.v(TAG, "CaptureModule mFocusController is null!");
+            return;
+        }
+        mFocusController.showActiveFocusAt(viewX, viewY);
 
         // Normalize coordinates to [0,1] per CameraOne API.
         float points[] = new float[2];
-        points[0] = (x - mPreviewArea.left) / mPreviewArea.width();
-        points[1] = (y - mPreviewArea.top) / mPreviewArea.height();
+        points[0] = (viewX - mPreviewArea.left) / mPreviewArea.width();
+        points[1] = (viewY - mPreviewArea.top) / mPreviewArea.height();
 
         // Rotate coordinates to portrait orientation per CameraOne API.
         Matrix rotationMatrix = new Matrix();
@@ -780,8 +762,11 @@ public class CaptureModule extends CameraModule
 
         // Log touch (screen coordinates).
         if (mZoomValue == 1f) {
-            TouchCoordinate touchCoordinate = new TouchCoordinate(x - mPreviewArea.left,
-                    y - mPreviewArea.top, mPreviewArea.width(), mPreviewArea.height());
+            TouchCoordinate touchCoordinate = new TouchCoordinate(
+                  viewX - mPreviewArea.left,
+                  viewY - mPreviewArea.top,
+                  mPreviewArea.width(),
+                  mPreviewArea.height());
             // TODO: Add to logging: duration, rotation.
             UsageStatistics.instance().tapToFocus(touchCoordinate, null);
         }
@@ -790,13 +775,17 @@ public class CaptureModule extends CameraModule
     /**
      * Show AF target in center of preview.
      */
-    private void setAutoFocusTargetPassive() {
-        float minEdge = Math.min(mPreviewArea.width(), mPreviewArea.height());
-        mUI.setAutoFocusTarget((int) mPreviewArea.centerX(), (int) mPreviewArea.centerY(),
-                true,
-                (int) (Settings3A.getAutoFocusRegionWidth() * mZoomValue * minEdge),
-                (int) (Settings3A.getMeteringRegionWidth() * mZoomValue * minEdge));
-        mUI.showAutoFocusInProgress();
+    private void startPassiveFocus() {
+        // TODO: make mFocusController final and remove null check.
+        if (mFocusController == null) {
+            return;
+        }
+
+        // TODO: Some passive focus scans may trigger on a location
+        // instead of the center of the screen.
+        mFocusController.showPassiveFocusAt(
+              (int) (mPreviewArea.width() / 2.0f),
+              (int) (mPreviewArea.height() / 2.0f));
     }
 
     /**
@@ -808,33 +797,17 @@ public class CaptureModule extends CameraModule
 
         switch (state) {
             case PASSIVE_SCAN:
-                mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setAutoFocusTargetPassive();
-                    }
-                });
+                startPassiveFocus();
                 break;
             case ACTIVE_SCAN:
-                mTapToFocusWaitForActiveScan = false;
                 break;
             case PASSIVE_FOCUSED:
             case PASSIVE_UNFOCUSED:
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mUI.setPassiveFocusSuccess(state == AutoFocusState.PASSIVE_FOCUSED);
-                    }
-                });
+                mFocusController.clearFocusIndicator();
                 break;
             case ACTIVE_FOCUSED:
             case ACTIVE_UNFOCUSED:
-                if (!mTapToFocusWaitForActiveScan) {
-                    mFocusedAtEnd = state != AutoFocusState.ACTIVE_UNFOCUSED;
-                    mMainHandler.removeCallbacks(mHideAutoFocusTargetRunnable);
-                    mMainHandler.post(mHideAutoFocusTargetRunnable);
-                }
+                mFocusController.clearFocusIndicator();
                 break;
         }
 
@@ -1273,6 +1246,12 @@ public class CaptureModule extends CameraModule
                         updateFrameDistributorBufferSize();
                         mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
                         Log.d(TAG, "starting preview ...");
+
+
+                        // TODO: make mFocusController final and remove null check.
+                        if (mFocusController != null) {
+                            camera.setFocusDistanceListener(mFocusController);
+                        }
 
                         // TODO: Consider rolling these two calls into one.
                         camera.startPreview(new Surface(mFrameDistributor.getInputSurfaceTexture()),

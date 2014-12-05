@@ -223,6 +223,11 @@ public class OneCameraImpl extends AbstractOneCamera {
                         AutoFocusHelper.logExtraFocusInfo(result);
                     }
 
+                    Float diopter = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
+                    if(diopter != null && mFocusDistanceListener != null) {
+                        mFocusDistanceListener.onFocusDistance(diopter, true);
+                    }
+
                     if (request.getTag() == RequestTag.CAPTURE) {
                         // Add the capture result to the latest in-flight
                         // capture. If all the data for that capture is

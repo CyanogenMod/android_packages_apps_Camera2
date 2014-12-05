@@ -432,48 +432,15 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
     @Override
     public void onCaptureProgressed(CameraCaptureSession session, CaptureRequest request,
             final CaptureResult partialResult) {
-        long frameNumber = partialResult.getFrameNumber();
-
-        // Update mMetadata for whichever keys are present, if this frame is
-        // supplying newer values.
-        for (final Key<?> key : partialResult.getKeys()) {
-            Pair<Long, Object> oldEntry = mMetadata.get(key);
-            final Object oldValue = (oldEntry != null) ? oldEntry.second : null;
-
-            boolean newerValueAlreadyExists = oldEntry != null
-                    && frameNumber < oldEntry.first;
-            if (newerValueAlreadyExists) {
-                continue;
-            }
-
-            final Object newValue = partialResult.get(key);
-            mMetadata.put(key, new Pair<Long, Object>(frameNumber, newValue));
-
-            // If the value has changed, call the appropriate listeners, if
-            // any exist.
-            if (oldValue == newValue || !mMetadataChangeListeners.containsKey(key)) {
-                continue;
-            }
-
-            for (final MetadataChangeListener listener :
-                    mMetadataChangeListeners.get(key)) {
-                Log.v(TAG, "Dispatching to metadata change listener for key: "
-                        + key.toString());
-                mListenerHandler.post(new Runnable() {
-                        @Override
-                    public void run() {
-                        listener.onImageMetadataChange(key, oldValue, newValue,
-                                partialResult);
-                    }
-                });
-            }
-        }
+        updateMetadataChangeListeners(partialResult);
     }
 
     @Override
     public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
             final TotalCaptureResult result) {
         final long timestamp = result.get(TotalCaptureResult.SENSOR_TIMESTAMP);
+
+      updateMetadataChangeListeners(result);
 
         // Detect camera thread stall.
         long now = SystemClock.uptimeMillis();
@@ -495,6 +462,43 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
         }
 
         tryExecutePendingCaptureRequest(timestamp);
+    }
+
+    private void updateMetadataChangeListeners(final CaptureResult result) {
+        long frameNumber = result.getFrameNumber();
+
+        // Update mMetadata for whichever keys are present, if this frame is
+        // supplying newer values.
+        for (final Key<?> key : result.getKeys()) {
+            Pair<Long, Object> oldEntry = mMetadata.get(key);
+            final Object oldValue = (oldEntry != null) ? oldEntry.second : null;
+
+            boolean newerValueAlreadyExists = oldEntry != null
+                  && frameNumber < oldEntry.first;
+            if (newerValueAlreadyExists) {
+                continue;
+            }
+
+            final Object newValue = result.get(key);
+            mMetadata.put(key, new Pair<Long, Object>(frameNumber, newValue));
+
+            // If the value has changed, call the appropriate listeners, if
+            // any exist.
+            if (oldValue == newValue || !mMetadataChangeListeners.containsKey(key)) {
+                continue;
+            }
+
+            for (final MetadataChangeListener listener :
+                  mMetadataChangeListeners.get(key)) {
+                mListenerHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onImageMetadataChange(key, oldValue, newValue,
+                              result);
+                    }
+                });
+            }
+        }
     }
 
     private boolean doMetaDataSwap(final TotalCaptureResult newMetadata, final long timestamp) {

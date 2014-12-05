@@ -32,6 +32,7 @@ import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewOverlay.OnZoomChangedListener;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.ProgressOverlay;
+import com.android.camera.ui.focus.FocusRing;
 import com.android.camera2.R;
 
 /**
@@ -58,7 +59,7 @@ public class CaptureModuleUI implements
             return true;
         }
     };
-    private final FocusOverlayManager.FocusUI mFocusUI;
+    private final FocusRing mFocusRing;
     private final CountDownView mCountdownView;
 
     private int mPreviewAreaWidth;
@@ -139,7 +140,7 @@ public class CaptureModuleUI implements
         mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
         mProgressOverlay = (ProgressOverlay) mRootView.findViewById(R.id.progress_overlay);
 
-        mFocusUI = (FocusOverlayManager.FocusUI) mRootView.findViewById(R.id.focus_overlay);
+        mFocusRing = (FocusRing) mRootView.findViewById(R.id.focus_ring);
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
     }
 
@@ -185,35 +186,12 @@ public class CaptureModuleUI implements
         return mPreviewView.getTransform(m);
     }
 
-    public void showAutoFocusInProgress() {
-        mFocusUI.onFocusStarted();
-    }
-
-    public void showAutoFocusSuccess() {
-        mFocusUI.onFocusSucceeded();
-    }
-
-    public void showAutoFocusFailure() {
-        mFocusUI.onFocusFailed();
-    }
-
-    public void setPassiveFocusSuccess(boolean success) {
-        mFocusUI.setPassiveFocusSuccess(success);
+    public FocusRing getFocusRing() {
+        return mFocusRing;
     }
 
     public void showDebugMessage(String message) {
-        mFocusUI.showDebugMessage(message);
-    }
-
-    public void setAutoFocusTarget(int x, int y, boolean isPassiveScan, int afSize, int aeSize) {
-        mFocusUI.setFocusPosition(x, y, isPassiveScan, afSize, aeSize);
-    }
-
-    public void clearAutoFocusIndicator() {
-        mFocusUI.clearFocus();
-    }
-
-    public void clearAutoFocusIndicator(boolean waitUntilProgressIsHidden) {
+        /* NoOp */
     }
 
     /**

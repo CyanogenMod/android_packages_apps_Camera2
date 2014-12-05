@@ -58,6 +58,7 @@ import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.StickyBottomCaptureLayout;
 import com.android.camera.ui.TouchCoordinate;
+import com.android.camera.ui.focus.FocusRing;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
@@ -513,7 +514,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
     private IndicatorIconController mIndicatorIconController;
-    private View mFocusOverlay;
+    private FocusRing mFocusRing;
     private FrameLayout mTutorialsPlaceHolderWrapper;
     private StickyBottomCaptureLayout mStickyBottomCaptureLayout;
     private TextureViewHelper mTextureViewHelper;
@@ -1263,7 +1264,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mController.getSettingsManager().addListener(mIndicatorIconController);
 
         mModeOptionsToggle = mCameraRootView.findViewById(R.id.mode_options_toggle);
-        mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
+        mFocusRing = (FocusRing) mCameraRootView.findViewById(R.id.focus_ring);
         mTutorialsPlaceHolderWrapper = (FrameLayout) mCameraRootView
                 .findViewById(R.id.tutorials_placeholder_wrapper);
         mStickyBottomCaptureLayout = (StickyBottomCaptureLayout) mAppRootView
@@ -1307,7 +1308,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         setShutterButtonEnabled(true);
         mPreviewStatusListener = null;
         mPreviewOverlay.reset();
-        mFocusOverlay.setVisibility(View.INVISIBLE);
+
+        Log.v(TAG, "mFocusRing.stopFocusAnimations()");
+        mFocusRing.stopFocusAnimations();
     }
 
     /**
