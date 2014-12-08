@@ -181,8 +181,28 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public boolean delete(Context context) {
-        File f = new File(mPath);
-        return f.delete();
+        File fileToDelete = new File(mPath);
+        boolean deletionSucceeded = fileToDelete.delete();
+        deleteSubDirIfEmpty(fileToDelete.getParentFile());
+        return deletionSucceeded;
+    }
+
+    private void deleteSubDirIfEmpty(File directory) {
+        // Make sure 'directory' refers to a valid existing empty directory.
+        if (!directory.exists() || !directory.isDirectory() || directory.list().length != 0) {
+            return;
+        }
+
+        // Check if this is a 'Camera' sub-directory.
+        String cameraPathStr = Storage.DIRECTORY_FILE.getAbsolutePath();
+        String fileParentPathStr = directory.getParentFile().getAbsolutePath();
+        Log.d(TAG, "CameraPathStr: " + cameraPathStr + "  fileParentPathStr: " + fileParentPathStr);
+
+        // Delete the directory if it's an empty sub-directory of the Camera
+        // directory.
+        if (fileParentPathStr.equals(cameraPathStr)) {
+            directory.delete();
+        }
     }
 
     @Override

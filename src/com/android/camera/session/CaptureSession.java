@@ -121,6 +121,13 @@ public interface CaptureSession {
             ExifInterface exif, OnMediaSavedListener listener);
 
     /**
+     * Will create and return a {@link StackSaver} for saving out a number of
+     * media items to a stack. The name of the stack will be the title of this
+     * capture session.
+     */
+    public StackSaver getStackSaver();
+
+    /**
      * Finishes the session.
      */
     public void finish();
@@ -138,16 +145,15 @@ public interface CaptureSession {
     public String getTempOutputPath();
 
     /**
-     * Returns the URI to the final output of this session. This is only available
-     * after startSession has been called.
+     * Returns the URI to the final output of this session. This is only
+     * available after startSession has been called.
      */
     public Uri getUri();
 
     /**
      * Returns the Content URI to the final output of this session. This is only
-     * available if the session has been finished.
-     *
-     * Returns null if it has not been finished.
+     * available if the session has been finished. Returns null if it has not
+     * been finished.
      */
     public Uri getContentUri();
 

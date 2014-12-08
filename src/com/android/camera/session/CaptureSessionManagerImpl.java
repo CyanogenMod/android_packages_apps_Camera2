@@ -71,6 +71,9 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
          */
         private final String mTempOutputPath;
 
+        /** Saver that is used to store a stack of images. */
+        private final StackSaver mStackSaver;
+
         /**
          * Creates a new {@link CaptureSession}.
          *
@@ -79,11 +82,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
          *            (since epoch).
          * @param location the location of this session, used for media store.
          */
-        private CaptureSessionImpl(String title, long sessionStartMillis, Location location) {
+        private CaptureSessionImpl(String title, long sessionStartMillis, Location location,
+                StackSaver stackSaver) {
             mTitle = title;
             mSessionStartMillis = sessionStartMillis;
             mLocation = location;
             mTempOutputPath = createTempOutputPath(mTitle);
+            mStackSaver = stackSaver;
         }
 
         @Override
@@ -184,6 +189,11 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
             removeSession(mUri.toString());
             notifyTaskDone(mPlaceHolderSession.outputUri);
+        }
+
+        @Override
+        public StackSaver getStackSaver() {
+            return mStackSaver;
         }
 
         @Override
@@ -350,9 +360,10 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     private final MediaSaver mMediaSaver;
+    private final ContentResolver mContentResolver;
     private final PlaceholderManager mPlaceholderManager;
     private final SessionStorageManager mSessionStorageManager;
-    private final ContentResolver mContentResolver;
+    private final StackSaverFactory mStackSaverFactory;
 
     /** Failed session messages. Uri -> message. */
     private final HashMap<Uri, CharSequence> mFailedSessionMessages =
@@ -380,22 +391,25 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
      *            temporary session data
      */
     public CaptureSessionManagerImpl(MediaSaver mediaSaver, ContentResolver contentResolver,
-            PlaceholderManager placeholderManager, SessionStorageManager sessionStorageManager) {
+            PlaceholderManager placeholderManager, SessionStorageManager sessionStorageManager,
+            StackSaverFactory stackSaverProvider) {
         mSessions = new HashMap<String, CaptureSession>();
         mMediaSaver = mediaSaver;
         mContentResolver = contentResolver;
         mPlaceholderManager = placeholderManager;
         mSessionStorageManager = sessionStorageManager;
+        mStackSaverFactory = stackSaverProvider;
     }
 
     @Override
     public CaptureSession createNewSession(String title, long sessionStartTime, Location location) {
-        return new CaptureSessionImpl(title, sessionStartTime, location);
+        return new CaptureSessionImpl(title, sessionStartTime, location, mStackSaverFactory.create(
+                title, location));
     }
 
     @Override
     public CaptureSession createSession() {
-        return new CaptureSessionImpl(null, System.currentTimeMillis(), null);
+        return new CaptureSessionImpl(null, System.currentTimeMillis(), null, null);
     }
 
     @Override
@@ -410,14 +424,6 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         synchronized (mSessions) {
             return mSessions.get(sessionUri.toString());
         }
-    }
-
-    @Override
-    public void saveImage(byte[] data, String title, long date, Location loc,
-            int width, int height, int orientation, ExifInterface exif,
-            OnMediaSavedListener listener) {
-        mMediaSaver.addImage(data, title, date, loc, width, height, orientation, exif,
-                listener, mContentResolver);
     }
 
     @Override

@@ -16,15 +16,13 @@
 
 package com.android.camera.burst;
 
-import android.content.ContentResolver;
+import android.content.Context;
 
-import com.android.camera.app.AppController;
-import com.android.camera.app.LocationManager;
-import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.gl.FrameDistributor;
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
 import com.android.camera.one.OneCamera;
+import com.android.camera.session.CaptureSession;
 
 import java.io.File;
 
@@ -32,39 +30,44 @@ import java.io.File;
  * Factory for creating burst manager objects.
  */
 public class BurstFacadeFactory {
-    private BurstFacadeFactory() {/* cannot be instantiated */}
+    private BurstFacadeFactory() {
+        /* cannot be instantiated */
+    }
 
     /**
      * An empty burst manager that is instantiated when burst is not supported.
      */
     private static class BurstFacadeStub implements BurstFacade {
         @Override
-        public void setContentResolver(ContentResolver contentResolver) {}
+        public void onCameraAttached(OneCamera camera) {
+        }
 
         @Override
-        public void onCameraAttached(OneCamera camera) {}
-
-        @Override
-        public void onCameraDetached() {}
+        public void onCameraDetached() {
+        }
 
         @Override
         public FrameConsumer getPreviewFrameConsumer() {
             return new FrameConsumer() {
 
                 @Override
-                public void onStop() {}
+                public void onStop() {
+                }
 
                 @Override
-                public void onStart() {}
+                public void onStart() {
+                }
 
                 @Override
                 public void onNewFrameAvailable(FrameDistributor frameDistributor,
-                        long timestampNs) {}
+                        long timestampNs) {
+                }
             };
         }
 
         @Override
-        public void startBurst() {}
+        public void startBurst(CaptureSession captureSession, File tempSessionDirectory) {
+        }
 
         @Override
         public boolean isReady() {
@@ -80,23 +83,16 @@ public class BurstFacadeFactory {
     /**
      * Creates and returns an instance of {@link BurstFacade}
      *
-     * @param appController the app level controller for controlling the shutter
-     *            button.
-     * @param mediaSaver the {@link MediaSaver} instance for saving results of
-     *            burst.
-     * @param locationManager for querying location of burst.
+     * @param appContext the Android application context which is passes through
+     *            to the burst controller.
      * @param orientationManager for querying orientation of burst.
-     * @param debugDataDir the debug directory to use for burst.
+     * @param readyStateListener gets called when the ready state of Burst
+     *            changes.
      */
-    public static BurstFacade create(AppController appController,
-            MediaSaver mediaSaver,
-            LocationManager locationManager,
-            OrientationManager orientationManager,
-            File debugDataDir) {
+    public static BurstFacade create(Context appContext, OrientationManager orientationManager,
+            BurstReadyStateChangeListener readyStateListener) {
         if (BurstControllerImpl.isBurstModeSupported()) {
-            return new BurstFacadeImpl(appController, mediaSaver,
-                    locationManager, orientationManager,
-                    debugDataDir);
+            return new BurstFacadeImpl(appContext, orientationManager, readyStateListener);
         } else {
             // Burst is not supported return a stub instance.
             return new BurstFacadeStub();

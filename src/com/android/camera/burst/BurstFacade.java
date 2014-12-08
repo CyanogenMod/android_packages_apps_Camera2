@@ -16,22 +16,16 @@
 
 package com.android.camera.burst;
 
-import android.content.ContentResolver;
-
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
 import com.android.camera.one.OneCamera;
+import com.android.camera.session.CaptureSession;
+
+import java.io.File;
 
 /**
  * Facade for {@link BurstController} provides a simpler interface.
  */
 public interface BurstFacade {
-    /**
-     * Set the content resolver to be updated when saving burst results.
-     *
-     * @param contentResolver to be updated when burst results are saved.
-     */
-    public void setContentResolver(ContentResolver contentResolver);
-
     /**
      * Called when camera is available.
      *
@@ -52,8 +46,11 @@ public interface BurstFacade {
 
     /**
      * Starts the burst.
+     *
+     * @param captureSession the capture session to use for this burst.
+     * @param tempSessionDirectory a directory in which temporary data can be put.
      */
-    public void startBurst();
+    public void startBurst(CaptureSession captureSession, File tempSessionDirectory);
 
     /**
      * @return Whether this burst controller is ready to start another burst.
