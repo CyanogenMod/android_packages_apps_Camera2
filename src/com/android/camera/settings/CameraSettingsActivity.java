@@ -87,6 +87,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private CameraDeviceInfo mInfos;
         private final String mPrefKey;
         private boolean mGetSubPrefAsRoot = true;
+        private boolean mPreferencesRemoved = false;
 
         // Selected resolutions for the different cameras and sizes.
         private SelectedPictureSizes mOldPictureSizesBack;
@@ -209,18 +210,19 @@ public class CameraSettingsActivity extends FragmentActivity {
         private void setVisibilities() {
             PreferenceGroup resolutions =
                     (PreferenceGroup) findPreference(PREF_CATEGORY_RESOLUTION);
-            if (mPictureSizesBack == null) {
+            if ((mPictureSizesBack == null) && !mPreferencesRemoved) {
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_PICTURE_SIZE_BACK));
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_VIDEO_QUALITY_BACK));
             }
-            if (mPictureSizesFront == null) {
+            if ((mPictureSizesFront == null) && !mPreferencesRemoved) {
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_PICTURE_SIZE_FRONT));
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_VIDEO_QUALITY_FRONT));
             }
+            mPreferencesRemoved = true;
         }
 
         /**
