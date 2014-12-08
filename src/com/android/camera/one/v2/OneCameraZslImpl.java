@@ -814,6 +814,35 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         }
     }
 
+    private boolean sendRepeatingBurstCaptureRequest() {
+        Log.v(TAG, "sendRepeatingBurstCaptureRequest()");
+        try {
+            CaptureRequest.Builder builder;
+            builder = mDevice.createCaptureRequest(CameraDevice.TEMPLATE_VIDEO_SNAPSHOT);
+            builder.addTarget(mPreviewSurface);
+
+            if (ZSL_ENABLED) {
+                builder.addTarget(mCaptureImageReader.getSurface());
+            }
+
+            builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+            builder.set(CaptureRequest.CONTROL_AF_MODE,
+                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
+            builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+
+            builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+            builder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+
+            addRegionsToCaptureRequestBuilder(builder);
+
+            mCaptureSession.setRepeatingRequest(builder.build(), mCaptureManager, mCameraHandler);
+            return true;
+        } catch (CameraAccessException e) {
+            Log.v(TAG, "Could not send repeating burst capture request.", e);
+            return false;
+        }
+    }
+
     private boolean sendAutoExposureTriggerRequest(Flash flashMode) {
         Log.v(TAG, "sendAutoExposureTriggerRequest()");
         try {
@@ -1074,6 +1103,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             throw new IllegalStateException(
                     "Attempting to start burst, when burst is already running.");
         }
+        // Overwrite repeating capture request with one specific to capturing Bursts.
+        sendRepeatingBurstCaptureRequest();
         mCaptureManager.setBurstEvictionHandler(params.
                 burstConfiguration.getEvictionHandler());
     }
@@ -1131,5 +1162,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         mBurstParams.get().callback.onBurstComplete(
                 new ImageExtractor(mBurstParams.get().orientation));
         mBurstParams.set(null);
+        // Restore original repeating request associated with taking camera picture.
+        sendRepeatingCaptureRequest();
     }
 }
