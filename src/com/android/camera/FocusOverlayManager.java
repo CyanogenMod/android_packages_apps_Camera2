@@ -34,6 +34,7 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.ex.camera2.portability.CameraCapabilities;
@@ -435,7 +436,10 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
 
     public void onPreviewStarted() {
         mState = STATE_IDLE;
-        resetTouchFocus();
+        // Avoid resetting touch focus if N4, b/18681082.
+        if (!ApiHelper.IS_NEXUS_4) {
+            resetTouchFocus();
+        }
     }
 
     public void onPreviewStopped() {
