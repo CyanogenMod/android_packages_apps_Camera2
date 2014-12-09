@@ -17,8 +17,11 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.SparseIntArray;
+
+import com.android.camera.util.ApiHelper;
 
 /**
  * Loads a plays custom sounds. For playing system-standard sounds for various
@@ -35,7 +38,7 @@ public class SoundPlayer {
      */
     public SoundPlayer(Context appContext) {
         mAppContext = appContext;
-        final int audioType = SoundClips.getAudioTypeForSoundPool();
+        final int audioType = getAudioTypeForSoundPool();
         mSoundPool = new SoundPool(1 /* max streams */, audioType, 0 /* quality */);
     }
 
@@ -77,4 +80,11 @@ public class SoundPlayer {
     public void release() {
         mSoundPool.release();
     }
+
+    private static int getAudioTypeForSoundPool() {
+        // STREAM_SYSTEM_ENFORCED is hidden API.
+        return ApiHelper.getIntFieldIfExists(AudioManager.class,
+                "STREAM_SYSTEM_ENFORCED", null, AudioManager.STREAM_RING);
+    }
+
 }
