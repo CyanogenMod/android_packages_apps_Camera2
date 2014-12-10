@@ -15,11 +15,17 @@
 -->
 <!-- This layout is shared by phone and tablet in landscape orientation. -->
 
-<com.android.camera.ui.BottomBarModeOptionsWrapper
+<com.android.camera.ui.StickyBottomCaptureLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/indicator_bottombar_wrapper"
+    android:id="@+id/sticky_bottom_capture_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+
+    <com.android.camera.widget.RoundedThumbnailView
+        android:id="@+id/rounded_thumbnail_view"
+        android:layout_width="@+dimen/rounded_thumbnail_ripple_ring_diameter_max"
+        android:layout_height="@+dimen/rounded_thumbnail_ripple_ring_diameter_max"
+        android:visibility="invisible" />
 
     <include layout="@layout/mode_options_overlay" />
 
@@ -33,5 +39,4 @@
         <include layout="@layout/bottom_bar_contents" />
 
     </com.android.camera.ui.BottomBar>
-</com.android.camera.ui.BottomBarModeOptionsWrapper>
-
+</com.android.camera.ui.StickyBottomCaptureLayout>

@@ -49,7 +49,6 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.BottomBar;
-import com.android.camera.ui.BottomBarModeOptionsWrapper;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.GridLines;
 import com.android.camera.ui.MainActivityLayout;
@@ -57,6 +56,7 @@ import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.ui.StickyBottomCaptureLayout;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
@@ -66,7 +66,7 @@ import com.android.camera.widget.Cling;
 import com.android.camera.widget.FilmstripLayout;
 import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.ModeOptionsOverlay;
-import com.android.camera.widget.PeekView;
+import com.android.camera.widget.RoundedThumbnailView;
 import com.android.camera2.R;
 
 import java.util.List;
@@ -515,7 +515,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private IndicatorIconController mIndicatorIconController;
     private View mFocusOverlay;
     private FrameLayout mTutorialsPlaceHolderWrapper;
-    private BottomBarModeOptionsWrapper mIndicatorBottomBarWrapper;
+    private StickyBottomCaptureLayout mStickyBottomCaptureLayout;
     private TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
     private DisplayManager.DisplayListener mDisplayListener;
@@ -541,7 +541,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
     private View mModeOptionsToggle;
-    private final PeekView mPeekView;
+    private final RoundedThumbnailView mRoundedThumbnailView;
     private final CaptureLayoutHelper mCaptureLayoutHelper;
     private boolean mAccessibilityEnabled;
     private final View mAccessibilityAffordances;
@@ -786,7 +786,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             Log.e(TAG, "Cannot find mode list in the view hierarchy");
         }
         mAnimationManager = new AnimationManager();
-        mPeekView = (PeekView) appRootView.findViewById(R.id.peek_view);
+        mRoundedThumbnailView = (RoundedThumbnailView) appRootView.findViewById(R.id.rounded_thumbnail_view);
+        mRoundedThumbnailView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFilmstripLayout.showFilmstrip();
+            }
+        });
+
         mAppRootView.setNonDecorWindowSizeChangedListener(mCaptureLayoutHelper);
         initDisplayListener();
         mAccessibilityAffordances = mAppRootView.findViewById(R.id.accessibility_affordances);
@@ -909,7 +916,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     if ((rotation - mLastRotation + 360) % 360 == 180
                             && mPreviewStatusListener != null) {
                         mPreviewStatusListener.onPreviewFlipped();
-                        mIndicatorBottomBarWrapper.requestLayout();
+                        mStickyBottomCaptureLayout.requestLayout();
                         mModeListView.requestLayout();
                         mTextureView.requestLayout();
                     }
@@ -1259,16 +1266,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mFocusOverlay = mCameraRootView.findViewById(R.id.focus_overlay);
         mTutorialsPlaceHolderWrapper = (FrameLayout) mCameraRootView
                 .findViewById(R.id.tutorials_placeholder_wrapper);
-        mIndicatorBottomBarWrapper = (BottomBarModeOptionsWrapper) mAppRootView
-                .findViewById(R.id.indicator_bottombar_wrapper);
-        mIndicatorBottomBarWrapper.setCaptureLayoutHelper(mCaptureLayoutHelper);
-        mTextureViewHelper.addPreviewAreaSizeChangedListener(
-                new PreviewStatusListener.PreviewAreaChangedListener() {
-                    @Override
-                    public void onPreviewAreaChanged(RectF previewArea) {
-                        mPeekView.setTranslationX(previewArea.right - mAppRootView.getRight());
-                    }
-                });
+        mStickyBottomCaptureLayout = (StickyBottomCaptureLayout) mAppRootView
+                .findViewById(R.id.sticky_bottom_capture_layout);
+        mStickyBottomCaptureLayout.setCaptureLayoutHelper(mCaptureLayoutHelper);
 
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeListView);
         mTextureViewHelper.addAspectRatioChangedListener(
@@ -1418,6 +1418,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mDisableAllUserInteractions = disable;
     }
 
+    @Override
+    public void onModeButtonPressed(int modeIndex) {
+        // TODO: Make CameraActivity listen to ModeListView's events.
+        int pressedModuleId = mController.getModuleId(modeIndex);
+        int currentModuleId = mController.getCurrentModuleIndex();
+        if (pressedModuleId != currentModuleId) {
+            hideCaptureIndicator();
+        }
+    }
+
     /**
      * Gets called when a mode is selected from {@link com.android.camera.ui.ModeListView}
      *
@@ -1470,27 +1480,37 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
        so that modules can have more knowledge of the status of the animation. */
 
     /**
-     * Starts the filmstrip peek animation.
+     * Starts the capture indicator pop-out animation.
      *
-     * @param bitmap The bitmap to show.
-     * @param strong Whether the animation shows more portion of the bitmap or
-     *               not.
-     * @param accessibilityString An accessibility String to be announced
-                     during the peek animation.
+     * @param accessibilityString An accessibility String to be announced during the peek animation.
      */
-    public void startPeekAnimation(Bitmap bitmap, boolean strong, String accessibilityString) {
+    public void startCaptureIndicatorRevealAnimation(String accessibilityString) {
         if (mFilmstripLayout.getVisibility() == View.VISIBLE) {
             return;
         }
-        mPeekView.startPeekAnimation(bitmap, strong, accessibilityString);
+        mRoundedThumbnailView.startRevealThumbnailAnimation(accessibilityString);
     }
 
     /**
-     * Starts the pre-capture animation.
+     * Updates the thumbnail image in the capture indicator.
      *
-     * @param shortFlash show shortest possible flash instead of regular long version.
+     * @param thumbnailBitmap The thumbnail image to be shown.
      */
-    public void startPreCaptureAnimation(boolean shortFlash) {
+    public void updateCaptureIndicatorThumbnail(Bitmap thumbnailBitmap) {
+        mRoundedThumbnailView.setThumbnail(thumbnailBitmap);
+    }
+
+    /**
+     * Hides the capture indicator.
+     */
+    public void hideCaptureIndicator() {
+        mRoundedThumbnailView.hideThumbnail();
+    }
+
+    /**
+     * Starts the flash animation.
+     */
+    public void startFlashAnimation(boolean shortFlash) {
         mCaptureOverlay.startFlashAnimation(shortFlash);
     }
 
@@ -1759,7 +1779,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     public void setIndicatorBottomBarWrapperVisible(boolean visible) {
-        mIndicatorBottomBarWrapper.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        mStickyBottomCaptureLayout.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 
     /**

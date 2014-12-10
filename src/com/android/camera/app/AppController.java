@@ -118,6 +118,11 @@ public interface AppController {
     public int getCurrentModuleIndex();
 
     /**
+     * Returns the module ID for a specific mode.
+     */
+    public int getModuleId(int modeIndex);
+
+    /**
      * Gets the mode that can be switched to from the given mode id through
      * quick switch.
      *
@@ -271,11 +276,11 @@ public interface AppController {
     /********************** Capture animation **********************/
 
     /**
-     * Starts the pre-capture animation with optional shorter flash.
+     * Starts flash animation with optional shorter flash.
      *
      * @param shortFlash true for shorter flash (faster cameras).
      */
-    public void startPreCaptureAnimation(boolean shortFlash);
+    public void startFlashAnimation(boolean shortFlash);
 
     /**
      * Starts normal pre-capture animation.

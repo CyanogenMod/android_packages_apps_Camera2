@@ -131,13 +131,6 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     /**
-     * Starts a flash animation
-     */
-    public void animateFlash() {
-        mController.startPreCaptureAnimation();
-    }
-
-    /**
      * Cancels on-going animations
      */
     public void cancelAnimations() {

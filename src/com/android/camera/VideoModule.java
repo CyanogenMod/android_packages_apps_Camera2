@@ -653,8 +653,7 @@ public class VideoModule extends CameraModule
                 // back to use SurfaceTexture for preview and we need to stop then start
                 // the preview. This will cause the preview flicker since the preview
                 // will not be continuous for a short period of time.
-
-                mUI.animateFlash();
+                mAppController.startFlashAnimation(false);
             }
         }
     }
@@ -1304,6 +1303,7 @@ public class VideoModule extends CameraModule
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
         mUI.showVideoRecordingHints(false);
+        mAppController.getCameraAppUI().hideCaptureIndicator();
 
         mActivity.updateStorageSpaceAndHint(new CameraActivity.OnStorageUpdateDoneListener() {
             @Override
@@ -1816,7 +1816,7 @@ public class VideoModule extends CameraModule
         if (mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_SNAPSHOT) &&
                 !mIsVideoCaptureIntent) {
             if (enabled) {
-                mUI.animateFlash();
+                mAppController.startFlashAnimation(false);
             } else {
                 mUI.showPreviewBorder(enabled);
             }
@@ -1940,11 +1940,6 @@ public class VideoModule extends CameraModule
     @Override
     public void onPreviewUIDestroyed() {
         stopPreview();
-    }
-
-    @Override
-    public void startPreCaptureAnimation() {
-        mAppController.startPreCaptureAnimation();
     }
 
     private void requestCamera(int id) {

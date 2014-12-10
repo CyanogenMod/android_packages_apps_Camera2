@@ -635,7 +635,7 @@ public class PhotoModule
 
     @Override
     public void startPreCaptureAnimation() {
-        mAppController.startPreCaptureAnimation();
+        mAppController.startFlashAnimation(false);
     }
 
     private void onCameraOpened() {

@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <include layout="@layout/mode_options_bottombar" />
+    <include layout="@layout/sticky_bottom_capture_layout" />
 
     <FrameLayout
         android:id="@+id/tutorials_placeholder_wrapper"

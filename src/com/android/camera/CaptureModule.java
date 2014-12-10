@@ -415,7 +415,7 @@ public class CaptureModule extends CameraModule
             @Override
             public void run() {
                 // Starts the short version of the capture animation UI.
-                mAppController.startPreCaptureAnimation(true);
+                mAppController.startFlashAnimation(true);
             }
         });
     }

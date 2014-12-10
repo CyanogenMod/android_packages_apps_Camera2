@@ -24,27 +24,30 @@ import android.widget.FrameLayout;
 
 import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.debug.Log;
+import com.android.camera.widget.RoundedThumbnailView;
 import com.android.camera2.R;
 
 /**
- * The goal of this class is to ensure mode options is always laid out to
- * the left of or above bottom bar in landscape or portrait respectively.
- * All the other children in this view group can be expected to be laid out
- * the same way as they are in a normal FrameLayout.
+ * The goal of this class is to ensure mode options and capture indicator is
+ * always laid out to the left of or above bottom bar in landscape or portrait
+ * respectively. All the other children in this view group can be expected to
+ * be laid out the same way as they are in a normal FrameLayout.
  */
-public class BottomBarModeOptionsWrapper extends FrameLayout {
+public class StickyBottomCaptureLayout extends FrameLayout {
 
-    private final static Log.Tag TAG = new Log.Tag("BottomBarWrapper");
+    private final static Log.Tag TAG = new Log.Tag("StickyBotCapLayout");
+    private RoundedThumbnailView mRoundedThumbnailView;
     private View mModeOptionsOverlay;
     private View mBottomBar;
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
-    public BottomBarModeOptionsWrapper(Context context, AttributeSet attrs) {
+    public StickyBottomCaptureLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     public void onFinishInflate() {
+        mRoundedThumbnailView = (RoundedThumbnailView) findViewById(R.id.rounded_thumbnail_view);
         mModeOptionsOverlay = findViewById(R.id.mode_options_overlay);
         mBottomBar = findViewById(R.id.bottom_bar);
     }
@@ -62,9 +65,16 @@ public class BottomBarModeOptionsWrapper extends FrameLayout {
             Log.e(TAG, "Capture layout helper needs to be set first.");
             return;
         }
+        RectF drawRect = new RectF(left, top, right, bottom);
         RectF uncoveredPreviewRect = mCaptureLayoutHelper.getUncoveredPreviewRect();
         RectF bottomBarRect = mCaptureLayoutHelper.getBottomBarRect();
-
+        RectF roundedThumbnailViewRect =
+                mRoundedThumbnailView.getDesiredLayout(drawRect, uncoveredPreviewRect);
+        mRoundedThumbnailView.layout(
+                (int) roundedThumbnailViewRect.left,
+                (int) roundedThumbnailViewRect.top,
+                (int) roundedThumbnailViewRect.right,
+                (int) roundedThumbnailViewRect.bottom);
         mModeOptionsOverlay.layout((int) uncoveredPreviewRect.left, (int) uncoveredPreviewRect.top,
                 (int) uncoveredPreviewRect.right, (int) uncoveredPreviewRect.bottom);
         mBottomBar.layout((int) bottomBarRect.left, (int) bottomBarRect.top,
