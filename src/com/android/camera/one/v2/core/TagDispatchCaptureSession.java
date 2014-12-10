@@ -22,13 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.os.Handler;
 
+import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
+import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
 
 /**
@@ -36,9 +37,11 @@ import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
  * {@link Request}s and dispatches to the appropriate {@link ResponseListener}
  * on a per-request basis, instead of for every {@link CaptureRequest} submitted
  * at the same time.
+ * <p/>
+ * TODO Write Tests
  */
 public class TagDispatchCaptureSession {
-    private static class CaptureCallback extends CameraCaptureSession.CaptureCallback {
+    private static class CaptureCallback implements CameraCaptureSessionProxy.CaptureCallback {
         private final Map<Object, ResponseListener> mListeners;
 
         /**
@@ -50,52 +53,51 @@ public class TagDispatchCaptureSession {
         }
 
         @Override
-        public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request,
+        public void onCaptureStarted(CameraCaptureSessionProxy session, CaptureRequest request,
                 long timestamp, long frameNumber) {
             Object tag = request.getTag();
             mListeners.get(tag).onStarted(timestamp);
         }
 
         @Override
-        public void onCaptureProgressed(CameraCaptureSession session, CaptureRequest request,
+        public void onCaptureProgressed(CameraCaptureSessionProxy session, CaptureRequest request,
                 CaptureResult partialResult) {
             Object tag = request.getTag();
-            long timestamp = partialResult.get(CaptureResult.SENSOR_TIMESTAMP);
-            mListeners.get(tag).onProgressed(timestamp, partialResult);
+            mListeners.get(tag).onProgressed(partialResult);
         }
 
         @Override
-        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+        public void onCaptureCompleted(CameraCaptureSessionProxy session, CaptureRequest request,
                 TotalCaptureResult result) {
             Object tag = request.getTag();
-            long timestamp = result.get(CaptureResult.SENSOR_TIMESTAMP);
-            mListeners.get(tag).onCompleted(timestamp, result);
+            mListeners.get(tag).onCompleted(result);
         }
 
         @Override
-        public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request,
+        public void onCaptureFailed(CameraCaptureSessionProxy session, CaptureRequest request,
                 CaptureFailure failure) {
             Object tag = request.getTag();
             mListeners.get(tag).onFailed(failure);
         }
 
         @Override
-        public void onCaptureSequenceAborted(CameraCaptureSession session, int sequenceId) {
+        public void onCaptureSequenceAborted(CameraCaptureSessionProxy session, int sequenceId) {
             // Ignored
         }
 
         @Override
-        public void onCaptureSequenceCompleted(CameraCaptureSession session, int sequenceId,
+        public void onCaptureSequenceCompleted(CameraCaptureSessionProxy session, int sequenceId,
                 long frameNumber) {
             // Ignored
         }
     }
 
-    private final CameraCaptureSession mCaptureSession;
+    private final CameraCaptureSessionProxy mCaptureSession;
     private final Handler mCameraHandler;
     private long mTagCounter;
 
-    public TagDispatchCaptureSession(CameraCaptureSession captureSession, Handler cameraHandler) {
+    public TagDispatchCaptureSession(CameraCaptureSessionProxy captureSession, Handler
+            cameraHandler) {
         mCaptureSession = captureSession;
         mCameraHandler = cameraHandler;
         mTagCounter = 0;
@@ -109,7 +111,7 @@ public class TagDispatchCaptureSession {
 
     /**
      * Submits the given burst request to the underlying
-     * {@link CameraCaptureSession}.
+     * {@link CameraCaptureSessionProxy}.
      * <p/>
      * Note that the Tag associated with the {@link CaptureRequest} from each
      * {@link Request} will be overwritten.
@@ -125,7 +127,7 @@ public class TagDispatchCaptureSession {
      *             resources necessary for each {@link Request}.
      */
     public void submitRequest(List<Request> burstRequests, boolean repeating) throws
-            CameraAccessException, InterruptedException {
+            CameraAccessException, InterruptedException, CameraCaptureSessionClosedException {
         try {
             Map<Object, ResponseListener> tagListenerMap = new HashMap<Object, ResponseListener>();
             List<CaptureRequest> captureRequests = new ArrayList<>(burstRequests.size());

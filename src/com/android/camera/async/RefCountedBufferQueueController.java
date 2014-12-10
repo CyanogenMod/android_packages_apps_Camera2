@@ -27,8 +27,8 @@ public class RefCountedBufferQueueController<T> implements BufferQueueController
     }
 
     @Override
-    public void append(T element) {
-        mBuffer.get().append(element);
+    public void update(T element) {
+        mBuffer.get().update(element);
     }
 
     @Override

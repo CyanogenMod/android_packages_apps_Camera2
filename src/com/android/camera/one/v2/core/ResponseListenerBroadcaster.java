@@ -27,7 +27,7 @@ import android.hardware.camera2.TotalCaptureResult;
  * Combines multiple {@link ResponseListener}s into a single one which
  * dispatches to all listeners for each callback.
  */
-public class ResponseListenerBroadcaster implements ResponseListener {
+public class ResponseListenerBroadcaster extends ResponseListener {
     private final List<ResponseListener> mListeners;
 
     public ResponseListenerBroadcaster(List<ResponseListener> listeners) {
@@ -42,16 +42,16 @@ public class ResponseListenerBroadcaster implements ResponseListener {
     }
 
     @Override
-    public void onProgressed(long timestamp, CaptureResult partialResult) {
+    public void onProgressed(CaptureResult partialResult) {
         for (ResponseListener listener : mListeners) {
-            listener.onProgressed(timestamp, partialResult);
+            listener.onProgressed(partialResult);
         }
     }
 
     @Override
-    public void onCompleted(long timestamp, TotalCaptureResult result) {
+    public void onCompleted(TotalCaptureResult result) {
         for (ResponseListener listener : mListeners) {
-            listener.onCompleted(timestamp, result);
+            listener.onCompleted(result);
         }
     }
 

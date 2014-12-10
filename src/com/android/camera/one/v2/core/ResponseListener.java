@@ -24,7 +24,7 @@ import android.hardware.camera2.TotalCaptureResult;
  * Like {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback},
  * but for events related to single requests.
  */
-public interface ResponseListener {
+public abstract class ResponseListener {
     /**
      * Note that this is typically invoked on the camera thread and at high
      * frequency, so implementations must execute quickly and not make
@@ -32,7 +32,8 @@ public interface ResponseListener {
      *
      * @See {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback#onCaptureStarted}
      */
-    public void onStarted(long timestamp);
+    public void onStarted(long timestamp) {
+    }
 
     /**
      * Note that this is typically invoked on the camera thread and at high
@@ -41,7 +42,8 @@ public interface ResponseListener {
      *
      * @See {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback#onCaptureProgressed}
      */
-    public void onProgressed(long timestamp, CaptureResult partialResult);
+    public void onProgressed(CaptureResult partialResult) {
+    }
 
     /**
      * Note that this is typically invoked on the camera thread and at high
@@ -50,7 +52,8 @@ public interface ResponseListener {
      *
      * @See {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback#onCaptureCompleted}
      */
-    public void onCompleted(long timestamp, TotalCaptureResult result);
+    public void onCompleted(TotalCaptureResult result) {
+    }
 
     /**
      * Note that this is typically invoked on the camera thread and at high
@@ -59,5 +62,6 @@ public interface ResponseListener {
      *
      * @See {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback#onCaptureFailed}
      */
-    public void onFailed(CaptureFailure failure);
+    public void onFailed(CaptureFailure failure) {
+    }
 }

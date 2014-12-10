@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.camera.one.v2.core;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.view.Surface;
 
 import com.android.camera.async.BufferQueue;
+import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
 
 /**
@@ -50,8 +52,8 @@ public class RequestBuilder {
         private final CaptureRequestBuilderProxy mBuilderProxy;
 
         private UnregisteredStreamProvider(CaptureStream captureStream,
-                                           BufferQueue<Long> timestampQueue,
-                                           CaptureRequestBuilderProxy builderProxy) {
+                BufferQueue<Long> timestampQueue,
+                CaptureRequestBuilderProxy builderProxy) {
             mCaptureStream = captureStream;
             mTimestampQueue = timestampQueue;
             mAllocated = new AtomicBoolean(false);
@@ -69,12 +71,17 @@ public class RequestBuilder {
     }
 
     private static class RequestImpl implements Request {
+        private static interface Allocation {
+            public void allocate() throws InterruptedException;
+
+            public void abort();
+        }
         private final CaptureRequestBuilderProxy mCaptureRequestBuilder;
         private final List<Allocation> mAllocations;
         private final ResponseListener mResponseListener;
 
         public RequestImpl(CaptureRequestBuilderProxy builder, List<Allocation> allocations,
-                           ResponseListener responseListener) {
+                ResponseListener responseListener) {
             mCaptureRequestBuilder = builder;
             mAllocations = allocations;
             mResponseListener = responseListener;
@@ -98,12 +105,6 @@ public class RequestBuilder {
             for (Allocation allocation : mAllocations) {
                 allocation.abort();
             }
-        }
-
-        private static interface Allocation {
-            public void allocate() throws InterruptedException;
-
-            public void abort();
         }
     }
 
@@ -137,6 +138,7 @@ public class RequestBuilder {
 
     /**
      * Sets the given key-value pair.
+     *
      * @see {@link CaptureRequest.Builder#set}.
      */
     public <T> void setParam(CaptureRequest.Key<T> key, T value) {
@@ -153,10 +155,12 @@ public class RequestBuilder {
      * @param captureStream
      */
     public void addStream(CaptureStream captureStream) {
-        TimestampResponseListener timestampResponseListener = new TimestampResponseListener();
+        ConcurrentBufferQueue<Long> timestamps = new ConcurrentBufferQueue<>();
+        TimestampResponseListener timestampResponseListener = new TimestampResponseListener(
+                timestamps);
 
         mAllocations.add(new UnregisteredStreamProvider(captureStream,
-                timestampResponseListener.getTimestamps(), mBuilder));
+                timestamps, mBuilder));
 
         mResponseListeners.add(timestampResponseListener);
     }

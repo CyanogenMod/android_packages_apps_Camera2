@@ -18,43 +18,24 @@ package com.android.camera.one.v2.core;
 
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
 
-import com.android.camera.async.ConcurrentBufferQueue;
-import com.android.camera.async.BufferQueue;
+import com.android.camera.async.Updatable;
 
 /**
- * A {@link ResponseListener} which provides a
- * stream of any CaptureRequests which triggered framework errors.
+ * A {@link ResponseListener} which provides a stream of any CaptureRequests
+ * which triggered framework errors.
  */
-public class FrameworkFailureResponseListener implements ResponseListener {
-    private final ConcurrentBufferQueue<CaptureRequest> mFailureStream;
+public class FrameworkFailureResponseListener extends ResponseListener {
+    private final Updatable<CaptureRequest> mFailureStream;
 
-    public FrameworkFailureResponseListener() {
-        mFailureStream = new ConcurrentBufferQueue<>();
-    }
-
-    public BufferQueue getFailureStream() {
-        return mFailureStream;
-    }
-
-    @Override
-    public void onStarted(long timestamp) {
-    }
-
-    @Override
-    public void onProgressed(long timestamp, CaptureResult partialResult) {
-    }
-
-    @Override
-    public void onCompleted(long timestamp, TotalCaptureResult result) {
+    public FrameworkFailureResponseListener(Updatable<CaptureRequest> failureStream) {
+        mFailureStream = failureStream;
     }
 
     @Override
     public void onFailed(CaptureFailure failure) {
         if (failure.getReason() == CaptureFailure.REASON_ERROR) {
-            mFailureStream.append(failure.getRequest());
+            mFailureStream.update(failure.getRequest());
         }
     }
 }

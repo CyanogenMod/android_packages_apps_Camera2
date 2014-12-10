@@ -109,7 +109,6 @@ public class ImageDistributor {
             while (mGlobalTimestampBufferQueue.getNext() <= timestamp) {
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
             image.close();
             return;
         } catch (BufferQueue.BufferQueueClosedException e) {
@@ -151,7 +150,7 @@ public class ImageDistributor {
             // before the underlying reference count is decremented, regardless
             // of how many times it is closed from each stream.
             ImageProxy singleCloseImage = new SingleCloseImageProxy(sharedImage);
-            outputStream.append(singleCloseImage);
+            outputStream.update(singleCloseImage);
         }
     }
 

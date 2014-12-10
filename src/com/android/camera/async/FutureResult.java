@@ -40,12 +40,25 @@ public class FutureResult<V> implements Future<V> {
     private V mValue;
     private boolean mCancelled;
     private Exception mException;
+    private final Updatable<Future<V>> mDoneUpdatable;
 
-    public FutureResult() {
+    /**
+     * @param doneUpdatable An updatable to be notified when the future is done.
+     */
+    public FutureResult(Updatable<Future<V>> doneUpdatable) {
         mDone = new AtomicBoolean();
         mDoneCondition = new CountDownLatch(1);
         mValue = null;
         mCancelled = false;
+        mDoneUpdatable = doneUpdatable;
+    }
+
+    public FutureResult() {
+        this(new Updatable<Future<V>>() {
+            @Override
+            public void update(Future<V> vFutureResult) {
+            }
+        });
     }
 
     /**
@@ -117,6 +130,7 @@ public class FutureResult<V> implements Future<V> {
 
         mCancelled = true;
         mDoneCondition.countDown();
+        mDoneUpdatable.update(this);
         return true;
     }
 
@@ -135,6 +149,7 @@ public class FutureResult<V> implements Future<V> {
 
         mValue = value;
         mDoneCondition.countDown();
+        mDoneUpdatable.update(this);
         return true;
     }
 
@@ -153,6 +168,7 @@ public class FutureResult<V> implements Future<V> {
 
         mException = e;
         mDoneCondition.countDown();
+        mDoneUpdatable.update(this);
         return true;
     }
 

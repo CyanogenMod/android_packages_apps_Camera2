@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.components;
+package com.android.camera.one.v2.commands;
 
 import java.util.Arrays;
 
 import android.hardware.camera2.CameraAccessException;
 
+import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 
 /**
- * Sends preview requests to a {@link FrameServer}.
+ * Sends repeating preview requests to a {@link FrameServer}.
  */
 public class PreviewCommand implements CameraCommand {
     private final FrameServer mFrameServer;
@@ -32,8 +33,8 @@ public class PreviewCommand implements CameraCommand {
     private final int mRequestType;
 
     /**
-     * Constructs a Preview. Note that it is the {@link RequestBuilder.Factory}
-     * 's responsibility to attach the relevant
+     * Constructs a Preview. Note that it is the responsiblity of the
+     * {@link RequestBuilder.Factory} to attach the relevant
      * {@link com.android.camera.one.v2.core.CaptureStream}s, such as the
      * viewfinder surface.
      */
@@ -44,13 +45,12 @@ public class PreviewCommand implements CameraCommand {
         mRequestType = requestType;
     }
 
-    public void run() throws InterruptedException, CameraAccessException {
-        FrameServer.Session session = mFrameServer.createSession();
-        try {
+    public void run() throws InterruptedException, CameraAccessException,
+            CameraCaptureSessionClosedException {
+        try (FrameServer.Session session = mFrameServer.createSession()) {
             RequestBuilder photoRequest = mBuilderFactory.create(mRequestType);
-            session.submitRequest(Arrays.asList(photoRequest.build()), true);
-        } finally {
-            session.close();
+            session.submitRequest(Arrays.asList(photoRequest.build()),
+                    FrameServer.RequestType.REPEATING);
         }
     }
 }

@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.camera.one.v2.components;
 
-import android.hardware.camera2.CameraAccessException;
+package com.android.camera.one.v2.camera2proxy;
 
 /**
- * A generic camera command which may be interrupted and may throw
- * {@link android.hardware.camera2.CameraAccessException}.
+ * A checked-exception to replace the {@link IllegalStateException} thrown by
+ * camera2 API calls when the associated
+ * {@link android.hardware.camera2.CameraCaptureSession} is closed.
  */
-public interface CameraCommand {
-    public void run() throws InterruptedException, CameraAccessException;
+public class CameraCaptureSessionClosedException extends Exception {
 }

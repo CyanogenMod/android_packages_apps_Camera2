@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.components;
+package com.android.camera.one.v2.commands;
 
 import java.util.Arrays;
 
@@ -22,7 +22,10 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 
 import com.android.camera.async.BufferQueue;
+import com.android.camera.async.Updatable;
+import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.core.FrameExposureResponseListener;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReader;
@@ -34,42 +37,43 @@ public class StaticPictureCommand implements CameraCommand {
     private final FrameServer mFrameServer;
     private final RequestBuilder.Factory mBuilderFactory;
     private final SharedImageReader mImageReader;
-    private final ImageSaver mImageSaver;
+    private final Updatable<ImageProxy> mImageSaver;
+    private final Updatable<Void> mImageExposureUpdatable;
 
     public StaticPictureCommand(FrameServer frameServer, RequestBuilder.Factory builder,
-            SharedImageReader imageReader, ImageSaver imageSaver) {
+            SharedImageReader imageReader, Updatable<ImageProxy> imageSaver,
+            Updatable<Void> imageExposureUpdatable) {
         mFrameServer = frameServer;
         mBuilderFactory = builder;
         mImageReader = imageReader;
         mImageSaver = imageSaver;
+        mImageExposureUpdatable = imageExposureUpdatable;
     }
 
     /**
      * Sends a request to take a picture and blocks until it completes.
      */
     public void run() throws
-            InterruptedException, CameraAccessException {
-        FrameServer.Session session = mFrameServer.createSession();
-        try {
+            InterruptedException, CameraAccessException, CameraCaptureSessionClosedException {
+        try (FrameServer.Session session = mFrameServer.createSession()) {
             RequestBuilder photoRequest = mBuilderFactory.create(CameraDevice
                     .TEMPLATE_STILL_CAPTURE);
 
             try (SharedImageReader.ImageCaptureBufferQueue imageStream = mImageReader
                     .createStream(1)) {
                 photoRequest.addStream(imageStream);
-                // TODO Add a {@link ResponseListener} to notify the caller of
-                // when the frame is exposed.
-                session.submitRequest(Arrays.asList(photoRequest.build()), false);
+                photoRequest.addResponseListener(new FrameExposureResponseListener(
+                        mImageExposureUpdatable));
+                session.submitRequest(Arrays.asList(photoRequest.build()),
+                        FrameServer.RequestType.NON_REPEATING);
 
                 ImageProxy image = imageStream.getNext();
-                mImageSaver.saveAndCloseImage(image);
+                mImageSaver.update(image);
             } catch (BufferQueue.BufferQueueClosedException e) {
                 // If we get here, the request was submitted, but the image
                 // never arrived.
                 // TODO Log failure and notify the caller
             }
-        } finally {
-            session.close();
         }
     }
 }
