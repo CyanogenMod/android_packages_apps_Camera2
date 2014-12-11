@@ -1359,10 +1359,6 @@ public class VideoModule extends CameraModule
                         return;
                     }
 
-                    // Make sure we stop playing sounds and disable the
-                    // vibrations during video recording.
-                    silenceSoundsAndVibrations();
-
                     try {
                         mMediaRecorder.start(); // Recording is now started
                     } catch (RuntimeException e) {
@@ -1372,6 +1368,10 @@ public class VideoModule extends CameraModule
                         mCameraDevice.lock();
                         return;
                     }
+                    // Make sure we stop playing sounds and disable the
+                    // vibrations during video recording.
+                    silenceSoundsAndVibrations();
+
                     mAppController.getCameraAppUI().setSwipeEnabled(false);
 
                     // The parameters might have been altered by MediaRecorder already.
@@ -1478,7 +1478,6 @@ public class VideoModule extends CameraModule
                 // b/16300704: Monkey is fast so it could pause the module while recording.
                 // stopPreview should definitely be called before switching off.
                 stopPreview();
-
                 closeCamera();
             }
 
