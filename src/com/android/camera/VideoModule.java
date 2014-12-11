@@ -135,6 +135,13 @@ public class VideoModule extends CameraModule
     private boolean mQuickCapture;
 
     private MediaRecorder mMediaRecorder;
+    /** Manager used to mute sounds and vibrations during video recording. */
+    private AudioManager mAudioManager;
+    /*
+     * The ringer mode that was set when video recording started. We use this to
+     * reset the mode once video recording has stopped.
+     */
+    private int mOriginalRingerMode;
 
     private boolean mSwitchingCamera;
     private boolean mMediaRecorderRecording = false;
@@ -331,6 +338,7 @@ public class VideoModule extends CameraModule
         // TODO: Need to look at the controller interface to see if we can get
         // rid of passing in the activity directly.
         mAppController = mActivity;
+        mAudioManager = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
 
         mActivity.updateStorageSpaceAndHint(null);
 
@@ -1288,9 +1296,24 @@ public class VideoModule extends CameraModule
      * Make sure we're not recording music playing in the background, ask the
      * MediaPlaybackService to pause playback.
      */
-    private void pauseAudioPlayback() {
-        AudioManager am = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
-        am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    private void silenceSoundsAndVibrations() {
+        // Get the audio focus which causes other music players to stop.
+        mAudioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN);
+        // Store current ringer mode so we can set it once video recording is
+        // finished.
+        mOriginalRingerMode = mAudioManager.getRingerMode();
+        // Make sure no system sounds and vibrations happen during video
+        // recording.
+        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+    }
+
+    private void restoreRingerMode() {
+        // First check if ringer mode was changed during the recording. If not,
+        // re-set the mode that was set before video recording started.
+        if (mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
+            mAudioManager.setRingerMode(mOriginalRingerMode);
+        }
     }
 
     // For testing.
@@ -1336,7 +1359,9 @@ public class VideoModule extends CameraModule
                         return;
                     }
 
-                    pauseAudioPlayback();
+                    // Make sure we stop playing sounds and disable the
+                    // vibrations during video recording.
+                    silenceSoundsAndVibrations();
 
                     try {
                         mMediaRecorder.start(); // Recording is now started
@@ -1442,6 +1467,7 @@ public class VideoModule extends CameraModule
                 }
                 fail = true;
             }
+            restoreRingerMode();
             mMediaRecorderRecording = false;
             mActivity.unlockOrientation();
 
