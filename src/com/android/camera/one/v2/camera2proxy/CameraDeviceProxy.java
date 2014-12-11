@@ -25,7 +25,9 @@ import android.hardware.camera2.CaptureRequest;
 import android.os.Handler;
 import android.view.Surface;
 
-public class CameraDeviceProxy {
+import com.android.camera.async.SafeCloseable;
+
+public class CameraDeviceProxy implements SafeCloseable {
     private static class AndroidCaptureSessionStateCallback extends
             CameraCaptureSession.StateCallback {
         private final CameraCaptureSessionProxy.StateCallback mStateCallback;
@@ -77,6 +79,7 @@ public class CameraDeviceProxy {
         return mCameraDevice.createCaptureRequest(i);
     }
 
+    @Override
     public void close() {
         mCameraDevice.close();
     }

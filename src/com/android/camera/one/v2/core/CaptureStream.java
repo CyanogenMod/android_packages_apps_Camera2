@@ -34,12 +34,13 @@ import com.android.camera.async.BufferQueue;
  * </p>
  * <p>
  * Implementations should use the {@link CaptureStream#bind} method to kick off
- * a process of taking, as input, a {@link com.android.camera.async.BufferQueue} of image timestamps as well
- * as the images added to the {@link Surface}, and producing, as output, a
- * stream of useful handles to the image data.
+ * a process of taking, as input, a {@link com.android.camera.async.BufferQueue}
+ * of image timestamps as well as the images added to the {@link Surface}, and
+ * producing, as output, a stream of useful handles to the image data.
  * </p>
  */
 public interface CaptureStream {
+
     /**
      * Implementations should use this method to allocate all resources
      * necessary to ensure that the requested images can be saved.
@@ -56,5 +57,5 @@ public interface CaptureStream {
      *             resources necessary to begin accepting new images.
      */
     public Surface bind(BufferQueue<Long> timestamps)
-            throws InterruptedException;
+            throws InterruptedException, ResourceAcquisitionFailedException;
 }

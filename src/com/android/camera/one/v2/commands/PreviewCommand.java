@@ -23,6 +23,7 @@ import android.hardware.camera2.CameraAccessException;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
+import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 /**
  * Sends repeating preview requests to a {@link FrameServer}.
@@ -46,7 +47,7 @@ public class PreviewCommand implements CameraCommand {
     }
 
     public void run() throws InterruptedException, CameraAccessException,
-            CameraCaptureSessionClosedException {
+            CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
         try (FrameServer.Session session = mFrameServer.createSession()) {
             RequestBuilder photoRequest = mBuilderFactory.create(mRequestType);
             session.submitRequest(Arrays.asList(photoRequest.build()),

@@ -37,10 +37,8 @@ import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
  * {@link Request}s and dispatches to the appropriate {@link ResponseListener}
  * on a per-request basis, instead of for every {@link CaptureRequest} submitted
  * at the same time.
- * <p/>
- * TODO Write Tests
  */
-public class TagDispatchCaptureSession {
+class TagDispatchCaptureSession {
     private static class CaptureCallback implements CameraCaptureSessionProxy.CaptureCallback {
         private final Map<Object, ResponseListener> mListeners;
 
@@ -127,7 +125,8 @@ public class TagDispatchCaptureSession {
      *             resources necessary for each {@link Request}.
      */
     public void submitRequest(List<Request> burstRequests, boolean repeating) throws
-            CameraAccessException, InterruptedException, CameraCaptureSessionClosedException {
+            CameraAccessException, InterruptedException, CameraCaptureSessionClosedException,
+            ResourceAcquisitionFailedException {
         try {
             Map<Object, ResponseListener> tagListenerMap = new HashMap<Object, ResponseListener>();
             List<CaptureRequest> captureRequests = new ArrayList<>(burstRequests.size());

@@ -29,6 +29,7 @@ import android.view.Surface;
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
+import com.android.camera.one.v2.common.TimestampResponseListener;
 
 /**
  * Conveniently builds {@link Request}s.
@@ -60,7 +61,7 @@ public class RequestBuilder {
             mBuilderProxy = builderProxy;
         }
 
-        public void allocate() throws InterruptedException {
+        public void allocate() throws InterruptedException, ResourceAcquisitionFailedException {
             mBuilderProxy.addTarget(mCaptureStream.bind(mTimestampQueue));
         }
 
@@ -72,10 +73,12 @@ public class RequestBuilder {
 
     private static class RequestImpl implements Request {
         private static interface Allocation {
-            public void allocate() throws InterruptedException;
+            public void allocate() throws InterruptedException,
+                    ResourceAcquisitionFailedException;
 
             public void abort();
         }
+
         private final CaptureRequestBuilderProxy mCaptureRequestBuilder;
         private final List<Allocation> mAllocations;
         private final ResponseListener mResponseListener;
@@ -88,7 +91,8 @@ public class RequestBuilder {
         }
 
         @Override
-        public CaptureRequestBuilderProxy allocateCaptureRequest() throws InterruptedException {
+        public CaptureRequestBuilderProxy allocateCaptureRequest() throws InterruptedException,
+                ResourceAcquisitionFailedException {
             for (Allocation allocation : mAllocations) {
                 allocation.allocate();
             }

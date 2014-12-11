@@ -17,15 +17,14 @@
 package com.android.camera.async;
 
 /**
- * An interface for updating thread-shared state from producer threads with
- * real-time requirements.
+ * A thread-safe callback.
  * <p>
  * Depending on how consumers need to access updates, the following
- * implementations may be used:
+ * implementations may be used (and already guarantee thread-safety):
  * <ul>
  * <li>Synchronous access to every update: {@link ConcurrentBufferQueue}</li>
  * <li>Synchronous access to a single update: {@link UpdatableCountDownLatch}</li>
- * <li>Polling: {@link ConcurrentState}</li>
+ * <li>Access to the latest value: {@link ConcurrentState}</li>
  * <li>Callbacks: {@link ConcurrentState}</li>
  * </ul>
  * </p>
