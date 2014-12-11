@@ -280,9 +280,6 @@ public class RoundedThumbnailView extends View {
      */
     public RectF getDesiredLayout(RectF parentRect, RectF uncoveredPreviewRect) {
         float parentViewWidth = parentRect.right - parentRect.left;
-        float parentViewHeight = parentRect.bottom - parentRect.top;
-        float uncoveredPreviewWidth = uncoveredPreviewRect.right - uncoveredPreviewRect.left;
-        float uncoveredPreviewHeight = uncoveredPreviewRect.bottom - uncoveredPreviewRect.top;
         float x = 0;
         float y = 0;
 
@@ -300,29 +297,16 @@ public class RoundedThumbnailView extends View {
                     parentRect.right - uncoveredPreviewRect.right;
             x = parentViewWidth - previewRightEdgeGap - mThumbnailPadding -
                     mThumbnailShrinkDiameterEnd - radius_diff_max_normal;
-            if (rotation >= 180) {
-                // Reverse portrait, bottom bar align top.
-                // TODO: this makes the thumbnail stick to the mode option
-                // three-dot button, however, three-dot button doesn't stick
-                // to the shutter button. please fix it.
-                y = parentViewHeight;
-            } else {
-                y = uncoveredPreviewHeight;
-            }
+            y = uncoveredPreviewRect.bottom;
             y -= modeSwitchThreeDotsBottomPadding + modeSwitchThreeDotsDiameter +
                     mThumbnailPadding + mThumbnailShrinkDiameterEnd + radius_diff_max_normal;
         }
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             float previewTopEdgeGap = uncoveredPreviewRect.top;
-            y = previewTopEdgeGap + mThumbnailPadding - radius_diff_max_normal;
-            if (rotation >= 180) {
-                // Reverse landscape, bottom bar align left.
-                x = parentViewWidth;
-            } else {
-                x = uncoveredPreviewWidth;
-            }
+            x = uncoveredPreviewRect.right;
             x -= modeSwitchThreeDotsBottomPadding + modeSwitchThreeDotsDiameter +
                     mThumbnailPadding + mThumbnailShrinkDiameterEnd + radius_diff_max_normal;
+            y = previewTopEdgeGap + mThumbnailPadding - radius_diff_max_normal;
         }
         return new RectF(x, y, x + mRippleRingDiameterEnd, y + mRippleRingDiameterEnd);
     }
@@ -569,18 +553,24 @@ public class RoundedThumbnailView extends View {
                 if (mOriginalBitmap == null) {
                     return null;
                 }
-
-                // Create a transformation matrix for the bitmap shader.
-                RectF srcRect = new RectF(
-                        0.0f, 0.0f, mOriginalBitmap.getWidth(), mOriginalBitmap.getHeight());
-                RectF dstRect = new RectF(0.0f, 0.0f, mViewSize, mViewSize);
-                Matrix shaderMatrix = new Matrix();
-                shaderMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.FILL);
+                // The original bitmap should be a square shape.
+                if (mOriginalBitmap.getWidth() != mOriginalBitmap.getHeight()) {
+                    return null;
+                }
 
                 // Create a bitmap shader for the paint.
                 BitmapShader shader = new BitmapShader(
                         mOriginalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-                shader.setLocalMatrix(shaderMatrix);
+                if (mOriginalBitmap.getWidth() != mViewSize) {
+                    // Create a transformation matrix for the bitmap shader if the size is not
+                    // matched.
+                    RectF srcRect = new RectF(
+                            0.0f, 0.0f, mOriginalBitmap.getWidth(), mOriginalBitmap.getHeight());
+                    RectF dstRect = new RectF(0.0f, 0.0f, mViewSize, mViewSize);
+                    Matrix shaderMatrix = new Matrix();
+                    shaderMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.FILL);
+                    shader.setLocalMatrix(shaderMatrix);
+                }
 
                 // Create the paint for drawing the thumbnail in a circle.
                 mThumbnailPaint = new Paint();
