@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -305,6 +306,31 @@ class BurstFacadeImpl implements BurstFacade {
     }
 
     /**
+     * Generates sequential timestamp with 1 second difference.
+     */
+    private static class SequentialTimestampGenerator {
+        private long mSeedTimestampMillis;
+
+        /**
+         * New instance of generator.
+         *
+         * @param seedTimestampMillis the timestamp in milliseconds for
+         *            initializing the generator.
+         */
+        public SequentialTimestampGenerator(long seedTimestampMillis) {
+            mSeedTimestampMillis = seedTimestampMillis;
+        }
+
+        /**
+         * Returns the next timestamp.
+         */
+        public synchronized long getNextTimestampMillis() {
+            mSeedTimestampMillis += TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS);
+            return mSeedTimestampMillis;
+        }
+    }
+
+    /**
      * Saves the burst result and on completion re-enables the shutter button.
      *
      * @param burstResult the result of the burst.
@@ -317,9 +343,23 @@ class BurstFacadeImpl implements BurstFacade {
                 new AsyncTask<Void, String, Void>() {
                     @Override
                     protected Void doInBackground(Void... arg0) {
+                        // The timestamp with which a media item is saved
+                        // determines its place in the film strip. The newer
+                        // items appear first.
+                        // We save artifacts and their corresponding media
+                        // items sequentially in the desired order. The order
+                        // of the artifacts is implicitly defined by
+                        // burstResult.getTypes() and the media items inside the
+                        // artifacts are assumed to be sorted in ascending order
+                        // by timestamps.
+                        // We create a timestamp-generator that generates
+                        // timestamps in order and use it to save timestamps.
+                        SequentialTimestampGenerator timestampGen =
+                                new SequentialTimestampGenerator(System.currentTimeMillis());
                         for (String artifactType : burstResult.getTypes()) {
                             publishProgress(artifactType);
-                            saveArtifacts(stackSaver, burstResult, artifactType);
+                            saveArtifacts(stackSaver, burstResult, artifactType,
+                                    timestampGen);
                         }
                         return null;
                     }
@@ -343,22 +383,29 @@ class BurstFacadeImpl implements BurstFacade {
      * Save individual artifacts for bursts.
      */
     private void saveArtifacts(final StackSaver stackSaver, final BurstResult burstResult,
-            final String artifactType) {
+            final String artifactType, SequentialTimestampGenerator timestampGenerator) {
         List<BurstArtifact> artifactList = burstResult.getArtifactsByType(artifactType);
         for (int artifactIndex = 0; artifactIndex < artifactList.size(); artifactIndex++) {
             List<BurstMediaItem> mediaItems = artifactList.get(artifactIndex).getMediaItems();
             for (int index = 0; index < mediaItems.size(); index++) {
                 saveBurstMediaItem(stackSaver, mediaItems.get(index),
-                        artifactType, artifactIndex + 1, index + 1);
+                        artifactType, artifactIndex + 1, index + 1, timestampGenerator);
             }
         }
     }
 
-    private void saveBurstMediaItem(StackSaver stackSaver, BurstMediaItem mediaItem,
-            String artifactType, int artifactIndex, int index) {
-        long timestamp = mediaItem.getTimestamp();
-        String title = String.format(MEDIA_ITEM_FILENAME_FORMAT_STRING,
-                artifactType, artifactIndex, index, timestamp);
+    private void saveBurstMediaItem(StackSaver stackSaver,
+            BurstMediaItem mediaItem,
+            String artifactType,
+            int artifactIndex,
+            int index,
+            SequentialTimestampGenerator timestampGenerator) {
+        // Use ordered timestamp for saving the media item, this way media
+        // items appear to be in the correct order when user swipes to the
+        // film strip.
+        long timestamp = timestampGenerator.getNextTimestampMillis();
+        final String title = String.format(MEDIA_ITEM_FILENAME_FORMAT_STRING,
+                artifactType, artifactIndex, index, mediaItem.getTimestamp());
         String mimeType = mediaItem.getMimeType();
         ExifInterface exif = null;
         if (FilmstripItemData.MIME_TYPE_JPEG.equals(mimeType)) {
