@@ -285,12 +285,12 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Sekinlashtirish vaqti"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Keng burchakli"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Siyqalash obyektivi"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Xiralashtirish effekti"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Kamera rejimini o‘zgartirish"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Video kamerani yoqish/o‘chirish"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Panorama rejimiga o‘tish"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Panorama rejimiga o‘tish"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Xiralashtirish obyektivi rejimiga o‘tish"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Tasvirni xiralashtirib rasmga olish"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Sozlamalarni ochish"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Sozlamalarni yopish"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR plus o‘chiq"</string>
