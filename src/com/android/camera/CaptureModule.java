@@ -43,6 +43,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.FirstRunDialog;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
@@ -51,6 +52,7 @@ import com.android.camera.burst.ToastingBurstFacadeDecorator.BurstToaster;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
+import com.android.camera.exif.Rational;
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
 import com.android.camera.gl.FrameDistributorWrapper;
 import com.android.camera.gl.SurfaceTextureConsumer;
@@ -69,6 +71,7 @@ import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
@@ -149,7 +152,10 @@ public class CaptureModule extends CameraModule
     private final SettingsManager mSettingsManager;
     /** Application context. */
     private final Context mContext;
+    /** Module UI. */
     private CaptureModuleUI mUI;
+    /** First run dialog */
+    private FirstRunDialog mFirstRunDialog;
     /** The camera manager used to open cameras. */
     private OneCameraManager mCameraManager;
     /** The currently opened camera device, or null if the camera is closed. */
@@ -320,6 +326,8 @@ public class CaptureModule extends CameraModule
                 cancelCountDown();
             }
         });
+
+        mFirstRunDialog = new FirstRunDialog(mAppController, mCameraManager);
     }
 
     @Override
@@ -503,8 +511,14 @@ public class CaptureModule extends CameraModule
                 || mPreviewConsumer.getHeight() != height) {
             mPreviewConsumer.setSize(width, height);
         }
-        closeCamera();
-        openCameraAndStartPreview();
+
+        // Don't open camera until the aspect ratio preference is set.
+        final boolean isAspectRatioPreferenceSet = mAppController.getSettingsManager().getBoolean(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
+        if (isAspectRatioPreferenceSet) {
+            closeCamera();
+            openCameraAndStartPreview();
+        }
     }
 
     @Override
@@ -585,6 +599,20 @@ public class CaptureModule extends CameraModule
 
         mSoundPlayer.loadSound(R.raw.timer_final_second);
         mSoundPlayer.loadSound(R.raw.timer_increment);
+
+        if (mFirstRunDialog.shouldShow()) {
+            mFirstRunDialog.setListener(new FirstRunDialog.FirstRunDialogListener() {
+                public void onLocationPreferenceConfirmed(boolean locationRecordingEnabled) {
+                }
+
+                public void onAspectRatioPreferenceConfirmed(Rational chosenAspectRatio) {
+                    // Open the camera. This dialog will be dismissed in onPreviewStarted() after
+                    // preview is started.
+                    openCameraAndStartPreview();
+                }
+            });
+            mFirstRunDialog.show();
+        }
     }
 
     @Override
@@ -1047,6 +1075,10 @@ public class CaptureModule extends CameraModule
         if (mState == ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED) {
             mState = ModuleState.UPDATE_TRANSFORM_ON_NEXT_SURFACE_TEXTURE_UPDATE;
         }
+
+        // Dismiss the aspect ratio preference dialog.
+        mFirstRunDialog.dismiss();
+
         mAppController.onPreviewStarted();
         onReadyStateChanged(true);
     }
@@ -1194,9 +1226,6 @@ public class CaptureModule extends CameraModule
      * Open camera and start the preview.
      */
     private void openCameraAndStartPreview() {
-        // Only enable HDR on the back camera
-        boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
-
         try {
             // TODO Given the current design, we cannot guarantee that one of
             // CaptureReadyCallback.onSetupFailed or onReadyForCapture will
@@ -1216,7 +1245,10 @@ public class CaptureModule extends CameraModule
             mCameraOpenCloseLock.release();
             return;
         }
-        mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
+        // Only enable HDR on the back camera
+        boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
+        Size pictureSize = getPictureSizeFromSettings();
+        mCameraManager.open(mCameraFacing, useHdr, pictureSize,
                 new OpenCallback() {
                     @Override
                     public void onFailure() {
@@ -1354,7 +1386,8 @@ public class CaptureModule extends CameraModule
     private Size getPictureSizeFromSettings() {
         String pictureSizeKey = mCameraFacing == Facing.FRONT ? Keys.KEY_PICTURE_SIZE_FRONT
                 : Keys.KEY_PICTURE_SIZE_BACK;
-        return mSettingsManager.getSize(SettingsManager.SCOPE_GLOBAL, pictureSizeKey);
+        return SettingsUtil.sizeFromSettingString(
+                mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL, pictureSizeKey));
     }
 
     private int getPreviewOrientation(int deviceOrientationDegrees) {

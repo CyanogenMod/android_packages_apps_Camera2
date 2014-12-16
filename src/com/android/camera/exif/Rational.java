@@ -16,6 +16,7 @@
 
 package com.android.camera.exif;
 
+// TODO: Move this class to under util package.
 /**
  * The rational data type of EXIF tag. Contains a pair of longs representing the
  * numerator and denominator of a Rational number.
@@ -28,11 +29,11 @@ public class Rational {
     /**
      * Create a Rational with a given numerator and denominator.
      *
-     * @param nominator
+     * @param numerator
      * @param denominator
      */
-    public Rational(long nominator, long denominator) {
-        mNumerator = nominator;
+    public Rational(long numerator, long denominator) {
+        mNumerator = numerator;
         mDenominator = denominator;
     }
 

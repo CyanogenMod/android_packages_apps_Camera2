@@ -37,10 +37,10 @@ import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
 import com.android.camera.util.GoogleHelpHelper;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
-import com.android.ex.camera2.portability.Size;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -352,7 +352,7 @@ public class CameraSettingsActivity extends FragmentActivity {
             for (int i = 0; i < selectedSizes.size(); i++) {
                 Size size = selectedSizes.get(i);
                 entries[i] = getSizeSummaryString(size);
-                entryValues[i] = SettingsUtil.sizeToSetting(size);
+                entryValues[i] = SettingsUtil.sizeToSettingString(size);
             }
             preference.setEntries(entries);
             preference.setEntryValues(entryValues);

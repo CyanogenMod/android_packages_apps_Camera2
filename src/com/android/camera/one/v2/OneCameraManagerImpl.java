@@ -30,6 +30,8 @@ import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.util.Size;
 
@@ -145,6 +147,18 @@ public class OneCameraManagerImpl extends OneCameraManager {
     public boolean hasCameraFacing(Facing facing) {
         return getFirstCameraFacing(facing == Facing.FRONT ? CameraCharacteristics.LENS_FACING_FRONT
                 : CameraCharacteristics.LENS_FACING_BACK) != null;
+    }
+
+    @Override
+    public OneCameraCharacteristics getCameraCharacteristics(Facing facing)
+            throws OneCameraAccessException {
+        String cameraId = getCameraId(facing);
+        try {
+            CameraCharacteristics characteristics = mCameraManager.getCameraCharacteristics(cameraId);
+            return new OneCameraCharacteristicsImpl(characteristics);
+        } catch (CameraAccessException ex) {
+            throw new OneCameraAccessException("Unable to get camera characteristics", ex);
+        }
     }
 
     /** Returns the ID of the first camera facing the given direction. */

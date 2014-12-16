@@ -19,6 +19,7 @@ package com.android.camera;
 
 import android.animation.Animator;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -979,6 +980,11 @@ public class CameraActivity extends QuickActivity
     @Override
     public Context getAndroidContext() {
         return mAppContext;
+    }
+
+    @Override
+    public Dialog createDialog() {
+        return new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
     }
 
     @Override

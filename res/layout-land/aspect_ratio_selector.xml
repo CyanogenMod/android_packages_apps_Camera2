@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<com.android.camera.widget.AspectRatioSelector
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/aspect_ratio_selector"
     android:orientation="vertical"
@@ -67,4 +67,4 @@
             android:gravity="center"
             android:layout_weight="1"/>
     </LinearLayout>
-</com.android.camera.widget.AspectRatioSelector>
+</LinearLayout>

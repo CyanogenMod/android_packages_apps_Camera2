@@ -71,8 +71,8 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.SessionStatsCollector;
+import com.android.camera.util.Size;
 import com.android.camera.util.UsageStatistics;
-import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraAFCallback;
@@ -83,7 +83,6 @@ import com.android.ex.camera2.portability.CameraAgent.CameraShutterCallback;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
-import com.android.ex.camera2.portability.Size;
 import com.google.common.logging.eventprotos;
 
 import java.io.ByteArrayOutputStream;
@@ -295,17 +294,18 @@ public class PhotoModule
         /**
          * Returns current aspect ratio that is being used to set as default.
          */
-        public AspectRatioSelector.AspectRatio getCurrentAspectRatio();
+        public Rational getCurrentAspectRatio();
 
         /**
          * Gets notified when user has made the aspect ratio selection.
          *
-         * @param newAspectRatio aspect ratio that user has selected
+         * @param chosenAspectRatio The aspect ratio that user has selected
          * @param dialogHandlingFinishedRunnable runnable to run when the operations
          *                                       needed to handle changes from dialog
          *                                       are finished.
          */
-        public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio,
+        public void onAspectRatioSelected(
+                Rational chosenAspectRatio,
                 Runnable dialogHandlingFinishedRunnable);
     }
 
@@ -529,81 +529,33 @@ public class PhotoModule
     }
 
     private AspectRatioDialogCallback createAspectRatioDialogCallback() {
-        Size currentSize = mCameraSettings.getCurrentPhotoSize();
-        float aspectRatio = (float) currentSize.width() / (float) currentSize.height();
-        if (aspectRatio < 1f) {
-            aspectRatio = 1 / aspectRatio;
-        }
-        final AspectRatioSelector.AspectRatio currentAspectRatio;
-        if (Math.abs(aspectRatio - 4f / 3f) <= 0.1f) {
-            currentAspectRatio = AspectRatioSelector.AspectRatio.ASPECT_RATIO_4x3;
-        } else if (Math.abs(aspectRatio - 16f / 9f) <= 0.1f) {
-            currentAspectRatio = AspectRatioSelector.AspectRatio.ASPECT_RATIO_16x9;
-        } else {
-            // TODO: Log error and not show dialog.
-            return null;
-        }
-
-        List<Size> sizes = mCameraCapabilities.getSupportedPhotoSizes();
-        List<Size> pictureSizes = ResolutionUtil
-                .getDisplayableSizesFromSupported(sizes, true);
-
-        // This logic below finds the largest resolution for each aspect ratio.
-        // TODO: Move this somewhere that can be shared with SettingsActivity
-        int aspectRatio4x3Resolution = 0;
-        int aspectRatio16x9Resolution = 0;
-        Size largestSize4x3 = new Size(0, 0);
-        Size largestSize16x9 = new Size(0, 0);
-        for (Size size : pictureSizes) {
-            float pictureAspectRatio = (float) size.width() / (float) size.height();
-            pictureAspectRatio = pictureAspectRatio < 1 ?
-                    1f / pictureAspectRatio : pictureAspectRatio;
-            int resolution = size.width() * size.height();
-            if (Math.abs(pictureAspectRatio - 4f / 3f) < 0.1f) {
-                if (resolution > aspectRatio4x3Resolution) {
-                    aspectRatio4x3Resolution = resolution;
-                    largestSize4x3 = size;
-                }
-            } else if (Math.abs(pictureAspectRatio - 16f / 9f) < 0.1f) {
-                if (resolution > aspectRatio16x9Resolution) {
-                    aspectRatio16x9Resolution = resolution;
-                    largestSize16x9 = size;
-                }
-            }
-        }
-
-        // Use the largest 4x3 and 16x9 sizes as candidates for picture size selection.
-        final Size size4x3ToSelect = largestSize4x3;
-        final Size size16x9ToSelect = largestSize16x9;
-
+        Size currentSize = new Size(mCameraSettings.getCurrentPhotoSize());
+        final Rational currentAspectRatio = ResolutionUtil.getAspectRatio(currentSize);
         AspectRatioDialogCallback callback = new AspectRatioDialogCallback() {
-
             @Override
-            public AspectRatioSelector.AspectRatio getCurrentAspectRatio() {
+            public Rational getCurrentAspectRatio() {
                 return currentAspectRatio;
             }
 
             @Override
-            public void onAspectRatioSelected(AspectRatioSelector.AspectRatio newAspectRatio,
-                    Runnable dialogHandlingFinishedRunnable) {
-                if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_4x3) {
-                    String largestSize4x3Text = SettingsUtil.sizeToSetting(size4x3ToSelect);
-                    mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                                                       Keys.KEY_PICTURE_SIZE_BACK,
-                                                       largestSize4x3Text);
-                } else if (newAspectRatio == AspectRatioSelector.AspectRatio.ASPECT_RATIO_16x9) {
-                    String largestSize16x9Text = SettingsUtil.sizeToSetting(size16x9ToSelect);
-                    mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                                                       Keys.KEY_PICTURE_SIZE_BACK,
-                                                       largestSize16x9Text);
-                }
-                mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                                                   Keys.KEY_USER_SELECTED_ASPECT_RATIO, true);
+            public void onAspectRatioSelected(
+                    Rational chosenAspectRatio, Runnable dialogHandlingFinishedRunnable) {
+                List<Size> supportedPhotoSizes = Size.convert(mCameraCapabilities.getSupportedPhotoSizes());
+                Size largestPictureSize = ResolutionUtil.getLargestPictureSize(
+                        chosenAspectRatio, supportedPhotoSizes);
+                mActivity.getSettingsManager().set(
+                        SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_PICTURE_SIZE_BACK,
+                        SettingsUtil.sizeToSettingString(largestPictureSize));
+                mActivity.getSettingsManager().set(
+                        SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_USER_SELECTED_ASPECT_RATIO,
+                        true);
                 String aspectRatio = mActivity.getSettingsManager().getString(
                     SettingsManager.SCOPE_GLOBAL,
                     Keys.KEY_USER_SELECTED_ASPECT_RATIO);
                 Log.e(TAG, "aspect ratio after setting it to true=" + aspectRatio);
-                if (newAspectRatio != currentAspectRatio) {
+                if (chosenAspectRatio != currentAspectRatio) {
                     Log.i(TAG, "changing aspect ratio from dialog");
                     stopPreview();
                     startPreview();
@@ -1113,8 +1065,7 @@ public class PhotoModule
                     width = exifWidth;
                     height = exifHeight;
                 } else {
-                    Size s;
-                    s = mCameraSettings.getCurrentPhotoSize();
+                    Size s = new Size(mCameraSettings.getCurrentPhotoSize());
                     if ((mJpegRotation + orientation) % 180 == 0) {
                         width = s.width();
                         height = s.height();
@@ -2125,7 +2076,8 @@ public class PhotoModule
         String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL,
                                                        pictureSizeKey);
 
-        List<Size> supported = mCameraCapabilities.getSupportedPhotoSizes();
+        List<com.android.camera.util.Size> supported =
+                com.android.camera.util.Size.convert(mCameraCapabilities.getSupportedPhotoSizes());
         CameraPictureSizesCacher.updateSizesForCamera(mAppController.getAndroidContext(),
                 mCameraDevice.getCameraId(), supported);
         SettingsUtil.setCameraPictureSize(pictureSize, supported, mCameraSettings,
@@ -2143,13 +2095,13 @@ public class PhotoModule
 
         // Set a preview size that is closest to the viewfinder height and has
         // the right aspect ratio.
-        List<Size> sizes = mCameraCapabilities.getSupportedPreviewSizes();
+        List<Size> sizes = Size.convert(mCameraCapabilities.getSupportedPreviewSizes());
         Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
                 (double) size.width() / size.height());
-        Size original = mCameraSettings.getCurrentPreviewSize();
+        Size original = new Size(mCameraSettings.getCurrentPreviewSize());
         if (!optimalSize.equals(original)) {
             Log.v(TAG, "setting preview size. optimal: " + optimalSize + "original: " + original);
-            mCameraSettings.setPreviewSize(optimalSize);
+            mCameraSettings.setPreviewSize(optimalSize.toPortabilitySize());
 
             mCameraDevice.applySettings(mCameraSettings);
             mCameraSettings = mCameraDevice.getSettings();
@@ -2186,7 +2138,6 @@ public class PhotoModule
             // If exposure compensation is not enabled, reset the exposure compensation value.
             setExposureCompensation(0);
         }
-
     }
 
     private void updateParametersSceneMode() {

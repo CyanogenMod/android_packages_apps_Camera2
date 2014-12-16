@@ -67,6 +67,7 @@ import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraAgent.CameraPictureCallback;
@@ -74,7 +75,6 @@ import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraDeviceInfo.Characteristics;
 import com.android.ex.camera2.portability.CameraSettings;
-import com.android.ex.camera2.portability.Size;
 import com.google.common.logging.eventprotos;
 
 import java.io.File;
@@ -801,8 +801,8 @@ public class VideoModule extends CameraModule
 
         final int previewScreenShortSide = (previewScreenSize.x < previewScreenSize.y ?
                 previewScreenSize.x : previewScreenSize.y);
-        List<Size> sizes = capabilities.getSupportedPreviewSizes();
-        Size preferred = capabilities.getPreferredPreviewSizeForVideo();
+        List<Size> sizes = Size.convert(capabilities.getSupportedPreviewSizes());
+        Size preferred = new Size(capabilities.getPreferredPreviewSizeForVideo());
         final int preferredPreviewSizeShortSide = (preferred.width() < preferred.height() ?
                 preferred.width() : preferred.height());
         if (preferredPreviewSizeShortSide * 2 < previewScreenShortSide) {
@@ -1612,7 +1612,8 @@ public class VideoModule extends CameraModule
         // Update Desired Preview size in case video camera resolution has changed.
         updateDesiredPreviewSize();
 
-        mCameraSettings.setPreviewSize(new Size(mDesiredPreviewWidth, mDesiredPreviewHeight));
+        Size previewSize = new Size(mDesiredPreviewWidth, mDesiredPreviewHeight);
+        mCameraSettings.setPreviewSize(previewSize.toPortabilitySize());
         // This is required for Samsung SGH-I337 and probably other Samsung S4 versions
         if (Build.BRAND.toLowerCase().contains("samsung")) {
             mCameraSettings.setSetting("video-size",
@@ -1644,12 +1645,12 @@ public class VideoModule extends CameraModule
         // The logic here is different from the logic in still-mode camera.
         // There we determine the preview size based on the picture size, but
         // here we determine the picture size based on the preview size.
-        List<Size> supported = mCameraCapabilities.getSupportedPhotoSizes();
+        List<Size> supported = Size.convert(mCameraCapabilities.getSupportedPhotoSizes());
         Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
                 mDesiredPreviewWidth, mDesiredPreviewHeight);
         Size original = new Size(mCameraSettings.getCurrentPhotoSize());
         if (!original.equals(optimalSize)) {
-            mCameraSettings.setPhotoSize(optimalSize);
+            mCameraSettings.setPhotoSize(optimalSize.toPortabilitySize());
         }
         Log.d(TAG, "Video snapshot size is " + optimalSize);
 

@@ -33,6 +33,7 @@ import android.widget.ImageView;
 
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
+import com.android.camera.exif.Rational;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
@@ -42,7 +43,6 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GservicesHelper;
 import com.android.camera.widget.AspectRatioDialogLayout;
-import com.android.camera.widget.AspectRatioSelector;
 import com.android.camera.widget.LocationDialogLayout;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
@@ -361,12 +361,11 @@ public class PhotoUI implements PreviewStatusListener,
             final PhotoModule.AspectRatioDialogCallback aspectRatioDialogCallback) {
         setDialog(new Dialog(mActivity,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen));
-        final LocationDialogLayout locationDialogLayout = (LocationDialogLayout) mActivity
-                .getLayoutInflater().inflate(R.layout.location_dialog_layout, null);
-        locationDialogLayout.setLocationTaggingSelectionListener(
-                new LocationDialogLayout.LocationTaggingSelectionListener() {
+        final LocationDialogLayout locationDialogLayout = new LocationDialogLayout(
+                mActivity, true);
+        locationDialogLayout.setListener(new LocationDialogLayout.LocationDialogListener() {
             @Override
-            public void onLocationTaggingSelected(boolean selected) {
+            public void onConfirm(boolean selected) {
                 // Update setting.
                 locationCallback.onLocationTaggingSelected(selected);
 
@@ -423,15 +422,13 @@ public class PhotoUI implements PreviewStatusListener,
             Log.e(TAG, "Dialog for aspect ratio is null.");
             return false;
         }
-        final AspectRatioDialogLayout aspectRatioDialogLayout =
-                (AspectRatioDialogLayout) mActivity
-                .getLayoutInflater().inflate(R.layout.aspect_ratio_dialog_layout, null);
-        aspectRatioDialogLayout.initialize(
-                new AspectRatioDialogLayout.AspectRatioChangedListener() {
+        final AspectRatioDialogLayout aspectRatioDialogLayout = new AspectRatioDialogLayout(
+                mActivity, callback.getCurrentAspectRatio());
+        aspectRatioDialogLayout.setListener(
+                new AspectRatioDialogLayout.AspectRatioDialogListener() {
                     @Override
-                    public void onAspectRatioChanged(AspectRatioSelector.AspectRatio aspectRatio) {
-                        // callback to set picture size.
-                        callback.onAspectRatioSelected(aspectRatio, new Runnable() {
+                    public void onConfirm(Rational chosenAspectRatio) {
+                        callback.onAspectRatioSelected(chosenAspectRatio, new Runnable() {
                             @Override
                             public void run() {
                                 if (mDialog != null) {
@@ -440,7 +437,7 @@ public class PhotoUI implements PreviewStatusListener,
                             }
                         });
                     }
-                }, callback.getCurrentAspectRatio());
+                });
         aspectRatioDialog.setContentView(aspectRatioDialogLayout, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         aspectRatioDialog.show();

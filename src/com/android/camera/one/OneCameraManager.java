@@ -58,10 +58,23 @@ public abstract class OneCameraManager {
     public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
             OpenCallback callback, Handler handler);
 
+    // TODO: Move this to OneCameraCharacteristics class.
     /**
      * Returns whether the device has a camera facing the given direction.
      */
     public abstract boolean hasCameraFacing(Facing facing);
+
+    /**
+     * Retrieve the characteristics for the camera facing at the given direction. The first camera
+     * found in the given direction will be chosen.
+     *
+     * @param facing The facing direction of the camera.
+     * @return A #{link com.android.camera.one.OneCameraCharacteristics} object to provide camera
+     *         characteristics information. Returns null if there is no camera facing the given
+     *         direction.
+     */
+    public abstract OneCameraCharacteristics getCameraCharacteristics(Facing facing)
+            throws OneCameraAccessException;
 
     /**
      * Creates a camera manager that is based on Camera2 API, if available, or

@@ -374,30 +374,6 @@ public class SettingsManager {
     }
 
     /**
-     * Retrieve a setting's value as a {@link Size}. Returns <code>null</code>
-     * if value could not be parsed as a size.
-     */
-    public Size getSize(String scope, String key) {
-        String strValue = getString(scope, key);
-        if (strValue == null) {
-            return null;
-        }
-
-        String[] widthHeight = strValue.split("x");
-        if (widthHeight.length != 2) {
-            return null;
-        }
-
-        try {
-            int width = Integer.parseInt(widthHeight[0]);
-            int height = Integer.parseInt(widthHeight[1]);
-            return new Size(width, height);
-        } catch (NumberFormatException ex) {
-            return null;
-        }
-    }
-
-    /**
      * If possible values are stored for this key, return the
      * index into that list of the currently set value.
      *

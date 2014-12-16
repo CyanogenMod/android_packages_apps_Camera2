@@ -17,6 +17,7 @@
 package com.android.camera.app;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -69,6 +70,13 @@ public interface AppController {
      * @return the {@link android.content.Context} being used.
      */
     public Context getAndroidContext();
+
+    /**
+     * Creates a new dialog which can be shown in the app.
+     *
+     * @return  {@link android.app.Dialog} of the app.
+     */
+    public Dialog createDialog();
 
     /**
      * @return the current camera id.

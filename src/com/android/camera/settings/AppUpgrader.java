@@ -24,10 +24,10 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.module.ModuleController;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
-import com.android.ex.camera2.portability.Size;
 
 import java.util.List;
 import java.util.Map;
@@ -326,7 +326,7 @@ public class AppUpgrader extends SettingsUpgrader {
             if (supported != null) {
                 Size size = SettingsUtil.getPhotoSize(pictureSize, supported, camera);
                 settingsManager.set(SettingsManager.SCOPE_GLOBAL, key,
-                        SettingsUtil.sizeToSetting(size));
+                        SettingsUtil.sizeToSettingString(size));
             }
         }
     }

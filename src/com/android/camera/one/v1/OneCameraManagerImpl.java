@@ -20,6 +20,7 @@ import android.os.Handler;
 
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.util.Size;
 
@@ -36,6 +37,11 @@ public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
     public boolean hasCameraFacing(Facing facing) {
+        throw new RuntimeException("Not implemented yet.");
+    }
+
+    @Override
+    public OneCameraCharacteristics getCameraCharacteristics(Facing facing) {
         throw new RuntimeException("Not implemented yet.");
     }
 }

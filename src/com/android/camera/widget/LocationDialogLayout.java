@@ -18,7 +18,6 @@ package com.android.camera.widget;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -26,49 +25,62 @@ import android.widget.FrameLayout;
 
 import com.android.camera2.R;
 
+/**
+ * Displays a dialog that allows people to choose whether they like to enable
+ * location recording or not. Please instantiate this class programmatically.
+ */
 public class LocationDialogLayout extends FrameLayout {
 
-    public interface LocationTaggingSelectionListener {
-        public void onLocationTaggingSelected(boolean selected);
+    public interface LocationDialogListener {
+        public void onConfirm(boolean locationRecordingEnabled);
     }
 
-    private View mConfirmButton;
+    private LocationDialogListener mListener;
     private CheckBox mCheckBox;
+    private View mConfirmButton;
     private int mLastOrientation;
-    private LocationTaggingSelectionListener mListener;
-    private boolean mCheckBoxChecked = true;
+    private boolean mLocationRecordingEnabled;
 
-    public LocationDialogLayout(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
+    /**
+     * Constructs a new LocationDialogLayout object.
+     *
+     * @param context The application context.
+     * @param defaultLocationRecordingEnabled Whether to enable location
+     *            recording by default.
+     */
+    public LocationDialogLayout(Context context, boolean defaultLocationRecordingEnabled) {
+        super(context);
+        mLocationRecordingEnabled = defaultLocationRecordingEnabled;
         mLastOrientation = context.getResources().getConfiguration().orientation;
+        setBackgroundResource(R.color.fullscreen_dialog_background_color);
+        inflate(context, R.layout.location_dialog_content, this);
+        updateSubviewReferences();
     }
 
-    @Override
-    public void onFinishInflate() {
-        updateViewReference();
+    public void setListener(LocationDialogListener listener) {
+        mListener = listener;
     }
 
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        // TODO: Extract the orientation checking logic in a super class as it
-        // is also used in the aspect ratio dialog.
         if (config.orientation == mLastOrientation) {
             return;
         }
         mLastOrientation = config.orientation;
+
         removeAllViews();
         inflate(getContext(), R.layout.location_dialog_content, this);
-        updateViewReference();
+        updateSubviewReferences();
     }
 
-    private void updateViewReference() {
+    private void updateSubviewReferences() {
         mCheckBox = (CheckBox) findViewById(R.id.check_box);
-        mCheckBox.setChecked(mCheckBoxChecked);
+        mCheckBox.setChecked(mLocationRecordingEnabled);
         mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCheckBoxChecked = isChecked;
+                mLocationRecordingEnabled = isChecked;
             }
         });
 
@@ -77,14 +89,9 @@ public class LocationDialogLayout extends FrameLayout {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
-                    mListener.onLocationTaggingSelected(mCheckBoxChecked);
+                    mListener.onConfirm(mLocationRecordingEnabled);
                 }
             }
         });
     }
-
-    public void setLocationTaggingSelectionListener(LocationTaggingSelectionListener listener) {
-        mListener = listener;
-    }
-
 }

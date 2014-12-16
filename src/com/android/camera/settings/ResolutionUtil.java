@@ -16,8 +16,9 @@
 
 package com.android.camera.settings;
 
+import com.android.camera.exif.Rational;
 import com.android.camera.util.ApiHelper;
-import com.android.ex.camera2.portability.Size;
+import com.android.camera.util.Size;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -36,6 +37,12 @@ import java.util.List;
  * user with so many options.
  */
 public class ResolutionUtil {
+    /**
+     * Different aspect ratio constants.
+     */
+    public static final Rational ASPECT_RATIO_16x9 = new Rational(16, 9);
+    public static final Rational ASPECT_RATIO_4x3 = new Rational(4, 3);
+    private static final double ASPECT_RATIO_TOLERANCE = 0.05;
 
     public static final String NEXUS_5_LARGE_16_BY_9 = "1836x3264";
     public static final float NEXUS_5_LARGE_16_BY_9_ASPECT_RATIO = 16f / 9f;
@@ -43,7 +50,7 @@ public class ResolutionUtil {
 
     /**
      * These are the preferred aspect ratios for the settings. We will take HAL
-     * supported aspect ratios that are within RATIO_TOLERANCE of these values.
+     * supported aspect ratios that are within ASPECT_RATIO_TOLERANCE of these values.
      * We will also take the maximum supported resolution for full sensor image.
      */
     private static Float[] sDesiredAspectRatios = {
@@ -53,8 +60,6 @@ public class ResolutionUtil {
     private static Size[] sDesiredAspectRatioSizes = {
             new Size(16, 9), new Size(4, 3)
     };
-
-    private static final float RATIO_TOLERANCE = .05f;
 
     /**
      * A resolution bucket holds a list of sizes that are of a given aspect
@@ -131,7 +136,7 @@ public class ResolutionUtil {
         for (Float targetRatio : sortedDesiredAspectRatios) {
             for (ResolutionBucket bucket : buckets) {
                 Number aspectRatio = bucket.aspectRatio;
-                if (Math.abs(aspectRatio.floatValue() - targetRatio) <= RATIO_TOLERANCE) {
+                if (Math.abs(aspectRatio.floatValue() - targetRatio) <= ASPECT_RATIO_TOLERANCE) {
                     result.addAll(pickUpToThree(bucket.sizes));
                 }
             }
@@ -197,12 +202,12 @@ public class ResolutionUtil {
      * possible.
      *
      * @param aspectRatio the aspect ratio to fuzz
-     * @return the closest desiredAspectRatio within RATIO_TOLERANCE, or the
+     * @return the closest desiredAspectRatio within ASPECT_RATIO_TOLERANCE, or the
      *         original ratio
      */
     private static float fuzzAspectRatio(float aspectRatio) {
         for (float desiredAspectRatio : sDesiredAspectRatios) {
-            if ((Math.abs(aspectRatio - desiredAspectRatio)) < RATIO_TOLERANCE) {
+            if ((Math.abs(aspectRatio - desiredAspectRatio)) < ASPECT_RATIO_TOLERANCE) {
                 return desiredAspectRatio;
             }
         }
@@ -223,7 +228,7 @@ public class ResolutionUtil {
         HashMap<Float, ResolutionBucket> aspectRatioToBuckets = new HashMap<Float, ResolutionBucket>();
 
         for (Size size : sizes) {
-            Float aspectRatio = size.width() / (float) size.height();
+            Float aspectRatio = (float) size.getWidth() / (float) size.getHeight();
             // If this aspect ratio is close to a desired Aspect Ratio,
             // fuzz it so that they are bucketed together
             aspectRatio = fuzzAspectRatio(aspectRatio);
@@ -300,20 +305,9 @@ public class ResolutionUtil {
         float fuzzy = fuzzAspectRatio(size.width() / (float) size.height());
         int index = Arrays.asList(sDesiredAspectRatios).indexOf(fuzzy);
         if (index != -1) {
-            aspectRatio = new Size(sDesiredAspectRatioSizes[index]);
+            aspectRatio = sDesiredAspectRatioSizes[index];
         }
         return aspectRatio;
-    }
-
-    /**
-     * See {@link #getApproximateSize(Size)}.
-     * <p>
-     * TODO: Move this whole util to {@link android.util.Size}
-     */
-    public static com.android.camera.util.Size getApproximateSize(
-            com.android.camera.util.Size size) {
-        Size result = getApproximateSize(new Size(size.getWidth(), size.getHeight()));
-        return new com.android.camera.util.Size(result.width(), result.height());
     }
 
     /**
@@ -330,4 +324,50 @@ public class ResolutionUtil {
         return denominator;
     }
 
+    /**
+     * Returns the aspect ratio for the given size.
+     *
+     * @param size The given size.
+     * @return A {@link Rational} which represents the aspect ratio.
+     */
+    public static Rational getAspectRatio(Size size) {
+        int width = size.getWidth();
+        int height = size.getHeight();
+        int numerator = width;
+        int denominator = height;
+        if (height > width) {
+            numerator = height;
+            denominator = width;
+        }
+        return new Rational(numerator, denominator);
+    }
+
+    public static boolean hasSameAspectRatio(Rational ar1, Rational ar2) {
+        return Math.abs(ar1.toDouble() - ar2.toDouble()) < ASPECT_RATIO_TOLERANCE;
+    }
+
+    /**
+     * Selects the maximal resolution for the given aspect ratio from all available resolutions.
+     *
+     * @param desiredAspectRatio The desired aspect ratio.
+     * @param sizes All available resolutions.
+     * @return The maximal resolution for 4x3 aspect ratio
+     */
+    public static Size getLargestPictureSize(Rational desiredAspectRatio, List<Size> sizes) {
+        int maxPixelNum = 0;
+        Size maxSize = new Size(0, 0);
+        for (Size size : sizes) {
+            Rational aspectRatio = getAspectRatio(size);
+            // Skip if the aspect ratio is not desired.
+            if (!hasSameAspectRatio(aspectRatio, desiredAspectRatio)) {
+                continue;
+            }
+            int pixelNum = size.getWidth() * size.getHeight();
+            if (pixelNum > maxPixelNum) {
+                maxPixelNum = pixelNum;
+                maxSize = size;
+            }
+        }
+        return maxSize;
+    }
 }

@@ -132,8 +132,7 @@ public class CaptureModuleUI implements
         mLayoutListener = layoutListener;
 
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
-        mActivity.getLayoutInflater().inflate(R.layout.capture_module,
-                moduleRoot, true);
+        mActivity.getLayoutInflater().inflate(R.layout.capture_module, moduleRoot, true);
 
         mPreviewView = (TextureView) mRootView.findViewById(R.id.preview_content);
 
