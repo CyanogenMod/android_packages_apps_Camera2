@@ -1191,6 +1191,12 @@ public class CameraActivity extends QuickActivity
             return;
         }
 
+        // Don't show capture indicator in Photo Sphere.
+        final int photosphereModuleId = getApplicationContext().getResources().getInteger(
+                R.integer.camera_mode_photosphere);
+        if (mCurrentModeIndex == photosphereModuleId) {
+            return;
+        }
         mPeekAnimationHandler.startDecodingJob(data, new Callback<Bitmap>() {
             @Override
             public void onCallback(Bitmap result) {
