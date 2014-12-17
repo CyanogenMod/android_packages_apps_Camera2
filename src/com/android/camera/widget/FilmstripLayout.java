@@ -29,6 +29,7 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.android.camera.filmstrip.FilmstripContentPanel;
@@ -43,7 +44,7 @@ import com.android.camera2.R;
  */
 public class FilmstripLayout extends FrameLayout implements FilmstripContentPanel {
 
-    private static final long DEFAULT_DURATION_MS = 200;
+    private static final long DEFAULT_DURATION_MS = 250;
 
     /**
      * The layout containing the {@link com.android.camera.widget.FilmstripView}
@@ -121,6 +122,8 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private void init(Context context) {
         mGestureRecognizer = new FilmstripGestureRecognizer(context, new MyGestureListener());
         mFilmstripAnimator.setDuration(DEFAULT_DURATION_MS);
+        mFilmstripAnimator.setInterpolator(AnimationUtils.loadInterpolator(
+                getContext(), android.R.interpolator.fast_out_slow_in));
         mFilmstripAnimator.addUpdateListener(mFilmstripAnimatorUpdateListener);
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
         mHandler = new Handler(Looper.getMainLooper());
