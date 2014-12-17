@@ -44,6 +44,7 @@ public class Storage {
     public static final String DCIM =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
     public static final String DIRECTORY = DCIM + "/Camera";
+    public static final File DIRECTORY_FILE = new File(DIRECTORY);
     public static final String JPEG_POSTFIX = ".jpg";
     public static final String GIF_POSTFIX = ".gif";
     // Match the code in MediaProvider.computeBucketValues().
@@ -68,7 +69,7 @@ public class Storage {
      *
      * @param resolver The The content resolver to use.
      * @param title The title of the media file.
-     * @param date The date fo the media file.
+     * @param date The date for the media file.
      * @param location The location of the media file.
      * @param orientation The orientation of the media file.
      * @param exif The EXIF info. Can be {@code null}.
@@ -95,7 +96,7 @@ public class Storage {
      * @param resolver The The content resolver to use.
      * @param title The title of the media file.
      * @param data The data to save.
-     * @param date The date fo the media file.
+     * @param date The date for the media file.
      * @param location The location of the media file.
      * @param orientation The orientation of the media file.
      * @param exif The EXIF info. Can be {@code null}.
@@ -107,7 +108,7 @@ public class Storage {
      * @return The URI of the added image, or null if the image could not be
      *         added.
      */
-    static Uri addImage(ContentResolver resolver, String title, long date,
+    public static Uri addImage(ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] data, int width,
             int height, String mimeType) {
 
@@ -125,7 +126,7 @@ public class Storage {
      *
      * @param resolver The The content resolver to use.
      * @param title The title of the media file.
-     * @param date The date fo the media file.
+     * @param date The date for the media file.
      * @param location The location of the media file.
      * @param orientation The orientation of the media file.
      * @param width The width of the media file after the orientation is
@@ -136,7 +137,7 @@ public class Storage {
      * @return The content URI of the inserted media file or null, if the image
      *         could not be added.
      */
-    private static Uri addImageToMediaStore(ContentResolver resolver, String title, long date,
+    public static Uri addImageToMediaStore(ContentResolver resolver, String title, long date,
             Location location, int orientation, long jpegLength, String path, int width, int height,
             String mimeType) {
         // Insert into MediaStore.
@@ -264,7 +265,11 @@ public class Storage {
      *
      * @return The size of the file. -1 if failed.
      */
-    private static long writeFile(String path, byte[] jpeg, ExifInterface exif) {
+    public static long writeFile(String path, byte[] jpeg, ExifInterface exif) {
+        if (!createDirectoryIfNeeded(path)) {
+            Log.e(TAG, "Failed to create parent directory for file: " + path);
+            return -1;
+        }
         if (exif != null) {
             try {
                 exif.writeExif(jpeg, path);
@@ -305,7 +310,30 @@ public class Storage {
         return -1;
     }
 
-    // Updates the image values in MediaStore
+    /**
+     * Given a file path, makes sure the directory it's in exists, and if not
+     * that it is created.
+     *
+     * @param filePath the absolute path of a file, e.g. '/foo/bar/file.jpg'.
+     * @return Whether the directory exists. If 'false' is returned, this file
+     *         cannot be written to since the parent directory could not be
+     *         created.
+     */
+    private static boolean createDirectoryIfNeeded(String filePath) {
+        File parentFile = new File(filePath).getParentFile();
+
+        // If the parent exists, return 'true' if it is a directory. If it's a
+        // file, return 'false'.
+        if (parentFile.exists()) {
+            return parentFile.isDirectory();
+        }
+
+        // If the parent does not exists, attempt to create it and return
+        // whether creating it succeeded.
+        return parentFile.mkdirs();
+    }
+
+    /** Updates the image values in MediaStore. */
     private static Uri updateImage(Uri imageUri, ContentResolver resolver, String title,
             long date, Location location, int orientation, int jpegLength,
             String path, int width, int height, String mimeType) {
@@ -330,6 +358,10 @@ public class Storage {
     }
 
     private static String generateFilepath(String title, String mimeType) {
+        return generateFilepath(DIRECTORY, title, mimeType);
+    }
+
+    public static String generateFilepath(String directory, String title, String mimeType) {
         String extension = null;
         if (LocalData.MIME_TYPE_JPEG.equals(mimeType)) {
             extension = JPEG_POSTFIX;
@@ -338,7 +370,7 @@ public class Storage {
         } else {
             throw new IllegalArgumentException("Invalid mimeType: " + mimeType);
         }
-        return DIRECTORY + '/' + title + extension;
+        return (new File(directory, title + extension)).getAbsolutePath();
     }
 
     /**

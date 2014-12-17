@@ -45,6 +45,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
+import com.android.camera.burst.BurstReadyStateChangeListener;
 import com.android.camera.burst.ToastingBurstFacadeDecorator;
 import com.android.camera.burst.ToastingBurstFacadeDecorator.BurstToaster;
 import com.android.camera.debug.DebugPropertyHelper;
@@ -80,6 +81,7 @@ import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -249,9 +251,6 @@ public class CaptureModule extends CameraModule
     /** TODO: This is N5 specific. */
     public static final float FULLSCREEN_ASPECT_RATIO = 16 / 9f;
 
-    /** A directory to store debug information in during development. */
-    private final File mDebugDataDir;
-
     /** Used to distribute camera frames to consumers. */
     private final FrameDistributorWrapper mFrameDistributor;
 
@@ -260,6 +259,7 @@ public class CaptureModule extends CameraModule
 
     /** The burst manager for controlling the burst. */
     private final BurstFacade mBurstController;
+    private static final String BURST_SESSIONS_DIR = "burst_sessions";
 
     public CaptureModule(AppController appController) {
         this(appController, false);
@@ -272,15 +272,20 @@ public class CaptureModule extends CameraModule
         mContext = mAppController.getAndroidContext();
         mSettingsManager = mAppController.getSettingsManager();
         mSettingsManager.addListener(this);
-        mDebugDataDir = mContext.getExternalCacheDir();
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
 
         mPreviewConsumer = new SurfaceTextureConsumer();
         mFrameDistributor = new FrameDistributorWrapper();
-        BurstFacade burstController = BurstFacadeFactory.create(mAppController, getServices()
-                .getMediaSaver(),
-                mLocationManager, mAppController.getOrientationManager(), mDebugDataDir);
+        BurstFacade burstController = BurstFacadeFactory.create(mContext, mAppController
+                .getOrientationManager(), new BurstReadyStateChangeListener() {
+            @Override
+            public void onBurstReadyStateChanged(boolean ready) {
+                // TODO: This needs to take into account the state of the whole
+                // system, not just burst.
+                mAppController.setShutterEnabled(ready);
+            }
+        });
         BurstToaster toaster = new BurstToaster(appController.getAndroidContext());
         mBurstController = new ToastingBurstFacadeDecorator(burstController, toaster);
     }
@@ -301,7 +306,6 @@ public class CaptureModule extends CameraModule
                 mLayoutListener);
         mAppController.setPreviewStatusListener(mUI);
 
-        mBurstController.setContentResolver(activity.getContentResolver());
         // Set the preview texture from UI for the SurfaceTextureConsumer.
         mPreviewConsumer.setSurfaceTexture(
                 mAppController.getCameraAppUI().getSurfaceTexture(),
@@ -327,7 +331,16 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onShutterButtonLongPressed() {
-        mBurstController.startBurst();
+        File tempSessionDataDirectory;
+        try {
+            tempSessionDataDirectory = getServices().getCaptureSessionManager()
+                    .getSessionDirectory(BURST_SESSIONS_DIR);
+        } catch (IOException e) {
+            Log.e(TAG, "Cannot start burst", e);
+            return;
+        }
+        CaptureSession session = createCaptureSession();
+        mBurstController.startBurst(session, tempSessionDataDirectory);
     }
 
     @Override
@@ -365,20 +378,30 @@ public class CaptureModule extends CameraModule
     }
 
     private void takePictureNow() {
-        Location location = mLocationManager.getCurrentLocation();
-
-        // Set up the capture session.
-        long sessionTime = System.currentTimeMillis();
-        String title = CameraUtil.createJpegName(sessionTime);
-        CaptureSession session = getServices().getCaptureSessionManager()
-                .createNewSession(title, sessionTime, location);
+        CaptureSession session = createCaptureSession();
         int orientation = mAppController.getOrientationManager().getDeviceOrientation()
                 .getDegrees();
+        // TODO: This should really not use getExternalCacheDir and instead use
+        // the SessionStorage API. Need to sync with gcam if that's OK.
         PhotoCaptureParameters params = new PhotoCaptureParameters(
-                title, orientation, location, mDebugDataDir, this, mHeading,
-                getFlashModeFromSettings(), mZoomValue, 0);
+                session.getTitle(), orientation, session.getLocation(),
+                mContext.getExternalCacheDir(), this,
+                mHeading, getFlashModeFromSettings(), mZoomValue, 0);
 
         mCamera.takePicture(params, session);
+    }
+
+    private CaptureSession createCaptureSession() {
+        long sessionTime = getSessionTime();
+        Location location = mLocationManager.getCurrentLocation();
+        String title = CameraUtil.createJpegName(sessionTime);
+        return getServices().getCaptureSessionManager()
+                .createNewSession(title, sessionTime, location);
+    }
+
+    private long getSessionTime() {
+        // TODO: Replace with a mockable TimeProvider interface.
+        return System.currentTimeMillis();
     }
 
     @Override

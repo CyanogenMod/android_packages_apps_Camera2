@@ -16,12 +16,14 @@
 
 package com.android.camera.burst;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.widget.Toast;
 
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
 import com.android.camera.one.OneCamera;
+import com.android.camera.session.CaptureSession;
+
+import java.io.File;
 
 /**
  * A simle decorator for a {@link BurstFacade} that shows toasts for when a
@@ -68,11 +70,6 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public void setContentResolver(ContentResolver contentResolver) {
-        mBurstFacade.setContentResolver(contentResolver);
-    }
-
-    @Override
     public void onCameraAttached(OneCamera camera) {
         mBurstFacade.onCameraAttached(camera);
     }
@@ -88,9 +85,9 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public void startBurst() {
+    public void startBurst(CaptureSession captureSession, File tempSessionDirectory) {
         mToaster.showToastBurstStarted();
-        mBurstFacade.startBurst();
+        mBurstFacade.startBurst(captureSession, tempSessionDirectory);
     }
 
     @Override

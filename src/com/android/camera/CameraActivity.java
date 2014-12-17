@@ -143,7 +143,6 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
-
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
 import com.google.common.logging.eventprotos.MediaInteraction;

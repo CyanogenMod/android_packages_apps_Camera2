@@ -19,9 +19,6 @@ package com.android.camera.session;
 import android.location.Location;
 import android.net.Uri;
 
-import com.android.camera.app.MediaSaver.OnMediaSavedListener;
-import com.android.camera.exif.ExifInterface;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -87,22 +84,6 @@ public interface CaptureSessionManager {
      * @return The corresponding CaptureSession.
      */
     CaptureSession getSession(Uri sessionUri);
-
-    /**
-     * Save an image without creating a session that includes progress.
-     *
-     * @param data the image data to be saved.
-     * @param title the title of the media item.
-     * @param date the timestamp of the capture.
-     * @param loc the capture location.
-     * @param width the width of the captured image.
-     * @param height the height of the captured image.
-     * @param orientation the orientation of the captured image.
-     * @param exif the EXIF data of the captured image.
-     * @param listener called when saving is complete.
-     */
-    void saveImage(byte[] data, String title, long date, Location loc, int width, int height,
-            int orientation, ExifInterface exif, OnMediaSavedListener listener);
 
     /**
      * Add a listener to be informed about capture session updates.
