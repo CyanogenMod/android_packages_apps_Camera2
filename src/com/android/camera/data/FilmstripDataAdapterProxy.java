@@ -25,18 +25,19 @@ import com.android.camera.util.Callback;
 import java.util.List;
 
 /**
- * An abstract {@link LocalDataAdapter} implementation to wrap another
- * {@link LocalDataAdapter}. All implementations related to data id is not
+ * An abstract {@link LocalFilmstripDataAdapter} implementation to wrap another
+ * {@link LocalFilmstripDataAdapter}. All implementations related to data id is not
  * addressed in this abstract class since wrapping another data adapter
  * surely makes things different for data id.
  *
- * @see FixedFirstDataAdapter
- * @see FixedLastDataAdapter
+ * @see FixedFirstProxyAdapter
+ * @see FixedLastProxyAdapter
  */
-public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapter {
+public abstract class FilmstripDataAdapterProxy implements
+      LocalFilmstripDataAdapter {
 
     protected final Context mContext;
-    protected final LocalDataAdapter mAdapter;
+    protected final LocalFilmstripDataAdapter mAdapter;
     protected int mSuggestedWidth;
     protected int mSuggestedHeight;
 
@@ -44,9 +45,10 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
      * Constructor.
      *
      * @param context A valid Android context.
-     * @param wrappedAdapter The {@link LocalDataAdapter} to be wrapped.
+     * @param wrappedAdapter The {@link LocalFilmstripDataAdapter} to be wrapped.
      */
-    AbstractLocalDataAdapterWrapper(Context context, LocalDataAdapter wrappedAdapter) {
+    FilmstripDataAdapterProxy(Context context,
+          LocalFilmstripDataAdapter wrappedAdapter) {
         if (wrappedAdapter == null) {
             throw new AssertionError("data adapter is null");
         }
@@ -67,13 +69,13 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public void setLocalDataListener(LocalDataListener listener) {
+    public void setLocalDataListener(FilmstripItemListener listener) {
         mAdapter.setLocalDataListener(listener);
     }
 
     @Override
-    public void requestLoad(Callback<Void> doneCallback) {
-        mAdapter.requestLoad(doneCallback);
+    public void requestLoad(Callback<Void> onDone) {
+        mAdapter.requestLoad(onDone);
     }
 
     @Override
@@ -82,13 +84,13 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public boolean addData(LocalData data) {
-        return mAdapter.addData(data);
+    public boolean addOrUpdate(FilmstripItem item) {
+        return mAdapter.addOrUpdate(item);
     }
 
     @Override
-    public void flush() {
-        mAdapter.flush();
+    public void clear() {
+        mAdapter.clear();
     }
 
     @Override
@@ -97,8 +99,8 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public boolean undoDataRemoval() {
-        return mAdapter.undoDataRemoval();
+    public boolean undoDeletion() {
+        return mAdapter.undoDeletion();
     }
 
     @Override
@@ -107,13 +109,13 @@ public abstract class AbstractLocalDataAdapterWrapper implements LocalDataAdapte
     }
 
     @Override
-    public AsyncTask updateMetadata(int dataId) {
-        return mAdapter.updateMetadata(dataId);
+    public AsyncTask updateMetadataAt(int index) {
+        return mAdapter.updateMetadataAt(index);
     }
 
     @Override
-    public boolean isMetadataUpdated(int dataId) {
-        return mAdapter.isMetadataUpdated(dataId);
+    public boolean isMetadataUpdatedAt(int index) {
+        return mAdapter.isMetadataUpdatedAt(index);
     }
 
     @Override

@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Fast access data structure for an ordered LocalData list.
  */
-public class LocalDataList {
+public class FilmstripItemList {
     /**
      * We use this as a way to compare a Uri to LocalData instances inside a
      * LinkedList. A linked list in indexOf does a other.equals(get(i)).
@@ -44,18 +44,18 @@ public class LocalDataList {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof LocalData)) {
+            if (!(o instanceof FilmstripItem)) {
                 return false;
             }
-            return mUri.equals(((LocalData) o).getUri());
+            return mUri.equals(((FilmstripItem) o).getData().getUri());
         }
     }
 
     private static final Tag TAG = new Tag("LocalDataList");
-    private final LinkedList<LocalData> mList = new LinkedList<LocalData>();
-    private final HashMap<Uri, LocalData> mUriMap = new HashMap<Uri, LocalData>();
+    private final LinkedList<FilmstripItem> mList = new LinkedList<FilmstripItem>();
+    private final HashMap<Uri, FilmstripItem> mUriMap = new HashMap<Uri, FilmstripItem>();
 
-    public LocalData get(int index) {
+    public FilmstripItem get(int index) {
         return mList.get(index);
     }
 
@@ -66,9 +66,9 @@ public class LocalDataList {
      * @return If the item was found and deleted, it is returned. If the item
      *         was not found, null is returned.
      */
-    public synchronized LocalData remove(int index) {
+    public synchronized FilmstripItem remove(int index) {
         try {
-            LocalData removedItem = mList.remove(index);
+            FilmstripItem removedItem = mList.remove(index);
             mUriMap.remove(removedItem);
             return removedItem;
         } catch (IndexOutOfBoundsException ex) {
@@ -77,28 +77,28 @@ public class LocalDataList {
         }
     }
 
-    public LocalData get(Uri uri) {
+    public FilmstripItem get(Uri uri) {
         return mUriMap.get(uri);
     }
 
-    public void set(int pos, LocalData data) {
+    public void set(int pos, FilmstripItem data) {
         mList.set(pos, data);
-        mUriMap.put(data.getUri(), data);
+        mUriMap.put(data.getData().getUri(), data);
     }
 
-    public void add(LocalData data) {
+    public void add(FilmstripItem data) {
         mList.add(data);
-        mUriMap.put(data.getUri(), data);
+        mUriMap.put(data.getData().getUri(), data);
     }
 
-    public void add(int pos, LocalData data) {
+    public void add(int pos, FilmstripItem data) {
         mList.add(pos, data);
-        mUriMap.put(data.getUri(), data);
+        mUriMap.put(data.getData().getUri(), data);
     }
 
-    public void addAll(List<LocalData> localDataList) {
-        for (LocalData localData : localDataList) {
-            add(localData);
+    public void addAll(List<FilmstripItem> filmstripItemList) {
+        for (FilmstripItem filmstripItem : filmstripItemList) {
+            add(filmstripItem);
         }
     }
 
@@ -106,7 +106,7 @@ public class LocalDataList {
         return mList.size();
     }
 
-    public void sort(Comparator<LocalData> comparator) {
+    public void sort(Comparator<FilmstripItem> comparator) {
         Collections.sort(mList, comparator);
     }
 

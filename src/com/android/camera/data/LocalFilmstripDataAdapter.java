@@ -19,28 +19,28 @@ package com.android.camera.data;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.android.camera.filmstrip.DataAdapter;
+import com.android.camera.filmstrip.FilmstripDataAdapter;
 import com.android.camera.util.Callback;
 import com.android.camera.widget.Preloader;
 
 import java.util.List;
 
 /**
- * An interface which extends {@link com.android.camera.filmstrip.DataAdapter}
+ * An interface which extends {@link com.android.camera.filmstrip.FilmstripDataAdapter}
  * and defines operations on the data in the local camera folder.
  */
-public interface LocalDataAdapter extends DataAdapter,
+public interface LocalFilmstripDataAdapter extends FilmstripDataAdapter,
         Preloader.ItemLoader<Integer, AsyncTask>, Preloader.ItemSource<Integer> {
 
-    public interface LocalDataListener {
+    public interface FilmstripItemListener {
         /**
-         * Metadata of a {@link com.android.camera.data.LocalData} is loaded on
+         * Metadata of a {@link FilmstripItem} is loaded on
          * demand. Once the metadata is loaded this listener is notified.
          *
-         * @param updatedData The IDs of the data whose metadata has been
+         * @param indexes The indexes of the data whose metadata has been
          *            updated.
          */
-        public void onMetadataUpdated(List<Integer> updatedData);
+        public void onMetadataUpdated(List<Integer> indexes);
     }
 
     /**
@@ -52,31 +52,31 @@ public interface LocalDataAdapter extends DataAdapter,
     /**
      * Request for loading the local data.
      */
-    public void requestLoad(Callback<Void> doneCallback);
+    public void requestLoad(Callback<Void> onDone);
 
     /**
-     * Returns the specified {@link LocalData}.
+     * Returns the specified {@link FilmstripItem}.
      *
-     * @param dataID The ID of the {@link LocalData} to get.
-     * @return The {@link LocalData} to get. {@code null} if not available.
+     * @param index The ID of the {@link FilmstripItem} to get.
+     * @return The {@link FilmstripItem} to get. {@code null} if not available.
      */
-    public LocalData getLocalData(int dataID);
+    public FilmstripItem getItemAt(int index);
 
     /**
      * Remove the data in the local camera folder.
      *
-     * @param dataID ID of data to be deleted.
+     * @param index of data to be deleted.
      */
-    public void removeData(int dataID);
+    public void removeAt(int index);
 
     /**
      * Adds new local data. The data is either inserted or updated, depending
      * on the existence of the Uri.
      *
-     * @param data The new data.
+     * @param item The new data.
      * @return Whether the data is newly inserted.
      */
-    public boolean addData(LocalData data);
+    public boolean addOrUpdate(FilmstripItem item);
 
     /**
      * Refresh the data by {@link Uri}.
@@ -86,17 +86,17 @@ public interface LocalDataAdapter extends DataAdapter,
     public void refresh(Uri uri);
 
     /**
-     * Finds the {@link LocalData} of the specified content Uri.
+     * Finds the {@link FilmstripItem} of the specified content Uri.
      *
-     * @param uri The content Uri of the {@link LocalData}.
+     * @param uri The content Uri of the {@link FilmstripItem}.
      * @return The index of the data. {@code -1} if not found.
      */
-    public int findDataByContentUri(Uri uri);
+    public int findByContentUri(Uri uri);
 
     /**
      * Clears all the data currently loaded.
      */
-    public void flush();
+    public void clear();
 
     /**
      * Executes the deletion task. Delete the data waiting in the deletion
@@ -112,32 +112,32 @@ public interface LocalDataAdapter extends DataAdapter,
      *
      * @return Whether there are items in the queue.
      */
-    public boolean undoDataRemoval();
+    public boolean undoDeletion();
 
     /**
      * Update the data in a specific position.
      *
-     * @param pos The position of the data to be updated.
-     * @param data The new data.
+     * @param index The position of the data to be updated.
+     * @param item The new data.
      */
-    public void updateData(int pos, LocalData data);
+    public void updateItemAt(int index, FilmstripItem item);
 
     /** Sets the listener for the LocalData change. */
-    public void setLocalDataListener(LocalDataListener listener);
+    public void setLocalDataListener(FilmstripItemListener listener);
 
     /**
      * Updates the metadata in the background. The completion of the updating
      * will be notified through
-     * {@link com.android.camera.data.LocalDataAdapter.LocalDataListener}.
+     * {@link LocalFilmstripDataAdapter.FilmstripItemListener}.
      *
-     * @param dataId The ID of the data to update the metadata for.
+     * @param index The ID of the data to update the metadata for.
      * @return An {@link android.os.AsyncTask} performing the background load
      *      that can be used to cancel the load if it's no longer needed.
      */
-    public AsyncTask updateMetadata(int dataId);
+    public AsyncTask updateMetadataAt(int index);
 
     /**
      * @return whether the metadata is already updated.
      */
-    public boolean isMetadataUpdated(int dataId);
+    public boolean isMetadataUpdatedAt(int index);
 }

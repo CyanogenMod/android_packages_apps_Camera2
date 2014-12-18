@@ -18,11 +18,9 @@ package com.android.camera.one.v2.photo;
 
 import android.net.Uri;
 
-import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
-import com.android.camera.util.Callback;
 
 import java.util.concurrent.Executor;
 
@@ -30,12 +28,12 @@ import java.util.concurrent.Executor;
  * Splits a {@link OneCamera.PictureCallback} into separate thread-safe
  * callbacks for each method.
  */
-class PictureCallbackAdaptor {
+class PictureCallbackAdapter {
     private final OneCamera.PictureCallback mPictureCallback;
     private final Executor mMainExecutor;
 
-    public PictureCallbackAdaptor(OneCamera.PictureCallback pictureCallback,
-            Executor mainExecutor) {
+    public PictureCallbackAdapter(OneCamera.PictureCallback pictureCallback,
+          Executor mainExecutor) {
         mPictureCallback = pictureCallback;
         mMainExecutor = mainExecutor;
     }

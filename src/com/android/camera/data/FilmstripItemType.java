@@ -16,24 +16,14 @@
 
 package com.android.camera.data;
 
-import android.content.Context;
-import android.net.Uri;
-
-import com.android.camera.util.RefocusHelper;
-
 /**
- * Loads RGBZ data.
+ * The set of all unique identifiers for all different views that may be shown
+ * in the Filmstrip.
  */
-public class RgbzMetadataLoader {
-
-    /**
-     * Checks whether this file is an RGBZ file and fill in the metadata.
-     *
-     * @param context  The app context.
-     */
-    public static void loadRgbzMetadata(final Context context, Uri contentUri, Metadata metadata) {
-        if (RefocusHelper.isRGBZ(context, contentUri)) {
-            metadata.setHasRgbzData(true);
-        }
-    }
+public enum FilmstripItemType {
+    CAMERA_PREVIEW,
+    PHOTO,
+    VIDEO,
+    SESSION,
+    SECURE_ALBUM_PLACEHOLDER,
 }

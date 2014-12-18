@@ -122,7 +122,7 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
             }
             if (key == MediaDetails.INDEX_FLASH) {
                 MediaDetails.FlashState state = new MediaDetails.FlashState(
-                        Integer.valueOf(value.toString()));
+                        Integer.valueOf(value));
                 details.addDetail(key, state);
             } else {
                 details.addDetail(key, value);

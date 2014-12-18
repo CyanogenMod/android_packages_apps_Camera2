@@ -31,7 +31,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
@@ -80,21 +79,23 @@ import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.MotionManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManagerImpl;
-import com.android.camera.data.CameraDataAdapter;
-import com.android.camera.data.FixedLastDataAdapter;
-import com.android.camera.data.LocalData;
-import com.android.camera.data.LocalDataAdapter;
-import com.android.camera.data.LocalDataUtil;
-import com.android.camera.data.LocalDataViewType;
-import com.android.camera.data.LocalMediaObserver;
-import com.android.camera.data.LocalSessionData;
+import com.android.camera.data.CameraFilmstripDataAdapter;
+import com.android.camera.data.FilmstripContentObserver;
+import com.android.camera.data.FilmstripItem;
+import com.android.camera.data.FilmstripItemData;
+import com.android.camera.data.FilmstripItemType;
+import com.android.camera.data.FilmstripItemUtils;
+import com.android.camera.data.FixedLastProxyAdapter;
+import com.android.camera.data.LocalFilmstripDataAdapter;
+import com.android.camera.data.LocalFilmstripDataAdapter.FilmstripItemListener;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.MetadataLoader;
-import com.android.camera.data.PanoramaMetadataLoader;
-import com.android.camera.data.PhotoData.PhotoDataFactory;
-import com.android.camera.data.RgbzMetadataLoader;
-import com.android.camera.data.SimpleViewData;
-import com.android.camera.data.VideoData.VideoDataFactory;
+import com.android.camera.data.PhotoDataFactory;
+import com.android.camera.data.PhotoItemFactory;
+import com.android.camera.data.PlaceholderItem;
+import com.android.camera.data.SessionItem;
+import com.android.camera.data.VideoDataFactory;
+import com.android.camera.data.VideoItemFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
@@ -143,19 +144,18 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
+import com.bumptech.glide.load.engine.prefill.PreFillType;
+import com.google.common.base.Optional;
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
 import com.google.common.logging.eventprotos.MediaInteraction;
 import com.google.common.logging.eventprotos.NavigationChange;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class CameraActivity extends QuickActivity
         implements AppController, CameraAgent.CameraOpenCallback,
@@ -179,7 +179,6 @@ public class CameraActivity extends QuickActivity
 
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000; // 2 mins.
-    private static final int MAX_PEEK_BITMAP_PIXELS = 1600000; // 1.6 * 4 MBs.
     /** Load metadata for 10 items ahead of our current. */
     private static final int FILMSTRIP_PRELOAD_AHEAD_ITEMS = 10;
 
@@ -201,7 +200,9 @@ public class CameraActivity extends QuickActivity
     /**
      * This data adapter is used by FilmStripView.
      */
-    private LocalDataAdapter mDataAdapter;
+    private VideoItemFactory mVideoItemFactory;
+    private PhotoItemFactory mPhotoItemFactory;
+    private LocalFilmstripDataAdapter mDataAdapter;
 
     private OneCameraManager mCameraManager;
     private SettingsManager mSettingsManager;
@@ -234,8 +235,8 @@ public class CameraActivity extends QuickActivity
 
     private final Uri[] mNfcPushUris = new Uri[1];
 
-    private LocalMediaObserver mLocalImagesObserver;
-    private LocalMediaObserver mLocalVideosObserver;
+    private FilmstripContentObserver mLocalImagesObserver;
+    private FilmstripContentObserver mLocalVideosObserver;
 
     private boolean mPendingDeletion = false;
 
@@ -307,20 +308,20 @@ public class CameraActivity extends QuickActivity
                     if (mPanoramaViewHelper == null) {
                         return;
                     }
-                    final LocalData data = getCurrentLocalData();
+                    final FilmstripItem data = getCurrentLocalData();
                     if (data == null) {
                         Log.w(TAG, "Cannot open null data.");
                         return;
                     }
-                    final Uri contentUri = data.getUri();
+                    final Uri contentUri = data.getData().getUri();
                     if (contentUri == Uri.EMPTY) {
                         Log.w(TAG, "Cannot open empty URL.");
                         return;
                     }
 
-                    if (PanoramaMetadataLoader.isPanoramaAndUseViewer(data)) {
+                    if (data.getMetadata().isUsePanoramaViewer()) {
                         mPanoramaViewHelper.showPanorama(CameraActivity.this, contentUri);
-                    } else if (RgbzMetadataLoader.hasRGBZData(data)) {
+                    } else if (data.getMetadata().isHasRgbzData()) {
                         mPanoramaViewHelper.showRgbz(contentUri);
                         if (mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
                                 Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
@@ -334,22 +335,23 @@ public class CameraActivity extends QuickActivity
 
                 @Override
                 public void onEdit() {
-                    LocalData data = getCurrentLocalData();
+                    FilmstripItem data = getCurrentLocalData();
                     if (data == null) {
                         Log.w(TAG, "Cannot edit null data.");
                         return;
                     }
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                    UsageStatistics.instance().mediaInteraction(fileNameFromAdapterAtIndex(
+                                currentDataId),
                             MediaInteraction.InteractionType.EDIT,
                             NavigationChange.InteractionCause.BUTTON,
-                            fileAgeFromDataID(currentDataId));
+                            fileAgeFromAdapterAtIndex(currentDataId));
                     launchEditor(data);
                 }
 
                 @Override
                 public void onTinyPlanet() {
-                    LocalData data = getCurrentLocalData();
+                    FilmstripItem data = getCurrentLocalData();
                     if (data == null) {
                         Log.w(TAG, "Cannot edit tiny planet on null data.");
                         return;
@@ -360,26 +362,28 @@ public class CameraActivity extends QuickActivity
                 @Override
                 public void onDelete() {
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                    UsageStatistics.instance().mediaInteraction(fileNameFromAdapterAtIndex(
+                                currentDataId),
                             MediaInteraction.InteractionType.DELETE,
                             NavigationChange.InteractionCause.BUTTON,
-                            fileAgeFromDataID(currentDataId));
-                    removeData(currentDataId);
+                            fileAgeFromAdapterAtIndex(currentDataId));
+                    removeItemAt(currentDataId);
                 }
 
                 @Override
                 public void onShare() {
-                    final LocalData data = getCurrentLocalData();
+                    final FilmstripItem data = getCurrentLocalData();
                     if (data == null) {
                         Log.w(TAG, "Cannot share null data.");
                         return;
                     }
 
                     final int currentDataId = getCurrentDataId();
-                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+                    UsageStatistics.instance().mediaInteraction(fileNameFromAdapterAtIndex(
+                                currentDataId),
                             MediaInteraction.InteractionType.SHARE,
                             NavigationChange.InteractionCause.BUTTON,
-                            fileAgeFromDataID(currentDataId));
+                            fileAgeFromAdapterAtIndex(currentDataId));
                     // If applicable, show release information before this item
                     // is shared.
                     if (ReleaseHelper.shouldShowReleaseInfoDialogOnShare(data)) {
@@ -395,7 +399,7 @@ public class CameraActivity extends QuickActivity
                     }
                 }
 
-                private void share(LocalData data) {
+                private void share(FilmstripItem data) {
                     Intent shareIntent = getShareIntentByData(data);
                     if (shareIntent != null) {
                         try {
@@ -408,31 +412,31 @@ public class CameraActivity extends QuickActivity
                 }
 
                 private int getCurrentDataId() {
-                    return mFilmstripController.getCurrentId();
+                    return mFilmstripController.getCurrentAdapterIndex();
                 }
 
-                private LocalData getCurrentLocalData() {
-                    return mDataAdapter.getLocalData(getCurrentDataId());
+                private FilmstripItem getCurrentLocalData() {
+                    return mDataAdapter.getItemAt(getCurrentDataId());
                 }
 
                 /**
                  * Sets up the share intent and NFC properly according to the
                  * data.
                  *
-                 * @param data The data to be shared.
+                 * @param item The data to be shared.
                  */
-                private Intent getShareIntentByData(final LocalData data) {
+                private Intent getShareIntentByData(final FilmstripItem item) {
                     Intent intent = null;
-                    final Uri contentUri = data.getUri();
+                    final Uri contentUri = item.getData().getUri();
                     final String msgShareTo = getResources().getString(R.string.share_to);
 
-                    if (PanoramaMetadataLoader.isPanorama360(data) &&
-                            data.getUri() != Uri.EMPTY) {
+                    if (item.getMetadata().isPanorama360() &&
+                          item.getData().getUri() != Uri.EMPTY) {
                         intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("application/vnd.google.panorama360+jpg");
+                        intent.setType(FilmstripItemData.MIME_TYPE_PHOTOSPHERE);
                         intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                    } else if (data.isDataActionSupported(LocalData.DATA_ACTION_SHARE)) {
-                        final String mimeType = data.getMimeType();
+                    } else if (item.getAttributes().canShare()) {
+                        final String mimeType = item.getData().getMimeType();
                         intent = getShareIntentFromType(mimeType);
                         if (intent != null) {
                             intent.putExtra(Intent.EXTRA_STREAM, contentUri);
@@ -467,9 +471,9 @@ public class CameraActivity extends QuickActivity
 
                 @Override
                 public void onProgressErrorClicked() {
-                    LocalData data = getCurrentLocalData();
+                    FilmstripItem data = getCurrentLocalData();
                     getServices().getCaptureSessionManager().removeErrorMessage(
-                            data.getUri());
+                            data.getData().getUri());
                     updateBottomControlsByData(data);
                 }
             };
@@ -589,23 +593,23 @@ public class CameraActivity extends QuickActivity
         }
     }
 
-    private String fileNameFromDataID(int dataID) {
-        final LocalData localData = mDataAdapter.getLocalData(dataID);
-        if (localData == null) {
+    private String fileNameFromAdapterAtIndex(int index) {
+        final FilmstripItem filmstripItem = mDataAdapter.getItemAt(index);
+        if (filmstripItem == null) {
             return "";
         }
 
-        File localFile = new File(localData.getPath());
+        File localFile = new File(filmstripItem.getData().getFilePath());
         return localFile.getName();
     }
 
-    private float fileAgeFromDataID(int dataID) {
-        final LocalData localData = mDataAdapter.getLocalData(dataID);
-        if (localData == null) {
+    private float fileAgeFromAdapterAtIndex(int index) {
+        final FilmstripItem filmstripItem = mDataAdapter.getItemAt(index);
+        if (filmstripItem == null) {
             return 0;
         }
 
-        File localFile = new File(localData.getPath());
+        File localFile = new File(filmstripItem.getData().getFilePath());
         return 0.001f * (System.currentTimeMillis() - localFile.lastModified());
     }
 
@@ -643,64 +647,67 @@ public class CameraActivity extends QuickActivity
                     mCameraAppUI.hideCaptureIndicator();
                     UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
                             NavigationChange.InteractionCause.SWIPE_LEFT);
-                    updateUiByData(mFilmstripController.getCurrentId());
+                    updateUiByData(mFilmstripController.getCurrentAdapterIndex());
                 }
 
                 @Override
-                public void onFocusedDataLongPressed(int dataId) {
+                public void onFocusedDataLongPressed(int adapterIndex) {
                     // Do nothing.
                 }
 
                 @Override
-                public void onFocusedDataPromoted(int dataID) {
-                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(dataID),
+                public void onFocusedDataPromoted(int adapterIndex) {
+                    UsageStatistics.instance().mediaInteraction(fileNameFromAdapterAtIndex(
+                                adapterIndex),
                             MediaInteraction.InteractionType.DELETE,
-                            NavigationChange.InteractionCause.SWIPE_UP, fileAgeFromDataID(dataID));
-                    removeData(dataID);
+                            NavigationChange.InteractionCause.SWIPE_UP, fileAgeFromAdapterAtIndex(
+                                adapterIndex));
+                    removeItemAt(adapterIndex);
                 }
 
                 @Override
-                public void onFocusedDataDemoted(int dataID) {
-                    UsageStatistics.instance().mediaInteraction(fileNameFromDataID(dataID),
+                public void onFocusedDataDemoted(int adapterIndex) {
+                    UsageStatistics.instance().mediaInteraction(fileNameFromAdapterAtIndex(
+                                adapterIndex),
                             MediaInteraction.InteractionType.DELETE,
                             NavigationChange.InteractionCause.SWIPE_DOWN,
-                            fileAgeFromDataID(dataID));
-                    removeData(dataID);
+                            fileAgeFromAdapterAtIndex(adapterIndex));
+                    removeItemAt(adapterIndex);
                 }
 
                 @Override
-                public void onEnterFullScreenUiShown(int dataId) {
+                public void onEnterFullScreenUiShown(int adapterIndex) {
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(true);
                     }
                 }
 
                 @Override
-                public void onLeaveFullScreenUiShown(int dataId) {
+                public void onLeaveFullScreenUiShown(int adapterIndex) {
                     // Do nothing.
                 }
 
                 @Override
-                public void onEnterFullScreenUiHidden(int dataId) {
+                public void onEnterFullScreenUiHidden(int adapterIndex) {
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(false);
                     }
                 }
 
                 @Override
-                public void onLeaveFullScreenUiHidden(int dataId) {
+                public void onLeaveFullScreenUiHidden(int adapterIndex) {
                     // Do nothing.
                 }
 
                 @Override
-                public void onEnterFilmstrip(int dataId) {
+                public void onEnterFilmstrip(int adapterIndex) {
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(true);
                     }
                 }
 
                 @Override
-                public void onLeaveFilmstrip(int dataId) {
+                public void onLeaveFilmstrip(int adapterIndex) {
                     // Do nothing.
                 }
 
@@ -709,42 +716,43 @@ public class CameraActivity extends QuickActivity
                     if (!mFilmstripVisible) {
                         return;
                     }
-                    updateUiByData(mFilmstripController.getCurrentId());
+                    updateUiByData(mFilmstripController.getCurrentAdapterIndex());
                 }
 
                 @Override
-                public void onDataUpdated(int dataId) {
+                public void onDataUpdated(int adapterIndex) {
                     if (!mFilmstripVisible) {
                         return;
                     }
-                    updateUiByData(mFilmstripController.getCurrentId());
+                    updateUiByData(mFilmstripController.getCurrentAdapterIndex());
                 }
 
                 @Override
-                public void onEnterZoomView(int dataID) {
+                public void onEnterZoomView(int adapterIndex) {
                     if (mFilmstripVisible) {
                         CameraActivity.this.setFilmstripUiVisibility(false);
                     }
                 }
 
                 @Override
-                public void onZoomAtIndexChanged(int dataId, float zoom) {
-                    final LocalData localData = mDataAdapter.getLocalData(dataId);
-                    long ageMillis = System.currentTimeMillis() - localData.getDateModified() * 1000;
+                public void onZoomAtIndexChanged(int adapterIndex, float zoom) {
+                    final FilmstripItem filmstripItem = mDataAdapter.getItemAt(adapterIndex);
+                    long ageMillis = System.currentTimeMillis()
+                          - filmstripItem.getData().getLastModifiedDate().getTime();
 
                     // Do not log if items is to old or does not have a path (which is
                     // being used as a key).
-                    if (TextUtils.isEmpty(localData.getPath()) ||
+                    if (TextUtils.isEmpty(filmstripItem.getData().getFilePath()) ||
                             ageMillis > UsageStatistics.VIEW_TIMEOUT_MILLIS) {
                         return;
                     }
-                    File localFile = new File(localData.getPath());
+                    File localFile = new File(filmstripItem.getData().getFilePath());
                     UsageStatistics.instance().mediaView(localFile.getName(),
-                            TimeUnit.SECONDS.toMillis(localData.getDateModified()), zoom);
+                          filmstripItem.getData().getLastModifiedDate().getTime(), zoom);
                }
 
                 @Override
-                public void onDataFocusChanged(final int prevDataId, final int newDataId) {
+                public void onDataFocusChanged(final int prevIndex, final int newIndex) {
                     if (!mFilmstripVisible) {
                         return;
                     }
@@ -754,7 +762,7 @@ public class CameraActivity extends QuickActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            updateUiByData(newDataId);
+                            updateUiByData(newIndex);
                         }
                     });
                 }
@@ -765,18 +773,18 @@ public class CameraActivity extends QuickActivity
                 }
             };
 
-    private final LocalDataAdapter.LocalDataListener mLocalDataListener =
-            new LocalDataAdapter.LocalDataListener() {
+    private final FilmstripItemListener mFilmstripItemListener =
+            new FilmstripItemListener() {
                 @Override
-                public void onMetadataUpdated(List<Integer> updatedData) {
+                public void onMetadataUpdated(List<Integer> indexes) {
                     if (mPaused) {
                         // Callback after the activity is paused.
                         return;
                     }
-                    int currentDataId = mFilmstripController.getCurrentId();
-                    for (Integer dataId : updatedData) {
-                        if (dataId == currentDataId) {
-                            updateBottomControlsByData(mDataAdapter.getLocalData(dataId));
+                    int currentIndex = mFilmstripController.getCurrentAdapterIndex();
+                    for (Integer index : indexes) {
+                        if (index == currentIndex) {
+                            updateBottomControlsByData(mDataAdapter.getItemAt(index));
                             // Currently we have only 1 data can be matched.
                             // No need to look for more, break.
                             break;
@@ -862,13 +870,13 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public boolean onShareTargetSelected(ShareActionProvider shareActionProvider, Intent intent) {
-        int currentDataId = mFilmstripController.getCurrentId();
-        if (currentDataId < 0) {
+        int currentIndex = mFilmstripController.getCurrentAdapterIndex();
+        if (currentIndex < 0) {
             return false;
         }
-        UsageStatistics.instance().mediaInteraction(fileNameFromDataID(currentDataId),
+        UsageStatistics.instance().mediaInteraction(fileNameFromAdapterAtIndex(currentIndex),
                 MediaInteraction.InteractionType.SHARE,
-                NavigationChange.InteractionCause.BUTTON, fileAgeFromDataID(currentDataId));
+                NavigationChange.InteractionCause.BUTTON, fileAgeFromAdapterAtIndex(currentIndex));
         // TODO add intent.getComponent().getPackageName()
         return true;
     }
@@ -882,8 +890,8 @@ public class CameraActivity extends QuickActivity
                     if (!Storage.isSessionUri(uri)) {
                         return;
                     }
-                    LocalSessionData newData = new LocalSessionData(uri);
-                    mDataAdapter.addData(newData);
+                    SessionItem newData = new SessionItem(getApplicationContext(), uri);
+                    mDataAdapter.addOrUpdate(newData);
                 }
 
                 @Override
@@ -894,8 +902,7 @@ public class CameraActivity extends QuickActivity
                         mDataAdapter.refresh(sessionUri);
                         return;
                     }
-                    LocalData newData = PhotoDataFactory.queryContentUri(
-                          getContentResolver(), contentUri);
+                    FilmstripItem newData = mPhotoItemFactory.queryContentUri(contentUri);
 
                     // This can be null if e.g. a session is canceled (e.g.
                     // through discard panorama). It might be worth adding
@@ -905,13 +912,13 @@ public class CameraActivity extends QuickActivity
                         return;
                     }
 
-                    final int pos = mDataAdapter.findDataByContentUri(sessionUri);
+                    final int pos = mDataAdapter.findByContentUri(sessionUri);
                     if (pos == -1) {
                         // We do not have a placeholder for this image, perhaps
                         // due to the activity crashing or being killed.
-                        mDataAdapter.addData(newData);
+                        mDataAdapter.addOrUpdate(newData);
                     } else {
-                        mDataAdapter.updateData(pos, newData);
+                        mDataAdapter.updateItemAt(pos, newData);
                     }
                 }
 
@@ -921,24 +928,24 @@ public class CameraActivity extends QuickActivity
                         // Do nothing, there is no task for this URI.
                         return;
                     }
-                    int currentDataId = mFilmstripController.getCurrentId();
-                    if (currentDataId == -1) {
+                    int currentIndex = mFilmstripController.getCurrentAdapterIndex();
+                    if (currentIndex == -1) {
                         return;
                     }
                     if (uri.equals(
-                            mDataAdapter.getLocalData(currentDataId).getUri())) {
+                            mDataAdapter.getItemAt(currentIndex).getData().getUri())) {
                         updateSessionProgress(progress);
                     }
                 }
 
                 @Override
                 public void onSessionProgressText(final Uri uri, final CharSequence message) {
-                    int currentDataId = mFilmstripController.getCurrentId();
-                    if (currentDataId == -1) {
+                    int currentIndex = mFilmstripController.getCurrentAdapterIndex();
+                    if (currentIndex == -1) {
                         return;
                     }
                     if (uri.equals(
-                            mDataAdapter.getLocalData(currentDataId).getUri())) {
+                            mDataAdapter.getItemAt(currentIndex).getData().getUri())) {
                         updateSessionProgressText(message);
                     }
                 }
@@ -953,9 +960,9 @@ public class CameraActivity extends QuickActivity
                 public void onSessionPreviewAvailable(Uri uri) {
                     Log.v(TAG, "onSessionPreviewAvailable: " + uri);
                     mDataAdapter.refresh(uri);
-                    int dataId = mDataAdapter.findDataByContentUri(uri);
-                    if (dataId != -1) {
-                        startPeekAnimation(mDataAdapter.getLocalData(dataId),
+                    int index = mDataAdapter.findByContentUri(uri);
+                    if (index != -1) {
+                        startPeekAnimation(mDataAdapter.getItemAt(index),
                                 mCurrentModule.getPeekAccessibilityString());
                     }
                 }
@@ -964,10 +971,10 @@ public class CameraActivity extends QuickActivity
                 public void onSessionFailed(Uri uri, CharSequence reason) {
                     Log.v(TAG, "onSessionFailed:" + uri);
 
-                    int failedDataId = mDataAdapter.findDataByContentUri(uri);
-                    int currentDataId = mFilmstripController.getCurrentId();
+                    int failedIndex = mDataAdapter.findByContentUri(uri);
+                    int currentIndex = mFilmstripController.getCurrentAdapterIndex();
 
-                    if (currentDataId == failedDataId) {
+                    if (currentIndex == failedIndex) {
                         updateSessionProgress(0);
                         showProcessError(reason);
                     }
@@ -1176,25 +1183,23 @@ public class CameraActivity extends QuickActivity
 
     /**
      * Starts the filmstrip peek animation if the filmstrip is not visible.
-     * Only {@link LocalData#LOCAL_IMAGE}, {@link
-     * LocalData#LOCAL_IN_PROGRESS_DATA} and {@link
-     * LocalData#LOCAL_VIDEO} are supported.
      *
      * @param data The data to peek.
      * @param accessibilityString Accessibility string to announce on peek animation.
      */
-    private void startPeekAnimation(final LocalData data, final String accessibilityString) {
+    private void startPeekAnimation(final FilmstripItem data, final String accessibilityString) {
         if (mFilmstripVisible || mPeekAnimationHandler == null) {
             return;
         }
 
-        int dataType = data.getLocalDataType();
-        if (dataType != LocalData.LOCAL_IMAGE && dataType != LocalData.LOCAL_IN_PROGRESS_DATA &&
-                dataType != LocalData.LOCAL_VIDEO) {
+        if (data.getAttributes().isImage() ||
+              data.getAttributes().isVideo() ||
+              !data.getAttributes().isRendering()) {
             return;
         }
 
         // Don't show capture indicator in Photo Sphere.
+        // TODO: Don't reach into resources to figure out the current mode.
         final int photosphereModuleId = getApplicationContext().getResources().getInteger(
                 R.integer.camera_mode_photosphere);
         if (mCurrentModeIndex == photosphereModuleId) {
@@ -1217,17 +1222,17 @@ public class CameraActivity extends QuickActivity
         updateStorageSpaceAndHint(null);
         ContentResolver cr = getContentResolver();
         String mimeType = cr.getType(uri);
-        LocalData newData = null;
-        if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
+        FilmstripItem newData = null;
+        if (FilmstripItemUtils.isMimeTypeVideo(mimeType)) {
             sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-            newData = VideoDataFactory.queryContentUri(getContentResolver(), uri);
+            newData = mVideoItemFactory.queryContentUri(uri);
             if (newData == null) {
                 Log.e(TAG, "Can't find video data in content resolver:" + uri);
                 return;
             }
-        } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
+        } else if (FilmstripItemUtils.isMimeTypeImage(mimeType)) {
             CameraUtil.broadcastNewPicture(mAppContext, uri);
-            newData = PhotoDataFactory.queryContentUri(getContentResolver(), uri);
+            newData = mPhotoItemFactory.queryContentUri(uri);
             if (newData == null) {
                 Log.e(TAG, "Can't find photo data in content resolver:" + uri);
                 return;
@@ -1239,18 +1244,18 @@ public class CameraActivity extends QuickActivity
 
         // We are preloading the metadata for new video since we need the
         // rotation info for the thumbnail.
-        new AsyncTask<LocalData, Void, LocalData>() {
+        new AsyncTask<FilmstripItem, Void, FilmstripItem>() {
             @Override
-            protected LocalData doInBackground(LocalData... params) {
-                LocalData data = params[0];
+            protected FilmstripItem doInBackground(FilmstripItem... params) {
+                FilmstripItem data = params[0];
                 MetadataLoader.loadMetadata(getAndroidContext(), data);
                 return data;
             }
 
             @Override
-            protected void onPostExecute(LocalData data) {
+            protected void onPostExecute(FilmstripItem data) {
                 // TODO: Figure out why sometimes the data is aleady there.
-                mDataAdapter.addData(data);
+                mDataAdapter.addOrUpdate(data);
                 startPeekAnimation(data, mCurrentModule.getPeekAccessibilityString());
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, newData);
@@ -1281,8 +1286,8 @@ public class CameraActivity extends QuickActivity
         return mCameraManager;
     }
 
-    private void removeData(int dataID) {
-        mDataAdapter.removeData(dataID);
+    private void removeItemAt(int index) {
+        mDataAdapter.removeAt(index);
         if (mDataAdapter.getTotalNumber() > 1) {
             showUndoDeletionBar();
         } else {
@@ -1304,7 +1309,7 @@ public class CameraActivity extends QuickActivity
                 onBackPressed();
                 return true;
             case R.id.action_details:
-                showDetailsDialog(mFilmstripController.getCurrentId());
+                showDetailsDialog(mFilmstripController.getCurrentAdapterIndex());
                 return true;
             case R.id.action_help_and_feedback:
                 mResetToPreviewOnResume = false;
@@ -1381,10 +1386,29 @@ public class CameraActivity extends QuickActivity
         mAppContext = getApplication().getBaseContext();
 
         if (!Glide.isSetup()) {
-            Glide.setup(new GlideBuilder(getAndroidContext())
-                    .setDecodeFormat(DecodeFormat.ALWAYS_ARGB_8888)
-                    .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
-            Glide.get(getAndroidContext()).setMemoryCategory(MemoryCategory.HIGH);
+            Context context = getAndroidContext();
+            Glide.setup(new GlideBuilder(context)
+                .setDecodeFormat(DecodeFormat.ALWAYS_ARGB_8888)
+                .setResizeService(new FifoPriorityThreadPoolExecutor(2)));
+
+            Glide glide = Glide.get(context);
+
+            // As a camera we will use a large amount of memory
+            // for displaying images.
+            glide.setMemoryCategory(MemoryCategory.HIGH);
+
+            // Prefill glides bitmap pool to prevent excessive jank
+            // when loading large images.
+            glide.preFillBitmapPool(
+                new PreFillType.Builder(
+                      FilmstripItem.MAXIMUM_TEXTURE_SIZE)
+                  .setWeight(5),
+                  // It's more important for jank and GC to have
+                  // A larger weight of max texture size images than
+                  // media store sized images.
+                new PreFillType.Builder(
+                      FilmstripItem.MEDIASTORE_THUMB_WIDTH,
+                      FilmstripItem.MEDIASTORE_THUMB_HEIGHT));
         }
 
         mOnCreateTime = System.currentTimeMillis();
@@ -1490,9 +1514,15 @@ public class CameraActivity extends QuickActivity
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
-        // Set up the camera preview first so the preview shows up ASAP.
-        mDataAdapter = new CameraDataAdapter(mAppContext, R.color.photo_placeholder);
-        mDataAdapter.setLocalDataListener(mLocalDataListener);
+
+        ContentResolver appContentResolver = mAppContext.getContentResolver();
+        mPhotoItemFactory = new PhotoItemFactory(mAppContext, appContentResolver,
+              new PhotoDataFactory());
+        mVideoItemFactory = new VideoItemFactory(mAppContext, appContentResolver,
+              new VideoDataFactory());
+        mDataAdapter = new CameraFilmstripDataAdapter(mAppContext, R.color.photo_placeholder,
+              mPhotoItemFactory, mVideoItemFactory);
+        mDataAdapter.setLocalDataListener(mFilmstripItemListener);
 
         mPreloader = new Preloader<Integer, AsyncTask>(FILMSTRIP_PRELOAD_AHEAD_ITEMS, mDataAdapter,
                 mDataAdapter);
@@ -1525,7 +1555,7 @@ public class CameraActivity extends QuickActivity
             // 0.
             ImageView v = (ImageView) getLayoutInflater().inflate(
                     R.layout.secure_album_placeholder, null);
-            v.setTag(R.id.mediadata_tag_viewtype, LocalDataViewType.SECURE_ALBUM_PLACEHOLDER.ordinal());
+            v.setTag(R.id.mediadata_tag_viewtype, FilmstripItemType.SECURE_ALBUM_PLACEHOLDER.ordinal());
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1536,24 +1566,23 @@ public class CameraActivity extends QuickActivity
                 }
             });
             v.setContentDescription(getString(R.string.accessibility_unlock_to_camera));
-            mDataAdapter = new FixedLastDataAdapter(
+            mDataAdapter = new FixedLastProxyAdapter(
                     mAppContext,
                     mDataAdapter,
-                    new SimpleViewData(
+                    new PlaceholderItem(
                             v,
-                            LocalDataViewType.SECURE_ALBUM_PLACEHOLDER,
+                            FilmstripItemType.SECURE_ALBUM_PLACEHOLDER,
                             v.getDrawable().getIntrinsicWidth(),
-                            v.getDrawable().getIntrinsicHeight(),
-                            0, 0));
+                            v.getDrawable().getIntrinsicHeight()));
             // Flush out all the original data.
-            mDataAdapter.flush();
+            mDataAdapter.clear();
             mFilmstripController.setDataAdapter(mDataAdapter);
         }
 
         setupNfcBeamPush();
 
-        mLocalImagesObserver = new LocalMediaObserver();
-        mLocalVideosObserver = new LocalMediaObserver();
+        mLocalImagesObserver = new FilmstripContentObserver();
+        mLocalVideosObserver = new FilmstripContentObserver();
 
         getContentResolver().registerContentObserver(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
@@ -1827,9 +1856,10 @@ public class CameraActivity extends QuickActivity
         setSwipingEnabled(true);
 
         if (!mResetToPreviewOnResume) {
-            LocalData data = mDataAdapter.getLocalData(mFilmstripController.getCurrentId());
-            if (data != null) {
-                mDataAdapter.refresh(data.getUri());
+            FilmstripItem item = mDataAdapter.getItemAt(
+                  mFilmstripController.getCurrentAdapterIndex());
+            if (item != null) {
+                mDataAdapter.refresh(item.getData().getUri());
             }
         }
         // The share button might be disabled to avoid double tapping.
@@ -1860,7 +1890,7 @@ public class CameraActivity extends QuickActivity
         mLocalVideosObserver.setActivityPaused(false);
         if (!mSecureCamera) {
             mLocalImagesObserver.setForegroundChangeListener(
-                    new LocalMediaObserver.ChangeListener() {
+                    new FilmstripContentObserver.ChangeListener() {
                 @Override
                 public void onChange() {
                     mDataAdapter.requestLoadNewPhotos();
@@ -2332,13 +2362,13 @@ public class CameraActivity extends QuickActivity
     /**
      * Launches an ACTION_EDIT intent for the given local data item. If
      * 'withTinyPlanet' is set, this will show a disambig dialog first to let
-     * the user start either the tiny planet editor or another photo edior.
+     * the user start either the tiny planet editor or another photo editor.
      *
      * @param data The data item to edit.
      */
-    public void launchEditor(LocalData data) {
+    public void launchEditor(FilmstripItem data) {
         Intent intent = new Intent(Intent.ACTION_EDIT)
-                .setDataAndType(data.getUri(), data.getMimeType())
+                .setDataAndType(data.getData().getUri(), data.getData().getMimeType())
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
             launchActivityByIntent(intent);
@@ -2376,11 +2406,11 @@ public class CameraActivity extends QuickActivity
      *            panoramic image. It will not be modified, instead a new item
      *            with the result will be added to the filmstrip.
      */
-    public void launchTinyPlanetEditor(LocalData data) {
+    public void launchTinyPlanetEditor(FilmstripItem data) {
         TinyPlanetFragment fragment = new TinyPlanetFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(TinyPlanetFragment.ARGUMENT_URI, data.getUri().toString());
-        bundle.putString(TinyPlanetFragment.ARGUMENT_TITLE, data.getTitle());
+        bundle.putString(TinyPlanetFragment.ARGUMENT_URI, data.getData().getUri().toString());
+        bundle.putString(TinyPlanetFragment.ARGUMENT_TITLE, data.getData().getTitle());
         fragment.setArguments(bundle);
         fragment.show(getFragmentManager(), "tiny_planet");
     }
@@ -2453,7 +2483,7 @@ public class CameraActivity extends QuickActivity
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mDataAdapter.undoDataRemoval();
+                    mDataAdapter.undoDeletion();
                     hideUndoDeletionBar(true);
                 }
             });
@@ -2619,10 +2649,11 @@ public class CameraActivity extends QuickActivity
             UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
                     NavigationChange.InteractionCause.BUTTON);
             Intent startGalleryIntent = new Intent(mGalleryIntent);
-            int currentDataId = mFilmstripController.getCurrentId();
-            LocalData currentLocalData = mDataAdapter.getLocalData(currentDataId);
-            if (currentLocalData != null) {
-                GalleryHelper.setContentUri(startGalleryIntent, currentLocalData.getUri());
+            int currentIndex = mFilmstripController.getCurrentAdapterIndex();
+            FilmstripItem currentFilmstripItem = mDataAdapter.getItemAt(currentIndex);
+            if (currentFilmstripItem != null) {
+                GalleryHelper.setContentUri(startGalleryIntent,
+                      currentFilmstripItem.getData().getUri());
             }
             launchActivityByIntent(startGalleryIntent);
         } catch (ActivityNotFoundException e) {
@@ -2631,8 +2662,8 @@ public class CameraActivity extends QuickActivity
         return false;
     }
 
-    private void setNfcBeamPushUriFromData(LocalData data) {
-        final Uri uri = data.getUri();
+    private void setNfcBeamPushUriFromData(FilmstripItem data) {
+        final Uri uri = data.getData().getUri();
         if (uri != Uri.EMPTY) {
             mNfcPushUris[0] = uri;
         } else {
@@ -2643,8 +2674,8 @@ public class CameraActivity extends QuickActivity
     /**
      * Updates the visibility of the filmstrip bottom controls and action bar.
      */
-    private void updateUiByData(final int dataId) {
-        final LocalData currentData = mDataAdapter.getLocalData(dataId);
+    private void updateUiByData(final int index) {
+        final FilmstripItem currentData = mDataAdapter.getItemAt(index);
         if (currentData == null) {
             Log.w(TAG, "Current data ID not found.");
             hideSessionProgress();
@@ -2662,32 +2693,31 @@ public class CameraActivity extends QuickActivity
             return;
         }
 
-
         setNfcBeamPushUriFromData(currentData);
 
-        if (!mDataAdapter.isMetadataUpdated(dataId)) {
-            mDataAdapter.updateMetadata(dataId);
+        if (!mDataAdapter.isMetadataUpdatedAt(index)) {
+            mDataAdapter.updateMetadataAt(index);
         }
     }
 
     /**
      * Updates the bottom controls based on the data.
      */
-    private void updateBottomControlsByData(final LocalData currentData) {
+    private void updateBottomControlsByData(final FilmstripItem currentData) {
 
         final CameraAppUI.BottomPanel filmstripBottomPanel =
                 mCameraAppUI.getFilmstripBottomControls();
         filmstripBottomPanel.showControls();
         filmstripBottomPanel.setEditButtonVisibility(
-                currentData.isDataActionSupported(LocalData.DATA_ACTION_EDIT));
+                currentData.getAttributes().canEdit());
         filmstripBottomPanel.setShareButtonVisibility(
-                currentData.isDataActionSupported(LocalData.DATA_ACTION_SHARE));
+              currentData.getAttributes().canShare());
         filmstripBottomPanel.setDeleteButtonVisibility(
-                currentData.isDataActionSupported(LocalData.DATA_ACTION_DELETE));
+                currentData.getAttributes().canDelete());
 
         /* Progress bar */
 
-        Uri contentUri = currentData.getUri();
+        Uri contentUri = currentData.getData().getUri();
         CaptureSessionManager sessionManager = getServices()
                 .getCaptureSessionManager();
 
@@ -2716,25 +2746,25 @@ public class CameraActivity extends QuickActivity
 
         // We need to add this to a separate DB.
         final int viewButtonVisibility;
-        if (PanoramaMetadataLoader.isPanoramaAndUseViewer(currentData)) {
+        if (currentData.getMetadata().isUsePanoramaViewer()) {
             viewButtonVisibility = CameraAppUI.BottomPanel.VIEWER_PHOTO_SPHERE;
-        } else if (RgbzMetadataLoader.hasRGBZData(currentData)) {
+        } else if (currentData.getMetadata().isHasRgbzData()) {
             viewButtonVisibility = CameraAppUI.BottomPanel.VIEWER_REFOCUS;
         } else {
             viewButtonVisibility = CameraAppUI.BottomPanel.VIEWER_NONE;
         }
 
         filmstripBottomPanel.setTinyPlanetEnabled(
-                PanoramaMetadataLoader.isPanorama360(currentData));
+                currentData.getMetadata().isPanorama360());
         filmstripBottomPanel.setViewerButtonVisibility(viewButtonVisibility);
     }
 
     private static class PeekAnimationHandler extends Handler {
         private class DataAndCallback {
-            LocalData mData;
+            FilmstripItem mData;
             com.android.camera.util.Callback<Bitmap> mCallback;
 
-            public DataAndCallback(LocalData data, com.android.camera.util.Callback<Bitmap>
+            public DataAndCallback(FilmstripItem data, com.android.camera.util.Callback<Bitmap>
                     callback) {
                 mData = data;
                 mCallback = callback;
@@ -2759,7 +2789,7 @@ public class CameraActivity extends QuickActivity
          * @param callback {@link com.android.camera.util.Callback} after the
          *                 decoding is done.
          */
-        public void startDecodingJob(final LocalData data,
+        public void startDecodingJob(final FilmstripItem data,
                 final com.android.camera.util.Callback<Bitmap> callback) {
             PeekAnimationHandler.this.obtainMessage(0 /** dummy integer **/,
                     new DataAndCallback(data, callback)).sendToTarget();
@@ -2767,83 +2797,48 @@ public class CameraActivity extends QuickActivity
 
         @Override
         public void handleMessage(Message msg) {
-            final LocalData data = ((DataAndCallback) msg.obj).mData;
+            final FilmstripItem data = ((DataAndCallback) msg.obj).mData;
             final com.android.camera.util.Callback<Bitmap> callback =
                     ((DataAndCallback) msg.obj).mCallback;
             if (data == null || callback == null) {
                 return;
             }
 
-            final Bitmap bitmap;
-            switch (data.getLocalDataType()) {
-                case LocalData.LOCAL_IN_PROGRESS_DATA:
-                    bitmap = Storage.getPlacerHolderForSession(data.getUri());
-                    break;
+            final Optional<Bitmap> bitmap = data.generateThumbnail(
+                  mAboveFilmstripControlLayout.getWidth(),
+                  mAboveFilmstripControlLayout.getMeasuredHeight());
 
-                case LocalData.LOCAL_IMAGE:
-                    FileInputStream stream;
-                    try {
-                        stream = new FileInputStream(data.getPath());
-                    } catch (FileNotFoundException e) {
-                        Log.e(TAG, "File not found:" + data.getPath());
-                        return;
+            if (bitmap.isPresent()) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onCallback(bitmap.get());
                     }
-                    Point dim = CameraUtil.resizeToFill(data.getWidth(), data.getHeight(),
-                            data.getRotation(), mAboveFilmstripControlLayout.getWidth(),
-                            mAboveFilmstripControlLayout.getMeasuredHeight());
-                    if (data.getRotation() % 180 != 0) {
-                        int dummy = dim.x;
-                        dim.x = dim.y;
-                        dim.y = dummy;
-                    }
-                    bitmap = LocalDataUtil
-                            .loadImageThumbnailFromStream(stream, data.getWidth(), data.getHeight(),
-                                    (int) (dim.x * 0.7f), (int) (dim.y * 0.7),
-                                    data.getRotation(), MAX_PEEK_BITMAP_PIXELS);
-                    break;
-
-                case LocalData.LOCAL_VIDEO:
-                    bitmap = LocalDataUtil.loadVideoThumbnail(data.getPath());
-                    break;
-
-                default:
-                    bitmap = null;
-                    break;
+                });
             }
-
-            if (bitmap == null) {
-                return;
-            }
-
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    callback.onCallback(bitmap);
-                }
-            });
         }
     }
 
-    private void showDetailsDialog(int dataId) {
-        final LocalData data = mDataAdapter.getLocalData(dataId);
+    private void showDetailsDialog(int index) {
+        final FilmstripItem data = mDataAdapter.getItemAt(index);
         if (data == null) {
             return;
         }
-        MediaDetails details = data.getMediaDetails(getAndroidContext());
-        if (details == null) {
+        Optional<MediaDetails> details = data.getMediaDetails();
+        if (!details.isPresent()) {
             return;
         }
-        Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details);
+        Dialog detailDialog = DetailsDialog.create(CameraActivity.this, details.get());
         detailDialog.show();
         UsageStatistics.instance().mediaInteraction(
-                fileNameFromDataID(dataId), MediaInteraction.InteractionType.DETAILS,
-                NavigationChange.InteractionCause.BUTTON, fileAgeFromDataID(dataId));
+                fileNameFromAdapterAtIndex(index), MediaInteraction.InteractionType.DETAILS,
+                NavigationChange.InteractionCause.BUTTON, fileAgeFromAdapterAtIndex(index));
     }
 
     /**
      * Show or hide action bar items depending on current data type.
      */
-    private void updateActionBarMenu(LocalData data) {
+    private void updateActionBarMenu(FilmstripItem data) {
         if (mActionBarMenu == null) {
             return;
         }
@@ -2853,8 +2848,7 @@ public class CameraActivity extends QuickActivity
             return;
         }
 
-        int type = data.getLocalDataType();
-        boolean showDetails = (type == LocalData.LOCAL_IMAGE) || (type == LocalData.LOCAL_VIDEO);
+        boolean showDetails = data.getAttributes().hasDetailedCaptureInfo();
         detailsMenuItem.setVisible(showDetails);
     }
 }

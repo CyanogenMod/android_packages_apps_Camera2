@@ -59,7 +59,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private FilmstripGestureRecognizer.Listener mFilmstripGestureListener;
     private final ValueAnimator mFilmstripAnimator = ValueAnimator.ofFloat(null);
     private int mSwipeTrend;
-    private MyBackgroundDrawable mBackgroundDrawable;
+    private FilmstripBackground mBackgroundDrawable;
     private Handler mHandler;
     // We use this to record the current translation position instead of using
     // the real value because we might set the translation before onMeasure()
@@ -123,7 +123,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     }
 
     private void init(Context context) {
-        mGestureRecognizer = new FilmstripGestureRecognizer(context, new MyGestureListener());
+        mGestureRecognizer = new FilmstripGestureRecognizer(context, new OpenFilmstripGesture());
         mFilmstripAnimator.setDuration(DEFAULT_DURATION_MS);
         TimeInterpolator interpolator;
         if (ApiHelper.isLOrHigher()) {
@@ -136,7 +136,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         mFilmstripAnimator.addUpdateListener(mFilmstripAnimatorUpdateListener);
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
         mHandler = new Handler(Looper.getMainLooper());
-        mBackgroundDrawable = new MyBackgroundDrawable();
+        mBackgroundDrawable = new FilmstripBackground();
         mBackgroundDrawable.setCallback(new Drawable.Callback() {
             @Override
             public void invalidateDrawable(Drawable drawable) {
@@ -203,7 +203,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         mListener.onFilmstripShown();
         mFilmstripView.zoomAtIndexChanged();
         FilmstripController controller = mFilmstripView.getController();
-        int currentId = controller.getCurrentId();
+        int currentId = controller.getCurrentAdapterIndex();
         if (controller.inFilmstrip()) {
             mListener.onEnterFilmstrip(currentId);
         } else if (controller.inFullScreen()) {
@@ -323,10 +323,10 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
      * {@code mFilmstripView} by default and only intercepts scroll gestures
      * when the {@code mFilmstripView} is not in full-screen.
      */
-    private class MyGestureListener implements FilmstripGestureRecognizer.Listener {
+    private class OpenFilmstripGesture implements FilmstripGestureRecognizer.Listener {
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
-            if (mFilmstripView.getController().getCurrentId() == -1) {
+            if (mFilmstripView.getController().getCurrentAdapterIndex() == -1) {
                 return true;
             }
             if (mFilmstripAnimator.isRunning()) {
@@ -464,11 +464,11 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         }
     }
 
-    private class MyBackgroundDrawable extends Drawable {
+    private class FilmstripBackground extends Drawable {
         private Paint mPaint;
         private int mOffset;
 
-        public MyBackgroundDrawable() {
+        public FilmstripBackground() {
             mPaint = new Paint();
             mPaint.setAntiAlias(true);
             mPaint.setColor(getResources().getColor(R.color.filmstrip_background));

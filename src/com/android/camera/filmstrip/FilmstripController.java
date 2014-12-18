@@ -46,9 +46,9 @@ public interface FilmstripController {
     /**
      * Sets the listener for filmstrip events.
      *
-     * @param l
+     * @param listener
      */
-    public void setListener(FilmstripListener l);
+    public void setListener(FilmstripListener listener);
 
     /**
      * Sets the gap width between each images on the filmstrip.
@@ -60,12 +60,12 @@ public interface FilmstripController {
     /**
      * @return The ID of the current item, or -1.
      */
-    public int getCurrentId();
+    public int getCurrentAdapterIndex();
 
     /**
-     * Sets the {@link DataAdapter}.
+     * Sets the {@link FilmstripDataAdapter}.
      */
-    public void setDataAdapter(DataAdapter adapter);
+    public void setDataAdapter(FilmstripDataAdapter adapter);
 
     /**
      * Returns whether the filmstrip is in filmstrip mode.
@@ -83,7 +83,7 @@ public interface FilmstripController {
     public boolean isCameraPreview();
 
     /**
-     * @return Whether the filmstrip is in full-screen camrea preview.
+     * @return Whether the filmstrip is in full-screen camera preview.
      */
     public boolean inCameraFullscreen();
 
@@ -169,24 +169,24 @@ public interface FilmstripController {
          * Callback when the data item is promoted. A data is promoted if the user
          * swipe up a data vertically.
          *
-         * @param dataID The ID of the promoted data.
+         * @param adapterIndex The ID of the promoted data.
          */
-        public void onFocusedDataPromoted(int dataID);
+        public void onFocusedDataPromoted(int adapterIndex);
 
         /**
          * Callback when the data item is demoted. A data is promoted if the user
          * swipe down a data vertically.
          *
-         * @param dataID The ID of the demoted data.
+         * @param adapterIndex The ID of the demoted data.
          */
-        public void onFocusedDataDemoted(int dataID);
+        public void onFocusedDataDemoted(int adapterIndex);
 
         /**
          * Callback when the data item is long-pressed.
          *
-         * @param dataID The ID of the long-pressed data.
+         * @param adapterIndex The ID of the long-pressed data.
          */
-        public void onFocusedDataLongPressed(int dataID);
+        public void onFocusedDataLongPressed(int adapterIndex);
 
         /**
          * Called when all the data has been reloaded.
@@ -196,75 +196,75 @@ public interface FilmstripController {
         /**
          * Called when data is updated.
          *
-         * @param dataId The ID of the updated data.
+         * @param adapterIndex The ID of the updated data.
          */
-        public void onDataUpdated(int dataId);
+        public void onDataUpdated(int adapterIndex);
 
         /**
          * The callback when the item enters augmented full-screen state.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          */
-        public void onEnterFullScreenUiShown(int dataId);
+        public void onEnterFullScreenUiShown(int adapterIndex);
 
         /**
          * The callback when the item leaves augmented full-screen.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          */
-        public void onLeaveFullScreenUiShown(int dataId);
+        public void onLeaveFullScreenUiShown(int adapterIndex);
 
         /**
          * The callback when the filmstrip enters no UI full-screen.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          */
-        public void onEnterFullScreenUiHidden(int dataId);
+        public void onEnterFullScreenUiHidden(int adapterIndex);
 
         /**
          * The callback when the filmstrip leaves no UI full-screen.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          */
-        public void onLeaveFullScreenUiHidden(int dataId);
+        public void onLeaveFullScreenUiHidden(int adapterIndex);
 
         /**
          * The callback when the item enters filmstrip.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          */
-        public void onEnterFilmstrip(int dataId);
+        public void onEnterFilmstrip(int adapterIndex);
 
         /**
          * The callback when the item leaves filmstrip.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          */
-        public void onLeaveFilmstrip(int dataId);
+        public void onLeaveFilmstrip(int adapterIndex);
 
         /**
          * The callback when the item enters zoom view.
          *
-         * @param dataID
+         * @param adapterIndex
          */
-        public void onEnterZoomView(int dataID);
+        public void onEnterZoomView(int adapterIndex);
 
         /**
          * Called when current item or zoom level has changed.
          *
-         * @param dataId The ID of the current focused image data.
+         * @param adapterIndex The ID of the current focused image data.
          * @param zoom Zoom level.
          */
-        public void onZoomAtIndexChanged(int dataId, float zoom);
+        public void onZoomAtIndexChanged(int adapterIndex, float zoom);
 
         /**
          * The callback when the data focus changed.
          *
-         * @param prevDataId The ID of the previously focused data or {@code -1} if
+         * @param prevIndex The ID of the previously focused data or {@code -1} if
          *                   none.
-         * @param newDataId The ID of the focused data of {@code -1} if none.
+         * @param newIndex The ID of the focused data of {@code -1} if none.
          */
-        public void onDataFocusChanged(int prevDataId, int newDataId);
+        public void onDataFocusChanged(int prevIndex, int newIndex);
 
         /**
          * The callback when we scroll.

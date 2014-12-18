@@ -28,7 +28,7 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 
-import com.android.camera.data.LocalData;
+import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
@@ -82,7 +82,7 @@ public class Storage {
             int height) {
 
         return addImage(resolver, title, date, location, orientation, exif, jpeg, width, height,
-                LocalData.MIME_TYPE_JPEG);
+              FilmstripItemData.MIME_TYPE_JPEG);
     }
 
     /**
@@ -359,9 +359,9 @@ public class Storage {
 
     public static String generateFilepath(String directory, String title, String mimeType) {
         String extension = null;
-        if (LocalData.MIME_TYPE_JPEG.equals(mimeType)) {
+        if (FilmstripItemData.MIME_TYPE_JPEG.equals(mimeType)) {
             extension = JPEG_POSTFIX;
-        } else if (LocalData.MIME_TYPE_GIF.equals(mimeType)) {
+        } else if (FilmstripItemData.MIME_TYPE_GIF.equals(mimeType)) {
             extension = GIF_POSTFIX;
         } else {
             throw new IllegalArgumentException("Invalid mimeType: " + mimeType);

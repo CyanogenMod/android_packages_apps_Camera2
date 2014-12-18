@@ -23,7 +23,7 @@ import android.text.TextUtils;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
 import com.android.camera.app.OrientationManager.OnOrientationChangeListener;
-import com.android.camera.data.LocalData;
+import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.ExifInterface;
@@ -361,7 +361,7 @@ class BurstFacadeImpl implements BurstFacade {
                 artifactType, artifactIndex, index, timestamp);
         String mimeType = mediaItem.getMimeType();
         ExifInterface exif = null;
-        if (LocalData.MIME_TYPE_JPEG.equals(mimeType)) {
+        if (FilmstripItemData.MIME_TYPE_JPEG.equals(mimeType)) {
             exif = new ExifInterface();
             exif.addDateTimeStampTag(
                     ExifInterface.TAG_DATE_TIME,
