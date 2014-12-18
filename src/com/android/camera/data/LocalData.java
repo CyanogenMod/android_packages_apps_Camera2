@@ -84,6 +84,9 @@ public interface LocalData extends ImageData {
     /**
      * Creates View to represent media.
      *
+     * TODO: Replace this with a renderer that can produce views to split the data
+     *       loading from UI rendering.
+     *
      * @param context The {@link android.content.Context} to create the view.
      * @param thumbWidth Width in pixels of the suggested zoomed out view/image size.
      * @param thumbHeight Height in pixels of the suggested zoomed out view/image size.

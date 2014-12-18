@@ -24,6 +24,8 @@ import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.data.LocalData.ActionCallback;
+import com.android.camera.data.PhotoData.PhotoDataFactory;
+import com.android.camera.data.VideoData.VideoDataFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.Callback;
@@ -341,8 +343,8 @@ public class CameraDataAdapter implements LocalDataAdapter {
             if (mMinPhotoId != LocalMediaData.QUERY_ALL_MEDIA_ID) {
                 Log.v(TAG, "updating media metadata with photos newer than id: " + mMinPhotoId);
                 final ContentResolver cr = contentResolvers[0];
-                return LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
-                        mMinPhotoId);
+                return PhotoDataFactory.queryAll(cr, PhotoData.CONTENT_URI,
+                      mMinPhotoId);
             }
             return new ArrayList<LocalData>(0);
         }
@@ -407,14 +409,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
             final Context context = contexts[0];
             final ContentResolver cr = context.getContentResolver();
             LocalDataList l = new LocalDataList();
-            // Photos
-            List<LocalData> photoData = LocalMediaData.PhotoData.query(cr,
-                    LocalMediaData.PhotoData.CONTENT_URI, LocalMediaData.QUERY_ALL_MEDIA_ID);
-            List<LocalData> videoData = LocalMediaData.VideoData.query(cr,
-                    LocalMediaData.VideoData.CONTENT_URI, LocalMediaData.QUERY_ALL_MEDIA_ID);
+            // Photos and videos
+            List<LocalData> photoData = PhotoDataFactory.queryAll(cr);
+            List<LocalData> videoData = VideoDataFactory.queryAll(cr);
 
             long lastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
-            if (!photoData.isEmpty()) {
+            if (photoData != null && !photoData.isEmpty()) {
                 // This relies on {@link LocalMediaData.QUERY_ORDER} returning
                 // items sorted descending by ID, as such we can just pull the
                 // ID from the first item in the result to establish the last
