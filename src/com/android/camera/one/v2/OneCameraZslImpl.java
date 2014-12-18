@@ -83,7 +83,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * shutter lag.<br>
  * TODO: Determine what the maximum number of full YUV capture frames is.
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+@TargetApi(Build.VERSION_CODES.L)
 public class OneCameraZslImpl extends AbstractOneCamera {
     private static final Tag TAG = new Tag("OneCameraZslImpl2");
 

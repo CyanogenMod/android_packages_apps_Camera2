@@ -18,6 +18,7 @@ package com.android.camera.util;
 
 /**
  * Simple callback.
+ * TODO: Move to async.
  */
 public interface Callback<T> {
     public void onCallback(T result);

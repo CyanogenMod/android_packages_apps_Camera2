@@ -1198,7 +1198,6 @@ public class PhotoModule
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private final class AutoFocusMoveCallback
             implements CameraAFMoveCallback {
         @Override

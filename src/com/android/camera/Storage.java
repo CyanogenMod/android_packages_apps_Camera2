@@ -16,13 +16,11 @@
 
 package com.android.camera;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.provider.MediaStore.Images;
@@ -246,7 +244,6 @@ public class Storage {
                 width, height, mimeType);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
         // The two fields are available since ICS but got published in JB
         if (ApiHelper.HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT) {

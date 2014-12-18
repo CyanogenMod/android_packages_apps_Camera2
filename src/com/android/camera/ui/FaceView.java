@@ -34,7 +34,7 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 public class FaceView extends View
-    implements FocusIndicator, Rotatable, PreviewStatusListener.PreviewAreaChangedListener {
+    implements Rotatable, PreviewStatusListener.PreviewAreaChangedListener {
     private static final Log.Tag TAG = new Log.Tag("FaceView");
     private final boolean LOGV = false;
     // The value for android.hardware.Camera.setDisplayOrientation.
@@ -131,24 +131,6 @@ public class FaceView extends View
         return (mFaces != null && mFaces.length > 0);
     }
 
-    @Override
-    public void showStart() {
-        invalidate();
-    }
-
-    // Ignore the parameter. No autofocus animation for face detection.
-    @Override
-    public void showSuccess(boolean timeout) {
-        invalidate();
-    }
-
-    // Ignore the parameter. No autofocus animation for face detection.
-    @Override
-    public void showFail(boolean timeout) {
-        invalidate();
-    }
-
-    @Override
     public void clear() {
         // Face indicator is displayed during preview. Do not clear the
         // drawable.

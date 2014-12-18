@@ -35,7 +35,6 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -997,7 +996,7 @@ public class FilmstripView extends ViewGroup {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.L)
     private void setMaxElevation(View v) {
         v.setElevation(Float.MAX_VALUE);
     }

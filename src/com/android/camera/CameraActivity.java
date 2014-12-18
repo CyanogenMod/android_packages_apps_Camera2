@@ -18,7 +18,6 @@
 package com.android.camera;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -96,7 +95,6 @@ import com.android.camera.data.PanoramaMetadataLoader;
 import com.android.camera.data.PhotoData.PhotoDataFactory;
 import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
-import com.android.camera.data.VideoData;
 import com.android.camera.data.VideoData.VideoDataFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
@@ -841,7 +839,6 @@ public class CameraActivity extends QuickActivity
         mCameraAppUI.getFilmstripBottomControls().setProgressText(message);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setupNfcBeamPush() {
         NfcAdapter adapter = NfcAdapter.getDefaultAdapter(mAppContext);
         if (adapter == null) {

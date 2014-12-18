@@ -431,7 +431,6 @@ public class VideoModule extends CameraModule
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
      private void updateAutoFocusMoveCallback() {
         if (mPaused || mCameraDevice == null) {
             return;
@@ -613,20 +612,17 @@ public class VideoModule extends CameraModule
     }
 
     @Override
-    @OnClickAttr
     public void onReviewPlayClicked(View v) {
         startPlayVideoActivity();
     }
 
     @Override
-    @OnClickAttr
     public void onReviewDoneClicked(View v) {
         mIsInReviewMode = false;
         doReturnToCaller(true);
     }
 
     @Override
-    @OnClickAttr
     public void onReviewCancelClicked(View v) {
         // TODO: It should be better to not even insert the URI at all before we
         // confirm done in review, which means we need to handle temporary video
@@ -781,7 +777,6 @@ public class VideoModule extends CameraModule
                 + mDesiredPreviewHeight);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     /**
      * Calculates the preview size and stores it in mDesiredPreviewWidth and
      * mDesiredPreviewHeight.

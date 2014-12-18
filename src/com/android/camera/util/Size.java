@@ -16,7 +16,9 @@
 
 package com.android.camera.util;
 
+import android.annotation.TargetApi;
 import android.graphics.Point;
+import android.os.Build.VERSION_CODES;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class Size {
     private final int width;
     private final int height;
 
+    @TargetApi(VERSION_CODES.L)
     public static Size[] convert(android.util.Size[] sizes) {
         Size[] converted = new Size[sizes.length];
         for (int i = 0; i < sizes.length; ++i) {
@@ -49,6 +52,7 @@ public class Size {
         this.height = point.y;
     }
 
+    @TargetApi(VERSION_CODES.L)
     public Size(android.util.Size size) {
         this.width = size.getWidth();
         this.height = size.getHeight();
