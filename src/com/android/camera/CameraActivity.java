@@ -88,14 +88,16 @@ import com.android.camera.data.LocalData;
 import com.android.camera.data.LocalDataAdapter;
 import com.android.camera.data.LocalDataUtil;
 import com.android.camera.data.LocalDataViewType;
-import com.android.camera.data.LocalMediaData;
 import com.android.camera.data.LocalMediaObserver;
 import com.android.camera.data.LocalSessionData;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.MetadataLoader;
 import com.android.camera.data.PanoramaMetadataLoader;
+import com.android.camera.data.PhotoData.PhotoDataFactory;
 import com.android.camera.data.RgbzMetadataLoader;
 import com.android.camera.data.SimpleViewData;
+import com.android.camera.data.VideoData;
+import com.android.camera.data.VideoData.VideoDataFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
@@ -895,8 +897,8 @@ public class CameraActivity extends QuickActivity
                         mDataAdapter.refresh(sessionUri);
                         return;
                     }
-                    LocalData newData = LocalMediaData.PhotoData.fromContentUri(
-                            getContentResolver(), contentUri);
+                    LocalData newData = PhotoDataFactory.queryContentUri(
+                          getContentResolver(), contentUri);
 
                     // This can be null if e.g. a session is canceled (e.g.
                     // through discard panorama). It might be worth adding
@@ -1216,14 +1218,14 @@ public class CameraActivity extends QuickActivity
         LocalData newData = null;
         if (LocalDataUtil.isMimeTypeVideo(mimeType)) {
             sendBroadcast(new Intent(CameraUtil.ACTION_NEW_VIDEO, uri));
-            newData = LocalMediaData.VideoData.fromContentUri(getContentResolver(), uri);
+            newData = VideoDataFactory.queryContentUri(getContentResolver(), uri);
             if (newData == null) {
                 Log.e(TAG, "Can't find video data in content resolver:" + uri);
                 return;
             }
         } else if (LocalDataUtil.isMimeTypeImage(mimeType)) {
             CameraUtil.broadcastNewPicture(mAppContext, uri);
-            newData = LocalMediaData.PhotoData.fromContentUri(getContentResolver(), uri);
+            newData = PhotoDataFactory.queryContentUri(getContentResolver(), uri);
             if (newData == null) {
                 Log.e(TAG, "Can't find photo data in content resolver:" + uri);
                 return;
