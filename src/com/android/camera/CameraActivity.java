@@ -1393,9 +1393,9 @@ public class CameraActivity extends QuickActivity
         try {
             mCameraManager = OneCameraManager.get(this);
         } catch (OneCameraException e) {
-            Log.d(TAG, "Creating camera manager failed.", e);
-            CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
-            return;
+            // Log error and continue. Modules requiring OneCamera should check
+            // and handle if null by showing error dialog or other treatment.
+            Log.w(TAG, "Creating camera manager failed.", e);
         }
 
         // TODO: Try to move all the resources allocation to happen as soon as
@@ -1728,6 +1728,7 @@ public class CameraActivity extends QuickActivity
             finish();
         } else {
             // Close the camera and wait for the operation done.
+            Log.v(TAG, "onPause closing camera");
             mCameraController.closeCamera(true);
         }
     }
