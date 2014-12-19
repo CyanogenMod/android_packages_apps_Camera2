@@ -21,6 +21,7 @@ import android.location.Location;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 public interface ImageSaver {
     public interface Builder {
@@ -36,6 +37,12 @@ public interface ImageSaver {
          * Sets the location of this capture.
          */
         public void setLocation(Location location);
+
+        /**
+         * Sets the associated CaptureSession
+         * @param session Associated CaptureSession
+         */
+        public void setSession(CaptureSession session);
 
         /**
          * Sets the callback to invoke with thumbnail data.

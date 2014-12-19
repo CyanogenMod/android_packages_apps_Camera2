@@ -16,6 +16,8 @@
 
 package com.android.camera.util;
 
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
+
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.media.Image;
@@ -113,7 +115,7 @@ public class JpegUtilNative {
      * @param quality the jpeg encoder quality (0 to 100)
      * @return The number of bytes written to outBuf
      */
-    public static int compressJpegFromYUV420Image(Image img, ByteBuffer outBuf, int quality) {
+    public static int compressJpegFromYUV420Image(ImageProxy img, ByteBuffer outBuf, int quality) {
         if (img.getFormat() != ImageFormat.YUV_420_888) {
             throw new RuntimeException("Unsupported Image Format.");
         }
@@ -170,7 +172,7 @@ public class JpegUtilNative {
      * @param degrees the amount to rotate the image clockwise, in degrees.
      * @return The number of bytes written to outBuf
      */
-    public static int compressJpegFromYUV420Image(Image img, ByteBuffer outBuf, int quality,
+    public static int compressJpegFromYUV420Image(ImageProxy img, ByteBuffer outBuf, int quality,
             int degrees) {
         if (degrees != 0 && degrees != 90 && degrees != 180 && degrees != 270) {
             throw new RuntimeException("Unsupported rotation angle");

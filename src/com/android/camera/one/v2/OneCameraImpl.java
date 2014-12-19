@@ -55,6 +55,7 @@ import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.CameraDirectionProvider;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.Settings3A;
+import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.CaptureDataSerializer;
@@ -73,7 +74,7 @@ import java.util.List;
  * {@link OneCamera} implementation directly on top of the Camera2 API for
  * cameras without API 2 FULL support (limited or legacy).
  */
-@TargetApi(Build.VERSION_CODES.L)
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class OneCameraImpl extends AbstractOneCamera {
     /** Captures that are requested but haven't completed yet. */
     private static class InFlightCapture {
@@ -814,7 +815,8 @@ public class OneCameraImpl extends AbstractOneCamera {
             buffer = ByteBuffer.allocateDirect(image.getWidth() * image.getHeight() * 3);
 
             Log.v(TAG, "Compressing JPEG with software encoder.");
-            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(image, buffer, JPEG_QUALITY);
+            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(
+                    new AndroidImageProxy(image), buffer, JPEG_QUALITY);
 
             if (numBytes < 0) {
                 throw new RuntimeException("Error compressing jpeg.");

@@ -22,6 +22,8 @@ import android.graphics.YuvImage;
 
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
+import com.android.camera.util.JpegUtilNative;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,22 +31,35 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 
 /**
- * TaskImageContainer are the base class of tasks that wish to run with the
- * ImageBackend class. It contains the basic information required to interact
- * with the ImageBackend class and the ability to identify itself to the UI
- * backend for updates on its progress.
+ * TaskJpegEncode are the base class of tasks that wish to do JPEG encoding/decoding.
+ * Various helper functions are held in this class.
  */
 public abstract class TaskJpegEncode extends TaskImageContainer {
 
     protected final static Log.Tag TAG = new Log.Tag("TaskJpegEnc");
 
+    /**
+     * Constructor to use for NOT passing the image reference forward.
+     *
+     * @param otherTask Parent task that is spawning this task
+     * @param processingPriority Preferred processing priority for this task
+     */
     public TaskJpegEncode(TaskImageContainer otherTask, ProcessingPriority processingPriority) {
         super(otherTask, processingPriority);
     }
 
+    /**
+     * Constructor to use for initial task definition or complex shared state sharing.
+     *
+     * @param image Image reference that is required for computation
+     * @param executor Executor to avoid thread control leakage
+     * @param imageBackend ImageBackend associated with
+     * @param preferredLane Preferred processing priority for this task
+     * @param captureSession Session associated for UI handling
+     */
     public TaskJpegEncode(ImageProxy image, Executor executor, ImageBackend imageBackend,
-            TaskImageContainer.ProcessingPriority preferredLane) {
-        super(image, executor, imageBackend, preferredLane);
+            TaskImageContainer.ProcessingPriority preferredLane, CaptureSession captureSession) {
+        super(image, executor, imageBackend, preferredLane, captureSession);
     }
 
     /**
@@ -82,20 +97,49 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
         ByteBuffer y_buffer = img.getPlanes()[0].getBuffer();
         ByteBuffer u_buffer = img.getPlanes()[1].getBuffer();
         ByteBuffer v_buffer = img.getPlanes()[2].getBuffer();
+        final int color_pixel_stride = img.getPlanes()[1].getPixelStride();
+        final int y_size = y_buffer.capacity();
+        final int u_size = u_buffer.capacity();
+        final int data_offset = w * h;
 
-        for (int i = 0; i < y_buffer.capacity(); i++) {
-            dataCopy[i] = (byte)(y_buffer.get(i) & 255);
+        for (int i = 0; i < y_size; i++) {
+            dataCopy[i] = (byte) (y_buffer.get(i) & 255);
         }
 
-        int color_pixel_stride = img.getPlanes()[1].getPixelStride();
-        int data_offset = y_buffer.capacity();
-        for (int i = 0; i < u_buffer.capacity() / color_pixel_stride; i++) {
+        for (int i = 0; i < u_size / color_pixel_stride; i++) {
             dataCopy[data_offset + 2 * i] = v_buffer.get(i * color_pixel_stride);
             dataCopy[data_offset + 2 * i + 1] = u_buffer.get(i * color_pixel_stride);
         }
 
         return dataCopy;
     }
+
+    /**
+     * Creates a dummy shaded image for testing in packed NV21 format.
+     *
+     * @param dataCopy Buffer to contained shaded test image
+     * @param w Width of image
+     * @param h Height of Image
+     */
+    public void dummyConvertYUV420ImageToPackedNV21(byte[] dataCopy,
+            final int w, final int h) {
+        final int y_size = w*h;
+        final int data_offset = w*h;
+
+        for (int i = 0; i < y_size ; i++) {
+            dataCopy[i] = (byte)((((i % w)*255)/w) & 255);
+            dataCopy[i] = 0;
+        }
+
+        for (int i = 0; i < h/2 ; i++) {
+            for (int j = 0; j < w/2 ; j++) {
+                int offset=data_offset + w*i + j*2;
+                dataCopy[offset] = (byte) ((255*i)/(h/2) & 255);
+                dataCopy[offset+1] = (byte) ((255*j)/(w/2) & 255);
+            }
+        }
+    }
+
 
     /**
      * Wraps the Android built-in YUV to Jpeg conversion routine. Pass in a valid NV21 image and get
@@ -123,6 +167,7 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
         Log.e(TAG, "TIMER_END NV21 to Jpeg Conversion.");
         return postViewBytes.toByteArray();
     }
+
 
     /**
      * Wraps the onResultCompressed listener for ease of use.

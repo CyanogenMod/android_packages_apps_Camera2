@@ -48,13 +48,17 @@ public class ProcessingServiceManager {
     /** Can be set to prevent tasks from being processed until released.*/
     private boolean mHoldProcessing = false;
 
+    private static ImageBackend sImageBackend;
+
     /**
-     * Initializes the singleton instance.
+     * Initializes the singleton instances of ProcessingServiceManager
+     * and ImageBackend.
      *
      * @param context the application context.
      */
     public static void initSingleton(Context appContext) {
         sInstance = new ProcessingServiceManager(appContext);
+        sImageBackend = new ImageBackend();
     }
 
     /**
@@ -68,6 +72,20 @@ public class ProcessingServiceManager {
         }
         return sInstance;
     }
+
+
+    /**
+     * Note: Make sure to call {@link #initSingleton(Context)} first.
+     *
+     * @return the singleton instance of the processing service manager.
+     */
+    public static ImageBackend getImageBackendInstance() {
+        if (sInstance == null) {
+            throw new IllegalStateException("initSingleton() not yet called.");
+        }
+        return sImageBackend;
+    }
+
 
     private ProcessingServiceManager(Context context) {
         mAppContext = context;

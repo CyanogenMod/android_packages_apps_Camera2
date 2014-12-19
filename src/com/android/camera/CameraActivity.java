@@ -105,6 +105,7 @@ import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
@@ -1572,6 +1573,10 @@ public class CameraActivity extends QuickActivity
             }
         });
         mMotionManager = getServices().getMotionManager();
+
+        // Register the UI for ImageBackend Events
+        // TODO:  Replace with better messaging mechanism
+        ProcessingServiceManager.getImageBackendInstance().registerAppUI(mCameraAppUI);
     }
 
     /**
@@ -1684,6 +1689,12 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void onPauseTasks() {
+
+        // Unregister the UI for ImageBackend Events
+        // TODO:  Replace with better messaging mechanism
+        ProcessingServiceManager.getImageBackendInstance().unregisterAppUI();
+
+
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
 
         /*
@@ -1876,6 +1887,11 @@ public class CameraActivity extends QuickActivity
         updatePreviewRendering(previewVisibility);
 
         mMotionManager.start();
+
+        // Register the UI for ImageBackend Events
+        // TODO:  Replace with better messaging mechanism
+        ProcessingServiceManager.getImageBackendInstance().registerAppUI(mCameraAppUI);
+
     }
 
     private void fillTemporarySessions() {
@@ -1926,6 +1942,7 @@ public class CameraActivity extends QuickActivity
         if (mSecureCamera) {
             unregisterReceiver(mShutdownReceiver);
         }
+
         mSettingsManager.removeAllListeners();
         mCameraController.removeCallbackReceiver();
         mCameraController.setCameraExceptionHandler(null);

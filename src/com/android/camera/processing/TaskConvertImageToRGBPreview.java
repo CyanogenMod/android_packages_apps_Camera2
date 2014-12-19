@@ -19,12 +19,14 @@ package com.android.camera.processing;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 
 /**
- * Implements the conversion of a YUV_420_888 image to subsampled image inscribed in a circle.
+ * Implements the conversion of a YUV_420_888 image to subsampled image
+ * inscribed in a circle.
  */
 public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     // 24 bit-vector to be written for images that are out of bounds.
@@ -37,8 +39,9 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     private int mTargetWidth;
 
     TaskConvertImageToRGBPreview(ImageProxy imageProxy, Executor executor,
-            ImageBackend imageBackend, int targetWidth, int targetHeight) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.FAST);
+            ImageBackend imageBackend, CaptureSession captureSession, int targetWidth,
+            int targetHeight) {
+        super(imageProxy, executor, imageBackend, ProcessingPriority.FAST, captureSession);
         mTargetWidth = targetWidth;
         mTargetHeight = targetHeight;
     }
@@ -56,29 +59,33 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
 
     /**
      * Way to calculate the resultant image sizes of inscribed circles:
-     * colorInscribedDataCircleFromYuvImage, dummyColorInscribedDataCircleFromYuvImage,
-     * colorDataCircleFromYuvImage
+     * colorInscribedDataCircleFromYuvImage,
+     * dummyColorInscribedDataCircleFromYuvImage, colorDataCircleFromYuvImage
      *
      * @param height height of the input image
      * @param width width of the input image
-     * @return height/width of the resultant square image TODO: Refactor functions in question to
-     *         return the image size as a tuple for these functions, or re-use an general purpose
-     *         holder object.
+     * @return height/width of the resultant square image TODO: Refactor
+     *         functions in question to return the image size as a tuple for
+     *         these functions, or re-use an general purpose holder object.
      */
     protected int inscribedCircleRadius(int width, int height) {
         return (Math.min(height, width) / 2) + 1;
     }
 
     /**
-     * Calculates the best integer subsample from a given height and width to a target width and
-     * height It is assumed that the exact scaling will be done with the Android Bitmap framework;
-     * this subsample value is to best convert raw images into the lowest resolution raw images in
-     * visually lossless manner without changing the aspect ratio or creating subsample artifacts.
+     * Calculates the best integer subsample from a given height and width to a
+     * target width and height It is assumed that the exact scaling will be done
+     * with the Android Bitmap framework; this subsample value is to best
+     * convert raw images into the lowest resolution raw images in visually
+     * lossless manner without changing the aspect ratio or creating subsample
+     * artifacts.
      *
      * @param height height of the input image
      * @param width width of the input image
-     * @param targetWidth width of the image as it will be seen on the screen in raw pixels
-     * @param targetHeight height of the image as it will be seen on the screen in raw pixels
+     * @param targetWidth width of the image as it will be seen on the screen in
+     *            raw pixels
+     * @param targetHeight height of the image as it will be seen on the screen
+     *            in raw pixels
      * @returns inscribed image as ARGB_8888
      */
     protected int calculateBestSubsampleFactor(int height, int width, int targetWidth,
@@ -101,12 +108,14 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     }
 
     /**
-     * Converts an Android Image to a inscribed circle bitmap of ARGB_8888 in a super-optimized loop
-     * unroll. Guarantees only one subsampled pass over the YUV data. This version of the function
-     * should be used in production and also feathers the edges with 50% alpha on its edges. NOTE:
-     * To get the size of the resultant bitmap, you need to call inscribedCircleRadius(w, h) outside
-     * of this function. Runs in ~10-15ms for 4K image with a subsample of 13. TODO: Implement
-     * horizontal alpha feathering of the edge of the image, if necessary.
+     * Converts an Android Image to a inscribed circle bitmap of ARGB_8888 in a
+     * super-optimized loop unroll. Guarantees only one subsampled pass over the
+     * YUV data. This version of the function should be used in production and
+     * also feathers the edges with 50% alpha on its edges. NOTE: To get the
+     * size of the resultant bitmap, you need to call inscribedCircleRadius(w,
+     * h) outside of this function. Runs in ~10-15ms for 4K image with a
+     * subsample of 13. TODO: Implement horizontal alpha feathering of the edge
+     * of the image, if necessary.
      *
      * @param img YUV420_888 Image to convert
      * @param subsample width/height subsample factor
@@ -155,8 +164,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         int alpha = 255 << 24;
 
         /*
-         * Quick n' Dirty YUV to RGB conversion R = Y + 1.403V' G = Y - 0.344U' - 0.714V' B = Y +
-         * 1.770U'
+         * Quick n' Dirty YUV to RGB conversion R = Y + 1.403V' G = Y - 0.344U'
+         * - 0.714V' B = Y + 1.770U'
          */
 
         Log.v(TAG, "TIMER_BEGIN Starting Native Java YUV420-to-RGB Quick n' Dirty Conversion 4");
@@ -178,10 +187,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
             // Find the subsequence of pixels we need for each horizontal raster
             // line.
             int circleHalfWidth0 =
-                    (int)(Math.sqrt((float)(r * r - (j - centerY) * (j - centerY))) + 0.5f);
+                    (int) (Math.sqrt((float) (r * r - (j - centerY) * (j - centerY))) + 0.5f);
             int circleMin0 = centerX - (circleHalfWidth0);
             int circleMax0 = centerX + circleHalfWidth0;
-            int circleHalfWidth1 = (int)(Math.sqrt((float)(r * r - (j + 1 - centerY)
+            int circleHalfWidth1 = (int) (Math.sqrt((float) (r * r - (j + 1 - centerY)
                     * (j + 1 - centerY))) + 0.5f);
             int circleMin1 = centerX - (circleHalfWidth1);
             int circleMax1 = centerX + circleHalfWidth1;
@@ -206,8 +215,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
 
                 // calculate the RGB component of the u/v channels and use it
                 // for all pixels in the 2x2 block
-                int u = (int)(bufU.get(offsetU) & 255) - 128;
-                int v = (int)(bufV.get(offsetV) & 255) - 128;
+                int u = (int) (bufU.get(offsetU) & 255) - 128;
+                int v = (int) (bufV.get(offsetV) & 255) - 128;
                 int redDiff = (v * 45) >> 4;
                 int greenDiff = 0 - ((u * 11 + v * 22) >> 4);
                 int blueDiff = (u * 58) >> 4;
@@ -218,7 +227,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     // Do a little alpha feathering on the edges
                     int alpha00 = (i == circleMax0 || i == circleMin0) ? (128 << 24) : (255 << 24);
 
-                    int y00 = (int)(buf0.get(offsetY) & 255);
+                    int y00 = (int) (buf0.get(offsetY) & 255);
 
                     int green00 = y00 + greenDiff;
                     int blue00 = y00 + blueDiff;
@@ -254,7 +263,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 } else {
                     int alpha01 = ((i + 1) == circleMax0 || (i + 1) == circleMin0) ? (128 << 24)
                             : (255 << 24);
-                    int y01 = (int)(buf0.get(offsetY + yPixelStride) & 255);
+                    int y01 = (int) (buf0.get(offsetY + yPixelStride) & 255);
                     int green01 = y01 + greenDiff;
                     int blue01 = y01 + blueDiff;
                     int red01 = y01 + redDiff;
@@ -287,7 +296,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     colors[offsetColor + outputPixelStride] = OUT_OF_BOUNDS_COLOR;
                 } else {
                     int alpha10 = (i == circleMax1 || i == circleMin1) ? (128 << 24) : (255 << 24);
-                    int y10 = (int)(buf0.get(offsetY + yByteStride) & 255);
+                    int y10 = (int) (buf0.get(offsetY + yByteStride) & 255);
                     int green10 = y10 + greenDiff;
                     int blue10 = y10 + blueDiff;
                     int red10 = y10 + redDiff;
@@ -321,7 +330,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 } else {
                     int alpha11 = ((i + 1) == circleMax1 || (i + 1) == circleMin1) ? (128 << 24)
                             : (255 << 24);
-                    int y11 = (int)(buf0.get(offsetY + yByteStride + yPixelStride) & 255);
+                    int y11 = (int) (buf0.get(offsetY + yByteStride + yPixelStride) & 255);
                     int green11 = y11 + greenDiff;
                     int blue11 = y11 + blueDiff;
                     int red11 = y11 + redDiff;
@@ -359,8 +368,9 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     }
 
     /**
-     * DEBUG IMAGE FUNCTION Converts an Android Image to a inscribed circle bitmap, currently wired
-     * to the test pattern. Will subsample and optimize the image given a target resolution.
+     * DEBUG IMAGE FUNCTION Converts an Android Image to a inscribed circle
+     * bitmap, currently wired to the test pattern. Will subsample and optimize
+     * the image given a target resolution.
      *
      * @param img YUV420_888 Image to convert
      * @param subsample width/height subsample factor

@@ -57,6 +57,7 @@ import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.one.v2.photo.PictureTaker;
+import com.android.camera.one.v2.photo.ZslImageSaverImpl;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
@@ -169,53 +170,7 @@ public class ZslOneCameraFactory {
 
             HandlerExecutor mainExecutor = new HandlerExecutor(mMainHandler);
 
-            // FIXME TODO Replace stub with real implementation
-            ImageSaver.Builder imageSaverBuilder = new ImageSaver.Builder() {
-
-                @Override
-                public void setTitle(String title) {
-
-                }
-
-                @Override
-                public void setOrientation(OrientationManager.DeviceOrientation orientation) {
-
-                }
-
-                @Override
-                public void setLocation(Location location) {
-
-                }
-
-                @Override
-                public void setThumbnailCallback(Updatable<byte[]> callback) {
-
-                }
-
-                @Override
-                public ImageSaver build() {
-                    return new ImageSaver() {
-                        @Override
-                        public void saveAndCloseImage(final ImageProxy imageProxy) {
-                            // Fake implementation which sleeps for 2 seconds
-                            // before closing the image.
-                            Executors.newCachedThreadPool().submit(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Thread.sleep(2000);
-                                    } catch (InterruptedException e) {
-                                        // Impossible exception.
-                                        throw new RuntimeException(e);
-                                    } finally {
-                                        imageProxy.close();
-                                    }
-                                }
-                            });
-                        }
-                    };
-                }
-            };
+            ImageSaver.Builder imageSaverBuilder = new ZslImageSaverImpl(mainExecutor);
 
             ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(mainExecutor,
                     cameraCommandExecutor, imageSaverBuilder, frameServer, rootBuilder,

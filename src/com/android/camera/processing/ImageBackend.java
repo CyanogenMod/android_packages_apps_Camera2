@@ -16,9 +16,13 @@
 
 package com.android.camera.processing;
 
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.processing.TaskImageContainer.ProcessingPriority;
 import com.android.camera.debug.Log;
+import com.android.camera.session.CaptureSession;
+
+import android.graphics.Paint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,32 +37,39 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * This ImageBackend is created for the purpose of creating a task-running infrastructure that has
- * two-level of priority and doing the book-keeping to keep track of tasks that use Android Images.
- * Android.media.images are critical system resources that MUST be properly managed in order to
- * maintain camera application performance. Android.media.images are merely Java handles to regions
- * of physically contiguous memory used by the camera hardware as a destination for imaging data. In
- * general, this physically contiguous memory is not counted as an application resource, but as a
- * system resources held by the application and does NOT count against the limits of application
- * memory. The performance pressures of both computing and memory resources must often be
- * prioritized in releasing Android.media.images in a timely manner. In order to properly balance
- * these concerns, most image processing requested should be routed through this object. This object
- * is also responsible for releasing Android.media image as soon as possible, so as not to stall the
- * camera hardware subsystem. Image that reserve these images are a subclass of the basic Java
- * Runnable with a few conditions placed upon their run() implementation:
+ * This ImageBackend is created for the purpose of creating a task-running
+ * infrastructure that has two-level of priority and doing the book-keeping to
+ * keep track of tasks that use Android Images. Android.media.images are
+ * critical system resources that MUST be properly managed in order to maintain
+ * camera application performance. Android.media.images are merely Java handles
+ * to regions of physically contiguous memory used by the camera hardware as a
+ * destination for imaging data. In general, this physically contiguous memory
+ * is not counted as an application resource, but as a system resources held by
+ * the application and does NOT count against the limits of application memory.
+ * The performance pressures of both computing and memory resources must often
+ * be prioritized in releasing Android.media.images in a timely manner. In order
+ * to properly balance these concerns, most image processing requested should be
+ * routed through this object. This object is also responsible for releasing
+ * Android.media image as soon as possible, so as not to stall the camera
+ * hardware subsystem. Image that reserve these images are a subclass of the
+ * basic Java Runnable with a few conditions placed upon their run()
+ * implementation:
  * <ol>
- * <li>The task will try to release the image as early as possible by calling the
- * releaseSemaphoreReference as soon as a reference to the original image is no longer required.</li>
- * <li>A set of tasks that require ImageData must only happen on the first receiveImage call.
- * receiveImage must only be called once per image.</li>
- * <li>However, the submitted tasks may spawn new tasks via the appendTask with any image that have
- * had a task submitted, but NOT released via releaseSemaphoreReference.</li>
- * <li>Computation that is dependent on multiple images should be written into this task framework
- * in a distributed manner where image task can be computed independently and join their results to
- * a common shared object.This style of implementation allows for the earliest release of Android
- * Images while honoring the resources priorities set by this class. See the Lucky shot
- * implementation for a concrete example for this shared object and its respective task
- * {@link TaskLuckyShotSession} {@link LuckyShotSession}</li>
+ * <li>The task will try to release the image as early as possible by calling
+ * the releaseSemaphoreReference as soon as a reference to the original image is
+ * no longer required.</li>
+ * <li>A set of tasks that require ImageData must only happen on the first
+ * receiveImage call. receiveImage must only be called once per image.</li>
+ * <li>However, the submitted tasks may spawn new tasks via the appendTask with
+ * any image that have had a task submitted, but NOT released via
+ * releaseSemaphoreReference.</li>
+ * <li>Computation that is dependent on multiple images should be written into
+ * this task framework in a distributed manner where image task can be computed
+ * independently and join their results to a common shared object.This style of
+ * implementation allows for the earliest release of Android Images while
+ * honoring the resources priorities set by this class. See the Lucky shot
+ * implementation for a concrete example for this shared object and its
+ * respective task {@link TaskLuckyShotSession} {@link LuckyShotSession}</li>
  * </ol>
  */
 public class ImageBackend implements ImageConsumer {
@@ -117,19 +128,71 @@ public class ImageBackend implements ImageConsumer {
         mSimpleCache = new SimpleCache(NUM_THREADS_SLOW);
     }
 
+    // REMOVE When plumbed properly
+
     /**
-     * Simple getter for the simple cache functionality associated with this instantiation. Needs to
-     * be accessed by the tasks in order to get/return memory. TODO: Replace with something better.
+     * Receiver to a valid UI that can handle events started by the
+     * ImageBackend.
+     */
+    private CameraAppUI mCameraAppUI;
+
+    // REMOVE When plumbed properly
+
+    /**
+     * Returns whether the ImageBackend has a valid handle to UI event handler.
+     * NOTE: there are still synchronization issues
      *
-     * @return cache object that implements a simple memory pool for this object.
+     * @return whether the ImageBackend has a valid handle to UI event handler
+     */
+    public synchronized boolean hasValidUI() {
+        return (mCameraAppUI != null);
+    }
+
+    // REMOVE When plumbed properly
+
+    /**
+     * Setter for a valid UI handle. Should be called when the Activity has
+     * created or resumed its UI Handler.
+     *
+     * @param cameraAppUI
+     */
+    public synchronized void registerAppUI(CameraAppUI cameraAppUI) {
+        mCameraAppUI = cameraAppUI;
+    }
+
+    // REMOVE When plumbed properly
+    /**
+     * Invalidates the UI Handle.  Should be called when the Activity has destroyed or paused its UI Handler.
+     */
+    public synchronized void unregisterAppUI() {
+        mCameraAppUI = null;
+    }
+
+    // REMOVE When plumbed properly
+
+    /**
+     * Getter for Valid UI Handler
+     * @return Valid UI Handler.  If null, there is no valid UI Handler.
+     */
+    public synchronized CameraAppUI getAppUI() {
+        return mCameraAppUI;
+    }
+
+    /**
+     * Simple getter for the simple cache functionality associated with this
+     * instantiation. Needs to be accessed by the tasks in order to get/return
+     * memory. TODO: Replace with something better.
+     *
+     * @return cache object that implements a simple memory pool for this
+     *         object.
      */
     public SimpleCache getCache() {
         return mSimpleCache;
     }
 
     /**
-     * Simple getting for the associated listener object associated with this instantiation that
-     * handles registration of events listeners.
+     * Simple getting for the associated listener object associated with this
+     * instantiation that handles registration of events listeners.
      *
      * @return listener proxy that handles events messaging for this object.
      */
@@ -142,9 +205,10 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Wrapper function for all log messages created by this object. Default implementation is to
-     * send messages to the Android logger. For test purposes, this method can be overridden to
-     * avoid "Stub!" Runtime exceptions in Unit Tests.
+     * Wrapper function for all log messages created by this object. Default
+     * implementation is to send messages to the Android logger. For test
+     * purposes, this method can be overridden to avoid "Stub!" Runtime
+     * exceptions in Unit Tests.
      */
     public void logWrapper(String message) {
         Log.e(TAG, message);
@@ -164,14 +228,16 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Signals the ImageBackend that a tasks has released a reference to the image. Imagebackend
-     * determines whether all references have been released and applies its specified release
-     * protocol of closing image and/or unblocking the caller. Should ONLY be called by the tasks
-     * running on this class.
+     * Signals the ImageBackend that a tasks has released a reference to the
+     * image. Imagebackend determines whether all references have been released
+     * and applies its specified release protocol of closing image and/or
+     * unblocking the caller. Should ONLY be called by the tasks running on this
+     * class.
      *
      * @param img the image to be released by the task.
-     * @param executor the executor on which the image close is run. if null, image close is run by
-     *            the calling thread (usually the main task thread).
+     * @param executor the executor on which the image close is run. if null,
+     *            image close is run by the calling thread (usually the main
+     *            task thread).
      */
     public void releaseSemaphoreReference(final ImageProxy img, Executor executor) {
         synchronized (mImageSemaphoreMap) {
@@ -197,6 +263,7 @@ public class ImageBackend implements ImageConsumer {
                 // receiveImage call
                 if (protocol.closeOnRelease) {
                     closeImageExecutorSafe(img, executor);
+                    logWrapper("Ref release close.");
                 }
 
                 // Conditionally signal the blocking thread to go.
@@ -212,10 +279,12 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Spawns dependent tasks from internal implementation of a task. If a dependent task does NOT
-     * require the image reference, it should be passed a null pointer as an image reference. In
-     * general, this method should be called after the task has completed its own computations, but
-     * before it has released its own image reference (via the releaseSemaphoreReference call).
+     * Spawns dependent tasks from internal implementation of a task. If a
+     * dependent task does NOT require the image reference, it should be passed
+     * a null pointer as an image reference. In general, this method should be
+     * called after the task has completed its own computations, but before it
+     * has released its own image reference (via the releaseSemaphoreReference
+     * call).
      *
      * @param tasks The set of tasks to be run
      * @return whether tasks are successfully submitted.
@@ -248,44 +317,48 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Implements that top-level image single task submission that is defined by the ImageConsumer
-     * interface.
+     * Implements that top-level image single task submission that is defined by
+     * the ImageConsumer interface.
      *
      * @param img Image required by the task
      * @param task Task to be run
-     * @param blockUntilImageRelease If true, call blocks until the object img is no longer referred
-     *            by any task. If false, call is non-blocking
-     * @param closeOnImageRelease If true, images is closed when the object img is is no longer
-     *            referred by any task. If false, After an image is submitted, it should never be
-     *            submitted again to the interface until all tasks and their spawned tasks are
+     * @param blockUntilImageRelease If true, call blocks until the object img
+     *            is no longer referred by any task. If false, call is
+     *            non-blocking
+     * @param closeOnImageRelease If true, images is closed when the object img
+     *            is is no longer referred by any task. If false, After an image
+     *            is submitted, it should never be submitted again to the
+     *            interface until all tasks and their spawned tasks are
      *            finished.
      */
     @Override
     public boolean receiveImage(ImageProxy img, TaskImageContainer task,
-            boolean blockUntilImageRelease, boolean closeOnImageRelease)
+            boolean blockUntilImageRelease, boolean closeOnImageRelease, CaptureSession session)
             throws InterruptedException {
         Set<TaskImageContainer> passTasks = new HashSet<TaskImageContainer>(1);
         passTasks.add(task);
-        return receiveImage(img, passTasks, blockUntilImageRelease, closeOnImageRelease);
+        return receiveImage(img, passTasks, blockUntilImageRelease, closeOnImageRelease, session);
     }
 
     /**
-     * Implements that top-level image single task submission that is defined by the ImageConsumer
-     * interface.
+     * Implements that top-level image single task submission that is defined by
+     * the ImageConsumer interface.
      *
      * @param img Image required by the task
      * @param tasks A set of Tasks to be run
-     * @param blockUntilImageRelease If true, call blocks until the object img is no longer referred
-     *            by any task. If false, call is non-blocking
-     * @param closeOnImageRelease If true, images is closed when the object img is is no longer
-     *            referred by any task. If false, After an image is submitted, it should never be
-     *            submitted again to the interface until all tasks and their spawned tasks are
+     * @param blockUntilImageRelease If true, call blocks until the object img
+     *            is no longer referred by any task. If false, call is
+     *            non-blocking
+     * @param closeOnImageRelease If true, images is closed when the object img
+     *            is is no longer referred by any task. If false, After an image
+     *            is submitted, it should never be submitted again to the
+     *            interface until all tasks and their spawned tasks are
      *            finished.
      * @return whether the blocking completed properly
      */
     @Override
     public boolean receiveImage(ImageProxy img, Set<TaskImageContainer> tasks,
-            boolean blockUntilImageRelease, boolean closeOnImageRelease)
+            boolean blockUntilImageRelease, boolean closeOnImageRelease, CaptureSession session)
             throws InterruptedException {
 
         // Short circuit if no tasks submitted.
@@ -320,18 +393,21 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Implements that top-level image task submission short-cut that is defined by the
-     * ImageConsumer interface.
+     * Implements that top-level image task submission short-cut that is defined
+     * by the ImageConsumer interface.
      *
      * @param img Image required by the task
-     * @param executor Executor to run events and image closes, in case of control leakage
-     * @param processingFlags Magical bit vector that specifies jobs to be run After an image is
-     *            submitted, it should never be submitted again to the interface until all tasks and
-     *            their spawned tasks are finished.
+     * @param executor Executor to run events and image closes, in case of
+     *            control leakage
+     * @param processingFlags Magical bit vector that specifies jobs to be run
+     *            After an image is submitted, it should never be submitted
+     *            again to the interface until all tasks and their spawned tasks
+     *            are finished.
      */
     @Override
     public boolean receiveImage(ImageProxy img, Executor executor,
-            Set<ImageTaskFlags> processingFlags) throws InterruptedException {
+            Set<ImageTaskFlags> processingFlags, CaptureSession session)
+            throws InterruptedException {
 
         Set<TaskImageContainer> tasksToExecute = new HashSet<TaskImageContainer>();
 
@@ -345,12 +421,13 @@ public class ImageBackend implements ImageConsumer {
         if (processingFlags.contains(ImageTaskFlags.COMPRESS_IMAGE_TO_JPEG)
                 || processingFlags.contains(ImageTaskFlags.WRITE_IMAGE_TO_DISK)) {
             // Add this type of task to the appropriate queue.
-            tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this));
+            tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
         }
 
         if (processingFlags.contains(ImageTaskFlags.CONVERT_IMAGE_TO_RGB_PREVIEW)) {
             // Add this type of task to the appropriate queue.
-            tasksToExecute.add(new TaskConvertImageToRGBPreview(img, executor, this, 160, 100));
+            tasksToExecute.add(new TaskConvertImageToRGBPreview(img, executor, this, session, 160,
+                    100));
         }
 
         if (processingFlags.contains(ImageTaskFlags.WRITE_IMAGE_TO_DISK)) {
@@ -361,7 +438,7 @@ public class ImageBackend implements ImageConsumer {
 
         receiveImage(img, tasksToExecute,
                 processingFlags.contains(ImageTaskFlags.BLOCK_UNTIL_IMAGE_RELEASE),
-                processingFlags.contains(ImageTaskFlags.CLOSE_IMAGE_ON_RELEASE));
+                processingFlags.contains(ImageTaskFlags.CLOSE_IMAGE_ON_RELEASE), session);
 
         return true;
     }
@@ -370,14 +447,16 @@ public class ImageBackend implements ImageConsumer {
      * Factory functions, in case, you want some shake and bake functionality.
      */
     public TaskConvertImageToRGBPreview createTaskConvertImageToRGBPreview(ImageProxy imageProxy,
-            Executor executor, ImageBackend imageBackend, int targetWidth, int targetHeight) {
-        return new TaskConvertImageToRGBPreview(imageProxy, executor, imageBackend, targetWidth,
+            Executor executor, ImageBackend imageBackend, CaptureSession session, int targetWidth,
+            int targetHeight) {
+        return new TaskConvertImageToRGBPreview(imageProxy, executor, imageBackend, session,
+                targetWidth,
                 targetHeight);
     }
 
     public TaskCompressImageToJpeg createTaskCompressImageToJpeg(ImageProxy imageProxy,
-            Executor executor, ImageBackend imageBackend) {
-        return new TaskCompressImageToJpeg(imageProxy, executor, imageBackend);
+            Executor executor, ImageBackend imageBackend, CaptureSession session) {
+        return new TaskCompressImageToJpeg(imageProxy, executor, imageBackend, session);
     }
 
     /**
@@ -390,7 +469,8 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Puts the tasks on the specified queue. May be more complicated in the future.
+     * Puts the tasks on the specified queue. May be more complicated in the
+     * future.
      *
      * @param tasks The set of tasks to be run
      */
@@ -407,8 +487,8 @@ public class ImageBackend implements ImageConsumer {
     /**
      * Initializes the semaphore count for the image
      *
-     * @return The protocol object that keeps tracks of the image reference count and actions to be
-     *         taken on release.
+     * @return The protocol object that keeps tracks of the image reference
+     *         count and actions to be taken on release.
      */
     protected ImageReleaseProtocol setSemaphoreReferenceCount(ImageProxy img, int count,
             boolean blockUntilRelease, boolean closeOnRelease) throws RuntimeException {
@@ -435,8 +515,9 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Increments the semaphore count for the image. Should ONLY be internally via appendTasks by
-     * internal tasks. Otherwise, image references could get out of whack.
+     * Increments the semaphore count for the image. Should ONLY be internally
+     * via appendTasks by internal tasks. Otherwise, image references could get
+     * out of whack.
      *
      * @return Number of Image references currently held by this instance
      */
@@ -457,11 +538,12 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Close an Image with a executor if it's available and does the proper booking keeping on the
-     * object.
+     * Close an Image with a executor if it's available and does the proper
+     * booking keeping on the object.
      *
      * @param img Image to be closed
-     * @param executor Executor to be used, if executor is null, the close is run on the task thread
+     * @param executor Executor to be used, if executor is null, the close is
+     *            run on the task thread
      */
     private void closeImageExecutorSafe(final ImageProxy img, Executor executor) {
         Runnable closeTask = new Runnable() {
@@ -482,8 +564,8 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Calculates the number of new Image references in a set of dependent tasks. Checks to make
-     * sure no new image references are being introduced.
+     * Calculates the number of new Image references in a set of dependent
+     * tasks. Checks to make sure no new image references are being introduced.
      *
      * @param tasks The set of dependent tasks to be run
      */
@@ -504,8 +586,9 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * A simple tuple class to keep track of image reference, and whether to block and/or close on
-     * final image release. Instantiated on every task submission call.
+     * A simple tuple class to keep track of image reference, and whether to
+     * block and/or close on final image release. Instantiated on every task
+     * submission call.
      */
     static private class ImageReleaseProtocol {
 

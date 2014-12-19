@@ -19,6 +19,7 @@ package com.android.camera.processing;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
 
@@ -63,13 +64,13 @@ public abstract class TaskImageContainer implements Runnable {
         public final static int EXTRA_USER_DEFINED_FORMAT_ARGB_8888 = -1;
 
         // Minimal required knowledge for the image specification.
-        final OrientationManager.DeviceOrientation orientation;
+        public final OrientationManager.DeviceOrientation orientation;
 
-        final int height;
+        public final int height;
 
-        final int width;
+        public final int width;
 
-        final int format;
+        public final int format;
 
         TaskImage(OrientationManager.DeviceOrientation anOrientation, int aWidth, int aHeight,
                 int aFormat) {
@@ -119,6 +120,8 @@ public abstract class TaskImageContainer implements Runnable {
 
     final protected ImageProxy mImageProxy;
 
+    final protected CaptureSession mSession;
+
     /**
      * Constructor when releasing the image reference.
      *
@@ -126,10 +129,11 @@ public abstract class TaskImageContainer implements Runnable {
      * @param processingPriority Priority that the derived task will run at.
      */
     public TaskImageContainer(TaskImageContainer otherTask, ProcessingPriority processingPriority) {
-        this.mId = otherTask.mId;
-        this.mExecutor = otherTask.mExecutor;
-        this.mImageBackend = otherTask.mImageBackend;
-        this.mProcessingPriority = processingPriority;
+        mId = otherTask.mId;
+        mExecutor = otherTask.mExecutor;
+        mImageBackend = otherTask.mImageBackend;
+        mProcessingPriority = processingPriority;
+        mSession = otherTask.mSession;
         mImageProxy = null;
     }
 
@@ -140,14 +144,16 @@ public abstract class TaskImageContainer implements Runnable {
      * @param Executor Executor to run the event handling
      * @param imageBackend a reference to the ImageBackend, in case, you need to spawn other tasks
      * @param preferredLane Priority that the derived task will run at
+     * @param captureSession Session that handles image processing events
      */
     public TaskImageContainer(ImageProxy image, Executor Executor, ImageBackend imageBackend,
-            ProcessingPriority preferredLane) {
+            ProcessingPriority preferredLane, CaptureSession captureSession) {
         mImageProxy = image;
-        this.mId = image.getTimestamp();
-        this.mExecutor = Executor;
-        this.mImageBackend = imageBackend;
-        this.mProcessingPriority = preferredLane;
+        mId = image.getTimestamp();
+        mExecutor = Executor;
+        mImageBackend = imageBackend;
+        mProcessingPriority = preferredLane;
+        mSession = captureSession;
     }
 
     /**

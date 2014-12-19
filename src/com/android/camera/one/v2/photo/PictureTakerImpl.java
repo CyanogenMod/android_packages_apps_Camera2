@@ -74,6 +74,7 @@ class PictureTakerImpl implements PictureTaker {
         mImageSaverBuilder.setLocation(params.location);
         mImageSaverBuilder.setOrientation(OrientationManager.DeviceOrientation.CLOCKWISE_0);
         mImageSaverBuilder.setThumbnailCallback(thumbnailCallback);
+        mImageSaverBuilder.setSession(session);
 
         final ImageSaver imageSaver = mImageSaverBuilder.build();
 

@@ -58,6 +58,7 @@ import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
+import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.JpegUtilNative;
@@ -83,7 +84,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * shutter lag.<br>
  * TODO: Determine what the maximum number of full YUV capture frames is.
  */
-@TargetApi(Build.VERSION_CODES.L)
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class OneCameraZslImpl extends AbstractOneCamera {
     private static final Tag TAG = new Tag("OneCameraZslImpl2");
 
@@ -1030,7 +1031,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 buffer = ByteBuffer.allocateDirect(img.getWidth() * img.getHeight() * 3);
             }
 
-            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img, buffer, JPEG_QUALITY,
+            int numBytes = JpegUtilNative.compressJpegFromYUV420Image(
+                    new AndroidImageProxy(img), buffer, JPEG_QUALITY,
                     degrees);
 
             if (numBytes < 0) {

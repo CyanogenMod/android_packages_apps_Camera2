@@ -18,6 +18,7 @@ package com.android.camera.processing;
 
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
 
@@ -27,8 +28,8 @@ import java.util.concurrent.Executor;
 public class TaskWriteImageToDisk extends TaskImageContainer {
 
     public TaskWriteImageToDisk(ImageProxy imageProxy, Executor executor,
-                                ImageBackend imageBackend) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW);
+                                ImageBackend imageBackend, CaptureSession captureSession) {
+        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
     }
 
     @Override

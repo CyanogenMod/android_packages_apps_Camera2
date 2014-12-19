@@ -21,6 +21,7 @@ import android.graphics.ImageFormat;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
 
@@ -33,8 +34,8 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
     private final static Log.Tag TAG = new Log.Tag("TaskChainJpg");
 
     TaskChainedCompressImageToJpeg(ImageProxy imageProxy, Executor executor,
-            ImageBackend imageBackend) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW);
+            ImageBackend imageBackend, CaptureSession captureSession) {
+        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
     }
 
     private void logWrapper(String message) {

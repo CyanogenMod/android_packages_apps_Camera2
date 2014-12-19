@@ -20,6 +20,7 @@ import android.media.Image;
 import android.net.Uri;
 
 import com.android.camera.debug.Log;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class ImageProcessorProxyListener implements ImageProcessorListener {
 
     // TODO: Return the state of the paired thing in processing
     public List<TaskImageContainer.TaskImage> registerListener(ImageProcessorListener listener,
-            Image image) {
+            ImageProxy image) {
         synchronized (mRegisteredListeners) {
             mRegisteredListeners.add(listener);
             if (image == null) {

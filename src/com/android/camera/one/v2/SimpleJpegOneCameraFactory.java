@@ -60,6 +60,7 @@ import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
+import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -163,6 +164,10 @@ public class SimpleJpegOneCameraFactory {
 
             // FIXME TODO Replace stub with real implementation
             ImageSaver.Builder imageSaverBuilder = new ImageSaver.Builder() {
+                @Override
+                public void setSession(CaptureSession session) {
+
+                }
 
                 @Override
                 public void setTitle(String title) {

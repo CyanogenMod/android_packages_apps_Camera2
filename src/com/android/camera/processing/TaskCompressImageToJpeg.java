@@ -19,20 +19,31 @@ package com.android.camera.processing;
 import android.graphics.ImageFormat;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
+import com.android.camera.util.JpegUtilNative;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 
 /**
- *  Implements the conversion of a YUV_420_888 image to compressed JPEG byte array,
- *  as a single two-step task: the first to copy from the image to NV21 memory layout,
- *  and the second to convert the image into JPEG, using the built-in Android compressor.
+ * Implements the conversion of a YUV_420_888 image to compressed JPEG byte
+ * array, using the native implementation of the Camera Application.
  */
 public class TaskCompressImageToJpeg extends TaskJpegEncode {
+    private static final int DEFAULT_JPEG_COMPRESSION_QUALITY = 90;
 
-    TaskCompressImageToJpeg(ImageProxy imageProxy, Executor executor, ImageBackend imageBackend) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW);
+    /**
+     * Constructor
+     *
+     * @param imageProxy Image required for computation
+     * @param executor Executor to run events
+     * @param imageBackend Link to ImageBackend for reference counting
+     * @param captureSession Handler for UI/Disk events
+     */
+    TaskCompressImageToJpeg(ImageProxy imageProxy, Executor executor, ImageBackend imageBackend,
+            CaptureSession captureSession) {
+        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
     }
 
     private void logWrapper(String message) {
@@ -46,35 +57,34 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         // TODO: Pass in the orientation for processing as well.
         final TaskImage inputImage = new TaskImage(
                 OrientationManager.DeviceOrientation.CLOCKWISE_0,
-                img.getWidth(),img.getHeight(),img.getFormat());
+                img.getWidth(), img.getHeight(), img.getFormat());
         final TaskImage resultImage = new TaskImage(
                 OrientationManager.DeviceOrientation.CLOCKWISE_0,
-                img.getWidth(),img.getHeight(),ImageFormat.JPEG);
+                img.getWidth(), img.getHeight(), ImageFormat.JPEG);
 
-        onStart(mId,inputImage,resultImage);
+        onStart(mId, inputImage, resultImage);
 
         logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.getWidth() + " h="
                 + img.getHeight() + " of format " + img.getFormat() + " (35==YUV_420_888)");
-        int[] strides = new int[3];
-        // Do the byte copy
-        strides[0] = img.getPlanes()[0].getRowStride() / img.getPlanes()[0].getPixelStride();
-        strides[1] = 2 * img.getPlanes()[1].getRowStride() / img.getPlanes()[1].getPixelStride();
-        strides[2] = 2 * img.getPlanes()[2].getRowStride() / img.getPlanes()[2].getPixelStride();
 
-        byte[] dataCopy = mImageBackend.getCache().cacheGet();
-        if (dataCopy == null) {
-            dataCopy = convertYUV420ImageToPackedNV21(img);
-        } else {
-            convertYUV420ImageToPackedNV21(img, dataCopy);
+        ByteBuffer compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
+                * resultImage.height);
+
+        int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img, compressedData,
+                DEFAULT_JPEG_COMPRESSION_QUALITY);
+
+        if (numBytes < 0) {
+            throw new RuntimeException("Error compressing jpeg.");
         }
-
+        compressedData.limit(numBytes);
+        byte[] writeOut = new byte[numBytes];
+        compressedData.get(writeOut);
+        compressedData.rewind();
         // Release the image now that you have a usable copy
         mImageBackend.releaseSemaphoreReference(img, mExecutor);
 
-        byte[] compressedData = convertNv21toJpeg(dataCopy, inputImage.width, inputImage.height,
-                strides);
-        mImageBackend.getCache().cacheSave(dataCopy);
-        onJpegEncodeDone(mId,inputImage,resultImage,compressedData);
-
+        mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height, 0, null, null);
+        onJpegEncodeDone(mId, inputImage, resultImage, writeOut);
     }
+
 }
