@@ -26,6 +26,7 @@ import android.view.Surface;
 
 import com.android.camera.async.CloseableHandlerThread;
 import com.android.camera.async.ConcurrentState;
+import com.android.camera.async.FilteredUpdatable;
 import com.android.camera.async.FutureResult;
 import com.android.camera.async.HandlerExecutor;
 import com.android.camera.async.Lifetime;
@@ -125,8 +126,9 @@ public class InitializedOneCameraFactory {
         // Since these values are interacted with by multiple threads, we can
         // use {@link ConcurrentState} to provide this functionality safely.
         final ConcurrentState<Float> zoomState = new ConcurrentState<>();
-        final ConcurrentState<OneCamera.FocusState> focusState = new ConcurrentState<>();
         final ConcurrentState<Integer> afState = new ConcurrentState<>();
+        final ConcurrentState<OneCamera.FocusState> focusState = new ConcurrentState<>();
+        final ConcurrentState<Integer> afMode = new ConcurrentState<>();
         final ConcurrentState<Boolean> readyState = new ConcurrentState<>();
         final ConcurrentState<Boolean> previewStartSuccessState = new ConcurrentState<>();
 
@@ -135,12 +137,17 @@ public class InitializedOneCameraFactory {
         Listenable<Integer> afStateListenable = new ListenableConcurrentState<>(afState,
                 mainThreadExecutor);
         Listenable<OneCamera.FocusState> focusStateListenable = new ListenableConcurrentState<>(
-                focusState,
-                mainThreadExecutor);
+                focusState, mainThreadExecutor);
         Listenable<Boolean> readyStateListenable = new ListenableConcurrentState<>(readyState,
                 mainThreadExecutor);
         Listenable<Boolean> previewStateListenable = new ListenableConcurrentState<>
                 (previewStartSuccessState, mainThreadExecutor);
+
+        // Wrap each value in a filter to ensure that only differences pass through.
+        final MetadataCallback metadataCallback = new MetadataCallback(
+                new FilteredUpdatable<>(afState),
+                new FilteredUpdatable<>(focusState),
+                new FilteredUpdatable<>(afMode));
 
         // The following handles the initialization sequence in which we receive
         // various dependencies at different times in the following sequence:
@@ -165,7 +172,7 @@ public class InitializedOneCameraFactory {
                         CameraStarter.CameraControls controls = mCameraStarter.startCamera(
                                 new Lifetime(cameraLifetime),
                                 session, previewSurface,
-                                zoomState, afState, readyState);
+                                zoomState, metadataCallback, readyState);
                         mPictureTaker.setValue(controls.getPictureTaker());
                         mManualAutoFocus.setValue(controls.getManualAutoFocus());
                     }
