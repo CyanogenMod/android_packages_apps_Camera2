@@ -37,8 +37,13 @@ public class BurstFacadeFactory {
 
     /**
      * An empty burst manager that is instantiated when burst is not supported.
+     * <p>
+     * It keeps a hold of the current surface texture so it can be used when
+     * burst is not enabled.
      */
     private static class BurstFacadeStub implements BurstFacade {
+        private SurfaceTexture mPreviewSurfaceTexture;
+
         @Override
         public void onCameraAttached(OneCamera camera) {
         }
@@ -63,6 +68,7 @@ public class BurstFacadeFactory {
 
         @Override
         public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height) {
+            mPreviewSurfaceTexture = surfaceTexture;
         }
 
         @Override
@@ -72,6 +78,8 @@ public class BurstFacadeFactory {
         @Override
         public void initializeSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int
                 surfaceWidth, int surfaceHeight) {
+            mPreviewSurfaceTexture = surfaceTexture;
+
         }
 
         @Override
@@ -88,7 +96,7 @@ public class BurstFacadeFactory {
 
         @Override
         public SurfaceTexture getInputSurfaceTexture() {
-            return null;
+            return mPreviewSurfaceTexture;
         }
 
         @Override
@@ -108,8 +116,12 @@ public class BurstFacadeFactory {
     public static BurstFacade create(Context appContext, OrientationManager orientationManager,
             BurstReadyStateChangeListener readyStateListener) {
         if (BurstControllerImpl.isBurstModeSupported(appContext)) {
-            return new BurstFacadeImpl(appContext, orientationManager, readyStateListener,
+            BurstFacade burstController = new BurstFacadeImpl(appContext, orientationManager,
+                    readyStateListener,
                     new FrameDistributorWrapper(), new SurfaceTextureConsumer());
+            ToastingBurstFacadeDecorator.BurstToaster toaster =
+                    new ToastingBurstFacadeDecorator.BurstToaster(appContext);
+            return new ToastingBurstFacadeDecorator(burstController, toaster);
         } else {
             // Burst is not supported return a stub instance.
             return new BurstFacadeStub();
