@@ -20,9 +20,21 @@ import com.android.camera.async.BufferQueue;
 import com.android.camera.async.BufferQueueController;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
-/**
- */
 public interface ImageDistributor {
-    void addRoute(BufferQueue<Long> inputTimestampBufferQueue,
-                  BufferQueueController<ImageProxy> outputStream);
+    /**
+     * Begins routing new images with timestamps matching those found in
+     * inputTimestampQueue to outputStream.
+     * <p>
+     * The route is removed when either inputTimestampQueue is closed, or
+     * outputStream is closed.
+     * <p>
+     * If multiple routes request the same image, they will both receive a
+     * reference-counted "copy".
+     *
+     * @param inputTimestampQueue A queue containing timestamps of all images to
+     *            be routed to outputStream.
+     * @param outputStream The output queue in which to add images.
+     */
+    void addRoute(BufferQueue<Long> inputTimestampQueue,
+            BufferQueueController<ImageProxy> outputStream);
 }

@@ -16,15 +16,15 @@
 
 package com.android.camera.one.v2.sharedimagereader.imagedistributor;
 
+import com.android.camera.async.BufferQueue;
+import com.android.camera.async.BufferQueueController;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.android.camera.async.BufferQueue;
-import com.android.camera.async.BufferQueueController;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 /**
  * Distributes incoming images to output {@link BufferQueueController}s
@@ -111,10 +111,12 @@ class ImageDistributorImpl implements ImageDistributor {
         List<BufferQueueController<ImageProxy>> streamsToReceiveImage = new ArrayList<>();
         Set<DispatchRecord> deadRecords = new HashSet<>();
 
-        for (DispatchRecord dispatchRecord : mDispatchTable) {
+        // mDispatchTable may be modified in {@link #addRoute} while iterating,
+        // so to avoid unnecessary locking, make a copy to iterate over.
+        Set<DispatchRecord> recordsToProcess = new HashSet<>(mDispatchTable);
+        for (DispatchRecord dispatchRecord : recordsToProcess) {
             // If either the input timestampBufferQueue or the output
-            // imageStream is closed,
-            // then the route can be removed.
+            // imageStream is closed, then the route can be removed.
             if (dispatchRecord.timestampBufferQueue.isClosed() ||
                     dispatchRecord.imageStream.isClosed()) {
                 deadRecords.add(dispatchRecord);
@@ -158,7 +160,7 @@ class ImageDistributorImpl implements ImageDistributor {
      */
     @Override
     public void addRoute(BufferQueue<Long> inputTimestampBufferQueue,
-                         BufferQueueController<ImageProxy> outputStream) {
+            BufferQueueController<ImageProxy> outputStream) {
         mDispatchTable.add(new DispatchRecord(inputTimestampBufferQueue, outputStream));
     }
 }
