@@ -19,6 +19,7 @@ package com.android.camera.session;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
@@ -54,28 +55,39 @@ public class PlaceholderManager {
         mContext = context;
     }
 
+    /**
+     * Inserts a new placeholder into the filmstrip.
+     *
+     * @param title the title of the item
+     * @param placeholder the initial thumbnail to show for this placeholder
+     * @param timestamp the timestamp of the placeholder (used for ordering
+     *            within the filmstrip). Millis since epoch.
+     * @return A session instance representing the new placeholder.
+     */
+    public Session insertPlaceholder(String title, Bitmap placeholder, long timestamp) {
+        if (title == null || placeholder == null) {
+            throw new IllegalArgumentException("Null argument passed to insertPlaceholder");
+        }
+
+        if (placeholder.getWidth() <= 0 || placeholder.getHeight() <= 0) {
+            throw new IllegalArgumentException("Image had bad height/width");
+        }
+
+        Uri uri =  Storage.addPlaceholder(placeholder);
+        if (uri == null) {
+            return null;
+        }
+        return new Session(title, uri, timestamp);
+    }
+
     public Session insertPlaceholder(String title, byte[] placeholder, long timestamp) {
         if (title == null || placeholder == null) {
             throw new IllegalArgumentException("Null argument passed to insertPlaceholder");
         }
 
-        // Decode bounds
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(placeholder, 0, placeholder.length, options);
-        int width = options.outWidth;
-        int height = options.outHeight;
-
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Image had bad height/width");
-        }
-
-        Uri uri =
-                Storage.addPlaceholder(placeholder, width, height);
-        if (uri == null) {
-            return null;
-        }
-        return new Session(title, uri, timestamp);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(placeholder, 0, placeholder.length, options);
+        return insertPlaceholder(title, bitmap, timestamp);
     }
 
     /**
@@ -103,9 +115,9 @@ public class PlaceholderManager {
      * @return The content URI of the new media item.
      */
     public Uri finishPlaceholder(Session session, Location location, int orientation,
-                                 ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
-
-        Uri resultUri = Storage.updateImage(session.outputUri, mContext.getContentResolver(), session.outputTitle,
+            ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
+        Uri resultUri = Storage.updateImage(session.outputUri, mContext.getContentResolver(),
+                session.outputTitle,
                 session.time, location, orientation, exif, jpeg, width, height, mimeType);
         CameraUtil.broadcastNewPicture(mContext, resultUri);
         return resultUri;
@@ -115,15 +127,10 @@ public class PlaceholderManager {
      * This changes the temporary placeholder jpeg without writing it to the media store
      *
      * @param session the session to update
-     * @param jpeg the new placeholder bytes
-     * @param width the width of the image
-     * @param height the height of the image
+     * @param placeholder the placeholder bitmap
      */
-    public void replacePlaceholder(Session session,
-                                   byte[] jpeg, int width, int height) {
-
-        Storage.replacePlaceholder(session.outputUri,
-                jpeg, width, height);
+    public void replacePlaceholder(Session session, Bitmap placeholder) {
+        Storage.replacePlaceholder(session.outputUri, placeholder);
         CameraUtil.broadcastNewPicture(mContext, session.outputUri);
     }
 

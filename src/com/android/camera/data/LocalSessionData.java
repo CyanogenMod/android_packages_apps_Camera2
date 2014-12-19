@@ -17,6 +17,7 @@
 package com.android.camera.data;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -70,10 +71,10 @@ public class LocalSessionData implements LocalData {
             imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 
-        byte[] jpegData = Storage.getJpegForSession(mUri);
-        int currentVersion = Storage.getJpegVersionForSession(mUri);
+        Bitmap placeholder = Storage.getPlacerHolderForSession(mUri);
+        int currentVersion = Storage.getPlacerHolderVersionForSession(mUri);
         Glide.with(context)
-            .load(jpegData)
+            .load(placeholder)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .signature(new StringSignature(mUri.toString() + currentVersion))
             .fitCenter()

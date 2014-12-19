@@ -18,6 +18,7 @@ package com.android.camera;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
@@ -55,12 +56,11 @@ public class Storage {
     public static final String CAMERA_SESSION_SCHEME = "camera_session";
     private static final Log.Tag TAG = new Log.Tag("Storage");
     private static final String GOOGLE_COM = "google.com";
-    private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<Uri, Uri>();
-    private static HashMap<Uri, Uri> sContentUrisToSessions = new HashMap<Uri, Uri>();
-    private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();
-    private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<Uri, Point>();
-    private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions =
-        new HashMap<Uri, Integer>();
+    private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<>();
+    private static HashMap<Uri, Uri> sContentUrisToSessions = new HashMap<>();
+    private static HashMap<Uri, Bitmap> sSessionsToPlaceholderBitmap = new HashMap<>();
+    private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<>();
+    private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions = new HashMap<>();
 
     /**
      * Save the image with default JPEG MIME type and add it to the MediaStore.
@@ -187,34 +187,33 @@ public class Storage {
 
     /**
      * Add a placeholder for a new image that does not exist yet.
-     * @param jpeg the bytes of the placeholder image
-     * @param width the image's width
-     * @param height the image's height
+     *
+     * @param placeholder the placeholder image
      * @return A new URI used to reference this placeholder
      */
-    public static Uri addPlaceholder(byte[] jpeg, int width, int height) {
+    public static Uri addPlaceholder(Bitmap placeholder) {
         Uri uri;
         Uri.Builder builder = new Uri.Builder();
         String uuid = UUID.randomUUID().toString();
         builder.scheme(CAMERA_SESSION_SCHEME).authority(GOOGLE_COM).appendPath(uuid);
         uri = builder.build();
 
-        replacePlaceholder(uri, jpeg, width, height);
+        replacePlaceholder(uri, placeholder);
         return uri;
     }
 
     /**
      * Add or replace placeholder for a new image that does not exist yet.
-     * @param uri the uri of the placeholder to replace, or null if this is a new one
-     * @param jpeg the bytes of the placeholder image
-     * @param width the image's width
-     * @param height the image's height
+     *
+     * @param uri the uri of the placeholder to replace, or null if this is a
+     *            new one
+     * @param placeholder the placeholder image
      * @return A URI used to reference this placeholder
      */
-    public static void replacePlaceholder(Uri uri, byte[] jpeg, int width, int height) {
-        Point size = new Point(width, height);
+    public static void replacePlaceholder(Uri uri, Bitmap placeholder) {
+        Point size = new Point(placeholder.getWidth(), placeholder.getHeight());
         sSessionsToSizes.put(uri, size);
-        sSessionsToPlaceholderBytes.put(uri, jpeg);
+        sSessionsToPlaceholderBitmap.put(uri, placeholder);
         Integer currentVersion = sSessionsToPlaceholderVersions.get(uri);
         sSessionsToPlaceholderVersions.put(uri, currentVersion == null ? 0 : currentVersion + 1);
     }
@@ -376,8 +375,8 @@ public class Storage {
      * @param uri the session uri to look up
      * @return The jpeg bytes or null
      */
-    public static byte[] getJpegForSession(Uri uri) {
-        return sSessionsToPlaceholderBytes.get(uri);
+    public static Bitmap getPlacerHolderForSession(Uri uri) {
+        return sSessionsToPlaceholderBitmap.get(uri);
     }
 
     /**
@@ -387,7 +386,7 @@ public class Storage {
      * @param uri the session uri to look up.
      * @return the current version int.
      */
-    public static int getJpegVersionForSession(Uri uri) {
+    public static int getPlacerHolderVersionForSession(Uri uri) {
         return sSessionsToPlaceholderVersions.get(uri);
     }
 

@@ -31,7 +31,6 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -2763,12 +2762,7 @@ public class CameraActivity extends QuickActivity
             final Bitmap bitmap;
             switch (data.getLocalDataType()) {
                 case LocalData.LOCAL_IN_PROGRESS_DATA:
-                    byte[] jpegData = Storage.getJpegForSession(data.getUri());
-                    if (jpegData != null) {
-                        bitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
-                    } else {
-                        bitmap = null;
-                    }
+                    bitmap = Storage.getPlacerHolderForSession(data.getUri());
                     break;
 
                 case LocalData.LOCAL_IMAGE:

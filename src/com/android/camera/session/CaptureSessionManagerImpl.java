@@ -17,6 +17,7 @@
 package com.android.camera.session;
 
 import android.content.ContentResolver;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
@@ -321,13 +322,9 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                     final byte[] jpegData = jpegDataTemp;
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = true;
-                    BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length, options);
-                    int width = options.outWidth;
-                    int height = options.outHeight;
-
-                    mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, jpegData, width,
-                            height);
+                    Bitmap placeholder = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length,
+                            options);
+                    mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, placeholder);
                     onPreviewAvailable();
                 }
             });
