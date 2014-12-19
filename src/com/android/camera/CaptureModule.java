@@ -265,7 +265,7 @@ public class CaptureModule extends CameraModule
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
 
-        BurstFacade burstController = BurstFacadeFactory.create(mContext, mAppController
+        mBurstController = BurstFacadeFactory.create(mContext, mAppController
                 .getOrientationManager(), new BurstReadyStateChangeListener() {
             @Override
             public void onBurstReadyStateChanged(boolean ready) {
@@ -274,8 +274,6 @@ public class CaptureModule extends CameraModule
                 mAppController.setShutterEnabled(ready);
             }
         });
-        BurstToaster toaster = new BurstToaster(appController.getAndroidContext());
-        mBurstController = new ToastingBurstFacadeDecorator(burstController, toaster);
     }
 
     @Override
@@ -543,6 +541,10 @@ public class CaptureModule extends CameraModule
         }
     }
 
+    private SurfaceTexture getPreviewSurfaceTexture() {
+        return mBurstController.getInputSurfaceTexture();
+    }
+
     private void updateFrameDistributorBufferSize() {
         mBurstController.updatePreviewBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
     }
@@ -580,7 +582,9 @@ public class CaptureModule extends CameraModule
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
         // have to open the camera and start the preview here.
-        initSurfaceTextureConsumer();
+        if (getPreviewSurfaceTexture() != null) {
+            initSurfaceTextureConsumer();
+        }
 
         mSoundPlayer.loadSound(R.raw.timer_final_second);
         mSoundPlayer.loadSound(R.raw.timer_increment);
@@ -1238,6 +1242,7 @@ public class CaptureModule extends CameraModule
             mCameraOpenCloseLock.release();
             return;
         }
+
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
         Size pictureSize = getPictureSizeFromSettings();
@@ -1272,14 +1277,13 @@ public class CaptureModule extends CameraModule
                         mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
                         Log.d(TAG, "starting preview ...");
 
-
                         // TODO: make mFocusController final and remove null check.
                         if (mFocusController != null) {
                             camera.setFocusDistanceListener(mFocusController);
                         }
 
                         // TODO: Consider rolling these two calls into one.
-                        camera.startPreview(new Surface(mBurstController.getInputSurfaceTexture()),
+                        camera.startPreview(new Surface(getPreviewSurfaceTexture()),
                                 new CaptureReadyCallback() {
                                     @Override
                                     public void onSetupFailed() {
