@@ -26,9 +26,9 @@ import com.android.camera.one.v2.core.RequestBuilder;
  * {@link com.android.camera.one.v2.core.RequestBuilder}s.
  */
 public class CameraDeviceRequestBuilderFactory implements RequestBuilder.Factory {
-    private final CameraDevice mCameraDevice;
+    private final CameraDeviceProxy mCameraDevice;
 
-    public CameraDeviceRequestBuilderFactory(CameraDevice cameraDevice) {
+    public CameraDeviceRequestBuilderFactory(CameraDeviceProxy cameraDevice) {
         mCameraDevice = cameraDevice;
     }
 

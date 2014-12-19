@@ -23,7 +23,7 @@ import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
-import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
+import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 /**
  * Executes camera commands on a thread pool.
@@ -40,12 +40,20 @@ public class CameraCommandExecutor implements SafeCloseable {
         public void run() {
             try {
                 mCommand.run();
+            } catch (ResourceAcquisitionFailedException e) {
+                // This may indicate that the command would have otherwise
+                // deadlocked waiting for resources which can never be acquired,
+                // or the command was aborted because the necessary resources
+                // will never be available because the system is shutting down.
+                e.printStackTrace();
             } catch (InterruptedException e) {
-                // If interrupted, just return.
+                // If interrupted, just return because the system is shutting
+                // down.
             } catch (CameraAccessException e) {
                 // If the camera was closed and the command failed, just return.
             } catch (CameraCaptureSessionClosedException e) {
-                // If the session was closed and the command failed, just return.
+                // If the session was closed and the command failed, just
+                // return.
             }
         }
     }
@@ -67,6 +75,10 @@ public class CameraCommandExecutor implements SafeCloseable {
 
     @Override
     public void close() {
+        // Shutdown immediately by interrupting all currently-executing
+        // commands. Sending an interrupt is critical since commands may be
+        // waiting for results from the camera device which will never arrive,
+        // or for resources which may no longer be acquired.
         mExecutor.shutdownNow();
     }
 }

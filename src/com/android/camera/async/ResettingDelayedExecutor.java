@@ -43,6 +43,7 @@ public class ResettingDelayedExecutor implements Executor, SafeCloseable {
         mDelay = delay;
         mDelayUnit = delayUnit;
         mLock = new Object();
+        mClosed = false;
     }
 
     @Override
@@ -66,6 +67,7 @@ public class ResettingDelayedExecutor implements Executor, SafeCloseable {
             if (mClosed) {
                 return;
             }
+            mClosed = true;
             mExecutor.shutdownNow();
         }
     }

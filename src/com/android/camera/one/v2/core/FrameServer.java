@@ -17,10 +17,10 @@
 package com.android.camera.one.v2.core;
 
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import android.hardware.camera2.CameraAccessException;
 
+import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 
 /**
@@ -31,10 +31,34 @@ import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedExceptio
  * a nonexclusive session which allows other clients to access the camera
  * between subsequent requests.
  */
-public class FrameServer {
+public interface FrameServer {
     /**
-     * Indicates that the session has been closed already, via
-     * {@link Session#close} and no more requests may be submitted.
+     * A Session enables submitting multiple Requests for frames.
+     */
+    public interface Session extends SafeCloseable {
+        /**
+         * Submits the given request, blocking until the following conditions
+         * are met:
+         * <ul>
+         * <li>Resources are allocated for the request.</li>
+         * <li>Any existing exclusive session (other than this one) is closed.</li>
+         * </ul>
+         *
+         * @param burstRequests The request to submit to the camera device.
+         * @throws java.lang.InterruptedException if interrupted before the
+         *             request is be submitted.
+         */
+        public void submitRequest(List<Request> burstRequests, RequestType type)
+                throws CameraAccessException, InterruptedException,
+                CameraCaptureSessionClosedException, ResourceAcquisitionFailedException;
+
+        @Override
+        public void close();
+    }
+
+    /**
+     * Indicates that a session has been closed already, via
+     * {@link FrameServer.Session#close} and no more requests may be submitted.
      */
     public static class SessionClosedException extends RuntimeException {
     }
@@ -48,82 +72,6 @@ public class FrameServer {
     }
 
     /**
-     * A Session enables submitting multiple Requests for frames.
-     */
-    public class Session implements AutoCloseable {
-        private final boolean mExclusive;
-        private boolean mClosed;
-
-        private Session(boolean exclusive) {
-            mExclusive = exclusive;
-            mClosed = false;
-        }
-
-        /**
-         * Submits the given request, blocking until the following conditions
-         * are met:
-         * <ul>
-         * <li>Resources are allocated for the request.</li>
-         * <li>Any existing exclusive session (other than this one) is closed.</li>
-         * </ul>
-         *
-         * @param burstRequests The request to submit to the camera device.
-         * @throws java.lang.InterruptedException if interrupted before the
-         *             request is be submitted.
-         */
-        public synchronized void submitRequest(List<Request> burstRequests, RequestType type)
-                throws CameraAccessException, InterruptedException,
-                CameraCaptureSessionClosedException {
-            try {
-                if (mClosed) {
-                    throw new SessionClosedException();
-                }
-
-                // Exclusive sessions already own this lock. Non-exclusive must
-                // acquire it here, for each request.
-                if (!mExclusive) {
-                    mCameraLock.acquire();
-                }
-                try {
-                    mCaptureSession.submitRequest(burstRequests, type.isRepeating());
-                } finally {
-                    if (!mExclusive) {
-                        mCameraLock.release();
-                    }
-                }
-            } catch (Exception e) {
-                for (Request r : burstRequests) {
-                    r.abort();
-                }
-                throw e;
-            }
-        }
-
-        @Override
-        public void close() {
-            if (mClosed) {
-                return;
-            } else {
-                mClosed = true;
-
-                if (mExclusive) {
-                    mCameraLock.release();
-                }
-            }
-        }
-    }
-
-    private final TagDispatchCaptureSession mCaptureSession;
-    private final Semaphore mCameraLock;
-    private boolean mClosed;
-
-    public FrameServer(TagDispatchCaptureSession captureSession) {
-        mCaptureSession = captureSession;
-        mCameraLock = new Semaphore(1);
-        mClosed = false;
-    }
-
-    /**
      * Creates a non-exclusive session. If there are no exclusive sessions
      * currently open, this returns immediately. Otherwise, it will block until
      * the existing exclusive session closes.
@@ -131,10 +79,7 @@ public class FrameServer {
      * @return A new session which may be used to interact with the underlying
      *         camera.
      */
-    public Session createSession() {
-        // false indicates a nonexclusive session.
-        return new Session(false);
-    }
+    public Session createSession();
 
     /**
      * Creates an exclusive session.
@@ -154,23 +99,11 @@ public class FrameServer {
      * @return A new session which may be used to interact with the underlying
      *         camera.
      */
-    public Session createExclusiveSession() throws InterruptedException {
-        mCameraLock.acquire();
-        // true indicates a nonexclusive session, which now owns {@link
-        // mCameraLock}.
-        return new Session(true);
-    }
+    public Session createExclusiveSession() throws InterruptedException;
 
     /**
      * Like {@link #createExclusiveSession}, but returns null instead of
      * blocking if the session cannot be created immediately.
      */
-    public Session tryCreateExclusiveSession() {
-        if (mCameraLock.tryAcquire()) {
-            return new Session(true);
-        } else {
-            return null;
-        }
-    }
-
+    public Session tryCreateExclusiveSession();
 }

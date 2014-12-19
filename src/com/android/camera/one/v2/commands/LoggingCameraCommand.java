@@ -20,6 +20,7 @@ import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
+import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 /**
  * Wraps a {@link CameraCommand} with logging.
@@ -29,14 +30,9 @@ public class LoggingCameraCommand implements CameraCommand {
     private final CameraCommand mCommand;
     private final String mName;
 
-    public LoggingCameraCommand(CameraCommand command, String name) {
-        mCommand = command;
-        mName = name;
-    }
-
     @Override
     public void run() throws InterruptedException, CameraAccessException,
-            CameraCaptureSessionClosedException {
+            CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
         Log.v(TAG, String.format("Executing Command: %s: START", mName));
         try {
             mCommand.run();
@@ -46,5 +42,10 @@ public class LoggingCameraCommand implements CameraCommand {
             throw e;
         }
         Log.v(TAG, String.format("Executing Command: %s: END", mName));
+    }
+
+    public LoggingCameraCommand(CameraCommand command, String name) {
+        mCommand = command;
+        mName = name;
     }
 }

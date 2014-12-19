@@ -35,7 +35,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * leaking managed resources which might otherwise be left dangling in the
  * queue.
  */
-public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueController<T>, SafeCloseable {
+public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueController<T>,
+        SafeCloseable {
+    /**
+     * A callback to be invoked with all of the elements of the sequence which
+     * are added but never retrieved via {@link #getNext}.
+     */
+    public static interface UnusedElementProcessor<T> {
+        /**
+         * Implementations should properly close the discarded element, if
+         * necessary.
+         */
+        public void process(T element);
+    }
+
     /**
      * An entry can either be a {@link T} or a special "poison-pill" marker
      * indicating that the sequence has been closed.
@@ -57,7 +70,6 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
             return mValue;
         }
     }
-
     /**
      * Lock used for mQueue modification and mClosed.
      */
@@ -76,14 +88,10 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
      */
     private final UnusedElementProcessor<T> mUnusedElementProcessor;
 
-    /**
-     * @param unusedElementProcessor A callback to process elements which are
-     *            never retrieved via {@link #getNext}.
-     */
     public ConcurrentBufferQueue(UnusedElementProcessor<T> unusedElementProcessor) {
+        mUnusedElementProcessor = unusedElementProcessor;
         mLock = new Object();
         mQueue = new LinkedBlockingQueue<>();
-        mUnusedElementProcessor = unusedElementProcessor;
         mClosed = new AtomicBoolean();
     }
 
@@ -143,16 +151,10 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
         }
     }
 
-    @Override
-    public T getNext() throws InterruptedException, BufferQueueClosedException {
-        if (mClosed.get()) {
-            throw new BufferQueueClosedException();
-        }
-        Entry<T> nextEntry = mQueue.take();
+    private T doWithNextEntry(Entry<T> nextEntry) throws BufferQueueClosedException {
         if (nextEntry.isClosingMarker()) {
-            // Always keep a poisson-pill in the queue to avoid a race condition
-            // in which a
-            // thread reaches the mQueue.take() call after close().
+            // Always keep a poison-pill in the queue to avoid a race condition
+            // in which a thread reaches the mQueue.take() call after close().
             mQueue.add(nextEntry);
             throw new BufferQueueClosedException();
         } else {
@@ -161,19 +163,16 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
     }
 
     @Override
+    public T getNext() throws InterruptedException, BufferQueueClosedException {
+        Entry<T> nextEntry = mQueue.take();
+        return doWithNextEntry(nextEntry);
+    }
+
+    @Override
     public T getNext(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException,
             BufferQueueClosedException {
-        if (mClosed.get()) {
-            throw new BufferQueueClosedException();
-        }
         Entry<T> nextEntry = mQueue.poll(timeout, unit);
-        if (nextEntry.isClosingMarker()) {
-            // Always keep a poisson-pill in the queue to avoid a race condition
-            // in which a thread reaches the mQueue.take() call after close().
-            mQueue.add(nextEntry);
-            throw new BufferQueueClosedException();
-        }
-        return nextEntry.getValue();
+        return doWithNextEntry(nextEntry);
     }
 
     @Override
@@ -192,11 +191,12 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
     public void discardNext() {
         try {
             Entry<T> nextEntry = mQueue.remove();
-            if (!nextEntry.isClosingMarker()) {
-                // Always keep a poisson-pill in the queue to avoid a race
+            if (nextEntry.isClosingMarker()) {
+                // Always keep a poison-pill in the queue to avoid a race
                 // condition in which a thread reaches the mQueue.take() call
                 // after close().
                 mQueue.add(nextEntry);
+            } else {
                 mUnusedElementProcessor.process(nextEntry.getValue());
             }
         } catch (NoSuchElementException e) {
@@ -216,17 +216,5 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
 
     private Entry makeClosingMarker() {
         return new Entry(null, true);
-    }
-
-    /**
-     * A callback to be invoked with all of the elements of the sequence which
-     * are added but never retrieved via {@link #getNext}.
-     */
-    public static interface UnusedElementProcessor<T> {
-        /**
-         * Implementations should properly close the discarded element, if
-         * necessary.
-         */
-        public void process(T element);
     }
 }

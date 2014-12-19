@@ -27,7 +27,7 @@ import android.hardware.camera2.TotalCaptureResult;
  * Combines multiple {@link ResponseListener}s into a single one which
  * dispatches to all listeners for each callback.
  */
-public class ResponseListenerBroadcaster extends ResponseListener {
+class ResponseListenerBroadcaster extends ResponseListener {
     private final List<ResponseListener> mListeners;
 
     public ResponseListenerBroadcaster(List<ResponseListener> listeners) {

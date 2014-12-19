@@ -16,6 +16,8 @@
 
 package com.android.camera.one.v2.core;
 
+import android.hardware.camera2.CaptureRequest;
+
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
 
 /**
@@ -33,17 +35,17 @@ public interface Request {
      * ImageReader to ensure that the image can be saved when the request
      * completes.
      *
-     * @return The a proxy to a
-     *         {@link android.hardware.camera2.CaptureRequest.Builder} to build
-     *         the {@link android.hardware.camera2.CaptureRequest} to be sent.
+     * @return The a proxy to an android {@link CaptureRequest.Builder} to build
+     *         the {@link CaptureRequest} to be sent.
      * @throws InterruptedException if interrupted while blocking for resources
      *             to become available.
      */
-    public CaptureRequestBuilderProxy allocateCaptureRequest() throws InterruptedException;
+    public CaptureRequestBuilderProxy allocateCaptureRequest() throws InterruptedException,
+            ResourceAcquisitionFailedException;
 
     /**
-     * @return The {@link ResponseListener} to
-     *         receive events related to this request.
+     * @return The {@link ResponseListener} to receive events related to this
+     *         request.
      */
     public ResponseListener getResponseListener();
 

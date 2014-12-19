@@ -29,8 +29,14 @@ import com.android.camera.async.Pollable;
 
 /**
  * A {@link RequestBuilder.Factory} which allows modifying each
- * {@link RequestBuilder} that is created. <br>
- * TODO Write Tests
+ * {@link RequestBuilder} that is created.
+ * <p>
+ * This allows for easily factoring-out parameters, surfaces, and metadata logic
+ * which applies to multiple different components.
+ * <p>
+ * For example, a RequestBuilder.Factory could be created which produces request
+ * builders which already have the latest zoom settings, preview surface,
+ * metering regions, auto-focus state listener, etc. applied.
  */
 public class DecoratingRequestBuilderBuilder implements RequestBuilder.Factory {
     private static class Parameter<T> {
@@ -67,17 +73,27 @@ public class DecoratingRequestBuilderBuilder implements RequestBuilder.Factory {
         return withParam(key, new ConstantPollable<T>(value));
     }
 
+    /**
+     * Attaches the given value to all derived RequestBuilders. Note that the
+     * value is polled when each new RequestBuilder is created.
+     */
     public <T> DecoratingRequestBuilderBuilder withParam(CaptureRequest.Key<T> key,
             Pollable<T> value) {
         mParameters.add(new Parameter<T>(key, value));
         return this;
     }
 
+    /**
+     * Attaches the given ResponseListener to all derived RequestBuilders.
+     */
     public DecoratingRequestBuilderBuilder withResponseListener(ResponseListener listener) {
         mResponseListeners.add(listener);
         return this;
     }
 
+    /**
+     * Attaches the given stream to all derived RequestBuilders.
+     */
     public DecoratingRequestBuilderBuilder withStream(CaptureStream stream) {
         mCaptureStreams.add(stream);
         return this;
