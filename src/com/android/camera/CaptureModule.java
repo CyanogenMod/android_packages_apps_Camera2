@@ -602,9 +602,11 @@ public class CaptureModule extends CameraModule
 
         if (mFirstRunDialog.shouldShow()) {
             mFirstRunDialog.setListener(new FirstRunDialog.FirstRunDialogListener() {
+                @Override
                 public void onLocationPreferenceConfirmed(boolean locationRecordingEnabled) {
                 }
 
+                @Override
                 public void onAspectRatioPreferenceConfirmed(Rational chosenAspectRatio) {
                     // Open the camera. This dialog will be dismissed in onPreviewStarted() after
                     // preview is started.
@@ -1238,6 +1240,12 @@ public class CaptureModule extends CameraModule
             }
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
+        }
+        if (mCameraManager == null) {
+            Log.e(TAG, "no available OneCameraManager, showing error dialog");
+            mCameraOpenCloseLock.release();
+            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            return;
         }
         if (mCamera != null) {
             // If the camera is already open, do nothing.
