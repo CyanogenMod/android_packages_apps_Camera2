@@ -27,8 +27,6 @@ import android.widget.ImageView;
 import com.android.camera.Storage;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.signature.StringSignature;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -72,14 +70,7 @@ public class LocalSessionData implements LocalData {
         }
 
         Bitmap placeholder = Storage.getPlacerHolderForSession(mUri);
-        int currentVersion = Storage.getPlacerHolderVersionForSession(mUri);
-        Glide.with(context)
-            .load(placeholder)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .signature(new StringSignature(mUri.toString() + currentVersion))
-            .fitCenter()
-            .into(imageView);
-
+        imageView.setImageBitmap(placeholder);
         imageView.setContentDescription(context.getResources().getString(
                 R.string.media_processing_content_description));
         return imageView;
