@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -41,13 +42,18 @@ public class ReservableTicketPool implements TicketPool, SafeCloseable {
      */
     private class TicketImpl implements Ticket {
         private final Ticket mParentTicket;
+        private final AtomicBoolean mClosed;
 
         private TicketImpl(Ticket parentTicket) {
             mParentTicket = parentTicket;
+            mClosed = new AtomicBoolean(false);
         }
 
         @Override
         public void close() {
+            if (mClosed.getAndSet(true)) {
+                return;
+            }
             boolean releaseToParent;
             mLock.lock();
             try {

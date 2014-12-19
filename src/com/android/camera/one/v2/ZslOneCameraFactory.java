@@ -16,11 +16,6 @@
 
 package com.android.camera.one.v2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
@@ -68,6 +63,11 @@ import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 import com.android.camera.util.Size;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Creates a camera which takes YUV images with zero shutter lag.
@@ -194,8 +194,22 @@ public class ZslOneCameraFactory {
                 public ImageSaver build() {
                     return new ImageSaver() {
                         @Override
-                        public void saveAndCloseImage(ImageProxy imageProxy) {
-                            imageProxy.close();
+                        public void saveAndCloseImage(final ImageProxy imageProxy) {
+                            // Fake implementation which sleeps for 2 seconds before closing the
+                            // image
+                            Executors.newCachedThreadPool().submit(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Thread.sleep(2000);
+                                    } catch (InterruptedException e) {
+                                        // Impossible exception.
+                                        throw new RuntimeException(e);
+                                    } finally {
+                                        imageProxy.close();
+                                    }
+                                }
+                            });
                         }
                     };
                 }

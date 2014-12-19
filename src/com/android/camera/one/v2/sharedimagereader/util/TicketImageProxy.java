@@ -20,19 +20,26 @@ import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Combines an {@link ImageProxy} with a {@link Ticket}.
  */
 public class TicketImageProxy extends ForwardingImageProxy {
     private final Ticket mTicket;
+    private final AtomicBoolean mClosed;
 
     public TicketImageProxy(ImageProxy image, Ticket ticket) {
         super(image);
         mTicket = ticket;
+        mClosed = new AtomicBoolean(false);
     }
 
     @Override
     public void close() {
+        if (mClosed.getAndSet(true)) {
+            return;
+        }
         // The ticket must be closed *after* the image is closed to avoid a race
         // condition here in which another image is reserved before this one is
         // actually released.
