@@ -121,7 +121,7 @@ public class CaptureModule extends CameraModule
                 int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
-            mPreviewConsumer.setSize(width, height);
+            mBurstController.setPreviewConsumerSize(width, height);
             updatePreviewTransform(width, height, false);
         }
     };
@@ -246,11 +246,6 @@ public class CaptureModule extends CameraModule
     /** TODO: This is N5 specific. */
     public static final float FULLSCREEN_ASPECT_RATIO = 16 / 9f;
 
-    /** Used to distribute camera frames to consumers. */
-    private final FrameDistributorWrapper mFrameDistributor;
-
-    /** The frame consumer that renders frames to the preview. */
-    private final SurfaceTextureConsumer mPreviewConsumer;
 
     /** The burst manager for controlling the burst. */
     private final BurstFacade mBurstController;
@@ -270,8 +265,6 @@ public class CaptureModule extends CameraModule
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
 
-        mPreviewConsumer = new SurfaceTextureConsumer();
-        mFrameDistributor = new FrameDistributorWrapper();
         BurstFacade burstController = BurstFacadeFactory.create(mContext, mAppController
                 .getOrientationManager(), new BurstReadyStateChangeListener() {
             @Override
@@ -306,7 +299,7 @@ public class CaptureModule extends CameraModule
         mFocusController = new FocusController(mUI.getFocusRing(), focusSound, mMainHandler);
 
         // Set the preview texture from UI for the SurfaceTextureConsumer.
-        mPreviewConsumer.setSurfaceTexture(
+        mBurstController.setSurfaceTexture(
                 mAppController.getCameraAppUI().getSurfaceTexture(),
                 mAppController.getCameraAppUI().getSurfaceWidth(),
                 mAppController.getCameraAppUI().getSurfaceHeight());
@@ -504,23 +497,6 @@ public class CaptureModule extends CameraModule
         initSurfaceTextureConsumer(surface, width, height);
     }
 
-    private void initSurfaceTextureConsumer(SurfaceTexture surface, int width, int height) {
-        if (mPreviewConsumer.getSurfaceTexture() != surface) {
-            mPreviewConsumer.setSurfaceTexture(surface, width, height);
-        } else if (mPreviewConsumer.getWidth() != width
-                || mPreviewConsumer.getHeight() != height) {
-            mPreviewConsumer.setSize(width, height);
-        }
-
-        // Don't open camera until the aspect ratio preference is set.
-        final boolean isAspectRatioPreferenceSet = mAppController.getSettingsManager().getBoolean(
-                SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
-        if (isAspectRatioPreferenceSet) {
-            closeCamera();
-            openCameraAndStartPreview();
-        }
-    }
-
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         Log.d(TAG, "onSurfaceTextureSizeChanged");
@@ -545,17 +521,30 @@ public class CaptureModule extends CameraModule
         }
     }
 
-    private void initializeFrameDistributor() {
-        // Currently, there is only one consumer to FrameDistributor for
-        // rendering the frames to the preview texture.
-        List<FrameConsumer> frameConsumers = new ArrayList<FrameConsumer>();
-        frameConsumers.add(mBurstController.getPreviewFrameConsumer());
-        frameConsumers.add(mPreviewConsumer);
-        mFrameDistributor.start(frameConsumers);
+    private void initSurfaceTextureConsumer() {
+        mBurstController.initializeSurfaceTextureConsumer(
+                mAppController.getCameraAppUI().getSurfaceWidth(),
+                mAppController.getCameraAppUI().getSurfaceHeight());
+        reopenCamera();
+    }
+
+    private void initSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int width, int height) {
+        mBurstController.initializeSurfaceTextureConsumer(surfaceTexture, width, height);
+        reopenCamera();
+    }
+
+    private void reopenCamera() {
+        // Don't open camera until the aspect ratio preference is set.
+        final boolean isAspectRatioPreferenceSet = mAppController.getSettingsManager().getBoolean(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
+        if (isAspectRatioPreferenceSet) {
+            closeCamera();
+            openCameraAndStartPreview();
+        }
     }
 
     private void updateFrameDistributorBufferSize() {
-        mFrameDistributor.updatePreviewBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
+        mBurstController.updatePreviewBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
     }
 
     @Override
@@ -568,7 +557,7 @@ public class CaptureModule extends CameraModule
         mPaused = false;
         mAppController.getCameraAppUI().onChangeCamera();
         mAppController.addPreviewAreaSizeChangedListener(this);
-        initializeFrameDistributor();
+        mBurstController.initializeAndStartFrameDistributor();
         updateFrameDistributorBufferSize();
         getServices().getRemoteShutterListener().onModuleReady(this);
         // TODO: Check if we can really take a photo right now (memory, camera
@@ -591,11 +580,7 @@ public class CaptureModule extends CameraModule
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
         // have to open the camera and start the preview here.
-        if (mPreviewConsumer.getSurfaceTexture() != null) {
-            initSurfaceTextureConsumer(mPreviewConsumer.getSurfaceTexture(),
-                    mAppController.getCameraAppUI().getSurfaceWidth(),
-                    mAppController.getCameraAppUI().getSurfaceHeight());
-        }
+        initSurfaceTextureConsumer();
 
         mSoundPlayer.loadSound(R.raw.timer_final_second);
         mSoundPlayer.loadSound(R.raw.timer_increment);
@@ -623,7 +608,7 @@ public class CaptureModule extends CameraModule
         cancelCountDown();
         closeCamera();
         resetTextureBufferSize();
-        mFrameDistributor.close();
+        mBurstController.closeFrameDistributor();
         mSoundPlayer.unloadSound(R.raw.timer_final_second);
         mSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
@@ -1286,7 +1271,7 @@ public class CaptureModule extends CameraModule
                         }
 
                         // TODO: Consider rolling these two calls into one.
-                        camera.startPreview(new Surface(mFrameDistributor.getInputSurfaceTexture()),
+                        camera.startPreview(new Surface(mBurstController.getInputSurfaceTexture()),
                                 new CaptureReadyCallback() {
                                     @Override
                                     public void onSetupFailed() {
@@ -1372,9 +1357,7 @@ public class CaptureModule extends CameraModule
         }
         cancelCountDown();
         mAppController.freezeScreenUntilPreviewReady();
-        initSurfaceTextureConsumer(mPreviewConsumer.getSurfaceTexture(),
-                mAppController.getCameraAppUI().getSurfaceWidth(),
-                mAppController.getCameraAppUI().getSurfaceHeight());
+        initSurfaceTextureConsumer();
 
         // TODO: Un-comment once we have focus back.
         // if (mFocusManager != null) {

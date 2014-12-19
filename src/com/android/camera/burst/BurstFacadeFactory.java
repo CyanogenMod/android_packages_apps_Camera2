@@ -17,10 +17,11 @@
 package com.android.camera.burst;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.gl.FrameDistributor;
-import com.android.camera.gl.FrameDistributor.FrameConsumer;
+import com.android.camera.gl.FrameDistributorWrapper;
+import com.android.camera.gl.SurfaceTextureConsumer;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
 
@@ -47,25 +48,6 @@ public class BurstFacadeFactory {
         }
 
         @Override
-        public FrameConsumer getPreviewFrameConsumer() {
-            return new FrameConsumer() {
-
-                @Override
-                public void onStop() {
-                }
-
-                @Override
-                public void onStart() {
-                }
-
-                @Override
-                public void onNewFrameAvailable(FrameDistributor frameDistributor,
-                        long timestampNs) {
-                }
-            };
-        }
-
-        @Override
         public void startBurst(CaptureSession captureSession, File tempSessionDirectory) {
         }
 
@@ -77,6 +59,40 @@ public class BurstFacadeFactory {
         @Override
         public boolean stopBurst() {
             return false;
+        }
+
+        @Override
+        public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height) {
+        }
+
+        @Override
+        public void initializeSurfaceTextureConsumer(int surfaceWidth, int surfaceHeight) {
+        }
+
+        @Override
+        public void initializeSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int
+                surfaceWidth, int surfaceHeight) {
+        }
+
+        @Override
+        public void updatePreviewBufferSize(int width, int height) {
+        }
+
+        @Override
+        public void initializeAndStartFrameDistributor() {
+        }
+
+        @Override
+        public void closeFrameDistributor() {
+        }
+
+        @Override
+        public SurfaceTexture getInputSurfaceTexture() {
+            return null;
+        }
+
+        @Override
+        public void setPreviewConsumerSize(int width, int height) {
         }
     }
 
@@ -91,8 +107,9 @@ public class BurstFacadeFactory {
      */
     public static BurstFacade create(Context appContext, OrientationManager orientationManager,
             BurstReadyStateChangeListener readyStateListener) {
-        if (BurstControllerImpl.isBurstModeSupported()) {
-            return new BurstFacadeImpl(appContext, orientationManager, readyStateListener);
+        if (BurstControllerImpl.isBurstModeSupported(appContext)) {
+            return new BurstFacadeImpl(appContext, orientationManager, readyStateListener,
+                    new FrameDistributorWrapper(), new SurfaceTextureConsumer());
         } else {
             // Burst is not supported return a stub instance.
             return new BurstFacadeStub();

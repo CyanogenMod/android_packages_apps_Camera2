@@ -34,7 +34,7 @@ class BurstControllerImpl implements BurstController {
     /**
      * Returns true if burst mode is supported by camera.
      */
-    public static boolean isBurstModeSupported() {
+    public static boolean isBurstModeSupported(Context context) {
         return false;
     }
 

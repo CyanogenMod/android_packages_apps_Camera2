@@ -15,6 +15,7 @@
 package com.android.camera.burst;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -27,6 +28,8 @@ import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
+import com.android.camera.gl.FrameDistributorWrapper;
+import com.android.camera.gl.SurfaceTextureConsumer;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.BurstParameters;
 import com.android.camera.one.OneCamera.BurstResultsCallback;
@@ -147,6 +150,12 @@ class BurstFacadeImpl implements BurstFacade {
     private final OrientationManager mOrientationManager;
     private final BurstReadyStateChangeListener mReadyStateListener;
 
+    /** Used to distribute camera frames to consumers. */
+    private final FrameDistributorWrapper mFrameDistributor;
+
+    /** The frame consumer that renders frames to the preview. */
+    private final SurfaceTextureConsumer mPreviewConsumer;
+
     /**
      * Create a new BurstManagerImpl instance.
      *
@@ -156,10 +165,13 @@ class BurstFacadeImpl implements BurstFacade {
      *            changes.
      */
     public BurstFacadeImpl(Context appContext, OrientationManager orientationManager,
-            BurstReadyStateChangeListener readyStateListener) {
+            BurstReadyStateChangeListener readyStateListener,
+            FrameDistributorWrapper frameDistributor, SurfaceTextureConsumer previewConsumer) {
         mOrientationManager = orientationManager;
         mBurstController = new BurstControllerImpl(appContext, mBurstResultsListener);
         mReadyStateListener = readyStateListener;
+        mFrameDistributor = frameDistributor;
+        mPreviewConsumer = previewConsumer;
     }
 
     @Override
@@ -174,11 +186,6 @@ class BurstFacadeImpl implements BurstFacade {
         synchronized (mStartStopBurstLock) {
             mCamera = null;
         }
-    }
-
-    @Override
-    public FrameConsumer getPreviewFrameConsumer() {
-        return mBurstController.getPreviewFrameConsumer();
     }
 
     @Override
@@ -235,6 +242,66 @@ class BurstFacadeImpl implements BurstFacade {
             }
             return wasStopped;
         }
+    }
+
+    @Override
+    public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height) {
+        mPreviewConsumer.setSurfaceTexture(surfaceTexture, width, height);
+    }
+
+    @Override
+    public void initializeSurfaceTextureConsumer(int surfaceWidth, int surfaceHeight) {
+        initializeSurfaceTextureConsumer(mPreviewConsumer.getSurfaceTexture(), surfaceWidth,
+                surfaceHeight);
+    }
+
+    @Override
+    public void initializeSurfaceTextureConsumer(SurfaceTexture surface, int surfaceWidth,
+                                                 int surfaceHeight) {
+        if (surface == null) {
+            return;
+        }
+
+        if (mPreviewConsumer.getSurfaceTexture() != surface) {
+            mPreviewConsumer.setSurfaceTexture(surface, surfaceWidth, surfaceHeight);
+        } else if (mPreviewConsumer.getWidth() != surfaceWidth
+                || mPreviewConsumer.getHeight() != surfaceHeight) {
+            mPreviewConsumer.setSize(surfaceWidth, surfaceHeight);
+        }
+    }
+
+    @Override
+    public void initializeAndStartFrameDistributor() {
+        // Currently, there is only one consumer to FrameDistributor for
+        // rendering the frames to the preview texture.
+        List<FrameConsumer> frameConsumers = new ArrayList<>();
+        frameConsumers.add(mBurstController.getPreviewFrameConsumer());
+        frameConsumers.add(mPreviewConsumer);
+        mFrameDistributor.start(frameConsumers);
+    }
+
+    @Override
+    public void updatePreviewBufferSize(int width, int height) {
+        mFrameDistributor.updatePreviewBufferSize(width, height);
+    }
+
+    @Override
+    public void closeFrameDistributor() {
+        mFrameDistributor.close();
+    }
+
+    @Override
+    public SurfaceTexture getInputSurfaceTexture() {
+        if (mFrameDistributor != null) {
+            return mFrameDistributor.getInputSurfaceTexture();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void setPreviewConsumerSize(int previewWidth, int previewHeight) {
+        mPreviewConsumer.setSize(previewWidth, previewHeight);
     }
 
     /**
