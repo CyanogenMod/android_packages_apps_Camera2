@@ -125,6 +125,10 @@ public class ZslOneCameraFactory {
             rootBuilder.withResponseListener(
                     new TimestampResponseListener(globalTimestampCallback));
 
+            // TODO Change AE mode depending on flash mode.
+            rootBuilder.withParam(CaptureRequest.CONTROL_AE_MODE, CaptureRequest
+                    .CONTROL_AE_MODE_ON);
+
             rootBuilder.withStream(zslImageStream);
 
             rootBuilder.withResponseListener(

@@ -41,7 +41,7 @@ import com.android.camera.one.v2.core.RequestBuilder;
  * provides a way of polling for the most up-to-date metering regions.
  */
 public class ManualAutoFocusFactory {
-    private static final int AF_HOLD_MILLIS = 3000;
+    private static final int AF_HOLD_SEC = 3;
 
     private final ManualAutoFocus mManualAutoFocus;
     private final Pollable<MeteringRectangle[]> mAEMeteringRegion;
@@ -69,7 +69,7 @@ public class ManualAutoFocusFactory {
         ConcurrentState<MeteringParameters> currentMeteringParameters = new ConcurrentState<>();
         mAEMeteringRegion = new AEMeteringRegion(currentMeteringParameters, cropRegion,
                 sensorOrientation);
-        mAFMeteringRegion = new AEMeteringRegion(currentMeteringParameters, cropRegion,
+        mAFMeteringRegion = new AFMeteringRegion(currentMeteringParameters, cropRegion,
                 sensorOrientation);
 
         DecoratingRequestBuilderBuilder afRequestBuilder =
@@ -81,7 +81,7 @@ public class ManualAutoFocusFactory {
                 templateType);
 
         ResettingDelayedExecutor afHoldDelayedExecutor = new ResettingDelayedExecutor(threadPool,
-                AF_HOLD_MILLIS, TimeUnit.MILLISECONDS);
+                AF_HOLD_SEC, TimeUnit.SECONDS);
         lifetime.add(afHoldDelayedExecutor);
 
         CameraCommand afScanHoldResetCommand = new AFScanHoldResetCommand(afScanCommand,
