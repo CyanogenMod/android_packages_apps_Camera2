@@ -172,6 +172,9 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
     public T getNext(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException,
             BufferQueueClosedException {
         Entry<T> nextEntry = mQueue.poll(timeout, unit);
+        if (nextEntry == null) {
+            throw new TimeoutException();
+        }
         return doWithNextEntry(nextEntry);
     }
 
