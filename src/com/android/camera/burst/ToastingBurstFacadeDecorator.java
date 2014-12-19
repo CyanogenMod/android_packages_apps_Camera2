@@ -17,9 +17,9 @@
 package com.android.camera.burst;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.widget.Toast;
 
-import com.android.camera.gl.FrameDistributor.FrameConsumer;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
 
@@ -80,11 +80,6 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public FrameConsumer getPreviewFrameConsumer() {
-        return mBurstFacade.getPreviewFrameConsumer();
-    }
-
-    @Override
     public void startBurst(CaptureSession captureSession, File tempSessionDirectory) {
         mToaster.showToastBurstStarted();
         mBurstFacade.startBurst(captureSession, tempSessionDirectory);
@@ -104,5 +99,46 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
             mToaster.showToastBurstStopped();
         }
         return burstStopped;
+    }
+
+    @Override
+    public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height) {
+        mBurstFacade.setSurfaceTexture(surfaceTexture, width, height);
+    }
+
+    @Override
+    public void initializeSurfaceTextureConsumer(int surfaceWidth, int surfaceHeight) {
+        mBurstFacade.initializeSurfaceTextureConsumer(surfaceWidth, surfaceHeight);
+    }
+
+    @Override
+    public void initializeSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int surfaceWidth,
+            int surfaceHeight) {
+        mBurstFacade.initializeSurfaceTextureConsumer(surfaceTexture, surfaceWidth, surfaceHeight);
+    }
+
+    @Override
+    public void updatePreviewBufferSize(int width, int height) {
+        mBurstFacade.updatePreviewBufferSize(width, height);
+    }
+
+    @Override
+    public void initializeAndStartFrameDistributor() {
+        mBurstFacade.initializeAndStartFrameDistributor();
+    }
+
+    @Override
+    public void closeFrameDistributor() {
+        mBurstFacade.closeFrameDistributor();
+    }
+
+    @Override
+    public SurfaceTexture getInputSurfaceTexture() {
+        return mBurstFacade.getInputSurfaceTexture();
+    }
+
+    @Override
+    public void setPreviewConsumerSize(int width, int height) {
+        mBurstFacade.setPreviewConsumerSize(width, height);
     }
 }
