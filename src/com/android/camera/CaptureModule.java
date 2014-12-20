@@ -265,7 +265,7 @@ public class CaptureModule extends CameraModule
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
 
-        mBurstController = BurstFacadeFactory.create(mContext, mAppController
+        BurstFacade burstController = BurstFacadeFactory.create(mContext, mAppController
                 .getOrientationManager(), new BurstReadyStateChangeListener() {
             @Override
             public void onBurstReadyStateChanged(boolean ready) {
@@ -274,6 +274,8 @@ public class CaptureModule extends CameraModule
                 mAppController.setShutterEnabled(ready);
             }
         });
+        BurstToaster toaster = new BurstToaster(appController.getAndroidContext());
+        mBurstController = new ToastingBurstFacadeDecorator(burstController, toaster);
     }
 
     @Override
@@ -537,12 +539,8 @@ public class CaptureModule extends CameraModule
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
         if (isAspectRatioPreferenceSet) {
             closeCamera();
-            openCameraAndStartPreview(getPreviewSurfaceTexture());
+            openCameraAndStartPreview();
         }
-    }
-
-    private SurfaceTexture getPreviewSurfaceTexture() {
-        return mBurstController.getInputSurfaceTexture();
     }
 
     private void updateFrameDistributorBufferSize() {
@@ -582,9 +580,7 @@ public class CaptureModule extends CameraModule
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
         // have to open the camera and start the preview here.
-        if (mBurstController.getInputSurfaceTexture() != null) {
-            initSurfaceTextureConsumer();
-        }
+        initSurfaceTextureConsumer();
 
         mSoundPlayer.loadSound(R.raw.timer_final_second);
         mSoundPlayer.loadSound(R.raw.timer_increment);
@@ -599,7 +595,7 @@ public class CaptureModule extends CameraModule
                 public void onAspectRatioPreferenceConfirmed(Rational chosenAspectRatio) {
                     // Open the camera. This dialog will be dismissed in onPreviewStarted() after
                     // preview is started.
-                    openCameraAndStartPreview(getPreviewSurfaceTexture());
+                    openCameraAndStartPreview();
                 }
             });
             mFirstRunDialog.show();
@@ -1216,12 +1212,7 @@ public class CaptureModule extends CameraModule
     /**
      * Open camera and start the preview.
      */
-    private void openCameraAndStartPreview(final SurfaceTexture surfaceTexture) {
-        if (surfaceTexture == null) {
-            Log.i(TAG, "Not starting preview since preview texture is not available yet.");
-            return;
-        }
-
+    private void openCameraAndStartPreview() {
         try {
             // TODO Given the current design, we cannot guarantee that one of
             // CaptureReadyCallback.onSetupFailed or onReadyForCapture will
@@ -1288,7 +1279,7 @@ public class CaptureModule extends CameraModule
                         }
 
                         // TODO: Consider rolling these two calls into one.
-                        camera.startPreview(new Surface(surfaceTexture),
+                        camera.startPreview(new Surface(mBurstController.getInputSurfaceTexture()),
                                 new CaptureReadyCallback() {
                                     @Override
                                     public void onSetupFailed() {
