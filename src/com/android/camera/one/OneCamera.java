@@ -70,20 +70,6 @@ public interface OneCamera {
     }
 
     /**
-     * Auto focus system mode.
-     * <ul>
-     * <li>{@link #CONTINUOUS_PICTURE}</li>
-     * <li>{@link #AUTO}</li>
-     * </ul>
-     */
-    public static enum AutoFocusMode {
-        /** System is continuously focusing. */
-        CONTINUOUS_PICTURE,
-        /** System is running a triggered scan. */
-        AUTO
-    }
-
-    /**
      * Classes implementing this interface will be called when the camera was
      * opened or failed to open.
      */
@@ -228,9 +214,38 @@ public interface OneCamera {
         public final float diopter;
         public final boolean isActive;
 
+        /**
+         * @param diopter The current focal distance.
+         * @param isActive Whether the lens is moving, e.g. because of either an
+         *            "active scan" or a "passive scan".
+         */
         public FocusState(float diopter, boolean isActive) {
             this.diopter = diopter;
             this.isActive = isActive;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            FocusState that = (FocusState) o;
+
+            if (Float.compare(that.diopter, diopter) != 0)
+                return false;
+            if (isActive != that.isActive)
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (diopter != +0.0f ? Float.floatToIntBits(diopter) : 0);
+            result = 31 * result + (isActive ? 1 : 0);
+            return result;
         }
     }
 

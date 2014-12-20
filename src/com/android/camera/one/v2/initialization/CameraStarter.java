@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2.initialization;
 
+import android.hardware.camera2.TotalCaptureResult;
 import android.view.Surface;
 
 import com.android.camera.async.ConcurrentState;
@@ -64,6 +65,6 @@ public interface CameraStarter {
             CameraCaptureSessionProxy cameraCaptureSession,
             Surface previewSurface,
             ConcurrentState<Float> zoomState,
-            Updatable<Integer> afState,
-            Updatable<Boolean> readyState);
+            Updatable<TotalCaptureResult> metadataCallback,
+            Updatable<Boolean> readyStateCallback);
 }

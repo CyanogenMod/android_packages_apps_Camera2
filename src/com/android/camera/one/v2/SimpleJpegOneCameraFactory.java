@@ -16,17 +16,12 @@
 
 package com.android.camera.one.v2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.location.Location;
 import android.media.ImageReader;
@@ -36,7 +31,6 @@ import android.view.Surface;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.CallbackRunnable;
 import com.android.camera.async.ConcurrentState;
-import com.android.camera.async.FilteredUpdatable;
 import com.android.camera.async.HandlerExecutor;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Pollable;
@@ -51,9 +45,9 @@ import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.PreviewCommand;
 import com.android.camera.one.v2.commands.RunnableCameraCommand;
-import com.android.camera.one.v2.common.MetadataResponseListener;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
 import com.android.camera.one.v2.common.TimestampResponseListener;
+import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.common.ZoomedCropRegion;
 import com.android.camera.one.v2.core.CaptureStream;
 import com.android.camera.one.v2.core.DecoratingRequestBuilderBuilder;
@@ -67,6 +61,11 @@ import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Size;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Creates a camera which takes jpeg images using the hardware encoder with
@@ -98,7 +97,7 @@ public class SimpleJpegOneCameraFactory {
                 CameraCaptureSessionProxy cameraCaptureSession,
                 Surface previewSurface,
                 ConcurrentState<Float> zoomState,
-                Updatable<Integer> afState,
+                Updatable<TotalCaptureResult> metadataCallback,
                 Updatable<Boolean> readyState) {
             // Build the FrameServer from the CaptureSession
             FrameServerFactory frameServerFactory =
@@ -124,9 +123,8 @@ public class SimpleJpegOneCameraFactory {
             rootBuilder.withResponseListener(
                     new TimestampResponseListener(globalTimestampCallback));
 
-            rootBuilder.withResponseListener(
-                    new MetadataResponseListener<Integer>(
-                            CaptureResult.CONTROL_AF_STATE, new FilteredUpdatable<>(afState)));
+            rootBuilder.withResponseListener(new TotalCaptureResultResponseListener
+                    (metadataCallback));
 
             Pollable<Rect> cropRegion = new ZoomedCropRegion(mCameraCharacteristics, zoomState);
             rootBuilder.withParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
