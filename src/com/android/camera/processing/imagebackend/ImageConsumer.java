@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 import java.util.Set;
@@ -42,7 +41,7 @@ public interface ImageConsumer {
      * @param processingFlags Bit vector comprised of logically ORed TASK_FLAG*
      *            constants
      */
-    public boolean receiveImage(ImageProxy img, Executor executor,
+    public boolean receiveImage(ImageToProcess img, Executor executor,
             Set<ImageTaskFlags> processingFlags, CaptureSession captureSession)
             throws InterruptedException;
 
@@ -60,7 +59,7 @@ public interface ImageConsumer {
      * @return Whether the blocking completed properly. If false, there may be a
      *         need to clean up image closes manually.
      */
-    public boolean receiveImage(ImageProxy img, TaskImageContainer sharedTask,
+    public boolean receiveImage(ImageToProcess img, TaskImageContainer sharedTask,
             boolean blockOnImageRelease, boolean closeOnImageRelease,
             CaptureSession captureSession)
             throws InterruptedException;
@@ -80,7 +79,7 @@ public interface ImageConsumer {
      * @return Whether the blocking completed properly. If false, there may be a
      *         need to clean up image closes manually.
      */
-    public boolean receiveImage(ImageProxy img, Set<TaskImageContainer> sharedTasks,
+    public boolean receiveImage(ImageToProcess img, Set<TaskImageContainer> sharedTasks,
             boolean blockOnImageRelease, boolean closeOnImageRelease,
             CaptureSession captureSession)
             throws InterruptedException;

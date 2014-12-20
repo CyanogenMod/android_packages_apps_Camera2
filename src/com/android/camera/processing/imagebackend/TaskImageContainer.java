@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
@@ -75,8 +74,8 @@ public abstract class TaskImageContainer implements Runnable {
         TaskImage(OrientationManager.DeviceOrientation anOrientation, int aWidth, int aHeight,
                 int aFormat) {
             orientation = anOrientation;
-            height = aWidth;
-            width = aHeight;
+            height = aHeight;
+            width = aWidth;
             format = aFormat;
         }
 
@@ -118,7 +117,7 @@ public abstract class TaskImageContainer implements Runnable {
 
     final protected ProcessingPriority mProcessingPriority;
 
-    final protected ImageProxy mImageProxy;
+    final protected ImageToProcess mImage;
 
     final protected CaptureSession mSession;
 
@@ -134,7 +133,7 @@ public abstract class TaskImageContainer implements Runnable {
         mImageBackend = otherTask.mImageBackend;
         mProcessingPriority = processingPriority;
         mSession = otherTask.mSession;
-        mImageProxy = null;
+        mImage = null;
     }
 
     /**
@@ -146,10 +145,10 @@ public abstract class TaskImageContainer implements Runnable {
      * @param preferredLane Priority that the derived task will run at
      * @param captureSession Session that handles image processing events
      */
-    public TaskImageContainer(ImageProxy image, Executor Executor, ImageBackend imageBackend,
+    public TaskImageContainer(ImageToProcess image, Executor Executor, ImageBackend imageBackend,
             ProcessingPriority preferredLane, CaptureSession captureSession) {
-        mImageProxy = image;
-        mId = image.getTimestamp();
+        mImage = image;
+        mId = mImage.proxy.getTimestamp();
         mExecutor = Executor;
         mImageBackend = imageBackend;
         mProcessingPriority = preferredLane;

@@ -16,6 +16,7 @@
 
 package com.android.camera.session;
 
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 
@@ -82,6 +83,17 @@ public interface CaptureSession {
      *            {@link #setProgressMessage(CharSequence)}.
      */
     public void startSession(byte[] placeholder, CharSequence progressMessage);
+
+    /**
+     * Starts the session by adding a placeholder to the filmstrip and adding
+     * notifications.
+     *
+     * @param placeholder a valid bitmap to be used as the placeholder.
+     * @param progressMessage the message to be used to the progress
+     *            notification initially. This can later be changed using
+     *            {@link #setProgressMessage(CharSequence)}.
+     */
+    public void startSession(Bitmap placeholder, CharSequence progressMessage);
 
     /**
      * Starts the session by marking the item as in-progress and adding

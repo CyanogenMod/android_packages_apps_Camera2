@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
-import com.android.camera.debug.Log;
+import com.android.camera.app.OrientationManager;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
-import com.android.camera.session.CaptureSession;
-
-import java.util.concurrent.Executor;
 
 /**
- *  Placeholder for writing an image to disk.
+ * An image to be processed by the image backend. Contains an ImageProxy and
+ * parameters required to process the image.
  */
-public class TaskWriteImageToDisk extends TaskImageContainer {
+public class ImageToProcess {
+    public final ImageProxy proxy;
+    public final OrientationManager.DeviceOrientation rotation;
 
-    public TaskWriteImageToDisk(ImageProxy imageProxy, Executor executor,
-                                ImageBackend imageBackend, CaptureSession captureSession) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
-    }
-
-    @Override
-    public void run() {
-        // TODO: Make a dependency on JPEG_COMPRESSION
-
+    public ImageToProcess(ImageProxy proxy, OrientationManager.DeviceOrientation rotation) {
+        this.proxy = proxy;
+        this.rotation = rotation;
     }
 }

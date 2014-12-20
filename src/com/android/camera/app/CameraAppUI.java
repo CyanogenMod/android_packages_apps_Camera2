@@ -1499,8 +1499,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      *
      * @param thumbnailBitmap The thumbnail image to be shown.
      */
-    public void updateCaptureIndicatorThumbnail(Bitmap thumbnailBitmap) {
+    public void updateCaptureIndicatorThumbnail(Bitmap thumbnailBitmap, int rotation) {
         mRoundedThumbnailView.setThumbnail(thumbnailBitmap);
+        mRoundedThumbnailView.setRotation(rotation);
     }
 
     /**

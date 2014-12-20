@@ -21,13 +21,13 @@ import android.net.Uri;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
-import com.android.camera.one.v2.photo.ImageSaver;
-import com.android.camera.processing.ImageBackend;
-import com.android.camera.processing.ImageConsumer;
-import com.android.camera.processing.ImageProcessorListener;
-import com.android.camera.processing.ImageProcessorProxyListener;
 import com.android.camera.processing.ProcessingServiceManager;
-import com.android.camera.processing.TaskImageContainer;
+import com.android.camera.processing.imagebackend.ImageBackend;
+import com.android.camera.processing.imagebackend.ImageConsumer;
+import com.android.camera.processing.imagebackend.ImageProcessorListener;
+import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
+import com.android.camera.processing.imagebackend.ImageToProcess;
+import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
 
 import java.util.HashSet;
@@ -46,14 +46,18 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
     private CaptureSession mSession;
 
     final Executor mExecutor;
+    final ImageRotationCalculator mImageRotationCalculator;
 
     /**
      * Constructor
      *
      * @param executor Executor to run listener events on the ImageBackend
+     * @param imageRotationCalculator the image rotation calculator to determine
+     *            the final image rotation with
      */
-    public ZslImageSaverImpl(Executor executor) {
+    public ZslImageSaverImpl(Executor executor, ImageRotationCalculator imageRotationCalculator) {
         mExecutor = executor;
+        mImageRotationCalculator = imageRotationCalculator;
     }
 
     /**
@@ -74,7 +78,7 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
      */
     @Override
     public void setOrientation(OrientationManager.DeviceOrientation orientation) {
-        orientation = mOrientation;
+        mOrientation = orientation;
     }
 
     /**
@@ -115,6 +119,9 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
      */
     @Override
     public ImageSaver build() {
+        final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
+                .toImageRotation(mOrientation);
+
         return new ImageSaver() {
 
             /**
@@ -165,7 +172,11 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
                             mExecutor.execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    imageBackend.getAppUI().updateCaptureIndicatorThumbnail(bitmap);
+                                    // TODO: Finalize and I18N string.
+                                    mSession.startSession(bitmap, "Saving image ...");
+                                    mSession.setProgress(42);
+                                    imageBackend.getAppUI().updateCaptureIndicatorThumbnail(bitmap,
+                                            imageRotation.getDegrees());
                                 }
                             });
                         }
@@ -181,15 +192,14 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
 
                 listenerProxy.registerListener(previewListener, imageProxy);
 
-                Set<ImageConsumer.ImageTaskFlags> taskFlagsSet =
-                        new HashSet<ImageConsumer.ImageTaskFlags>();
+                Set<ImageConsumer.ImageTaskFlags> taskFlagsSet = new HashSet<>();
                 taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CONVERT_IMAGE_TO_RGB_PREVIEW);
                 taskFlagsSet.add(ImageConsumer.ImageTaskFlags.COMPRESS_IMAGE_TO_JPEG);
                 taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_IMAGE_ON_RELEASE);
 
-                mSession.startEmpty();
                 try {
-                    imageBackend.receiveImage(imageProxy, mExecutor, taskFlagsSet, mSession);
+                    imageBackend.receiveImage(new ImageToProcess(imageProxy, imageRotation),
+                            mExecutor, taskFlagsSet, mSession);
                 } catch (InterruptedException e) {
                     // TODO: Fire error here, since we are non-blocking.
                 }

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
 
-import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
@@ -33,39 +31,40 @@ import java.util.concurrent.Executor;
 class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
     private final static Log.Tag TAG = new Log.Tag("TaskChainJpg");
 
-    TaskChainedCompressImageToJpeg(ImageProxy imageProxy, Executor executor,
+    TaskChainedCompressImageToJpeg(ImageToProcess image, Executor executor,
             ImageBackend imageBackend, CaptureSession captureSession) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
+        super(image, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
     }
 
     private void logWrapper(String message) {
         // Do nothing.
     }
 
-
     @Override
     public void run() {
-        ImageProxy img = mImageProxy;
+        ImageToProcess img = mImage;
 
-        // TODO: Pass in the orientation for processing as well.
-        final TaskImage inputImage = new TaskImage(OrientationManager.DeviceOrientation.CLOCKWISE_0,
-                img.getWidth(),img.getHeight(),img.getFormat());
-        final TaskImage resultImage = new TaskImage(OrientationManager.DeviceOrientation.CLOCKWISE_0,
-                img.getWidth(),img.getHeight(),ImageFormat.JPEG);
+        final TaskImage inputImage = new TaskImage(mImage.rotation, img.proxy.getWidth(),
+                img.proxy.getHeight(), img.proxy.getFormat());
+        final TaskImage resultImage = new TaskImage(mImage.rotation, img.proxy.getWidth(),
+                img.proxy.getHeight(), ImageFormat.JPEG);
 
-        onStart(mId,inputImage,resultImage);
+        onStart(mId, inputImage, resultImage);
 
         int[] strides = new int[3];
         // Do the byte copy
-        strides[0] = img.getPlanes()[0].getRowStride() / img.getPlanes()[0].getPixelStride();
-        strides[1] = 2 * img.getPlanes()[1].getRowStride() / img.getPlanes()[1].getPixelStride();
-        strides[2] = 2 * img.getPlanes()[2].getRowStride() / img.getPlanes()[2].getPixelStride();
+        strides[0] = img.proxy.getPlanes()[0].getRowStride()
+                / img.proxy.getPlanes()[0].getPixelStride();
+        strides[1] = 2 * img.proxy.getPlanes()[1].getRowStride()
+                / img.proxy.getPlanes()[1].getPixelStride();
+        strides[2] = 2 * img.proxy.getPlanes()[2].getRowStride()
+                / img.proxy.getPlanes()[2].getPixelStride();
 
         byte[] dataCopy = mImageBackend.getCache().cacheGet();
         if (dataCopy == null) {
-            dataCopy = convertYUV420ImageToPackedNV21(img);
+            dataCopy = convertYUV420ImageToPackedNV21(img.proxy);
         } else {
-            convertYUV420ImageToPackedNV21(img, dataCopy);
+            convertYUV420ImageToPackedNV21(img.proxy, dataCopy);
         }
 
         // Release the image now that you have a usable copy
@@ -91,6 +90,5 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
         // Passed null, since the image has already been released.
         mImageBackend.appendTasks(null, chainedTask);
         logWrapper("Kicking off a chained task now that image is released.");
-
     }
 }

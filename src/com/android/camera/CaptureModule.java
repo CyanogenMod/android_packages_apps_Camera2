@@ -41,21 +41,16 @@ import android.view.View.OnLayoutChangeListener;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
+import com.android.camera.app.FirstRunDialog;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MediaSaver;
-import com.android.camera.app.FirstRunDialog;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
-import com.android.camera.burst.ToastingBurstFacadeDecorator;
-import com.android.camera.burst.ToastingBurstFacadeDecorator.BurstToaster;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.Rational;
-import com.android.camera.gl.FrameDistributor.FrameConsumer;
-import com.android.camera.gl.FrameDistributorWrapper;
-import com.android.camera.gl.SurfaceTextureConsumer;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
@@ -86,8 +81,6 @@ import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -373,6 +366,7 @@ public class CaptureModule extends CameraModule
         CaptureSession session = createCaptureSession();
         int orientation = mAppController.getOrientationManager().getDeviceOrientation()
                 .getDegrees();
+
         // TODO: This should really not use getExternalCacheDir and instead use
         // the SessionStorage API. Need to sync with gcam if that's OK.
         PhotoCaptureParameters params = new PhotoCaptureParameters(

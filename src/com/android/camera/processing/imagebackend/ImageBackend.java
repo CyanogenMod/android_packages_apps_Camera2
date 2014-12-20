@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
 import com.android.camera.app.CameraAppUI;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
-import com.android.camera.processing.TaskImageContainer.ProcessingPriority;
 import com.android.camera.debug.Log;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
-
-import android.graphics.Paint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +81,7 @@ public class ImageBackend implements ImageConsumer {
 
     protected final SimpleCache mSimpleCache;
 
-    protected final Map<ImageProxy, ImageReleaseProtocol> mImageSemaphoreMap;
+    protected final Map<ImageToProcess, ImageReleaseProtocol> mImageSemaphoreMap;
 
     protected final ExecutorService mThreadPoolFast;
 
@@ -108,7 +105,7 @@ public class ImageBackend implements ImageConsumer {
         mThreadPoolFast = Executors.newFixedThreadPool(NUM_THREADS_FAST, new FastThreadFactory());
         mThreadPoolSlow = Executors.newFixedThreadPool(NUM_THREADS_SLOW, new SlowThreadFactory());
         mProxyListener = new ImageProcessorProxyListener();
-        mImageSemaphoreMap = new HashMap<ImageProxy, ImageReleaseProtocol>();
+        mImageSemaphoreMap = new HashMap<>();
         mSimpleCache = new SimpleCache(NUM_THREADS_SLOW);
     }
 
@@ -124,7 +121,7 @@ public class ImageBackend implements ImageConsumer {
         mThreadPoolFast = fastService;
         mThreadPoolSlow = slowService;
         mProxyListener = imageProcessorProxyListener;
-        mImageSemaphoreMap = new HashMap<ImageProxy, ImageReleaseProtocol>();
+        mImageSemaphoreMap = new HashMap<>();
         mSimpleCache = new SimpleCache(NUM_THREADS_SLOW);
     }
 
@@ -239,7 +236,7 @@ public class ImageBackend implements ImageConsumer {
      *            image close is run by the calling thread (usually the main
      *            task thread).
      */
-    public void releaseSemaphoreReference(final ImageProxy img, Executor executor) {
+    public void releaseSemaphoreReference(final ImageToProcess img, Executor executor) {
         synchronized (mImageSemaphoreMap) {
             ImageReleaseProtocol protocol = mImageSemaphoreMap.get(img);
             if (protocol == null || protocol.getCount() <= 0) {
@@ -289,7 +286,7 @@ public class ImageBackend implements ImageConsumer {
      * @param tasks The set of tasks to be run
      * @return whether tasks are successfully submitted.
      */
-    public boolean appendTasks(ImageProxy img, Set<TaskImageContainer> tasks) {
+    public boolean appendTasks(ImageToProcess img, Set<TaskImageContainer> tasks) {
         // Make sure that referred images are all the same, if it exists.
         // And count how image references need to be kept track of.
         int countImageRefs = numPropagatedImageReferences(img, tasks);
@@ -310,7 +307,7 @@ public class ImageBackend implements ImageConsumer {
      * @param task The task to be run
      * @return whether tasks are successfully submitted.
      */
-    public boolean appendTasks(ImageProxy img, TaskImageContainer task) {
+    public boolean appendTasks(ImageToProcess img, TaskImageContainer task) {
         Set<TaskImageContainer> tasks = new HashSet<TaskImageContainer>(1);
         tasks.add(task);
         return appendTasks(img, tasks);
@@ -332,7 +329,7 @@ public class ImageBackend implements ImageConsumer {
      *            finished.
      */
     @Override
-    public boolean receiveImage(ImageProxy img, TaskImageContainer task,
+    public boolean receiveImage(ImageToProcess img, TaskImageContainer task,
             boolean blockUntilImageRelease, boolean closeOnImageRelease, CaptureSession session)
             throws InterruptedException {
         Set<TaskImageContainer> passTasks = new HashSet<TaskImageContainer>(1);
@@ -357,7 +354,7 @@ public class ImageBackend implements ImageConsumer {
      * @return whether the blocking completed properly
      */
     @Override
-    public boolean receiveImage(ImageProxy img, Set<TaskImageContainer> tasks,
+    public boolean receiveImage(ImageToProcess img, Set<TaskImageContainer> tasks,
             boolean blockUntilImageRelease, boolean closeOnImageRelease, CaptureSession session)
             throws InterruptedException {
 
@@ -405,7 +402,7 @@ public class ImageBackend implements ImageConsumer {
      *            are finished.
      */
     @Override
-    public boolean receiveImage(ImageProxy img, Executor executor,
+    public boolean receiveImage(ImageToProcess img, Executor executor,
             Set<ImageTaskFlags> processingFlags, CaptureSession session)
             throws InterruptedException {
 
@@ -446,17 +443,17 @@ public class ImageBackend implements ImageConsumer {
     /**
      * Factory functions, in case, you want some shake and bake functionality.
      */
-    public TaskConvertImageToRGBPreview createTaskConvertImageToRGBPreview(ImageProxy imageProxy,
-            Executor executor, ImageBackend imageBackend, CaptureSession session, int targetWidth,
-            int targetHeight) {
-        return new TaskConvertImageToRGBPreview(imageProxy, executor, imageBackend, session,
+    public TaskConvertImageToRGBPreview createTaskConvertImageToRGBPreview(
+            ImageToProcess image, Executor executor, ImageBackend imageBackend,
+            CaptureSession session, int targetWidth, int targetHeight) {
+        return new TaskConvertImageToRGBPreview(image, executor, imageBackend, session,
                 targetWidth,
                 targetHeight);
     }
 
-    public TaskCompressImageToJpeg createTaskCompressImageToJpeg(ImageProxy imageProxy,
+    public TaskCompressImageToJpeg createTaskCompressImageToJpeg(ImageToProcess image,
             Executor executor, ImageBackend imageBackend, CaptureSession session) {
-        return new TaskCompressImageToJpeg(imageProxy, executor, imageBackend, session);
+        return new TaskCompressImageToJpeg(image, executor, imageBackend, session);
     }
 
     /**
@@ -476,7 +473,7 @@ public class ImageBackend implements ImageConsumer {
      */
     protected void scheduleTasks(Set<TaskImageContainer> tasks) {
         for (TaskImageContainer task : tasks) {
-            if (task.getProcessingPriority() == ProcessingPriority.FAST) {
+            if (task.getProcessingPriority() == TaskImageContainer.ProcessingPriority.FAST) {
                 mThreadPoolFast.execute(task);
             } else {
                 mThreadPoolSlow.execute(task);
@@ -490,7 +487,7 @@ public class ImageBackend implements ImageConsumer {
      * @return The protocol object that keeps tracks of the image reference
      *         count and actions to be taken on release.
      */
-    protected ImageReleaseProtocol setSemaphoreReferenceCount(ImageProxy img, int count,
+    protected ImageReleaseProtocol setSemaphoreReferenceCount(ImageToProcess img, int count,
             boolean blockUntilRelease, boolean closeOnRelease) throws RuntimeException {
         synchronized (mImageSemaphoreMap) {
             if (mImageSemaphoreMap.get(img) != null) {
@@ -521,7 +518,7 @@ public class ImageBackend implements ImageConsumer {
      *
      * @return Number of Image references currently held by this instance
      */
-    protected void incrementSemaphoreReferenceCount(ImageProxy img, int count)
+    protected void incrementSemaphoreReferenceCount(ImageToProcess img, int count)
             throws RuntimeException {
         synchronized (mImageSemaphoreMap) {
             ImageReleaseProtocol protocol = mImageSemaphoreMap.get(img);
@@ -545,11 +542,11 @@ public class ImageBackend implements ImageConsumer {
      * @param executor Executor to be used, if executor is null, the close is
      *            run on the task thread
      */
-    private void closeImageExecutorSafe(final ImageProxy img, Executor executor) {
+    private void closeImageExecutorSafe(final ImageToProcess img, Executor executor) {
         Runnable closeTask = new Runnable() {
             @Override
             public void run() {
-                img.close();
+                img.proxy.close();
                 mOutstandingImageClosed++;
                 logWrapper("Release of image occurred.  Good fun. " + "Total Images Open/Closed = "
                         + mOutstandingImageOpened + "/" + mOutstandingImageClosed);
@@ -569,15 +566,15 @@ public class ImageBackend implements ImageConsumer {
      *
      * @param tasks The set of dependent tasks to be run
      */
-    private int numPropagatedImageReferences(ImageProxy img, Set<TaskImageContainer> tasks)
+    private int numPropagatedImageReferences(ImageToProcess img, Set<TaskImageContainer> tasks)
             throws RuntimeException {
         int countImageRefs = 0;
         for (TaskImageContainer task : tasks) {
-            if (task.mImageProxy != null && task.mImageProxy != img) {
+            if (task.mImage != null && task.mImage != img) {
                 throw new RuntimeException("ERROR:  Spawned tasks cannot reference new images!");
             }
 
-            if (task.mImageProxy != null) {
+            if (task.mImage != null) {
                 countImageRefs++;
             }
         }

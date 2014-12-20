@@ -19,7 +19,6 @@ package com.android.camera;
 
 import android.animation.Animator;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -1205,7 +1204,7 @@ public class CameraActivity extends QuickActivity
             @Override
             public void onCallback(Bitmap result) {
                 mCameraAppUI.startCaptureIndicatorRevealAnimation(accessibilityString);
-                mCameraAppUI.updateCaptureIndicatorThumbnail(result);
+                mCameraAppUI.updateCaptureIndicatorThumbnail(result, 0);
             }
         });
     }

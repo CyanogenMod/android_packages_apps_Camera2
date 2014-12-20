@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2;
 
+import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
@@ -25,6 +26,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.location.Location;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Handler;
 import android.view.Surface;
 
@@ -72,6 +74,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * Creates a camera which takes jpeg images using the hardware encoder with
  * baseline functionality.
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class SimpleJpegOneCameraFactory {
     /**
      * Finishes constructing the camera when prerequisites, e.g. the preview
