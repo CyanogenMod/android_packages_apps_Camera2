@@ -1362,7 +1362,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * can clearly see when the toggle becomes clickable again,
          * keep all of that logic at this level.
          */
-        disableModeOptions();
+        // disableModeOptions();
     }
 
     @Override
