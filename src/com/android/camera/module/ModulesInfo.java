@@ -23,13 +23,11 @@ import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
 import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
-import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
-import com.android.camera.util.SystemProperties;
 import com.android.camera2.R;
 
 /**
@@ -40,7 +38,8 @@ public class ModulesInfo {
     private static final Log.Tag TAG = new Log.Tag("ModulesInfo");
 
     /** Selects CaptureModule if true, PhotoModule if false. */
-    private static final boolean ENABLE_CAPTURE_MODULE = ApiHelper.HAS_CAMERA_2_API;
+    private static final boolean ENABLE_CAPTURE_MODULE = ApiHelper.HAS_CAMERA_2_API
+            && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6 || ApiHelper.IS_NEXUS_9);
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
