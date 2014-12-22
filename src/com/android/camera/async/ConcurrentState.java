@@ -33,7 +33,7 @@ import com.android.camera.util.Callback;
  * {@link FutureResult} or {@link BufferQueue} and its implementations.
  * </p>
  */
-public class ConcurrentState<T> implements Updatable<T>, Pollable<T> {
+public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
 
     private static class ExecutorListenerPair<T> {
         private final Executor mExecutor;
@@ -85,15 +85,7 @@ public class ConcurrentState<T> implements Updatable<T>, Pollable<T> {
         }
     }
 
-    /**
-     * Adds the given callback, returning a token to be closed when the callback
-     * is no longer needed.
-     *
-     * @param callback The callback to add.
-     * @param executor The executor on which the callback will be invoked.
-     * @return A {@link SafeCloseable} token to be closed when the callback must
-     *         be removed.
-     */
+    @Override
     public SafeCloseable addCallback(Callback callback, Executor executor) {
         synchronized (mLock) {
             final ExecutorListenerPair<T> pair = new ExecutorListenerPair<>(executor, callback);
