@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
@@ -33,18 +34,17 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
-import android.view.View.OnLayoutChangeListener;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.FirstRunDialog;
 import com.android.camera.app.LocationManager;
-import com.android.camera.app.MediaSaver;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
@@ -93,32 +93,14 @@ import java.util.concurrent.TimeUnit;
  * PhotoModule, which are to be retired eventually.
  * <p>
  */
-public class CaptureModule extends CameraModule
-        implements MediaSaver.QueueListener,
+public class CaptureModule extends CameraModule implements
         ModuleController,
         CountDownView.OnCountDownStatusListener,
         OneCamera.PictureCallback,
         OneCamera.FocusStateListener,
         OneCamera.ReadyStateChangedListener,
-        PreviewStatusListener.PreviewAreaChangedListener,
         RemoteCameraModule,
-        SensorEventListener,
-        SettingsManager.OnSettingChangedListener,
-        TextureView.SurfaceTextureListener {
-
-    /**
-     * Called on layout changes.
-     */
-    private final OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-                int oldTop, int oldRight, int oldBottom) {
-            int width = right - left;
-            int height = bottom - top;
-            mBurstController.setPreviewConsumerSize(width, height);
-            updatePreviewTransform(width, height, false);
-        }
-    };
+        SensorEventListener {
 
     private static final Tag TAG = new Tag("CaptureModule");
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
@@ -163,6 +145,103 @@ public class CaptureModule extends CameraModule
 
     private FocusController mFocusController;
 
+    /** The listener to listen events from the CaptureModuleUI. */
+    private final CaptureModuleUI.CaptureModuleUIListener mUIListener =
+            new CaptureModuleUI.CaptureModuleUIListener() {
+                @Override
+                public void onZoomRatioChanged(float zoomRatio) {
+                    mZoomValue = zoomRatio;
+                    if (mCamera != null) {
+                        mCamera.setZoom(zoomRatio);
+                    }
+                }
+            };
+
+    /** The listener to respond preview area changes. */
+    private final PreviewStatusListener.PreviewAreaChangedListener mPreviewAreaChangedListener =
+            new PreviewStatusListener.PreviewAreaChangedListener() {
+        @Override
+        public void onPreviewAreaChanged(RectF previewArea) {
+            mPreviewArea = previewArea;
+        }
+    };
+
+    /** The listener to listen events from the preview. */
+    private final PreviewStatusListener mPreviewStatusListener = new PreviewStatusListener() {
+        @Override
+        public void onPreviewLayoutChanged(View v, int left, int top, int right,
+                int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            int width = right - left;
+            int height = bottom - top;
+            mBurstController.setPreviewConsumerSize(width, height);
+            updatePreviewTransform(width, height, false);
+        }
+
+        @Override
+        public boolean shouldAutoAdjustTransformMatrixOnLayout() {
+            return false;
+        }
+
+        @Override
+        public void onPreviewFlipped() {
+            // Do nothing because when preview is flipped, TextureView will lay
+            // itself out again, which will then trigger a transform matrix update.
+        }
+
+        @Override
+        public GestureDetector.OnGestureListener getGestureListener() {
+            return new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent ev) {
+                    Point tapPoint = new Point((int) ev.getX(), (int) ev.getY());
+                    Log.v(TAG, "onSingleTapUpPreview location=" + tapPoint);
+                    // TODO: This should query actual capability.
+                    if (mCameraFacing == Facing.FRONT) {
+                        return false;
+                    }
+                    startActiveFocusAt(tapPoint.x, tapPoint.y);
+                    return true;
+                }
+            };
+        }
+
+        @Override
+        public View.OnTouchListener getTouchListener() {
+            return null;
+        }
+
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            Log.d(TAG, "onSurfaceTextureAvailable");
+            // Force to re-apply transform matrix here as a workaround for
+            // b/11168275
+            updatePreviewTransform(width, height, true);
+            initSurfaceTextureConsumer(surface, width, height);
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            Log.d(TAG, "onSurfaceTextureDestroyed");
+            closeCamera();
+            return true;
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            Log.d(TAG, "onSurfaceTextureSizeChanged");
+            updateFrameDistributorBufferSize();
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            if (mState == ModuleState.UPDATE_TRANSFORM_ON_NEXT_SURFACE_TEXTURE_UPDATE) {
+                Log.d(TAG, "onSurfaceTextureUpdated --> updatePreviewTransform");
+                mState = ModuleState.IDLE;
+                CameraAppUI appUI = mAppController.getCameraAppUI();
+                updatePreviewTransform(appUI.getSurfaceWidth(), appUI.getSurfaceHeight(), true);
+            }
+        }
+    };
 
   /** State by the module state machine. */
     private static enum ModuleState {
@@ -175,24 +254,12 @@ public class CaptureModule extends CameraModule
     private ModuleState mState = ModuleState.IDLE;
     /** Current zoom value. */
     private float mZoomValue = 1f;
-    /** Current duration of capture timer in seconds. */
-    private int mTimerDuration;
-    // TODO: Get image capture intent UI working.
-    private boolean mIsImageCaptureIntent;
 
-    /** True if in AF tap-to-focus sequence. */
-    private final boolean mTapToFocusWaitForActiveScan = false;
     /** Records beginning frame of each AF scan. */
     private long mAutoFocusScanStartFrame = -1;
     /** Records beginning time of each AF scan in uptimeMillis. */
     private long mAutoFocusScanStartTime;
 
-    /** Persistence of Tap to Focus target UI after scan complete. */
-    private static final int FOCUS_HOLD_UI_MILLIS = 0;
-    /** Worst case persistence of TTF target UI. */
-    private static final int FOCUS_UI_TIMEOUT_MILLIS = 2000;
-    /** Results from last tap to focus scan */
-    private boolean mFocusedAtEnd;
     /** Sensor manager we use to get the heading of the device. */
     private SensorManager mSensorManager;
     /** Accelerometer. */
@@ -238,8 +305,6 @@ public class CaptureModule extends CameraModule
 
     /** The current preview transformation matrix. */
     private Matrix mPreviewTranformationMatrix = new Matrix();
-    /** TODO: This is N5 specific. */
-    public static final float FULLSCREEN_ASPECT_RATIO = 16 / 9f;
 
 
     /** The burst manager for controlling the burst. */
@@ -256,7 +321,6 @@ public class CaptureModule extends CameraModule
         mAppController = appController;
         mContext = mAppController.getAndroidContext();
         mSettingsManager = mAppController.getSettingsManager();
-        mSettingsManager.addListener(this);
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
 
@@ -284,9 +348,8 @@ public class CaptureModule extends CameraModule
         mCameraFacing = getFacingFromCameraId(mSettingsManager.getInteger(
                 mAppController.getModuleScope(),
                 Keys.KEY_CAMERA_ID));
-        mUI = new CaptureModuleUI(activity, this, mAppController.getModuleLayoutRoot(),
-                mLayoutListener);
-        mAppController.setPreviewStatusListener(mUI);
+        mUI = new CaptureModuleUI(activity, mAppController.getModuleLayoutRoot(), mUIListener);
+        mAppController.setPreviewStatusListener(mPreviewStatusListener);
 
         mSoundPlayer = new SoundPlayer(mContext);
         FocusSound focusSound = new FocusSound(mSoundPlayer, R.raw.material_camera_focus);
@@ -302,10 +365,6 @@ public class CaptureModule extends CameraModule
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-
-        String action = activity.getIntent().getAction();
-        mIsImageCaptureIntent = (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
-                || CameraActivity.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
         View cancelButton = activity.findViewById(R.id.shutter_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -353,7 +412,6 @@ public class CaptureModule extends CameraModule
 
         int countDownDuration = mSettingsManager
                 .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
-        mTimerDuration = countDownDuration;
         if (countDownDuration > 0) {
             // Start count down.
             mAppController.getCameraAppUI().transitionToCancel();
@@ -435,14 +493,6 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onPreviewAreaChanged(RectF previewArea) {
-        mPreviewArea = previewArea;
-        mUI.onPreviewAreaChanged(previewArea);
-        // mUI.updatePreviewAreaRect(previewArea);
-        mUI.positionProgressOverlay(previewArea);
-    }
-
-    @Override
     public void onSensorChanged(SensorEvent event) {
         // This is literally the same as the GCamModule implementation.
         int type = event.sensor.getType();
@@ -474,48 +524,10 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onQueueStatus(boolean full) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     public void onRemoteShutterPress() {
         Log.d(TAG, "onRemoteShutterPress");
         // TODO: Check whether shutter is enabled.
         takePictureNow();
-    }
-
-    @Override
-    public void onSurfaceTextureAvailable(final SurfaceTexture surface, int width, int height) {
-        Log.d(TAG, "onSurfaceTextureAvailable");
-        // Force to re-apply transform matrix here as a workaround for
-        // b/11168275
-        updatePreviewTransform(width, height, true);
-        initSurfaceTextureConsumer(surface, width, height);
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-        Log.d(TAG, "onSurfaceTextureSizeChanged");
-        updateFrameDistributorBufferSize();
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        Log.d(TAG, "onSurfaceTextureDestroyed");
-        closeCamera();
-
-        return true;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        if (mState == ModuleState.UPDATE_TRANSFORM_ON_NEXT_SURFACE_TEXTURE_UPDATE) {
-            Log.d(TAG, "onSurfaceTextureUpdated --> updatePreviewTransform");
-            mState = ModuleState.IDLE;
-            CameraAppUI appUI = mAppController.getCameraAppUI();
-            updatePreviewTransform(appUI.getSurfaceWidth(), appUI.getSurfaceHeight(), true);
-        }
     }
 
     private void initSurfaceTextureConsumer() {
@@ -555,8 +567,9 @@ public class CaptureModule extends CameraModule
     @Override
     public void resume() {
         mPaused = false;
+        mAppController.addPreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
+        mAppController.addPreviewAreaSizeChangedListener(mUI);
         mAppController.getCameraAppUI().onChangeCamera();
-        mAppController.addPreviewAreaSizeChangedListener(this);
         mBurstController.initializeAndStartFrameDistributor();
         updateFrameDistributorBufferSize();
         getServices().getRemoteShutterListener().onModuleReady(this);
@@ -619,6 +632,8 @@ public class CaptureModule extends CameraModule
     @Override
     public void pause() {
         mPaused = true;
+        mAppController.removePreviewAreaSizeChangedListener(mUI);
+        mAppController.removePreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         getServices().getRemoteShutterListener().onModuleExit();
         mBurstController.stopBurst();
         cancelCountDown();
@@ -747,19 +762,6 @@ public class CaptureModule extends CameraModule
                 return true;
         }
         return false;
-    }
-
-    /**
-     * Focus sequence starts for zone around tap location for single tap.
-     */
-    @Override
-    public void onSingleTapUp(View view, int viewX, int viewY) {
-        Log.v(TAG, "onSingleTapUp x=" + viewX + " y=" + viewY);
-        // TODO: This should query actual capability.
-        if (mCameraFacing == Facing.FRONT) {
-            return;
-        }
-        startActiveFocusAt(viewX, viewY);
     }
 
     // TODO: Consider refactoring FocusOverlayManager.
@@ -918,11 +920,6 @@ public class CaptureModule extends CameraModule
     public void onPictureTakingFailed() {
     }
 
-    @Override
-    public void onSettingChanged(SettingsManager settingsManager, String key) {
-        // TODO Auto-generated method stub
-    }
-
     /**
      * Updates the preview transform matrix to adapt to the current preview
      * width, height, and orientation.
@@ -935,18 +932,6 @@ public class CaptureModule extends CameraModule
             height = mScreenHeight;
         }
         updatePreviewTransform(width, height);
-    }
-
-    /**
-     * Set zoom value.
-     *
-     * @param zoom Zoom value, must be between 1.0 and mCamera.getMaxZoom().
-     */
-    public void setZoom(float zoom) {
-        mZoomValue = zoom;
-        if (mCamera != null) {
-            mCamera.setZoom(zoom);
-        }
     }
 
     /**
@@ -1189,21 +1174,6 @@ public class CaptureModule extends CameraModule
                     - centerY);
 
             mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
-            // if (mGcamProxy != null) {
-            // mGcamProxy.postSetAspectRatio(mFinalAspectRatio);
-            // }
-            // mUI.updatePreviewAreaRect(new RectF(0, 0, previewWidth,
-            // previewHeight));
-
-            // TODO: Add face detection.
-            // Characteristics info =
-            // mapp.getCameraProvider().getCharacteristics(0);
-            // mUI.setupFaceDetection(CameraUtil.getDisplayOrientation(incomingRotation,
-            // info), false);
-            // updateCamera2FaceBoundTransform(new
-            // RectF(mEffectiveCropRegion),
-            // new RectF(0, 0, mBufferWidth, mBufferHeight),
-            // new RectF(0, 0, previewWidth, previewHeight), getRotation());
         }
     }
 

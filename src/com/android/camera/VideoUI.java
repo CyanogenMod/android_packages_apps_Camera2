@@ -72,11 +72,6 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     @Override
-    public boolean shouldAutoAdjustBottomBar() {
-        return true;
-    }
-
-    @Override
     public void onPreviewFlipped() {
         mController.updateCameraOrientation();
     }
