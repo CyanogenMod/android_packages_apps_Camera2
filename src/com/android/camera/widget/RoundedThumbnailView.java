@@ -352,9 +352,11 @@ public class RoundedThumbnailView extends View {
 
         // Stop currently running animators.
         if (mThumbnailAnimatorSet != null && mThumbnailAnimatorSet.isRunning()) {
+            mThumbnailAnimatorSet.removeAllListeners();
             mThumbnailAnimatorSet.end();
         }
         if (mRippleAnimator != null && mRippleAnimator.isRunning()) {
+            mRippleAnimator.removeAllListeners();
             mRippleAnimator.end();
         }
         // Remove all pending reveal requests.
