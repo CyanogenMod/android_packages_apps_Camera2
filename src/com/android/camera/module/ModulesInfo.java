@@ -39,7 +39,7 @@ public class ModulesInfo {
 
     /** Selects CaptureModule if true, PhotoModule if false. */
     private static final boolean ENABLE_CAPTURE_MODULE = ApiHelper.HAS_CAMERA_2_API
-            && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6 || ApiHelper.IS_NEXUS_9);
+            && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6);
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
