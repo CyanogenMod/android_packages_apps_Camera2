@@ -27,6 +27,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.media.MediaActionSound;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -212,6 +213,7 @@ public class CaptureModule extends CameraModule
     private final LocationManager mLocationManager;
     /** Plays sounds for countdown timer. */
     private SoundPlayer mSoundPlayer;
+    private final MediaActionSound mMediaActionSound;
 
     /** Whether the module is paused right now. */
     private boolean mPaused;
@@ -267,6 +269,7 @@ public class CaptureModule extends CameraModule
                 mAppController.setShutterEnabled(ready);
             }
         });
+        mMediaActionSound = new MediaActionSound();
     }
 
     @Override
@@ -312,6 +315,7 @@ public class CaptureModule extends CameraModule
         });
 
         mFirstRunDialog = new FirstRunDialog(mAppController, mCameraManager);
+        mMediaActionSound.load(MediaActionSound.SHUTTER_CLICK);
     }
 
     @Override
@@ -425,6 +429,7 @@ public class CaptureModule extends CameraModule
             public void run() {
                 // Starts the short version of the capture animation UI.
                 mAppController.startFlashAnimation(true);
+                mMediaActionSound.play(MediaActionSound.SHUTTER_CLICK);
             }
         });
     }
@@ -626,6 +631,7 @@ public class CaptureModule extends CameraModule
     @Override
     public void destroy() {
         mSoundPlayer.release();
+        mMediaActionSound.release();
         mCameraHandler.getLooper().quitSafely();
     }
 
