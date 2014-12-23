@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -27,14 +26,9 @@ import android.view.View.OnLayoutChangeListener;
 
 import com.android.camera.app.CameraProvider;
 import com.android.camera.debug.Log;
-import com.android.camera.settings.Keys;
-import com.android.camera.settings.ResolutionUtil;
-import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
-import com.android.ex.camera2.portability.Size;
 
 import java.util.ArrayList;
 import java.util.List;

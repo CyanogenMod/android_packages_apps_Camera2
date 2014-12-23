@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
-import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
@@ -38,10 +37,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
 
     private int mTargetWidth;
 
-    TaskConvertImageToRGBPreview(ImageProxy imageProxy, Executor executor,
+    TaskConvertImageToRGBPreview(ImageToProcess image, Executor executor,
             ImageBackend imageBackend, CaptureSession captureSession, int targetWidth,
             int targetHeight) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.FAST, captureSession);
+        super(image, executor, imageBackend, ProcessingPriority.FAST, captureSession);
         mTargetWidth = targetWidth;
         mTargetHeight = targetHeight;
     }
@@ -396,34 +395,31 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
 
     @Override
     public void run() {
-        ImageProxy img = mImageProxy;
+        ImageToProcess img = mImage;
 
-        // TODO: Pass in the orientation for processing as well.
-        final TaskImage inputImage = new TaskImage(
-                OrientationManager.DeviceOrientation.CLOCKWISE_0, img.getWidth(), img.getHeight(),
-                img.getFormat());
+        final TaskImage inputImage = new TaskImage(img.rotation, img.proxy.getWidth(),
+                img.proxy.getHeight(), img.proxy.getFormat());
         final int subsample = calculateBestSubsampleFactor(inputImage.width, inputImage.height,
                 mTargetWidth, mTargetHeight);
         final int radius = inscribedCircleRadius(inputImage.width / subsample, inputImage.height
                 / subsample);
 
-        final TaskImage resultImage = new TaskImage(
-                OrientationManager.DeviceOrientation.CLOCKWISE_0, radius * 2, radius * 2,
+        final TaskImage resultImage = new TaskImage(img.rotation, radius * 2, radius * 2,
                 TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888);
 
         onStart(mId, inputImage, resultImage);
 
-        logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.getWidth()
-                / subsample + " h=" + img.getHeight() / subsample + " of subsample " + subsample);
+        logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.proxy.getWidth()
+                / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
+                + subsample);
 
         // For dummy version, use
         // dummyColorInscribedDataCircleFromYuvImage
-        final int[] convertedImage = colorInscribedDataCircleFromYuvImage(img, subsample);
+        final int[] convertedImage = colorInscribedDataCircleFromYuvImage(img.proxy, subsample);
         // Signal backend that reference has been released
         mImageBackend.releaseSemaphoreReference(img, mExecutor);
 
         onPreviewDone(resultImage, inputImage, convertedImage);
-
     }
 
     /**

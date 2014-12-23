@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2.photo;
 
-import java.util.concurrent.Executor;
-
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.app.OrientationManager;
@@ -29,6 +27,8 @@ import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.LoggingCameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.session.CaptureSession;
+
+import java.util.concurrent.Executor;
 
 class PictureTakerImpl implements PictureTaker {
     private final Executor mMainExecutor;
@@ -72,7 +72,8 @@ class PictureTakerImpl implements PictureTaker {
                 pictureCallbackAdaptor.provideThumbnailUpdatable();
 
         mImageSaverBuilder.setLocation(params.location);
-        mImageSaverBuilder.setOrientation(OrientationManager.DeviceOrientation.CLOCKWISE_0);
+        mImageSaverBuilder.setOrientation(OrientationManager.DeviceOrientation
+                .from(params.orientation));
         mImageSaverBuilder.setThumbnailCallback(thumbnailCallback);
         mImageSaverBuilder.setSession(session);
 

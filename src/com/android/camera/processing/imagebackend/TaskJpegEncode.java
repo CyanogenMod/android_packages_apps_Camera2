@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -23,7 +23,6 @@ import android.graphics.YuvImage;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
-import com.android.camera.util.JpegUtilNative;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,7 +56,7 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      * @param preferredLane Preferred processing priority for this task
      * @param captureSession Session associated for UI handling
      */
-    public TaskJpegEncode(ImageProxy image, Executor executor, ImageBackend imageBackend,
+    public TaskJpegEncode(ImageToProcess image, Executor executor, ImageBackend imageBackend,
             TaskImageContainer.ProcessingPriority preferredLane, CaptureSession captureSession) {
         super(image, executor, imageBackend, preferredLane, captureSession);
     }

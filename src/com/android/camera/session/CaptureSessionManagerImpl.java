@@ -141,10 +141,20 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
+        public synchronized void startSession(Bitmap placeholder, CharSequence progressMessage) {
+            mProgressMessage = progressMessage;
+
+            mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
+                    mSessionStartMillis);
+            mUri = mPlaceHolderSession.outputUri;
+            putSession(mUri, this);
+            notifyTaskQueued(mUri);
+        }
+
+        @Override
         public synchronized void startSession(byte[] placeholder, CharSequence progressMessage) {
             mProgressMessage = progressMessage;
 
-            // TODO: This needs to happen outside the UI thread.
             mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
                     mSessionStartMillis);
             mUri = mPlaceHolderSession.outputUri;

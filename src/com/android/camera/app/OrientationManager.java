@@ -23,6 +23,26 @@ public interface OrientationManager {
         public int getDegrees() {
             return mDegrees;
         }
+
+        /**
+         * Turns a degree value (0, 90, 180, 270) into one of CLOCKWISE_0,
+         * CLOCKWISE_90, CLOCKWISE_180 or CLOCKWISE_270. If any other degree
+         * value is given, UNKNOWN is returned.
+         */
+        public static DeviceOrientation from(int degrees) {
+            switch (degrees) {
+                case 0:
+                    return CLOCKWISE_0;
+                case 90:
+                    return CLOCKWISE_90;
+                case 180:
+                    return CLOCKWISE_180;
+                case 270:
+                    return CLOCKWISE_270;
+                default:
+                    return UNKNOWN;
+            }
+        }
     }
 
     public interface OnOrientationChangeListener {

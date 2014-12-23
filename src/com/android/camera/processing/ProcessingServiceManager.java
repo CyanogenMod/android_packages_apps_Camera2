@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.android.camera.debug.Log;
+import com.android.camera.processing.imagebackend.ImageBackend;
 
 import java.util.LinkedList;
 
@@ -54,7 +55,7 @@ public class ProcessingServiceManager {
      * Initializes the singleton instances of ProcessingServiceManager
      * and ImageBackend.
      *
-     * @param context the application context.
+     * @param appContext the application context.
      */
     public static void initSingleton(Context appContext) {
         sInstance = new ProcessingServiceManager(appContext);

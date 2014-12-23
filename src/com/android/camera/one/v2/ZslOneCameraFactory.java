@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2;
 
+import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
@@ -23,8 +24,8 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
-import android.location.Location;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Handler;
 import android.view.Surface;
 
@@ -41,7 +42,6 @@ import com.android.camera.one.v2.autofocus.ManualAutoFocusFactory;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.PreviewCommand;
 import com.android.camera.one.v2.commands.RunnableCameraCommand;
@@ -55,6 +55,8 @@ import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
+import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.ZslImageSaverImpl;
@@ -72,6 +74,7 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Creates a camera which takes YUV images with zero shutter lag.
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ZslOneCameraFactory {
     /**
      * Finishes constructing the camera when prerequisites, e.g. the preview
@@ -170,7 +173,12 @@ public class ZslOneCameraFactory {
 
             HandlerExecutor mainExecutor = new HandlerExecutor(mMainHandler);
 
-            ImageSaver.Builder imageSaverBuilder = new ZslImageSaverImpl(mainExecutor);
+            // Used to rotate images the right way based on the sensor used for taking the image.
+            ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
+                    .from(mCameraCharacteristics);
+
+            ImageSaver.Builder imageSaverBuilder = new ZslImageSaverImpl(mainExecutor,
+                    imageRotationCalculator);
 
             ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(mainExecutor,
                     cameraCommandExecutor, imageSaverBuilder, frameServer, rootBuilder,

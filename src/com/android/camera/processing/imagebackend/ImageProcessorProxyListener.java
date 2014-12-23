@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
-import android.media.Image;
 import android.net.Uri;
 
 import com.android.camera.debug.Log;

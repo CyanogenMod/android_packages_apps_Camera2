@@ -16,11 +16,13 @@
 
 package com.android.camera.one.v2.initialization;
 
+import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Build;
 import android.os.Handler;
 import android.view.Surface;
 
@@ -60,6 +62,7 @@ import java.util.concurrent.Executors;
  * CameraDevice and preview Surface.</li>
  * </ol>
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class InitializedOneCameraFactory {
     private final CameraStarter mCameraStarter;
     private final CameraDeviceProxy mDevice;

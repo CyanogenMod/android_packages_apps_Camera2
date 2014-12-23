@@ -35,6 +35,7 @@ class DeferredPictureTaker implements PictureTaker {
         mPictureTakerFuture = pictureTakerFuture;
     }
 
+    @Override
     public void takePicture(OneCamera.PhotoCaptureParameters params, CaptureSession session) {
         if (mPictureTakerFuture.isDone()) {
             try {

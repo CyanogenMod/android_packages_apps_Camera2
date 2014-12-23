@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.camera.processing;
+package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
 
-import com.android.camera.app.OrientationManager;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.exif.ExifInterface;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.JpegUtilNative;
 
@@ -29,6 +28,9 @@ import java.util.concurrent.Executor;
 /**
  * Implements the conversion of a YUV_420_888 image to compressed JPEG byte
  * array, using the native implementation of the Camera Application.
+ * <p>
+ * TODO: Instead of setting the orientation in EXIF, actually rotate the image
+ * here and set a rotation of 0.
  */
 public class TaskCompressImageToJpeg extends TaskJpegEncode {
     private static final int DEFAULT_JPEG_COMPRESSION_QUALITY = 90;
@@ -36,14 +38,14 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     /**
      * Constructor
      *
-     * @param imageProxy Image required for computation
+     * @param image Image required for computation
      * @param executor Executor to run events
      * @param imageBackend Link to ImageBackend for reference counting
      * @param captureSession Handler for UI/Disk events
      */
-    TaskCompressImageToJpeg(ImageProxy imageProxy, Executor executor, ImageBackend imageBackend,
+    TaskCompressImageToJpeg(ImageToProcess image, Executor executor, ImageBackend imageBackend,
             CaptureSession captureSession) {
-        super(imageProxy, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
+        super(image, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
     }
 
     private void logWrapper(String message) {
@@ -52,25 +54,22 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
     @Override
     public void run() {
-        ImageProxy img = mImageProxy;
+        ImageToProcess img = mImage;
 
-        // TODO: Pass in the orientation for processing as well.
         final TaskImage inputImage = new TaskImage(
-                OrientationManager.DeviceOrientation.CLOCKWISE_0,
-                img.getWidth(), img.getHeight(), img.getFormat());
+                img.rotation, img.proxy.getWidth(), img.proxy.getHeight(), img.proxy.getFormat());
         final TaskImage resultImage = new TaskImage(
-                OrientationManager.DeviceOrientation.CLOCKWISE_0,
-                img.getWidth(), img.getHeight(), ImageFormat.JPEG);
+                img.rotation, img.proxy.getWidth(), img.proxy.getHeight(), ImageFormat.JPEG);
 
         onStart(mId, inputImage, resultImage);
-
-        logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.getWidth() + " h="
-                + img.getHeight() + " of format " + img.getFormat() + " (35==YUV_420_888)");
+        logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.proxy.getWidth() + " h="
+                + img.proxy.getHeight() + " of format " + img.proxy.getFormat()
+                + " (35==YUV_420_888)");
 
         ByteBuffer compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
                 * resultImage.height);
 
-        int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img, compressedData,
+        int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img.proxy, compressedData,
                 DEFAULT_JPEG_COMPRESSION_QUALITY);
 
         if (numBytes < 0) {
@@ -80,11 +79,21 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         byte[] writeOut = new byte[numBytes];
         compressedData.get(writeOut);
         compressedData.rewind();
+
         // Release the image now that you have a usable copy
         mImageBackend.releaseSemaphoreReference(img, mExecutor);
 
-        mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height, 0, null, null);
+        mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
+                img.rotation.getDegrees(), createExif(resultImage), null);
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut);
     }
 
+    private static ExifInterface createExif(TaskImage image) {
+        ExifInterface exif = new ExifInterface();
+        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_X_DIMENSION, image.width));
+        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_Y_DIMENSION, image.height));
+        exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.getOrientationValueForRotation(image.orientation.getDegrees())));
+        return exif;
+    }
 }
