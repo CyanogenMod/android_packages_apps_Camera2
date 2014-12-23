@@ -41,11 +41,11 @@
   <string name="pref_camera_video_hdr_title">HDR動画</string>
   <string name="pref_camera_facedetection_title">顔検出</string>
   <string name="pref_camera_redeyereduction_title">赤目軽減</string>
-  <string name="error_app_unsupported_hfr_selection">動画安定化、低速度撮影またはHDR動画がONになっているときはHFRはサポートされていません。</string>
+  <string name="error_app_unsupported_hfr_selection">動画の安定化、低速度撮影またはHDR動画がONになっているときはHFRはサポートされていません。</string>
   <string name="error_app_unsupported_hfr">選択された解像度ではHFRはサポートされていません</string>
   <string name="error_app_unsupported_hfr_codec">HFRがONのときはH.264ビデオエンコードのみサポートされています</string>
   <string name="error_app_unsupported">このコーデックの種類ではサポートされていない動画の解像度です</string>
-  <string name="error_app_unsupported_dis">選択した解像度では動画安定化はサポートされていません</string>
+  <string name="error_app_unsupported_dis">選択した解像度では動画の安定化はサポートされていません</string>
   <string name="pref_camera_ae_bracket_hdr_title">自動段階露出</string>
   <string name="pref_camera_hfr_title">スローモーション（HFR）</string>
   <string name="pref_camera_hfr_entry_off">OFF</string>
@@ -97,7 +97,7 @@
   <string name="pref_camera_coloreffect_entry_bluetint">淡い青色</string>
   <string name="pref_camera_coloreffect_entry_greentint">淡い緑色</string>
   <string name="pref_camera_touchafaec_title">タッチAF/AEC</string>
-  <string name="pref_camera_dis_title">動画安定化</string>
+  <string name="pref_camera_dis_title">動画の安定化</string>
   <string name="pref_camera_facerc_title">顔認識</string>
   <string name="pref_camera_sharpness_title">シャープネス</string>
   <string name="pref_camera_sharpness_entry_level0">レベル0</string>
