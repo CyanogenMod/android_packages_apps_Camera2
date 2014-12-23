@@ -181,7 +181,7 @@ public class CaptureModule extends CameraModule
     private boolean mIsImageCaptureIntent;
 
     /** True if in AF tap-to-focus sequence. */
-    private boolean mTapToFocusWaitForActiveScan = false;
+    private final boolean mTapToFocusWaitForActiveScan = false;
     /** Records beginning frame of each AF scan. */
     private long mAutoFocusScanStartFrame = -1;
     /** Records beginning time of each AF scan in uptimeMillis. */
@@ -531,10 +531,9 @@ public class CaptureModule extends CameraModule
     }
 
     private void reopenCamera() {
-        // Don't open camera until the aspect ratio preference is set.
-        final boolean isAspectRatioPreferenceSet = mAppController.getSettingsManager().getBoolean(
-                SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
-        if (isAspectRatioPreferenceSet) {
+        // Don't open camera until the aspect ratio preference is set on devices
+        // that require us to show it.
+        if (!mFirstRunDialog.shouldShow()) {
             closeCamera();
             openCameraAndStartPreview();
         }
@@ -592,6 +591,12 @@ public class CaptureModule extends CameraModule
             mFirstRunDialog.setListener(new FirstRunDialog.FirstRunDialogListener() {
                 @Override
                 public void onLocationPreferenceConfirmed(boolean locationRecordingEnabled) {
+                    // If this device doesn't need to show the aspect ratio
+                    // dialog, start the preview right away since
+                    // onAspectRatioPreferenceConfirmed will never be called.
+                    if (!mFirstRunDialog.shouldShow()) {
+                        openCameraAndStartPreview();
+                    }
                 }
 
                 @Override
