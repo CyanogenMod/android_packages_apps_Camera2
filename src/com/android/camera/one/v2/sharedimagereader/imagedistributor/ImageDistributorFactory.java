@@ -39,7 +39,8 @@ public class ImageDistributorFactory {
         lifetime.add(imageReaderHandler);
 
         imageReader.setOnImageAvailableListener(
-                new ImageDistributorOnImageAvailableListener(mImageDistributor),
+                new ImageDistributorOnImageAvailableListener(mImageDistributor, imageReader
+                        .getMaxImages()),
                 imageReaderHandler.get());
     }
 
