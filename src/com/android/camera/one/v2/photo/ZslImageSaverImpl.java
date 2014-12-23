@@ -121,6 +121,7 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
     public ImageSaver build() {
         final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
                 .toImageRotation(mOrientation);
+        final CaptureSession session = mSession;
 
         return new ImageSaver() {
 
@@ -173,8 +174,8 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
                                 @Override
                                 public void run() {
                                     // TODO: Finalize and I18N string.
-                                    mSession.startSession(bitmap, "Saving image ...");
-                                    mSession.setProgress(42);
+                                    session.startSession(bitmap, "Saving image ...");
+                                    session.setProgress(42);
                                     imageBackend.getAppUI().updateCaptureIndicatorThumbnail(bitmap,
                                             imageRotation.getDegrees());
                                 }
@@ -199,7 +200,7 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
 
                 try {
                     imageBackend.receiveImage(new ImageToProcess(imageProxy, imageRotation),
-                            mExecutor, taskFlagsSet, mSession);
+                            mExecutor, taskFlagsSet, session);
                 } catch (InterruptedException e) {
                     // TODO: Fire error here, since we are non-blocking.
                 }
