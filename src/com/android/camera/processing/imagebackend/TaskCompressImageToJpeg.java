@@ -18,9 +18,11 @@ package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
 
+import com.android.camera.app.OrientationManager.DeviceOrientation;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.JpegUtilNative;
+import com.android.camera.util.Size;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
@@ -58,8 +60,14 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
         final TaskImage inputImage = new TaskImage(
                 img.rotation, img.proxy.getWidth(), img.proxy.getHeight(), img.proxy.getFormat());
+
+        // Resulting image will be rotated so that viewers won't have to rotate.
+        // That's why the resulting image will have 0 rotation.
+        Size resultSize = getImageSizeForOrientation(img.proxy.getWidth(), img.proxy.getHeight(),
+                img.rotation);
         final TaskImage resultImage = new TaskImage(
-                img.rotation, img.proxy.getWidth(), img.proxy.getHeight(), ImageFormat.JPEG);
+                DeviceOrientation.CLOCKWISE_0, resultSize.getWidth(), resultSize.getHeight(),
+                ImageFormat.JPEG);
 
         onStart(mId, inputImage, resultImage);
         logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.proxy.getWidth() + " h="
@@ -70,7 +78,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 * resultImage.height);
 
         int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img.proxy, compressedData,
-                DEFAULT_JPEG_COMPRESSION_QUALITY);
+                DEFAULT_JPEG_COMPRESSION_QUALITY, inputImage.orientation.getDegrees());
 
         if (numBytes < 0) {
             throw new RuntimeException("Error compressing jpeg.");
@@ -84,7 +92,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         mImageBackend.releaseSemaphoreReference(img, mExecutor);
 
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
-                img.rotation.getDegrees(), createExif(resultImage), null);
+                resultImage.orientation.getDegrees(), createExif(resultImage), null);
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut);
     }
 
@@ -95,5 +103,27 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.getOrientationValueForRotation(image.orientation.getDegrees())));
         return exif;
+    }
+
+    /**
+     * @param originalWidth the width of the original image captured from the
+     *            camera
+     * @param originalHeight the height of the original image captured from the
+     *            camera
+     * @param orientation the rotation to apply, in degrees.
+     * @return The size of the final rotated image
+     */
+    private Size getImageSizeForOrientation(int originalWidth, int originalHeight,
+            DeviceOrientation orientation) {
+        if (orientation == DeviceOrientation.CLOCKWISE_0
+                || orientation == DeviceOrientation.CLOCKWISE_180) {
+            return new Size(originalWidth, originalHeight);
+        } else if (orientation == DeviceOrientation.CLOCKWISE_90
+                || orientation == DeviceOrientation.CLOCKWISE_270) {
+            return new Size(originalHeight, originalWidth);
+        } else {
+            // Unsupported orientation. Get rid of this once UNKNOWN is gone.
+            return new Size(originalWidth, originalHeight);
+        }
     }
 }

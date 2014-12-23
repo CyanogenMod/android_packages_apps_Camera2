@@ -39,7 +39,7 @@ public class Size {
         this.height = point.y;
     }
 
-    @TargetApi(VERSION_CODES.L)
+    @TargetApi(VERSION_CODES.LOLLIPOP)
     public Size(android.util.Size size) {
         this.width = size.getWidth();
         this.height = size.getHeight();
@@ -98,7 +98,7 @@ public class Size {
         return new com.android.ex.camera2.portability.Size(width, height);
     }
 
-    @TargetApi(VERSION_CODES.L)
+    @TargetApi(VERSION_CODES.LOLLIPOP)
     public static Size[] convert(android.util.Size[] sizes) {
         Size[] converted = new Size[sizes.length];
         for (int i = 0; i < sizes.length; ++i) {
