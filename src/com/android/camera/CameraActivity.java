@@ -1639,6 +1639,7 @@ public class CameraActivity extends Activity
         mCurrentModule.pause();
         mOrientationManager.pause();
         mPanoramaViewHelper.onPause();
+        mLocationManager.recordLocation(false);
 
         mLocalImagesObserver.setForegroundChangeListener(null);
         mLocalImagesObserver.setActivityPaused(true);
