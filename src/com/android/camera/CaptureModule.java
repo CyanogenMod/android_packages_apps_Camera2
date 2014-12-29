@@ -554,11 +554,6 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void resume() {
-        // Prevent a dead-lock where startPreview doesn't call the provided
-        // CaptureReadyCallback.
-        // TODO: Refactor to get rid of this lock.
-        mCameraOpenCloseLock.release();
-
         mPaused = false;
         mAppController.getCameraAppUI().onChangeCamera();
         mAppController.addPreviewAreaSizeChangedListener(this);
