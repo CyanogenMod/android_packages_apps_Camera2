@@ -577,6 +577,12 @@ public class CaptureModule extends CameraModule
         mHdrEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS) == 1;
 
+        // The lock only exists for HDR and causes trouble for non-HDR OneCameras.
+        // TODO: Fix for removing the locks completely is tracked at b/17985028
+        if (!mHdrEnabled) {
+            mCameraOpenCloseLock.release();
+        }
+
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
         // have to open the camera and start the preview here.
