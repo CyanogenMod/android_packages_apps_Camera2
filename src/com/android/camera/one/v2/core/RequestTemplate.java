@@ -38,7 +38,7 @@ import com.android.camera.async.Pollable;
  * builders which already have the latest zoom settings, preview surface,
  * metering regions, auto-focus state listener, etc. applied.
  */
-public class DecoratingRequestBuilderBuilder implements RequestBuilder.Factory {
+public class RequestTemplate implements RequestBuilder.Factory {
     private static class Parameter<T> {
         private final CaptureRequest.Key<T> key;
         private final Pollable<T> value;
@@ -62,23 +62,23 @@ public class DecoratingRequestBuilderBuilder implements RequestBuilder.Factory {
     private final List<Parameter<?>> mParameters;
     private final List<CaptureStream> mCaptureStreams;
 
-    public DecoratingRequestBuilderBuilder(RequestBuilder.Factory requestBuilderFactory) {
+    public RequestTemplate(RequestBuilder.Factory requestBuilderFactory) {
         mRequestBuilderFactory = requestBuilderFactory;
         mResponseListeners = new HashSet<>();
         mParameters = new ArrayList<>();
         mCaptureStreams = new ArrayList<>();
     }
 
-    public <T> DecoratingRequestBuilderBuilder withParam(CaptureRequest.Key<T> key, T value) {
-        return withParam(key, new ConstantPollable<T>(value));
+    public <T> RequestTemplate setParam(CaptureRequest.Key<T> key, T value) {
+        return setParam(key, new ConstantPollable<T>(value));
     }
 
     /**
      * Attaches the given value to all derived RequestBuilders. Note that the
      * value is polled when each new RequestBuilder is created.
      */
-    public <T> DecoratingRequestBuilderBuilder withParam(CaptureRequest.Key<T> key,
-            Pollable<T> value) {
+    public <T> RequestTemplate setParam(CaptureRequest.Key<T> key,
+                                        Pollable<T> value) {
         mParameters.add(new Parameter<T>(key, value));
         return this;
     }
@@ -86,7 +86,7 @@ public class DecoratingRequestBuilderBuilder implements RequestBuilder.Factory {
     /**
      * Attaches the given ResponseListener to all derived RequestBuilders.
      */
-    public DecoratingRequestBuilderBuilder withResponseListener(ResponseListener listener) {
+    public RequestTemplate addResponseListener(ResponseListener listener) {
         mResponseListeners.add(listener);
         return this;
     }
@@ -94,7 +94,7 @@ public class DecoratingRequestBuilderBuilder implements RequestBuilder.Factory {
     /**
      * Attaches the given stream to all derived RequestBuilders.
      */
-    public DecoratingRequestBuilderBuilder withStream(CaptureStream stream) {
+    public RequestTemplate addStream(CaptureStream stream) {
         mCaptureStreams.add(stream);
         return this;
     }

@@ -31,7 +31,7 @@ import com.android.camera.async.ResettingDelayedExecutor;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.RunnableCameraCommand;
-import com.android.camera.one.v2.core.DecoratingRequestBuilderBuilder;
+import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 
@@ -72,10 +72,10 @@ public class ManualAutoFocusFactory {
         mAFMeteringRegion = new AFMeteringRegion(currentMeteringParameters, cropRegion,
                 sensorOrientation);
 
-        DecoratingRequestBuilderBuilder afRequestBuilder =
-                new DecoratingRequestBuilderBuilder(rootBuilder);
-        afRequestBuilder.withParam(CaptureRequest.CONTROL_AE_REGIONS, mAEMeteringRegion);
-        afRequestBuilder.withParam(CaptureRequest.CONTROL_AF_REGIONS, mAFMeteringRegion);
+        RequestTemplate afRequestBuilder =
+                new RequestTemplate(rootBuilder);
+        afRequestBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, mAEMeteringRegion);
+        afRequestBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, mAFMeteringRegion);
 
         CameraCommand afScanCommand = new FullAFScanCommand(frameServer, afRequestBuilder,
                 templateType);
