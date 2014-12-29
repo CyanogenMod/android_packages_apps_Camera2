@@ -1299,7 +1299,7 @@ public class CaptureModule extends CameraModule
                                                    Log.d(TAG, "Camera closed, aborting.");
                                                    return;
                                                }
-                                               mCamera.close(null);
+                                               mCamera.close();
                                                mCamera = null;
                                                // TODO: Show an error message and exit.
                                            }
@@ -1342,7 +1342,7 @@ public class CaptureModule extends CameraModule
         }
         try {
             if (mCamera != null) {
-                mCamera.close(null);
+                mCamera.close();
                 mCamera.setFocusStateListener(null);
                 mCamera = null;
             }

@@ -161,8 +161,7 @@ class GenericOneCameraImpl implements OneCamera {
     }
 
     @Override
-    public void close(CloseCallback closeCallback) {
-        // TODO Remove CloseCallback from the interface. It is always null.
+    public void close() {
         mCloseListener.close();
     }
 

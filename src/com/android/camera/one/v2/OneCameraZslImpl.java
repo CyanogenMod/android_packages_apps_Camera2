@@ -162,8 +162,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private Surface mPreviewSurface;
     /** Whether closing of this device has been requested. */
     private volatile boolean mIsClosed = false;
-    /** A callback that is called when the device is fully closed. */
-    private CloseCallback mCloseCallback = null;
 
     /** Receives the normal captured images. */
     private final ImageReader mCaptureImageReader;
@@ -582,7 +580,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     }
 
     @Override
-    public void close(CloseCallback closeCallback) {
+    public void close() {
         if (mIsClosed) {
             Log.w(TAG, "Camera is already closed.");
             return;
@@ -593,7 +591,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             Log.e(TAG, "Could not abort captures in progress.");
         }
         mIsClosed = true;
-        mCloseCallback = closeCallback;
         mCameraThread.quitSafely();
         mDevice.close();
         mCaptureManager.close();
@@ -714,9 +711,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                     @Override
                 public void onClosed(CameraCaptureSession session) {
                     super.onClosed(session);
-                    if (mCloseCallback != null) {
-                        mCloseCallback.onCameraClosed();
-                    }
                 }
             }, mCameraHandler);
         } catch (CameraAccessException ex) {
