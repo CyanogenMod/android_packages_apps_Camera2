@@ -71,13 +71,8 @@ class PictureTakerImpl implements PictureTaker {
         final Updatable<byte[]> thumbnailCallback =
                 pictureCallbackAdaptor.provideThumbnailUpdatable();
 
-        mImageSaverBuilder.setLocation(params.location);
-        mImageSaverBuilder.setOrientation(OrientationManager.DeviceOrientation
-                .from(params.orientation));
-        mImageSaverBuilder.setThumbnailCallback(thumbnailCallback);
-        mImageSaverBuilder.setSession(session);
-
-        final ImageSaver imageSaver = mImageSaverBuilder.build();
+        final ImageSaver imageSaver = mImageSaverBuilder.build(OrientationManager
+                .DeviceOrientation.from(params.orientation), session);
 
         ImageCaptureCommand imageCommand;
         if (flashMode == OneCamera.PhotoCaptureParameters.Flash.ON) {
