@@ -29,7 +29,6 @@ import android.view.Surface;
 import com.android.camera.async.CloseableHandlerThread;
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.FilteredUpdatable;
-import com.android.camera.async.FutureResult;
 import com.android.camera.async.HandlerExecutor;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Listenable;
@@ -40,6 +39,7 @@ import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.util.Size;
+import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -117,10 +117,10 @@ public class InitializedOneCameraFactory {
         // Since we cannot create an actual PictureTaker and ManualAutoFocus
         // until the CaptureSession is available, so create ones which defer to
         // a Future of the actual implementation.
-        final FutureResult<PictureTaker> mPictureTaker = new FutureResult<>();
+        final SettableFuture<PictureTaker> mPictureTaker = SettableFuture.create();
         PictureTaker pictureTaker = new DeferredPictureTaker(mPictureTaker);
 
-        final FutureResult<ManualAutoFocus> mManualAutoFocus = new FutureResult<>();
+        final SettableFuture<ManualAutoFocus> mManualAutoFocus = SettableFuture.create();
         ManualAutoFocus manualAutoFocus = new DeferredManualAutoFocus(
                 mManualAutoFocus);
 
@@ -167,7 +167,7 @@ public class InitializedOneCameraFactory {
                 cameraHandler.get());
 
         PreviewStarter mPreviewStarter = new PreviewStarter(mOutputSurfaces,
-                captureSessionCreator, miscThreadPool,
+                captureSessionCreator,
                 new PreviewStarter.CameraCaptureSessionCreatedListener() {
                     @Override
                     public void onCameraCaptureSessionCreated(CameraCaptureSessionProxy session,
@@ -176,8 +176,8 @@ public class InitializedOneCameraFactory {
                                 new Lifetime(cameraLifetime),
                                 session, previewSurface,
                                 zoomState, metadataCallback, readyState);
-                        mPictureTaker.setValue(controls.getPictureTaker());
-                        mManualAutoFocus.setValue(controls.getManualAutoFocus());
+                        mPictureTaker.set(controls.getPictureTaker());
+                        mManualAutoFocus.set(controls.getManualAutoFocus());
                     }
                 });
 
