@@ -16,9 +16,6 @@
 
 package com.android.camera.one.v2.photo;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.BufferQueue;
@@ -26,6 +23,9 @@ import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class ZslImageCaptureCommand implements ImageCaptureCommand {
     private final BufferQueue<ImageProxy> mZslRingBuffer;
@@ -49,12 +49,13 @@ class ZslImageCaptureCommand implements ImageCaptureCommand {
             imageExposeCallback.update(null);
             imageSaver.saveAndCloseImage(image);
             zslImageCaptured = true;
-        } catch (TimeoutException | BufferQueue.BufferQueueClosedException e) {
-            // ignore and use fallback
-        } finally {
+        } catch (TimeoutException timeout) {
             if (!zslImageCaptured) {
                 mFallbackCommand.run(imageExposeCallback, imageSaver);
             }
+        } catch (BufferQueue.BufferQueueClosedException e) {
+            // The zsl ring buffer has been closed, so do nothing since the
+            // system is shutting down.
         }
     }
 }
