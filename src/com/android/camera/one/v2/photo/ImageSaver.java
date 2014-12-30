@@ -25,31 +25,8 @@ import com.android.camera.session.CaptureSession;
 
 public interface ImageSaver {
     public interface Builder {
-        /**
-         * Sets the title/filename (without suffix) for this capture.
-         */
-        public void setTitle(String title);
-        /**
-         * Sets the device orientation so we can compute the right JPEG rotation.
-         */
-        public void setOrientation(OrientationManager.DeviceOrientation orientation);
-        /**
-         * Sets the location of this capture.
-         */
-        public void setLocation(Location location);
-
-        /**
-         * Sets the associated CaptureSession
-         * @param session Associated CaptureSession
-         */
-        public void setSession(CaptureSession session);
-
-        /**
-         * Sets the callback to invoke with thumbnail data.
-         */
-        public void setThumbnailCallback(Updatable<byte[]> callback);
-
-        public ImageSaver build();
+        public ImageSaver build(OrientationManager.DeviceOrientation orientation,
+                                final CaptureSession session);
     }
 
     /**

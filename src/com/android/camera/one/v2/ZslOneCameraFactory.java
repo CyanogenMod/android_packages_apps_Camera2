@@ -59,7 +59,7 @@ import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.one.v2.photo.PictureTaker;
-import com.android.camera.one.v2.photo.ZslImageSaverImpl;
+import com.android.camera.one.v2.photo.YuvImageBackendImageSaver;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
@@ -177,7 +177,7 @@ public class ZslOneCameraFactory {
             ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
                     .from(mCameraCharacteristics);
 
-            ImageSaver.Builder imageSaverBuilder = new ZslImageSaverImpl(mainExecutor,
+            ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(mainExecutor,
                     imageRotationCalculator);
 
             ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(mainExecutor,

@@ -24,7 +24,6 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
-import android.location.Location;
 import android.media.ImageReader;
 import android.os.Build;
 import android.os.Handler;
@@ -168,32 +167,8 @@ public class SimpleJpegOneCameraFactory {
             // FIXME TODO Replace stub with real implementation
             ImageSaver.Builder imageSaverBuilder = new ImageSaver.Builder() {
                 @Override
-                public void setSession(CaptureSession session) {
-
-                }
-
-                @Override
-                public void setTitle(String title) {
-
-                }
-
-                @Override
-                public void setOrientation(OrientationManager.DeviceOrientation orientation) {
-
-                }
-
-                @Override
-                public void setLocation(Location location) {
-
-                }
-
-                @Override
-                public void setThumbnailCallback(Updatable<byte[]> callback) {
-
-                }
-
-                @Override
-                public ImageSaver build() {
+                public ImageSaver build(OrientationManager.DeviceOrientation orientation,
+                        CaptureSession session) {
                     return new ImageSaver() {
                         @Override
                         public void saveAndCloseImage(ImageProxy imageProxy) {

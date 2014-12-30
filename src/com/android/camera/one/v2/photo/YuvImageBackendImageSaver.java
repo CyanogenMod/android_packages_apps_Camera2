@@ -15,11 +15,9 @@
 package com.android.camera.one.v2.photo;
 
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.processing.imagebackend.ImageBackend;
@@ -35,18 +33,11 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 /**
- * Wires up the ImageBackend task submission process to the ZSL backend. This
- * object is created on a per CaptureSession basis.
+ * Wires up the ImageBackend task submission process to save Yuv images.
  */
-public class ZslImageSaverImpl implements ImageSaver.Builder {
-    private String mTitle;
-    private OrientationManager.DeviceOrientation mOrientation;
-    private Location mLocation;
-    private Updatable<byte[]> mThumbnailCallback;
-    private CaptureSession mSession;
-
-    final Executor mExecutor;
-    final ImageRotationCalculator mImageRotationCalculator;
+public class YuvImageBackendImageSaver implements ImageSaver.Builder {
+    private final Executor mExecutor;
+    private final ImageRotationCalculator mImageRotationCalculator;
 
     /**
      * Constructor
@@ -55,61 +46,10 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
      * @param imageRotationCalculator the image rotation calculator to determine
      *            the final image rotation with
      */
-    public ZslImageSaverImpl(Executor executor, ImageRotationCalculator imageRotationCalculator) {
+    public YuvImageBackendImageSaver(Executor executor,
+            ImageRotationCalculator imageRotationCalculator) {
         mExecutor = executor;
         mImageRotationCalculator = imageRotationCalculator;
-    }
-
-    /**
-     * Saves title for the session. TODO: See whether some of these setters can
-     * be derived from the session.
-     *
-     * @param title Title to be saved
-     */
-    @Override
-    public void setTitle(String title) {
-        mTitle = title;
-    }
-
-    /**
-     * Saves Orientation of the current session
-     *
-     * @param orientation Orientation to be saved
-     */
-    @Override
-    public void setOrientation(OrientationManager.DeviceOrientation orientation) {
-        mOrientation = orientation;
-    }
-
-    /**
-     * Saves location for this session
-     *
-     * @param location Location to be saved
-     */
-    @Override
-    public void setLocation(Location location) {
-        mLocation = location;
-    }
-
-    /**
-     * Associates the CaptureSession with the tasks to be run
-     *
-     * @param session
-     */
-    @Override
-    public void setSession(CaptureSession session) {
-        mSession = session;
-    }
-
-    /**
-     * Associates an updateable thumbnail for the Android Wear. MUST be in
-     * compressed JPEG.
-     *
-     * @param callback
-     */
-    @Override
-    public void setThumbnailCallback(Updatable<byte[]> callback) {
-        mThumbnailCallback = callback;
     }
 
     /**
@@ -118,10 +58,10 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
      * @return Instantiated interface object
      */
     @Override
-    public ImageSaver build() {
+    public ImageSaver build(OrientationManager.DeviceOrientation orientation,
+            final CaptureSession session) {
         final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
-                .toImageRotation(mOrientation);
-        final CaptureSession session = mSession;
+                .toImageRotation(orientation);
 
         return new ImageSaver() {
 
@@ -142,7 +82,7 @@ public class ZslImageSaverImpl implements ImageSaver.Builder {
                     public void onStart(TaskImageContainer.TaskInfo task) {
                         // Start Animation
                         if (task.result.format
-                            == TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
+                        == TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
                             if (imageBackend.hasValidUI()) {
                                 mExecutor.execute(new Runnable() {
                                     @Override
