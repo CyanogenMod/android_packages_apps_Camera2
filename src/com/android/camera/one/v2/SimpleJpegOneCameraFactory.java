@@ -51,7 +51,7 @@ import com.android.camera.one.v2.common.TimestampResponseListener;
 import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.common.ZoomedCropRegion;
 import com.android.camera.one.v2.core.CaptureStream;
-import com.android.camera.one.v2.core.DecoratingRequestBuilderBuilder;
+import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.initialization.CameraStarter;
@@ -119,21 +119,21 @@ public class SimpleJpegOneCameraFactory {
             // The request builder used by all camera operations.
             // Streams, ResponseListeners, and Parameters added to
             // this will be applied to *all* requests sent to the camera.
-            DecoratingRequestBuilderBuilder rootBuilder = new DecoratingRequestBuilderBuilder
+            RequestTemplate rootBuilder = new RequestTemplate
                     (new CameraDeviceRequestBuilderFactory(mDevice));
             // The shared image reader must be wired to receive every timestamp
             // for every image (including the preview).
-            rootBuilder.withResponseListener(
+            rootBuilder.addResponseListener(
                     new TimestampResponseListener(globalTimestampCallback));
 
-            rootBuilder.withResponseListener(new TotalCaptureResultResponseListener
+            rootBuilder.addResponseListener(new TotalCaptureResultResponseListener
                     (metadataCallback));
 
             Pollable<Rect> cropRegion = new ZoomedCropRegion(mCameraCharacteristics, zoomState);
-            rootBuilder.withParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
+            rootBuilder.setParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
 
             CaptureStream previewStream = new SimpleCaptureStream(previewSurface);
-            rootBuilder.withStream(previewStream);
+            rootBuilder.addStream(previewStream);
 
             int templateType = CameraDevice.TEMPLATE_PREVIEW;
 
@@ -159,8 +159,8 @@ public class SimpleJpegOneCameraFactory {
             Pollable<MeteringRectangle[]> afRegions =
                     manualAutoFocusFactory.provideAFMeteringRegion();
 
-            rootBuilder.withParam(CaptureRequest.CONTROL_AE_REGIONS, aeRegions);
-            rootBuilder.withParam(CaptureRequest.CONTROL_AF_REGIONS, afRegions);
+            rootBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, aeRegions);
+            rootBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, afRegions);
 
             HandlerExecutor mainExecutor = new HandlerExecutor(mMainHandler);
 
