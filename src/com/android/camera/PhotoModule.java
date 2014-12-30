@@ -656,6 +656,14 @@ public class PhotoModule
         setCameraId(mCameraId);
 
         // from onPause
+        try {
+            if (mOpenCameraThread != null) {
+                mOpenCameraThread.join();
+                mOpenCameraThread = null;
+            }
+        } catch (InterruptedException ex) {
+            // ignore
+        }
         closeCamera();
         mUI.collapseCameraControls();
         mUI.clearFaces();
