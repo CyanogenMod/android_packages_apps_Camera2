@@ -25,18 +25,18 @@ import com.google.common.base.Supplier;
  * Computes the current crop region based on the current zoom.
  */
 public class ZoomedCropRegion implements Supplier<Rect> {
-    private final CameraCharacteristics mCharacteristics;
+    private final Rect mSensorArrayArea;
     private final Supplier<Float> mZoom;
 
-    public ZoomedCropRegion(CameraCharacteristics characteristics, Supplier<Float> zoom) {
-        mCharacteristics = characteristics;
+    public ZoomedCropRegion(Rect sensorArrayArea, Supplier<Float> zoom) {
+        mSensorArrayArea = sensorArrayArea;
         mZoom = zoom;
     }
 
     @Override
     public Rect get() {
         float zoom = mZoom.get();
-        Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+        Rect sensor = mSensorArrayArea;
         int xCenter = sensor.width() / 2;
         int yCenter = sensor.height() / 2;
         int xDelta = (int) (0.5f * sensor.width() / zoom);

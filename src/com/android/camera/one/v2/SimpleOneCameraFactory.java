@@ -16,10 +16,11 @@
 
 package com.android.camera.one.v2;
 
-import android.hardware.camera2.CameraCharacteristics;
+import android.annotation.TargetApi;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.ImageReader;
+import android.os.Build;
 import android.view.Surface;
 
 import com.android.camera.async.HandlerFactory;
@@ -45,11 +46,10 @@ import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.one.v2.photo.ImageSaver;
+import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.photo.YuvImageBackendImageSaver;
-import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
-import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
-import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
+import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -57,19 +57,29 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class ZslOneCameraFactory implements OneCameraFactory {
+/**
+ * Creates a camera which takes jpeg images using the hardware encoder with
+ * baseline functionality.
+ */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+public class SimpleOneCameraFactory implements OneCameraFactory {
     private final int mImageFormat;
     private final int mMaxImageCount;
 
-    public ZslOneCameraFactory(int imageFormat, int maxImageCount) {
+    /**
+     * @param imageFormat The {@link ImageFormat} to use for full-size images to
+     *            be saved.
+     * @param maxImageCount The size of the image reader to use for full-size
+     *            images.
+     */
+    public SimpleOneCameraFactory(int imageFormat, int maxImageCount) {
         mImageFormat = imageFormat;
         mMaxImageCount = maxImageCount;
     }
 
     @Override
     public OneCamera createOneCamera(final CameraDeviceProxy device,
-            final OneCameraCharacteristics characteristics,
-            final MainThreadExecutor mainThreadExecutor,
+            final OneCameraCharacteristics characteristics, final MainThreadExecutor mainExecutor,
             Size pictureSize,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
 
@@ -86,7 +96,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
          */
         CameraStarter cameraStarter = new CameraStarter() {
             @Override
-            public CameraControls startCamera(Lifetime cameraLifetime,
+            public CameraStarter.CameraControls startCamera(Lifetime cameraLifetime,
                     CameraCaptureSessionProxy cameraCaptureSession,
                     Surface previewSurface,
                     Observable<Float> zoomState,
@@ -101,13 +111,12 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 ScheduledExecutorService miscThreadPool = Executors.newScheduledThreadPool(1);
 
                 // Create the shared image reader.
-                ZslSharedImageReaderFactory sharedImageReaderFactory =
-                        new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime), imageReader);
+                SharedImageReaderFactory sharedImageReaderFactory =
+                        new SharedImageReaderFactory(new Lifetime(cameraLifetime), imageReader);
                 Updatable<Long> globalTimestampCallback =
                         sharedImageReaderFactory.provideGlobalTimestampQueue();
                 ImageStreamFactory imageStreamFactory =
                         sharedImageReaderFactory.provideSharedImageReader();
-                ImageStream zslStream = sharedImageReaderFactory.provideZSLCaptureStream();
 
                 // Create the request builder used by all camera operations.
                 // Streams, ResponseListeners, and Parameters added to
@@ -119,7 +128,6 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 rootBuilder.addResponseListener(
                         new TimestampResponseListener(globalTimestampCallback));
                 rootBuilder.addStream(new SimpleCaptureStream(previewSurface));
-                rootBuilder.addStream(zslStream);
 
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
@@ -135,20 +143,21 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // for taking the image.
                 ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
                         .from(characteristics);
-                ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(
-                        mainThreadExecutor, imageRotationCalculator);
+                // FIXME Create based on mImageFormat
+                ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(mainExecutor,
+                        imageRotationCalculator);
 
                 // Create the picture-taker.
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
                         miscThreadPool);
 
-                ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(
-                        mainThreadExecutor, cameraCommandExecutor, imageSaverBuilder, frameServer,
-                        meteredZooomedRequestBuilder, imageStreamFactory, zslStream);
+                PictureTakerFactory pictureTakerFactory = new PictureTakerFactory(mainExecutor,
+                        cameraCommandExecutor, imageSaverBuilder, frameServer,
+                        meteredZooomedRequestBuilder, imageStreamFactory);
 
                 basicCameraFactory.providePreviewStarter().run();
 
-                return new CameraControls(
+                return new CameraStarter.CameraControls(
                         pictureTakerFactory.providePictureTaker(),
                         basicCameraFactory.provideManualAutoFocus());
             }
@@ -157,8 +166,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
         float maxZoom = characteristics.getAvailableMaxDigitalZoom();
         List<Size> supportedPreviewSizes = characteristics.getSupportedPreviewSizes();
         OneCamera.Facing direction = characteristics.getCameraDirection();
-        return new InitializedOneCameraFactory(cameraStarter, device,
-                outputSurfaces, mainThreadExecutor, new HandlerFactory(), maxZoom,
-                supportedPreviewSizes, direction).provideOneCamera();
+
+        return new InitializedOneCameraFactory(cameraStarter, device, outputSurfaces, mainExecutor,
+                new HandlerFactory(), maxZoom, supportedPreviewSizes, direction).provideOneCamera();
     }
 }

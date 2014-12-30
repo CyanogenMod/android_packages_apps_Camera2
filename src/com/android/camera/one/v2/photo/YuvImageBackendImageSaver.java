@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
+import com.android.camera.async.MainThreadExecutor;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.processing.imagebackend.ImageBackend;
@@ -46,7 +47,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
      * @param imageRotationCalculator the image rotation calculator to determine
      *            the final image rotation with
      */
-    public YuvImageBackendImageSaver(Executor executor,
+    public YuvImageBackendImageSaver(MainThreadExecutor executor,
             ImageRotationCalculator imageRotationCalculator) {
         mExecutor = executor;
         mImageRotationCalculator = imageRotationCalculator;

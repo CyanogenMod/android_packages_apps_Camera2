@@ -31,11 +31,11 @@ import com.google.common.base.Supplier;
 class AEMeteringRegion implements Supplier<MeteringRectangle[]> {
     private final Supplier<MeteringParameters> mMeteringParameters;
     private final Supplier<Rect> mCropRegion;
-    private final OrientationManager.DeviceOrientation mSensorOrientation;
+    private final int mSensorOrientation;
 
     public AEMeteringRegion(Supplier<MeteringParameters> meteringParameters,
                             Supplier<Rect> cropRegion,
-                            OrientationManager.DeviceOrientation sensorOrientation) {
+                            int sensorOrientation) {
         mMeteringParameters = meteringParameters;
         mCropRegion = cropRegion;
         mSensorOrientation = sensorOrientation;
@@ -48,7 +48,7 @@ class AEMeteringRegion implements Supplier<MeteringRectangle[]> {
             Rect cropRegion = mCropRegion.get();
             PointF point = parameters.getAEPoint();
             return AutoFocusHelper.aeRegionsForNormalizedCoord(point.x, point.y, cropRegion,
-                    mSensorOrientation.getDegrees());
+                    mSensorOrientation);
         } else {
             return AutoFocusHelper.getZeroWeightRegion();
         }

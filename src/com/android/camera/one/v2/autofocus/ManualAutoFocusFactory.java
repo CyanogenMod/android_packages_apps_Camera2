@@ -60,7 +60,7 @@ public class ManualAutoFocusFactory {
      */
     public ManualAutoFocusFactory(Lifetime lifetime, FrameServer frameServer,
             ScheduledExecutorService threadPool, Supplier<Rect> cropRegion,
-            OrientationManager.DeviceOrientation sensorOrientation,
+            int sensorOrientation,
             Runnable previewRunner, RequestBuilder.Factory rootBuilder,
             int templateType) {
         CameraCommandExecutor commandExecutor = new CameraCommandExecutor(threadPool);

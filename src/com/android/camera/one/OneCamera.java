@@ -399,17 +399,6 @@ public interface OneCamera {
     public void close();
 
     /**
-     * @return A list of all supported preview resolutions.
-     */
-    public Size[] getSupportedPreviewSizes();
-
-    /**
-     * @return The aspect ratio of the full size capture (usually the native
-     *         resolution of the camera).
-     */
-    public float getFullSizeAspectRatio();
-
-    /**
      * @return The direction of the camera.
      */
     public Facing getDirection();

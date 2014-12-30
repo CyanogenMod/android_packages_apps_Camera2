@@ -58,27 +58,19 @@ class GenericOneCameraImpl implements OneCamera {
     private final Listenable<Boolean> mReadyStateListenable;
     private final float mMaxZoom;
     private final Updatable<Float> mZoom;
-    private final Size[] mSupportedPreviewSizes;
-    private final float mFullSizeAspectRatio;
     private final Facing mDirection;
     private final PreviewSizeSelector mPreviewSizeSelector;
-    private final Listenable<Boolean> mPreviewStartSuccessListenable;
     private final PreviewStarter mPreviewStarter;
 
     public GenericOneCameraImpl(SafeCloseable closeListener, PictureTaker pictureTaker,
             ManualAutoFocus manualAutoFocus, Executor mainExecutor,
             Listenable<Integer> afStateProvider, Listenable<FocusState> focusStateProvider,
             Listenable<Boolean> readyStateListenable, float maxZoom, Updatable<Float> zoom,
-            Size[] supportedPreviewSizes, float fullSizeAspectRatio, Facing direction,
-            PreviewSizeSelector previewSizeSelector,
-            Listenable<Boolean> previewStartSuccessListenable,
+            Facing direction, PreviewSizeSelector previewSizeSelector,
             PreviewStarter previewStarter) {
-        mPreviewStartSuccessListenable = previewStartSuccessListenable;
         mCloseListener = closeListener;
         mMainExecutor = mainExecutor;
         mMaxZoom = maxZoom;
-        mSupportedPreviewSizes = supportedPreviewSizes;
-        mFullSizeAspectRatio = fullSizeAspectRatio;
         mDirection = direction;
         mPreviewSizeSelector = previewSizeSelector;
         mPictureTaker = pictureTaker;
@@ -163,16 +155,6 @@ class GenericOneCameraImpl implements OneCamera {
     @Override
     public void close() {
         mCloseListener.close();
-    }
-
-    @Override
-    public Size[] getSupportedPreviewSizes() {
-        return mSupportedPreviewSizes;
-    }
-
-    @Override
-    public float getFullSizeAspectRatio() {
-        return mFullSizeAspectRatio;
     }
 
     @Override

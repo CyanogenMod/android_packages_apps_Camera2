@@ -19,6 +19,7 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.app.OrientationManager;
+import com.android.camera.async.MainThreadExecutor;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
@@ -31,14 +32,14 @@ import com.android.camera.session.CaptureSession;
 import java.util.concurrent.Executor;
 
 class PictureTakerImpl implements PictureTaker {
-    private final Executor mMainExecutor;
+    private final MainThreadExecutor mMainExecutor;
     private final CameraCommandExecutor mCameraCommandExecutor;
     private final ImageSaver.Builder mImageSaverBuilder;
     private final ImageCaptureCommand mFlashOffCommand;
     private final ImageCaptureCommand mFlashOnCommand;
     private final ImageCaptureCommand mFlashAutoCommand;
 
-    public PictureTakerImpl(Executor mainExecutor,
+    public PictureTakerImpl(MainThreadExecutor mainExecutor,
             CameraCommandExecutor cameraCommandExecutor,
             ImageSaver.Builder imageSaverBuilder,
             ImageCaptureCommand flashOffCommand,

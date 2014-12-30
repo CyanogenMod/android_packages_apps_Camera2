@@ -17,56 +17,51 @@
 package com.android.camera.one.v2.initialization;
 
 import android.content.Context;
-import android.graphics.ImageFormat;
 
 import com.android.camera.CaptureModuleUtil;
 import com.android.camera.util.Size;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
- * Picks a preview size.
+ * Picks a preview size. TODO Remove dependency on static CaptureModuleUtil
+ * function and write tests.
  */
 class PreviewSizeSelector {
-    private final int mImageFormat;
-    private final Size[] mSupportedPreviewSizes;
+    private final List<Size> mSupportedPreviewSizes;
 
-    public PreviewSizeSelector(int imageFormat, Size[] supportedPreviewSizes) {
-        mImageFormat = imageFormat;
-        mSupportedPreviewSizes = supportedPreviewSizes;
+    public PreviewSizeSelector(List<Size> supportedPreviewSizes) {
+        mSupportedPreviewSizes = new ArrayList<>(supportedPreviewSizes);
     }
 
     public Size pickPreviewSize(Size pictureSize, Context context) {
         if (pictureSize == null) {
             // TODO The default should be selected by the caller, and
             // pictureSize should never be null.
-            pictureSize = getDefaultPictureSize();
+            pictureSize = getLargestPictureSize();
         }
         float pictureAspectRatio = pictureSize.getWidth() / (float) pictureSize.getHeight();
 
-        // Since devices only have one raw resolution we need to be more
-        // flexible for selecting a matching preview resolution.
-        Double aspectRatioTolerance = mImageFormat == ImageFormat.RAW_SENSOR ? 10d : null;
-        Size size = CaptureModuleUtil.getOptimalPreviewSize(context, mSupportedPreviewSizes,
-                pictureAspectRatio, aspectRatioTolerance);
+        Size size = CaptureModuleUtil.getOptimalPreviewSize(context,
+                (Size[]) mSupportedPreviewSizes.toArray(new Size[mSupportedPreviewSizes.size()]),
+                pictureAspectRatio, null);
         return size;
     }
 
     /**
      * @return The largest supported picture size.
      */
-    private Size getDefaultPictureSize() {
-        Size[] supportedSizes = mSupportedPreviewSizes;
-
-        // Find the largest supported size.
-        Size largestSupportedSize = supportedSizes[0];
-        long largestSupportedSizePixels =
-                largestSupportedSize.getWidth() * largestSupportedSize.getHeight();
-        for (int i = 1; i < supportedSizes.length; i++) {
-            long numPixels = supportedSizes[i].getWidth() * supportedSizes[i].getHeight();
-            if (numPixels > largestSupportedSizePixels) {
-                largestSupportedSize = supportedSizes[i];
-                largestSupportedSizePixels = numPixels;
+    private Size getLargestPictureSize() {
+        return Collections.max(mSupportedPreviewSizes, new Comparator<Size>() {
+            @Override
+            public int compare(Size size1, Size size2) {
+                int area1 = size1.getWidth() * size1.getHeight();
+                int area2 = size2.getWidth() * size2.getHeight();
+                return Integer.compare(area1, area2);
             }
-        }
-        return new Size(largestSupportedSize.getWidth(), largestSupportedSize.getHeight());
+        });
     }
 }

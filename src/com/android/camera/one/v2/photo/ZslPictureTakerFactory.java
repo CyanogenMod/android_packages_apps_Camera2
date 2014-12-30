@@ -35,6 +35,7 @@ package com.android.camera.one.v2.photo;
 import java.util.concurrent.Executor;
 
 import com.android.camera.async.BufferQueue;
+import com.android.camera.async.MainThreadExecutor;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
@@ -44,7 +45,7 @@ import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 public class ZslPictureTakerFactory {
     private final PictureTakerImpl mPictureTaker;
 
-    public ZslPictureTakerFactory(Executor mainExecutor,
+    public ZslPictureTakerFactory(MainThreadExecutor mainExecutor,
                                   CameraCommandExecutor commandExecutor,
                                   ImageSaver.Builder imageSaverBuilder,
                                   FrameServer frameServer,

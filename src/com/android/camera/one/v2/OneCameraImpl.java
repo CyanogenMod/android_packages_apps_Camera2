@@ -436,14 +436,12 @@ public class OneCameraImpl extends AbstractOneCamera {
         mDevice.close();
     }
 
-    @Override
     public Size[] getSupportedPreviewSizes() {
         StreamConfigurationMap config = mCharacteristics
                 .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
         return Size.convert(config.getOutputSizes(SurfaceTexture.class));
     }
 
-    @Override
     public float getFullSizeAspectRatio() {
         return mFullSizeAspectRatio;
     }

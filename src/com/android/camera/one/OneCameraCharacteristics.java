@@ -16,6 +16,10 @@
 
 package com.android.camera.one;
 
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.hardware.camera2.CameraCharacteristics;
+
 import com.android.camera.util.Size;
 
 import java.util.List;
@@ -23,16 +27,38 @@ import java.util.List;
 /**
  * The properties describing a OneCamera device. These properties are fixed for
  * a given OneCamera device.
- *
- * TODO: Complete this interface to expose all camera
- * properties.
  */
 public interface OneCameraCharacteristics {
     /**
      * Gets the supported picture sizes for the given image format.
      *
      * @param imageFormat The specific image format listed on
-     *                    {@link ImageFormat}.
+     *            {@link ImageFormat}.
      */
     public List<Size> getSupportedPictureSizes(int imageFormat);
+
+    /**
+     * Gets the supported preview sizes.
+     */
+    public List<Size> getSupportedPreviewSizes();
+
+    /**
+     * @See {@link CameraCharacteristics#SENSOR_ORIENTATION}
+     */
+    public int getSensorOrientation();
+
+    /**
+     * @Return The direction of the camera
+     */
+    public OneCamera.Facing getCameraDirection();
+
+    /**
+     * @See {@link CameraCharacteristics#SENSOR_INFO_ACTIVE_ARRAY_SIZE}
+     */
+    public Rect getSensorInfoActiveArraySize();
+
+    /**
+     * @See {@link CameraCharacteristics#SCALER_AVAILABLE_MAX_DIGITAL_ZOOM}
+     */
+    public float getAvailableMaxDigitalZoom();
 }

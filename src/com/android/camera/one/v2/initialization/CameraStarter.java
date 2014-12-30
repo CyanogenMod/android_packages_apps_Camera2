@@ -21,6 +21,7 @@ import android.view.Surface;
 
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Lifetime;
+import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
@@ -64,7 +65,7 @@ public interface CameraStarter {
             Lifetime cameraLifetime,
             CameraCaptureSessionProxy cameraCaptureSession,
             Surface previewSurface,
-            ConcurrentState<Float> zoomState,
+            Observable<Float> zoomState,
             Updatable<TotalCaptureResult> metadataCallback,
             Updatable<Boolean> readyStateCallback);
 }

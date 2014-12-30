@@ -16,21 +16,21 @@
 
 package com.android.camera.one.v2;
 
-import android.content.Context;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.util.DisplayMetrics;
+import android.os.Handler;
 
-import com.android.camera.app.AppController;
-import com.android.camera.SoundPlayer;
+import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.Observable;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.util.Size;
 
-public class OneCameraCreator {
-    public static OneCamera create(AppController context, boolean useHdr, CameraDevice device,
-            CameraCharacteristics characteristics, Size pictureSize, int maxMemoryMB,
-            DisplayMetrics displayMetrics, SoundPlayer soundPlayer) {
-        // TODO: Might want to switch current camera to vendor HDR.
-        return new OneCameraImpl(device, characteristics, pictureSize);
-    }
+import java.util.concurrent.Executor;
+
+public interface OneCameraFactory {
+    OneCamera createOneCamera(CameraDeviceProxy cameraDevice,
+            OneCameraCharacteristics characteristics,
+            MainThreadExecutor mainThreadExecutor,
+            Size pictureSize,
+            Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting);
 }

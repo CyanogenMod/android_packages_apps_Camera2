@@ -17,10 +17,11 @@
 package com.android.camera.one.v2.photo;
 
 import android.annotation.TargetApi;
-import android.hardware.camera2.CameraCharacteristics;
 import android.os.Build;
 
 import com.android.camera.app.OrientationManager;
+import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.CameraUtil;
 
 /**
@@ -48,11 +49,11 @@ public class ImageRotationCalculatorImpl implements ImageRotationCalculator {
     /**
      * Create a calculator based on Camera characteristics.
      */
-    public static ImageRotationCalculator from(CameraCharacteristics characteristics) {
-        int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-        int lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING);
+    public static ImageRotationCalculator from(OneCameraCharacteristics characteristics) {
+        int sensorOrientation = characteristics.getSensorOrientation();
+        OneCamera.Facing lensDirection = characteristics.getCameraDirection();
         return new ImageRotationCalculatorImpl(sensorOrientation,
-                lensFacing == CameraCharacteristics.LENS_FACING_FRONT);
+                lensDirection == OneCamera.Facing.FRONT);
     }
 
     @Override

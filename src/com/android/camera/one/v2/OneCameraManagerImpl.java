@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 
 import com.android.camera.SoundPlayer;
+import com.android.camera.app.AppController;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera;
@@ -41,7 +42,7 @@ import com.android.camera.util.Size;
 public class OneCameraManagerImpl extends OneCameraManager {
     private static final Tag TAG = new Tag("OneCameraMgrImpl2");
 
-    private final Context mContext;
+    private final AppController mAppController;
     private final CameraManager mCameraManager;
     private final int mMaxMemoryMB;
     private final DisplayMetrics mDisplayMetrics;
@@ -54,9 +55,9 @@ public class OneCameraManagerImpl extends OneCameraManager {
      * @param maxMemoryMB maximum amount of memory opened cameras should consume
      *            during capture and processing, in megabytes.
      */
-    public OneCameraManagerImpl(Context context, CameraManager cameraManager, int maxMemoryMB,
-            DisplayMetrics displayMetrics, SoundPlayer soundPlayer) {
-        mContext = context;
+    public OneCameraManagerImpl(AppController appController, CameraManager cameraManager, int
+            maxMemoryMB, DisplayMetrics displayMetrics, SoundPlayer soundPlayer) {
+        mAppController = appController;
         mCameraManager = cameraManager;
         mMaxMemoryMB = maxMemoryMB;
         mDisplayMetrics = displayMetrics;
@@ -113,8 +114,9 @@ public class OneCameraManagerImpl extends OneCameraManager {
                             CameraCharacteristics characteristics = mCameraManager
                                     .getCameraCharacteristics(device.getId());
                             // TODO: Set boolean based on whether HDR+ is enabled.
-                            OneCamera oneCamera = OneCameraCreator.create(mContext, useHdr, device,
-                                    characteristics, pictureSize, mMaxMemoryMB, mDisplayMetrics,
+                            OneCamera oneCamera = OneCameraCreator.create(mAppController, useHdr,
+                                    device, characteristics, pictureSize, mMaxMemoryMB,
+                                    mDisplayMetrics,
                                     mSoundPlayer);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {

@@ -16,21 +16,24 @@
 
 package com.android.camera.one.v2.core;
 
+import android.os.Handler;
+
 import com.android.camera.async.CloseableHandlerThread;
+import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 
 public class FrameServerFactory {
     private FrameServer mFrameServer;
 
-    public FrameServerFactory(Lifetime lifetime, CameraCaptureSessionProxy cameraCaptureSession) {
-        CloseableHandlerThread cameraHandler = new CloseableHandlerThread("CameraMetadataHandler");
-        lifetime.add(cameraHandler);
+    public FrameServerFactory(Lifetime lifetime, CameraCaptureSessionProxy cameraCaptureSession,
+            HandlerFactory handlerFactory) {
+        Handler cameraHandler = handlerFactory.create(lifetime, "CameraMetadataHandler");
         // TODO Maybe enable closing the FrameServer along with the lifetime?
         // It would allow clean reuse of the cameraCaptureSession with
         // non-frameserver interaction
         mFrameServer = new FrameServerImpl(new TagDispatchCaptureSession(cameraCaptureSession,
-                cameraHandler.get()));
+                cameraHandler));
     }
 
     public FrameServer provideFrameServer() {

@@ -17,7 +17,6 @@
 package com.android.camera.async;
 
 import com.android.camera.util.Callback;
-import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 
 import java.util.concurrent.Executor;
@@ -35,5 +34,5 @@ public interface Observable<T> extends Supplier<T> {
      * @return A {@link SafeCloseable} handle to be closed when the callback
      *         must be removed.
      */
-    public SafeCloseable addCallback(Callback callback, Executor executor);
+    public SafeCloseable addCallback(Callback<T> callback, Executor executor);
 }

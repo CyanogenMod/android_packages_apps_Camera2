@@ -17,20 +17,14 @@
 package com.android.camera.one.v2.initialization;
 
 import android.annotation.TargetApi;
-import android.graphics.Rect;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Handler;
 import android.view.Surface;
 
-import com.android.camera.async.CloseableHandlerThread;
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.FilteredUpdatable;
-import com.android.camera.async.HandlerExecutor;
+import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Listenable;
 import com.android.camera.async.ListenableConcurrentState;
@@ -65,53 +59,30 @@ import java.util.concurrent.Executors;
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class InitializedOneCameraFactory {
-    private final CameraStarter mCameraStarter;
-    private final CameraDeviceProxy mDevice;
-    private final CameraCharacteristics mCameraCharacteristics;
-    private final List<Surface> mOutputSurfaces;
-    private final int mImageFormat;
-    private final Handler mMainHandler;
+    private final GenericOneCameraImpl mOneCamera;
 
     /**
      * @param cameraStarter Starts the camera, after initialization of the
      *            preview stream and capture session is complete.
      * @param device
-     * @param cameraCharacteristics
      * @param outputSurfaces The set of output Surfaces (excluding the
      *            not-yet-available preview Surface) to use when configuring the
      *            capture session.
-     * @param imageFormat The image format of the Surface for full-size images
-     *            to be saved.
-     * @param mainHandler
      */
     public InitializedOneCameraFactory(
-            CameraStarter cameraStarter,
-            CameraDeviceProxy device,
-            CameraCharacteristics cameraCharacteristics,
-            List<Surface> outputSurfaces,
-            int imageFormat,
-            Handler mainHandler) {
-        mCameraStarter = cameraStarter;
-        mDevice = device;
-        mCameraCharacteristics = cameraCharacteristics;
-        mOutputSurfaces = outputSurfaces;
-        mImageFormat = imageFormat;
-        mMainHandler = mainHandler;
-    }
-
-    public OneCamera provideOneCamera() {
+            final CameraStarter cameraStarter, CameraDeviceProxy device,
+            List<Surface> outputSurfaces, Executor mainThreadExecutor,
+            HandlerFactory handlerFactory, float maxZoom, List<Size> supportedPreviewSizes,
+            OneCamera.Facing direction) {
         // Assembles and returns a OneCamera based on the CameraStarter.
 
         // All resources tied to the camera are contained (directly or
         // transitively) by this.
         final Lifetime cameraLifetime = new Lifetime();
-        cameraLifetime.add(mDevice);
+        cameraLifetime.add(device);
 
         // Create/wrap required threads.
-        Executor mainThreadExecutor = new HandlerExecutor(mMainHandler);
-
-        final CloseableHandlerThread cameraHandler = new CloseableHandlerThread("CameraHandler");
-        cameraLifetime.add(cameraHandler);
+        final Handler cameraHandler = handlerFactory.create(cameraLifetime, "CameraHandler");
 
         final ExecutorService miscThreadPool = Executors.newCachedThreadPool();
 
@@ -137,7 +108,6 @@ public class InitializedOneCameraFactory {
         final ConcurrentState<Integer> afMode = new ConcurrentState<>(CaptureResult
                 .CONTROL_AF_MODE_OFF);
         final ConcurrentState<Boolean> readyState = new ConcurrentState<>(false);
-        final ConcurrentState<Boolean> previewStartSuccessState = new ConcurrentState<>(null);
 
         // Wrap state to be able to register listeners which run on the main
         // thread.
@@ -147,8 +117,6 @@ public class InitializedOneCameraFactory {
                 focusState, mainThreadExecutor);
         Listenable<Boolean> readyStateListenable = new ListenableConcurrentState<>(readyState,
                 mainThreadExecutor);
-        Listenable<Boolean> previewStateListenable = new ListenableConcurrentState<>
-                (previewStartSuccessState, mainThreadExecutor);
 
         // Wrap each value in a filter to ensure that only differences pass
         // through.
@@ -168,16 +136,16 @@ public class InitializedOneCameraFactory {
 
         // Note that these must be created in reverse-order to when they are run
         // because each stage depends on the previous one.
-        final CaptureSessionCreator captureSessionCreator = new CaptureSessionCreator(mDevice,
-                cameraHandler.get());
+        final CaptureSessionCreator captureSessionCreator = new CaptureSessionCreator(device,
+                cameraHandler);
 
-        PreviewStarter mPreviewStarter = new PreviewStarter(mOutputSurfaces,
+        PreviewStarter mPreviewStarter = new PreviewStarter(outputSurfaces,
                 captureSessionCreator,
                 new PreviewStarter.CameraCaptureSessionCreatedListener() {
                     @Override
                     public void onCameraCaptureSessionCreated(CameraCaptureSessionProxy session,
                             Surface previewSurface) {
-                        CameraStarter.CameraControls controls = mCameraStarter.startCamera(
+                        CameraStarter.CameraControls controls = cameraStarter.startCamera(
                                 new Lifetime(cameraLifetime),
                                 session, previewSurface,
                                 zoomState, metadataCallback, readyState);
@@ -186,47 +154,14 @@ public class InitializedOneCameraFactory {
                     }
                 });
 
-        // Various constants/functionality which OneCamera implementations must
-        // provide which do not depend on anything other than the
-        // characteristics.
-        PreviewSizeSelector previewSizeSelector = new PreviewSizeSelector(mImageFormat,
-                getSupportedPreviewSizes());
-        float maxZoom = getMaxZoom();
-        Size[] supportedPreviewSizes = getSupportedPreviewSizes();
-        float fullSizeAspectRatio = getFullSizeAspectRatio();
-        OneCamera.Facing direction = getDirection();
+        PreviewSizeSelector previewSizeSelector = new PreviewSizeSelector(supportedPreviewSizes);
 
-        return new GenericOneCameraImpl(cameraLifetime, pictureTaker,
-                manualAutoFocus, mainThreadExecutor, afStateListenable, focusStateListenable,
-                readyStateListenable, maxZoom, zoomState, supportedPreviewSizes,
-                fullSizeAspectRatio, direction, previewSizeSelector, previewStateListenable,
-                mPreviewStarter);
-
+        mOneCamera = new GenericOneCameraImpl(cameraLifetime, pictureTaker, manualAutoFocus,
+                mainThreadExecutor, afStateListenable, focusStateListenable, readyStateListenable,
+                maxZoom, zoomState, direction, previewSizeSelector, mPreviewStarter);
     }
 
-    private OneCamera.Facing getDirection() {
-        switch (mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING)) {
-            case CameraMetadata.LENS_FACING_BACK:
-                return OneCamera.Facing.BACK;
-            case CameraMetadata.LENS_FACING_FRONT:
-                return OneCamera.Facing.FRONT;
-        }
-        return OneCamera.Facing.BACK;
-    }
-
-    private float getFullSizeAspectRatio() {
-        Rect activeArraySize = mCameraCharacteristics.get(
-                CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-        return ((float) (activeArraySize.width())) / activeArraySize.height();
-    }
-
-    private Size[] getSupportedPreviewSizes() {
-        StreamConfigurationMap config = mCameraCharacteristics
-                .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        return Size.convert(config.getOutputSizes(SurfaceTexture.class));
-    }
-
-    private float getMaxZoom() {
-        return mCameraCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+    public OneCamera provideOneCamera() {
+        return mOneCamera;
     }
 }
