@@ -395,11 +395,8 @@ public interface OneCamera {
 
     /**
      * Closes the camera.
-     *
-     * @param closeCallback Optional. Called as soon as the camera is fully
-     *            closed.
      */
-    public void close(CloseCallback closeCallback);
+    public void close();
 
     /**
      * @return A list of all supported preview resolutions.
