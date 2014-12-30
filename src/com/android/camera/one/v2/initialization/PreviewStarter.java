@@ -21,13 +21,12 @@ import android.view.Surface;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 
 /**
  * When the preview surface is available, creates a capture session, and then
@@ -41,24 +40,19 @@ class PreviewStarter {
 
     private final List<Surface> mOutputSurfaces;
     private final CaptureSessionCreator mCaptureSessionCreator;
-    private final Executor mThreadPoolExecutor;
     private final CameraCaptureSessionCreatedListener mSessionListener;
 
     /**
      * @param outputSurfaces The set of output surfaces (except for the preview
      *            surface) to use.
      * @param captureSessionCreator
-     * @param threadPoolExecutor A thread pool on which to wait for the capture
-     *            session to be created and then invoke sessionListener.
      * @param sessionListener A callback to be invoked when the capture session
      *            has been created. It is executed on threadPoolExecutor.
      */
-    public PreviewStarter(List<Surface> outputSurfaces,
-            CaptureSessionCreator captureSessionCreator, Executor threadPoolExecutor,
+    public PreviewStarter(List<Surface> outputSurfaces, CaptureSessionCreator captureSessionCreator,
             CameraCaptureSessionCreatedListener sessionListener) {
         mOutputSurfaces = outputSurfaces;
         mCaptureSessionCreator = captureSessionCreator;
-        mThreadPoolExecutor = threadPoolExecutor;
         mSessionListener = sessionListener;
     }
 
@@ -70,44 +64,24 @@ class PreviewStarter {
      *            failure.
      */
     public void startPreview(final Surface surface, final Updatable<Boolean> successCallback) {
-        try {
-            // When we have the preview surface, start the capture session.
-            List<Surface> surfaceList = new ArrayList<Surface>(mOutputSurfaces);
-            surfaceList.add(surface);
-            // TODO This could be cleaner by using a ListenableFuture for
-            // the capture session since we would no longer need to spawn a
-            // thread on miscThreadPool just to wait for the capture session
-            // to become ready.
-            final Future<CameraCaptureSessionProxy> sessionFuture = mCaptureSessionCreator
-                    .createCaptureSession(surfaceList);
+        // When we have the preview surface, start the capture session.
+        List<Surface> surfaceList = new ArrayList<Surface>(mOutputSurfaces);
+        surfaceList.add(surface);
 
-            mThreadPoolExecutor.execute(new Runnable() {
-                public void run() {
-                    boolean success = false;
-                    try {
-                        CameraCaptureSessionProxy captureSession = sessionFuture.get();
-                        mSessionListener.onCameraCaptureSessionCreated(captureSession, surface);
-                        success = true;
-                    } catch (InterruptedException e) {
-                        // Impossible exception.
-                        throw new RuntimeException(e);
-                    } catch (ExecutionException e) {
-                        // Impossible exception.
-                        throw new RuntimeException(e);
-                    } catch (CancellationException e) {
-                        e.printStackTrace();
-                        // TODO Log
-                        // This may have been cancelled because configuration
-                        // failed, or because the camera was closed before the
-                        // capture session could be configured.
-                    } finally {
-                        successCallback.update(success);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            successCallback.update(false);
-            throw e;
-        }
+        final ListenableFuture<CameraCaptureSessionProxy> sessionFuture =
+                mCaptureSessionCreator.createCaptureSession(surfaceList);
+
+        Futures.addCallback(sessionFuture, new FutureCallback<CameraCaptureSessionProxy>() {
+            @Override
+            public void onSuccess(CameraCaptureSessionProxy captureSession) {
+                mSessionListener.onCameraCaptureSessionCreated(captureSession, surface);
+                successCallback.update(true);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                successCallback.update(false);
+            }
+        });
     }
 }

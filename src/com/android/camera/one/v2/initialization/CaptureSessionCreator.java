@@ -16,16 +16,16 @@
 
 package com.android.camera.one.v2.initialization;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
 import android.hardware.camera2.CameraAccessException;
 import android.os.Handler;
 import android.view.Surface;
 
-import com.android.camera.async.FutureResult;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+
+import java.util.List;
 
 /**
  * Asynchronously creates capture sessions.
@@ -47,11 +47,13 @@ class CaptureSessionCreator {
     /**
      * Asynchronously creates a capture session, returning a future to it.
      *
-     * @param surfaces The set of output surfaces for the camera capture session.
+     * @param surfaces The set of output surfaces for the camera capture
+     *            session.
      * @return A Future for the camera capture session.
      */
-    public Future<CameraCaptureSessionProxy> createCaptureSession(List<Surface> surfaces) {
-        final FutureResult<CameraCaptureSessionProxy> sessionFuture = new FutureResult<>();
+    public ListenableFuture<CameraCaptureSessionProxy> createCaptureSession(
+            List<Surface> surfaces) {
+        final SettableFuture<CameraCaptureSessionProxy> sessionFuture = SettableFuture.create();
         try {
             mDevice.createCaptureSession(surfaces, new CameraCaptureSessionProxy.StateCallback() {
                 @Override
@@ -61,13 +63,13 @@ class CaptureSessionCreator {
 
                 @Override
                 public void onConfigureFailed(CameraCaptureSessionProxy session) {
-                    sessionFuture.setCancelled();
+                    sessionFuture.cancel(true);
                     session.close();
                 }
 
                 @Override
                 public void onConfigured(CameraCaptureSessionProxy session) {
-                    boolean valueSet = sessionFuture.setValue(session);
+                    boolean valueSet = sessionFuture.set(session);
                     if (!valueSet) {
                         // If the future was already marked with cancellation or
                         // an exception, close the session.
@@ -82,7 +84,7 @@ class CaptureSessionCreator {
 
                 @Override
                 public void onClosed(CameraCaptureSessionProxy session) {
-                    sessionFuture.setCancelled();
+                    sessionFuture.cancel(true);
                     session.close();
                 }
             }, mCameraHandler);
