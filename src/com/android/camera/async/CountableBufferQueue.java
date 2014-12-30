@@ -35,36 +35,31 @@ public class CountableBufferQueue<T> implements BufferQueueController<T>, Buffer
         @Override
         public void process(T element) {
             mProcessor.process(element);
-            int count;
-            synchronized (mCountLock) {
-                mCount--;
-                count = mCount;
-            }
-            mSizeUpdatable.update(count);
+            decrementSize();
         }
     }
 
     private final ConcurrentBufferQueue<T> mBufferQueue;
     private final Object mCountLock;
-    private final Updatable<Integer> mSizeUpdatable;
+    private final Updatable<Integer> mSizeCallback;
     private int mCount;
 
     /**
-     * @param sizeUpdatable A thread-safe callback to be updated with the size
+     * @param sizeCallback A thread-safe callback to be updated with the size
      *            of the queue.
      * @param processor The callback for processing elements discarded from the
      *            queue.
      */
-    public CountableBufferQueue(Updatable<Integer> sizeUpdatable, ConcurrentBufferQueue
+    public CountableBufferQueue(Updatable<Integer> sizeCallback, ConcurrentBufferQueue
             .UnusedElementProcessor<T> processor) {
         mBufferQueue = new ConcurrentBufferQueue<T>(new DecrementingProcessor<T>(processor));
         mCountLock = new Object();
         mCount = 0;
-        mSizeUpdatable = sizeUpdatable;
+        mSizeCallback = sizeCallback;
     }
 
-    public CountableBufferQueue(ConcurrentState<Integer> sizeUpdatable) {
-        this(sizeUpdatable, new ConcurrentBufferQueue.UnusedElementProcessor<T>() {
+    public CountableBufferQueue(ConcurrentState<Integer> sizeCallback) {
+        this(sizeCallback, new ConcurrentBufferQueue.UnusedElementProcessor<T>() {
             @Override
             public void process(T element) {
                 // Do nothing by default.
@@ -72,28 +67,27 @@ public class CountableBufferQueue<T> implements BufferQueueController<T>, Buffer
         });
     }
 
-    @Override
-    public T getNext() throws InterruptedException, BufferQueueClosedException {
-        T result = mBufferQueue.getNext();
+    private void decrementSize() {
         int count;
         synchronized (mCountLock) {
             mCount--;
             count = mCount;
         }
-        mSizeUpdatable.update(count);
+        mSizeCallback.update(count);
+    }
+
+    @Override
+    public T getNext() throws InterruptedException, BufferQueueClosedException {
+        T result = mBufferQueue.getNext();
+        decrementSize();
         return result;
     }
 
     @Override
     public T getNext(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException,
             BufferQueueClosedException {
-        T result = mBufferQueue.getNext();
-        int count;
-        synchronized (mCountLock) {
-            mCount--;
-            count = mCount;
-        }
-        mSizeUpdatable.update(count);
+        T result = mBufferQueue.getNext(timeout, unit);
+        decrementSize();
         return result;
     }
 
@@ -123,7 +117,7 @@ public class CountableBufferQueue<T> implements BufferQueueController<T>, Buffer
             postCount = mCount;
         }
         if (preCount != postCount) {
-            mSizeUpdatable.update(postCount);
+            mSizeCallback.update(postCount);
         }
     }
 
