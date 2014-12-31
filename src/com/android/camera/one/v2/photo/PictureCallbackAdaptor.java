@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2.photo;
 
-import java.util.concurrent.Executor;
-
 import android.net.Uri;
 
 import com.android.camera.async.ConcurrentState;
@@ -25,6 +23,8 @@ import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Callback;
+
+import java.util.concurrent.Executor;
 
 /**
  * Splits a {@link OneCamera.PictureCallback} into separate thread-safe
@@ -41,68 +41,83 @@ class PictureCallbackAdaptor {
     }
 
     public Updatable<Void> provideQuickExposeUpdatable() {
-        ConcurrentState<Void> exposeState = new ConcurrentState<>();
-        exposeState.addCallback(new Callback<Long>() {
+        return new Updatable<Void>() {
             @Override
-            public void onCallback(Long timestamp) {
-                mPictureCallback.onQuickExpose();
+            public void update(Void v) {
+                mMainExecutor.execute(new Runnable() {
+                    public void run() {
+                        mPictureCallback.onQuickExpose();
+                    }
+                });
             }
-        }, mMainExecutor);
-        return exposeState;
+        };
     }
 
     public Updatable<byte[]> provideThumbnailUpdatable() {
-        ConcurrentState<byte[]> thumbnailState = new ConcurrentState<>();
-        thumbnailState.addCallback(new Callback<byte[]>() {
+        return new Updatable<byte[]>() {
             @Override
-            public void onCallback(byte[] jpegData) {
-                mPictureCallback.onThumbnailResult(jpegData);
+            public void update(final byte[] jpegData) {
+                mMainExecutor.execute(new Runnable() {
+                    public void run() {
+                        mPictureCallback.onThumbnailResult(jpegData);
+                    }
+                });
             }
-        }, mMainExecutor);
-        return thumbnailState;
+        };
     }
 
     public Updatable<CaptureSession> providePictureTakenUpdatable() {
-        ConcurrentState<CaptureSession> state = new ConcurrentState<>();
-        state.addCallback(new Callback<CaptureSession>() {
+        return new Updatable<CaptureSession>() {
             @Override
-            public void onCallback(CaptureSession session) {
-                mPictureCallback.onPictureTaken(session);
+            public void update(final CaptureSession session) {
+                mMainExecutor.execute(new Runnable() {
+                    public void run() {
+                        mPictureCallback.onPictureTaken(session);
+                    }
+                });
             }
-        }, mMainExecutor);
-        return state;
+        };
     }
 
     public Updatable<Uri> providePictureSavedUpdatable() {
-        ConcurrentState<Uri> state = new ConcurrentState<>();
-        state.addCallback(new Callback<Uri>() {
+        return new Updatable<Uri>() {
             @Override
-            public void onCallback(Uri uri) {
-                mPictureCallback.onPictureSaved(uri);
+            public void update(final Uri uri) {
+                mMainExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPictureCallback.onPictureSaved(uri);
+                    }
+                });
             }
-        }, mMainExecutor);
-        return state;
+        };
     }
 
     public Updatable<Void> providePictureTakingFailedUpdatable() {
-        ConcurrentState<Void> state = new ConcurrentState<>();
-        state.addCallback(new Callback<Void>() {
+        return new Updatable<Void>() {
             @Override
-            public void onCallback(Void v) {
-                mPictureCallback.onPictureTakingFailed();
+            public void update(Void v) {
+                mMainExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPictureCallback.onPictureTakingFailed();
+                    }
+                });
             }
-        }, mMainExecutor);
-        return state;
+        };
     }
 
     public Updatable<Float> providePictureTakingProgressUpdatable() {
-        ConcurrentState<Float> state = new ConcurrentState<>();
-        state.addCallback(new Callback<Float>() {
+        return new Updatable<Float>() {
             @Override
-            public void onCallback(Float progress) {
-                mPictureCallback.onTakePictureProgress(progress);
+            public void update(final Float progress) {
+                mMainExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPictureCallback.onTakePictureProgress(progress);
+                    }
+                });
             }
-        }, mMainExecutor);
-        return state;
+        };
     }
 }

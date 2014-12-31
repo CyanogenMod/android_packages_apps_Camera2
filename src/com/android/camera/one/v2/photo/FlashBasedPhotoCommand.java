@@ -19,11 +19,11 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CaptureResult;
 
-import com.android.camera.async.Pollable;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.google.common.base.Supplier;
 
 /**
  * Combines a flash-enabled command and a non-flash command into a single
@@ -32,13 +32,13 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 class FlashBasedPhotoCommand implements CameraCommand {
     private final CameraCommand mFlashPhotoCommand;
     private final CameraCommand mNoFlashPhotoCommand;
-    private final Pollable<Integer> mAEState;
+    private final Supplier<Integer> mAEState;
     private final PhotoCaptureParameters.Flash mFlashState;
 
     public FlashBasedPhotoCommand(
             CameraCommand flashPhotoCommand,
             CameraCommand noFlashPhotoCommand,
-            Pollable<Integer> aeState,
+            Supplier<Integer> aeState,
             PhotoCaptureParameters.Flash flashState) {
         mFlashPhotoCommand = flashPhotoCommand;
         mNoFlashPhotoCommand = noFlashPhotoCommand;
@@ -53,7 +53,7 @@ class FlashBasedPhotoCommand implements CameraCommand {
         if (mFlashState == PhotoCaptureParameters.Flash.ON) {
             needsFlash = true;
         } else {
-            Integer mostRecentAEState = mAEState.get(CaptureResult.CONTROL_AE_STATE_INACTIVE);
+            Integer mostRecentAEState = mAEState.get();
             if (mostRecentAEState == CaptureResult.CONTROL_AE_STATE_FLASH_REQUIRED) {
                 needsFlash = true;
             }

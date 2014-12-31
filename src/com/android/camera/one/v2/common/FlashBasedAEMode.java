@@ -18,32 +18,22 @@ package com.android.camera.one.v2.common;
 
 import android.hardware.camera2.CaptureRequest;
 
-import com.android.camera.async.Pollable;
 import com.android.camera.one.OneCamera;
+import com.google.common.base.Supplier;
 
 /**
- * Computes the current AE Mode to use based on the current flash
- * state.
+ * Computes the current AE Mode to use based on the current flash state.
  */
-public class FlashBasedAEMode implements Pollable<Integer> {
-    private final Pollable<OneCamera.PhotoCaptureParameters.Flash> mFlashPollable;
+public class FlashBasedAEMode implements Supplier<Integer> {
+    private final Supplier<OneCamera.PhotoCaptureParameters.Flash> mFlash;
 
-    public FlashBasedAEMode(Pollable<OneCamera.PhotoCaptureParameters.Flash> flashPollable) {
-        mFlashPollable = flashPollable;
+    public FlashBasedAEMode(Supplier<OneCamera.PhotoCaptureParameters.Flash> flash) {
+        mFlash = flash;
     }
 
     @Override
-    public Integer get(Integer defaultValue) {
-        try {
-            return get();
-        } catch (NoValueSetException e) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public Integer get() throws NoValueSetException {
-        switch (mFlashPollable.get()) {
+    public Integer get() {
+        switch (mFlash.get()) {
             case AUTO:
                 return CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
             case ON:

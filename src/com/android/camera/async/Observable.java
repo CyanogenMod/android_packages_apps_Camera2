@@ -17,13 +17,15 @@
 package com.android.camera.async;
 
 import com.android.camera.util.Callback;
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 
 import java.util.concurrent.Executor;
 
 /**
  * An interface for thread-safe observable objects.
  */
-public interface Observable<T> extends Pollable<T> {
+public interface Observable<T> extends Supplier<T> {
     /**
      * Adds the given callback, returning a handle to be closed when the
      * callback must be deregistered.

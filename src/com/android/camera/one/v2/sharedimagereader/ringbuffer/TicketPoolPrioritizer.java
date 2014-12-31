@@ -19,10 +19,10 @@ package com.android.camera.one.v2.sharedimagereader.ringbuffer;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.android.camera.async.Pollable;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketProvider;
+import com.google.common.base.Supplier;
 
 /**
  * Splits a {@link TicketPool} into a high-priority lane and a low-priority,
@@ -82,7 +82,7 @@ class TicketPoolPrioritizer {
             // The number of additional tickets which must be requested from the
             // parent pool to fulfill the hypothetical request for numTickets
             // tickets, after flushing low-priority tickets.
-            int numAdditionalTickets = numTickets - mReleasableLowPriorityTicketCount.get(0);
+            int numAdditionalTickets = numTickets - mReleasableLowPriorityTicketCount.get();
             if (numAdditionalTickets <= 0) {
                 return true;
             }
@@ -102,14 +102,14 @@ class TicketPoolPrioritizer {
     }
 
     private final LowPriorityTicketReleaser mLowPriorityTicketReleaser;
-    private final Pollable<Integer> mReleasableLowPriorityTicketCount;
+    private final Supplier<Integer> mReleasableLowPriorityTicketCount;
     private final TicketPool mRootTicketPool;
     private final AtomicInteger mHighPriorityWaiters;
     private final HighPriorityTicketPool mHighPriority;
     private final LowPriorityTicketPool mLowPriority;
 
     public TicketPoolPrioritizer(LowPriorityTicketReleaser lowPriorityTicketReleaser,
-            Pollable<Integer> releasableLowPriorityTicketCount, TicketPool rootTicketPool) {
+            Supplier<Integer> releasableLowPriorityTicketCount, TicketPool rootTicketPool) {
         mLowPriorityTicketReleaser = lowPriorityTicketReleaser;
         mReleasableLowPriorityTicketCount = releasableLowPriorityTicketCount;
         mRootTicketPool = rootTicketPool;

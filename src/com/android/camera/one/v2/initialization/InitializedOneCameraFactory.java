@@ -21,6 +21,7 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Handler;
@@ -128,12 +129,15 @@ public class InitializedOneCameraFactory {
         // through getters, setters, or the ability to register listeners.
         // Since these values are interacted with by multiple threads, we can
         // use {@link ConcurrentState} to provide this functionality safely.
-        final ConcurrentState<Float> zoomState = new ConcurrentState<>();
-        final ConcurrentState<Integer> afState = new ConcurrentState<>();
-        final ConcurrentState<OneCamera.FocusState> focusState = new ConcurrentState<>();
-        final ConcurrentState<Integer> afMode = new ConcurrentState<>();
-        final ConcurrentState<Boolean> readyState = new ConcurrentState<>();
-        final ConcurrentState<Boolean> previewStartSuccessState = new ConcurrentState<>();
+        final ConcurrentState<Float> zoomState = new ConcurrentState<>(1.0f);
+        final ConcurrentState<Integer> afState = new ConcurrentState<>(
+                CaptureResult.CONTROL_AF_STATE_INACTIVE);
+        final ConcurrentState<OneCamera.FocusState> focusState = new ConcurrentState<>(new
+                OneCamera.FocusState(0.0f, false));
+        final ConcurrentState<Integer> afMode = new ConcurrentState<>(CaptureResult
+                .CONTROL_AF_MODE_OFF);
+        final ConcurrentState<Boolean> readyState = new ConcurrentState<>(false);
+        final ConcurrentState<Boolean> previewStartSuccessState = new ConcurrentState<>(null);
 
         // Wrap state to be able to register listeners which run on the main
         // thread.
@@ -146,7 +150,8 @@ public class InitializedOneCameraFactory {
         Listenable<Boolean> previewStateListenable = new ListenableConcurrentState<>
                 (previewStartSuccessState, mainThreadExecutor);
 
-        // Wrap each value in a filter to ensure that only differences pass through.
+        // Wrap each value in a filter to ensure that only differences pass
+        // through.
         final MetadataCallback metadataCallback = new MetadataCallback(
                 new FilteredUpdatable<>(afState),
                 new FilteredUpdatable<>(focusState),

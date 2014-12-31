@@ -18,10 +18,9 @@ package com.android.camera.one.v2.initialization;
 
 import android.view.Surface;
 
-import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
-import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -49,7 +48,8 @@ class PreviewStarter {
      * @param sessionListener A callback to be invoked when the capture session
      *            has been created. It is executed on threadPoolExecutor.
      */
-    public PreviewStarter(List<Surface> outputSurfaces, CaptureSessionCreator captureSessionCreator,
+    public PreviewStarter(List<Surface> outputSurfaces,
+            CaptureSessionCreator captureSessionCreator,
             CameraCaptureSessionCreatedListener sessionListener) {
         mOutputSurfaces = outputSurfaces;
         mCaptureSessionCreator = captureSessionCreator;
@@ -60,10 +60,8 @@ class PreviewStarter {
      * See {@link OneCamera#startPreview}.
      *
      * @param surface The preview surface to use.
-     * @param successCallback A thread-safe callback to return upon success or
-     *            failure.
      */
-    public void startPreview(final Surface surface, final Updatable<Boolean> successCallback) {
+    public ListenableFuture<Void> startPreview(final Surface surface) {
         // When we have the preview surface, start the capture session.
         List<Surface> surfaceList = new ArrayList<Surface>(mOutputSurfaces);
         surfaceList.add(surface);
@@ -71,17 +69,14 @@ class PreviewStarter {
         final ListenableFuture<CameraCaptureSessionProxy> sessionFuture =
                 mCaptureSessionCreator.createCaptureSession(surfaceList);
 
-        Futures.addCallback(sessionFuture, new FutureCallback<CameraCaptureSessionProxy>() {
-            @Override
-            public void onSuccess(CameraCaptureSessionProxy captureSession) {
-                mSessionListener.onCameraCaptureSessionCreated(captureSession, surface);
-                successCallback.update(true);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                successCallback.update(false);
-            }
-        });
+        return Futures.transform(sessionFuture,
+                new AsyncFunction<CameraCaptureSessionProxy, Void>() {
+                    @Override
+                    public ListenableFuture<Void> apply(
+                            CameraCaptureSessionProxy captureSession) throws Exception {
+                        mSessionListener.onCameraCaptureSessionCreated(captureSession, surface);
+                        return Futures.immediateFuture(null);
+                    }
+                });
     }
 }

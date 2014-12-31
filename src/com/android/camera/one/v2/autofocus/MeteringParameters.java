@@ -34,6 +34,10 @@ class MeteringParameters {
         mMode = mode;
     }
 
+    public static MeteringParameters createGlobal() {
+        return new MeteringParameters(new PointF(), new PointF(), Mode.GLOBAL);
+    }
+
     public PointF getAFPoint() {
         return mAFPoint;
     }

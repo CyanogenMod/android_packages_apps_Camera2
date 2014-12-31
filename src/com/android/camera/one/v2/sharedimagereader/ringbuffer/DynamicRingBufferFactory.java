@@ -44,7 +44,7 @@ public class DynamicRingBufferFactory {
     private final BufferQueue<ImageProxy> mRingBufferOutput;
 
     public DynamicRingBufferFactory(Lifetime lifetime, TicketPool rootTicketPool) {
-        ConcurrentState<Integer> ringBufferSize = new ConcurrentState<>();
+        ConcurrentState<Integer> ringBufferSize = new ConcurrentState<>(0);
 
         CountableBufferQueue<ImageProxy> ringBuffer = new CountableBufferQueue<>(ringBufferSize,
                 new ImageCloser());

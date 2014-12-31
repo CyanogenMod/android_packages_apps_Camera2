@@ -16,9 +16,6 @@
 
 package com.android.camera.one.v2.autofocus;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
@@ -26,14 +23,17 @@ import android.hardware.camera2.params.MeteringRectangle;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Lifetime;
-import com.android.camera.async.Pollable;
 import com.android.camera.async.ResettingDelayedExecutor;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.RunnableCameraCommand;
-import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
+import com.android.camera.one.v2.core.RequestTemplate;
+import com.google.common.base.Supplier;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Wires together "tap-to-focus" functionality, providing a
@@ -44,8 +44,8 @@ public class ManualAutoFocusFactory {
     private static final int AF_HOLD_SEC = 3;
 
     private final ManualAutoFocus mManualAutoFocus;
-    private final Pollable<MeteringRectangle[]> mAEMeteringRegion;
-    private final Pollable<MeteringRectangle[]> mAFMeteringRegion;
+    private final Supplier<MeteringRectangle[]> mAEMeteringRegion;
+    private final Supplier<MeteringRectangle[]> mAFMeteringRegion;
 
     /**
      * @param lifetime The Lifetime for all created objects.
@@ -59,21 +59,21 @@ public class ManualAutoFocusFactory {
      *            to the FrameServer.
      */
     public ManualAutoFocusFactory(Lifetime lifetime, FrameServer frameServer,
-            ScheduledExecutorService threadPool, Pollable<Rect> cropRegion,
+            ScheduledExecutorService threadPool, Supplier<Rect> cropRegion,
             OrientationManager.DeviceOrientation sensorOrientation,
             Runnable previewRunner, RequestBuilder.Factory rootBuilder,
             int templateType) {
         CameraCommandExecutor commandExecutor = new CameraCommandExecutor(threadPool);
         lifetime.add(commandExecutor);
 
-        ConcurrentState<MeteringParameters> currentMeteringParameters = new ConcurrentState<>();
+        ConcurrentState<MeteringParameters> currentMeteringParameters = new ConcurrentState<>(
+                MeteringParameters.createGlobal());
         mAEMeteringRegion = new AEMeteringRegion(currentMeteringParameters, cropRegion,
                 sensorOrientation);
         mAFMeteringRegion = new AFMeteringRegion(currentMeteringParameters, cropRegion,
                 sensorOrientation);
 
-        RequestTemplate afRequestBuilder =
-                new RequestTemplate(rootBuilder);
+        RequestTemplate afRequestBuilder = new RequestTemplate(rootBuilder);
         afRequestBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, mAEMeteringRegion);
         afRequestBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, mAFMeteringRegion);
 
@@ -96,11 +96,11 @@ public class ManualAutoFocusFactory {
         return mManualAutoFocus;
     }
 
-    public Pollable<MeteringRectangle[]> provideAEMeteringRegion() {
+    public Supplier<MeteringRectangle[]> provideAEMeteringRegion() {
         return mAEMeteringRegion;
     }
 
-    public Pollable<MeteringRectangle[]> provideAFMeteringRegion() {
+    public Supplier<MeteringRectangle[]> provideAFMeteringRegion() {
         return mAFMeteringRegion;
     }
 }

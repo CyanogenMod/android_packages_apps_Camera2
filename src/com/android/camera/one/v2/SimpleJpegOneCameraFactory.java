@@ -34,7 +34,6 @@ import com.android.camera.async.CallbackRunnable;
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.HandlerExecutor;
 import com.android.camera.async.Lifetime;
-import com.android.camera.async.Pollable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
@@ -63,6 +62,7 @@ import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
+import com.google.common.base.Supplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +129,8 @@ public class SimpleJpegOneCameraFactory {
             rootBuilder.addResponseListener(new TotalCaptureResultResponseListener
                     (metadataCallback));
 
-            Pollable<Rect> cropRegion = new ZoomedCropRegion(mCameraCharacteristics, zoomState);
+            ZoomedCropRegion cropRegion = new ZoomedCropRegion(mCameraCharacteristics,
+                    zoomState);
             rootBuilder.setParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
 
             CaptureStream previewStream = new SimpleCaptureStream(previewSurface);
@@ -154,9 +155,9 @@ public class SimpleJpegOneCameraFactory {
                     Lifetime(cameraLifetime), frameServer, miscThreadPool, cropRegion,
                     sensorOrientation, previewRunner, rootBuilder, templateType);
             ManualAutoFocus autoFocus = manualAutoFocusFactory.provideManualAutoFocus();
-            Pollable<MeteringRectangle[]> aeRegions =
+            Supplier<MeteringRectangle[]> aeRegions =
                     manualAutoFocusFactory.provideAEMeteringRegion();
-            Pollable<MeteringRectangle[]> afRegions =
+            Supplier<MeteringRectangle[]> afRegions =
                     manualAutoFocusFactory.provideAFMeteringRegion();
 
             rootBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, aeRegions);

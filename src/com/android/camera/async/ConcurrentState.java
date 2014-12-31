@@ -58,13 +58,12 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
 
     private final Object mLock;
     private final Set<ExecutorListenerPair<T>> mListeners;
-    private boolean mValueSet;
     private T mValue;
 
-    public ConcurrentState() {
+    public ConcurrentState(T initialValue) {
         mLock = new Object();
-        mListeners = new HashSet<ExecutorListenerPair<T>>();
-        mValueSet = false;
+        mListeners = new HashSet<>();
+        mValue = initialValue;
     }
 
     /**
@@ -72,9 +71,8 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
      */
     @Override
     public void update(T newValue) {
-        List<ExecutorListenerPair<T>> listeners = new ArrayList<ExecutorListenerPair<T>>();
+        List<ExecutorListenerPair<T>> listeners = new ArrayList<>();
         synchronized (mLock) {
-            mValueSet = true;
             mValue = newValue;
             // Copy listeners out here so we can iterate over the list outside
             // the critical section.
@@ -105,31 +103,12 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
     /**
      * Polls for the latest value.
      *
-     * @return The latest state, or defaultValue if no state has been set yet.
-     */
-    @Override
-    public T get(T defaultValue) {
-        try {
-            return get();
-        } catch (Pollable.NoValueSetException e) {
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Polls for the latest value.
-     *
      * @return The latest state.
-     * @throws com.android.camera.async.Pollable.NoValueSetException If no value has been set yet.
      */
     @Override
-    public T get() throws Pollable.NoValueSetException {
+    public T get() {
         synchronized (mLock) {
-            if (mValueSet) {
-                return mValue;
-            } else {
-                throw new Pollable.NoValueSetException();
-            }
+            return mValue;
         }
     }
 }

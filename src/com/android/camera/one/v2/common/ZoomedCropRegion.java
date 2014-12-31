@@ -19,32 +19,22 @@ package com.android.camera.one.v2.common;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
 
-import com.android.camera.async.Pollable;
-import com.android.camera.one.v2.AutoFocusHelper;
+import com.google.common.base.Supplier;
 
 /**
  * Computes the current crop region based on the current zoom.
  */
-public class ZoomedCropRegion implements Pollable<Rect> {
+public class ZoomedCropRegion implements Supplier<Rect> {
     private final CameraCharacteristics mCharacteristics;
-    private final Pollable<Float> mZoom;
+    private final Supplier<Float> mZoom;
 
-    public ZoomedCropRegion(CameraCharacteristics characteristics, Pollable<Float> zoom) {
+    public ZoomedCropRegion(CameraCharacteristics characteristics, Supplier<Float> zoom) {
         mCharacteristics = characteristics;
         mZoom = zoom;
     }
 
     @Override
-    public Rect get(Rect defaultValue) {
-        try {
-            return get();
-        } catch (NoValueSetException e) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public Rect get() throws NoValueSetException {
+    public Rect get() {
         float zoom = mZoom.get();
         Rect sensor = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
         int xCenter = sensor.width() / 2;

@@ -30,8 +30,12 @@ import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Callback;
 import com.android.camera.util.Size;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 /**
  * A generic, composable {@link OneCamera}.
@@ -142,22 +146,18 @@ class GenericOneCameraImpl implements OneCamera {
 
     @Override
     public void startPreview(Surface surface, final CaptureReadyCallback listener) {
-        // Listener must be run on the main thread, so wrap with concurrent
-        // state to create a thread-safe callback to forward to the preview
-        // starter.
-        ConcurrentState<Boolean> previewStartSuccess = new ConcurrentState<>();
-        previewStartSuccess.addCallback(new Callback<Boolean>() {
+        ListenableFuture<Void> result = mPreviewStarter.startPreview(surface);
+        Futures.addCallback(result, new FutureCallback<Void>() {
             @Override
-            public void onCallback(Boolean success) {
-                if (success) {
-                    listener.onReadyForCapture();
-                } else {
-                    listener.onSetupFailed();
-                }
+            public void onSuccess(Void aVoid) {
+                listener.onReadyForCapture();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                listener.onSetupFailed();
             }
         }, mMainExecutor);
-
-        mPreviewStarter.startPreview(surface, previewStartSuccess);
     }
 
     @Override

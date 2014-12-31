@@ -21,20 +21,20 @@ import android.graphics.Rect;
 import android.hardware.camera2.params.MeteringRectangle;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.Pollable;
 import com.android.camera.one.v2.AutoFocusHelper;
+import com.google.common.base.Supplier;
 
 /**
  * Computes the current AF metering rectangles based on the current
  * metering parameters and crop region.
  */
-class AFMeteringRegion implements Pollable<MeteringRectangle[]> {
-    private final Pollable<MeteringParameters> mMeteringParameters;
-    private final Pollable<Rect> mCropRegion;
+class AFMeteringRegion implements Supplier<MeteringRectangle[]> {
+    private final Supplier<MeteringParameters> mMeteringParameters;
+    private final Supplier<Rect> mCropRegion;
     private final OrientationManager.DeviceOrientation mSensorOrientation;
 
-    public AFMeteringRegion(Pollable<MeteringParameters> meteringParameters,
-                            Pollable<Rect> cropRegion,
+    public AFMeteringRegion(Supplier<MeteringParameters> meteringParameters,
+                            Supplier<Rect> cropRegion,
                             OrientationManager.DeviceOrientation sensorOrientation) {
         mMeteringParameters = meteringParameters;
         mCropRegion = cropRegion;
@@ -42,16 +42,7 @@ class AFMeteringRegion implements Pollable<MeteringRectangle[]> {
     }
 
     @Override
-    public MeteringRectangle[] get(MeteringRectangle[] defaultValue) {
-        try {
-            return get();
-        } catch (NoValueSetException e) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public MeteringRectangle[] get() throws NoValueSetException {
+    public MeteringRectangle[] get() {
         MeteringParameters parameters = mMeteringParameters.get();
         if (parameters.getMode() == MeteringParameters.Mode.POINT) {
             Rect cropRegion = mCropRegion.get();

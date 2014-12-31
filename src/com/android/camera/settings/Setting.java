@@ -46,12 +46,13 @@ public class Setting<T> implements Updatable<T>, Observable<T>, SafeCloseable {
     private final Class<T> mTClass;
     private final AtomicBoolean mClosed;
 
-    private Setting(SettingsManager manager, String scope, String key, Class<T> tClass) {
+    private Setting(SettingsManager manager, String scope, String key, Class<T> tClass, T
+            defaultValue) {
         mSettingsManager = manager;
         mScope = scope;
         mKey = key;
         mTClass = tClass;
-        mState = new ConcurrentState<>();
+        mState = new ConcurrentState<>(defaultValue);
         mClosed = new AtomicBoolean(false);
 
         // Wrap mState to only dispatch to listeners when the value actually
@@ -72,17 +73,20 @@ public class Setting<T> implements Updatable<T>, Observable<T>, SafeCloseable {
 
     public static Setting<Integer> createForInteger(SettingsManager manager,
             String scope, String key) {
-        return new Setting<Integer>(manager, scope, key, Integer.class);
+        Integer defaultValue = manager.getIntegerDefault(key);
+        return new Setting<Integer>(manager, scope, key, Integer.class, defaultValue);
     }
 
     public static Setting<String> createForString(SettingsManager manager,
             String scope, String key) {
-        return new Setting<String>(manager, scope, key, String.class);
+        String defaultValue = manager.getStringDefault(key);
+        return new Setting<String>(manager, scope, key, String.class, defaultValue);
     }
 
     public static Setting<Boolean> createForBoolean(SettingsManager manager,
             String scope, String key) {
-        return new Setting<Boolean>(manager, scope, key, Boolean.class);
+        Boolean defaultValue = manager.getBooleanDefault(key);
+        return new Setting<Boolean>(manager, scope, key, Boolean.class, defaultValue);
     }
 
     @Override
@@ -108,12 +112,7 @@ public class Setting<T> implements Updatable<T>, Observable<T>, SafeCloseable {
     }
 
     @Override
-    public T get(T defaultValue) {
-        return getFromSettings();
-    }
-
-    @Override
-    public T get() throws NoValueSetException {
+    public T get() {
         return getFromSettings();
     }
 

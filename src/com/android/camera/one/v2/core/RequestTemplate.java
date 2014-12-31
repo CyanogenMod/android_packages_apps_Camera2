@@ -24,8 +24,9 @@ import java.util.Set;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CaptureRequest;
 
-import com.android.camera.async.ConstantPollable;
-import com.android.camera.async.Pollable;
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 /**
  * A {@link RequestBuilder.Factory} which allows modifying each
@@ -41,19 +42,15 @@ import com.android.camera.async.Pollable;
 public class RequestTemplate implements RequestBuilder.Factory {
     private static class Parameter<T> {
         private final CaptureRequest.Key<T> key;
-        private final Pollable<T> value;
+        private final Supplier<T> value;
 
-        private Parameter(CaptureRequest.Key<T> key, Pollable<T> value) {
+        private Parameter(CaptureRequest.Key<T> key, Supplier<T> value) {
             this.key = key;
             this.value = value;
         }
 
         public void addToBuilder(RequestBuilder builder) {
-            try {
-                builder.setParam(key, value.get());
-            } catch (Pollable.NoValueSetException e) {
-                // If there is no value to set, do nothing.
-            }
+            builder.setParam(key, value.get());
         }
     }
 
@@ -70,7 +67,7 @@ public class RequestTemplate implements RequestBuilder.Factory {
     }
 
     public <T> RequestTemplate setParam(CaptureRequest.Key<T> key, T value) {
-        return setParam(key, new ConstantPollable<T>(value));
+        return setParam(key, Suppliers.ofInstance(value));
     }
 
     /**
@@ -78,7 +75,7 @@ public class RequestTemplate implements RequestBuilder.Factory {
      * value is polled when each new RequestBuilder is created.
      */
     public <T> RequestTemplate setParam(CaptureRequest.Key<T> key,
-                                        Pollable<T> value) {
+                                        Supplier<T> value) {
         mParameters.add(new Parameter<T>(key, value));
         return this;
     }
