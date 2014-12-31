@@ -49,9 +49,9 @@ import com.android.camera.one.v2.common.TimestampResponseListener;
 import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.common.ZoomedCropRegion;
 import com.android.camera.one.v2.core.CaptureStream;
-import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
+import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
@@ -63,6 +63,7 @@ import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
+import com.android.camera.one.v2.stats.PreviewFpsListener;
 import com.android.camera.util.Size;
 import com.google.common.base.Supplier;
 
@@ -127,6 +128,8 @@ public class ZslOneCameraFactory {
             // for every image (including the preview).
             rootBuilder.addResponseListener(
                     new TimestampResponseListener(globalTimestampCallback));
+
+            rootBuilder.addResponseListener(new PreviewFpsListener());
 
             // TODO Change AE mode depending on flash mode.
             rootBuilder.setParam(CaptureRequest.CONTROL_AE_MODE, CaptureRequest
