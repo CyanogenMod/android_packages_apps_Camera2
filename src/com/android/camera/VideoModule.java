@@ -594,9 +594,15 @@ public class VideoModule extends CameraModule
         mCameraDevice = cameraProxy;
         mCameraCapabilities = mCameraDevice.getCapabilities();
         mCameraSettings = mCameraDevice.getSettings();
-        mFocusAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
-        mMeteringAreaSupported =
-                mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
+        if (isSamsung4k()) {
+            mFocusAreaSupported = false;
+            mMeteringAreaSupported = false;
+        } else {
+            mFocusAreaSupported =
+                    mCameraCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
+            mMeteringAreaSupported =
+                    mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
+        }
         readVideoPreferences();
         resizeForPreviewAspectRatio();
         initializeFocusManager();
@@ -721,6 +727,19 @@ public class VideoModule extends CameraModule
         // TODO: Remove this when old camera controls are removed from the UI.
     }
 
+    public boolean isSamsung4k() {
+        if (Build.BRAND.toLowerCase().contains("samsung")) {
+            SettingsManager settingsManager = mActivity.getSettingsManager();
+            String videoQualityKey = isCameraFrontFacing() ? Keys.KEY_VIDEO_QUALITY_FRONT
+                : Keys.KEY_VIDEO_QUALITY_BACK;
+            String videoQuality = settingsManager
+                    .getString(SettingsManager.SCOPE_GLOBAL, videoQualityKey);
+            int quality = SettingsUtil.getVideoQuality(videoQuality, mCameraId);
+            return quality == CamcorderProfile.QUALITY_2160P;
+        }
+        return false;
+    }
+
     private void readVideoPreferences() {
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
@@ -788,9 +807,9 @@ public class VideoModule extends CameraModule
      * @return The preferred preview size or {@code null} if the camera is not
      *         opened yet.
      */
-    private static Point getDesiredPreviewSize(Context context, CameraSettings settings,
+    private Point getDesiredPreviewSize(Context context, CameraSettings settings,
             CameraCapabilities capabilities, CamcorderProfile profile, Point previewScreenSize) {
-        if (capabilities.getSupportedVideoSizes().size() == 0) {
+        if (isSamsung4k() || capabilities.getSupportedVideoSizes().size() == 0) {
             // Driver doesn't support separate outputs for preview and video.
             return new Point(profile.videoFrameWidth, profile.videoFrameHeight);
         }
@@ -1346,15 +1365,16 @@ public class VideoModule extends CameraModule
                         return;
                     }
                     mAppController.getCameraAppUI().setSwipeEnabled(false);
-
-                    // The parameters might have been altered by MediaRecorder already.
-                    // We need to force mCameraDevice to refresh before getting it.
-                    mCameraDevice.refreshSettings();
-                    // The parameters may have been changed by MediaRecorder upon starting
-                    // recording. We need to alter the parameters if we support camcorder
-                    // zoom. To reduce latency when setting the parameters during zoom, we
-                    // update the settings here once.
-                    mCameraSettings = mCameraDevice.getSettings();
+                    if (!isSamsung4k()) {
+                        // The parameters might have been altered by MediaRecorder already.
+                        // We need to force mCameraDevice to refresh before getting it.
+                        mCameraDevice.refreshSettings();
+                        // The parameters may have been changed by MediaRecorder upon starting
+                        // recording. We need to alter the parameters if we support camcorder
+                        // zoom. To reduce latency when setting the parameters during zoom, we
+                        // update the settings here once.
+                        mCameraSettings = mCameraDevice.getSettings();
+                    }
 
                     mMediaRecorderRecording = true;
                     mActivity.lockOrientation();
@@ -1848,7 +1868,7 @@ public class VideoModule extends CameraModule
                 mParameters.setFlashMode(flashMode);
             }
         }*/
-        if (mCameraDevice != null) {
+        if (mCameraDevice != null && !isSamsung4k()) {
             mCameraDevice.applySettings(mCameraSettings);
         }
         mUI.updateOnScreenIndicators(mCameraSettings);
@@ -1953,14 +1973,14 @@ public class VideoModule extends CameraModule
     /***********************FocusOverlayManager Listener****************************/
     @Override
     public void autoFocus() {
-        if (mCameraDevice != null) {
+        if (mCameraDevice != null && !isSamsung4k()) {
             mCameraDevice.autoFocus(mHandler, mAutoFocusCallback);
         }
     }
 
     @Override
     public void cancelAutoFocus() {
-        if (mCameraDevice != null) {
+        if (mCameraDevice != null && !isSamsung4k()) {
             mCameraDevice.cancelAutoFocus();
             setFocusParameters();
         }
@@ -1983,7 +2003,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public void setFocusParameters() {
-        if (mCameraDevice != null) {
+        if (mCameraDevice != null && !isSamsung4k()) {
             updateFocusParameters();
             mCameraDevice.applySettings(mCameraSettings);
         }
