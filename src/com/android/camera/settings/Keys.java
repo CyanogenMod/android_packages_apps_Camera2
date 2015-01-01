@@ -42,6 +42,7 @@ public class Keys {
     public static final String KEY_FOCUS_MODE = "pref_camera_focusmode_key";
     public static final String KEY_FLASH_MODE = "pref_camera_flashmode_key";
     public static final String KEY_VIDEOCAMERA_FLASH_MODE = "pref_camera_video_flashmode_key";
+    public static final String KEY_VIDEOCAMERA_SAMSUNG4K_MODE = "pref_camera_video_samsung4k_key";
     public static final String KEY_SCENE_MODE = "pref_camera_scenemode_key";
     public static final String KEY_EXPOSURE = "pref_camera_exposure_key";
     public static final String KEY_VIDEO_EFFECT = "pref_video_effect_key";
