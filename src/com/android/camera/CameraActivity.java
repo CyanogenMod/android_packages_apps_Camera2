@@ -495,14 +495,14 @@ public class CameraActivity extends Activity
          * setting so we default to opening the camera in back facing camera, and
          * can save this flash support value again.
          */
-        if (!mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
-                                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
+        //if (!mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
+          //                          Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
             HardwareSpec hardware =
                     new HardwareSpecImpl(getCameraProvider(), camera.getCapabilities());
             mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
-                                 Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
-                                 hardware.isFlashSupported());
-        }
+                                Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
+                                false);//hardware.isFlashSupported());
+        //}
 
         if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {
             // We shouldn't be here. Just close the camera and leave.

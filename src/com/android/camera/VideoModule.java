@@ -96,7 +96,7 @@ public class VideoModule extends CameraModule
     private static final String VIDEO_MODULE_STRING_ID = "VideoModule";
 
     private static final Log.Tag TAG = new Log.Tag(VIDEO_MODULE_STRING_ID);
-
+    
     // Messages defined for the UI thread handler.
     private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
     private static final int MSG_UPDATE_RECORD_TIME = 5;
@@ -700,7 +700,7 @@ public class VideoModule extends CameraModule
         }
         mAppController.setShutterEnabled(false);
         if (mCameraSettings != null) {
-            mFocusManager.onShutterUp(mCameraSettings.getCurrentFocusMode());
+            //mFocusManager.onShutterUp(mCameraSettings.getCurrentFocusMode());
         }
 
         // Keep the shutter button disabled when in video capture intent
@@ -1349,12 +1349,12 @@ public class VideoModule extends CameraModule
 
                     // The parameters might have been altered by MediaRecorder already.
                     // We need to force mCameraDevice to refresh before getting it.
-                    mCameraDevice.refreshSettings();
+                   // mCameraDevice.refreshSettings();
                     // The parameters may have been changed by MediaRecorder upon starting
                     // recording. We need to alter the parameters if we support camcorder
                     // zoom. To reduce latency when setting the parameters during zoom, we
                     // update the settings here once.
-                    mCameraSettings = mCameraDevice.getSettings();
+                    //mCameraSettings = mCameraDevice.getSettings();
 
                     mMediaRecorderRecording = true;
                     mActivity.lockOrientation();
@@ -1366,7 +1366,7 @@ public class VideoModule extends CameraModule
                     mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
                     mUI.showRecordingUI(true);
 
-                    setFocusParameters();
+                    //setFocusParameters();
 
                     updateRecordingTime();
                     mActivity.enableKeepScreenOn(true);
@@ -1474,7 +1474,7 @@ public class VideoModule extends CameraModule
         mAppController.getCameraAppUI().showModeOptions();
         mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
         if (!mPaused && mCameraDevice != null) {
-            setFocusParameters();
+            //setFocusParameters();
             mCameraDevice.lock();
             if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
                 stopPreview();
@@ -1849,7 +1849,7 @@ public class VideoModule extends CameraModule
             }
         }*/
         if (mCameraDevice != null) {
-            mCameraDevice.applySettings(mCameraSettings);
+           // mCameraDevice.applySettings(mCameraSettings);
         }
         mUI.updateOnScreenIndicators(mCameraSettings);
     }
@@ -1984,8 +1984,8 @@ public class VideoModule extends CameraModule
     @Override
     public void setFocusParameters() {
         if (mCameraDevice != null) {
-            updateFocusParameters();
-            mCameraDevice.applySettings(mCameraSettings);
+            //updateFocusParameters();
+            //mCameraDevice.applySettings(mCameraSettings);
         }
     }
 }
