@@ -495,14 +495,11 @@ public class CameraActivity extends Activity
          * setting so we default to opening the camera in back facing camera, and
          * can save this flash support value again.
          */
-        if (!mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
-                                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
-            HardwareSpec hardware =
-                    new HardwareSpecImpl(getCameraProvider(), camera.getCapabilities());
-            mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
-                                 Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
-                                 hardware.isFlashSupported());
-        }
+        HardwareSpec hardware =
+                new HardwareSpecImpl(getCameraProvider(), camera.getCapabilities());
+        mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
+                            Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
+                            !isSamsung4k() && hardware.isFlashSupported());
 
         if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {
             // We shouldn't be here. Just close the camera and leave.
@@ -2477,6 +2474,11 @@ public class CameraActivity extends Activity
     public boolean isRecording() {
         return (mCurrentModule instanceof VideoModule) ?
                 ((VideoModule) mCurrentModule).isRecording() : false;
+    }
+
+    public boolean isSamsung4k() {
+        return (mCurrentModule instanceof VideoModule) ?
+                ((VideoModule) mCurrentModule).isSamsung4k() : false;
     }
 
     public CameraAgent.CameraOpenCallback getCameraOpenErrorCallback() {
