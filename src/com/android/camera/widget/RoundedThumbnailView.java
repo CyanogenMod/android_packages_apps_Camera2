@@ -353,11 +353,11 @@ public class RoundedThumbnailView extends View {
         // Stop currently running animators.
         if (mThumbnailAnimatorSet != null && mThumbnailAnimatorSet.isRunning()) {
             mThumbnailAnimatorSet.removeAllListeners();
-            mThumbnailAnimatorSet.end();
+            mThumbnailAnimatorSet.cancel();
         }
         if (mRippleAnimator != null && mRippleAnimator.isRunning()) {
             mRippleAnimator.removeAllListeners();
-            mRippleAnimator.end();
+            mRippleAnimator.cancel();
         }
         // Remove all pending reveal requests.
         mRevealRequestWaitQueue.clear();
@@ -435,7 +435,7 @@ public class RoundedThumbnailView extends View {
             mThumbnailAnimatorSet.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    // Mark the thumbnail animation is finished.
+                    // Mark the thumbnail animation as finished.
                     mActiveRevealRequest.finishThumbnailAnimation();
                     // Process the next reveal request if both thumbnail animation and ripple
                     // animation are both finished.
@@ -471,7 +471,10 @@ public class RoundedThumbnailView extends View {
             mRippleAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
+                    // Mark the ripple animation as finished.
                     mActiveRevealRequest.finishRippleAnimation();
+                    // Process the next reveal request if both thumbnail animation and ripple
+                    // animation are both finished.
                     if (mActiveRevealRequest.isFinished()) {
                         mFinishedRevealRequest = mActiveRevealRequest;
                         mActiveRevealRequest = null;
