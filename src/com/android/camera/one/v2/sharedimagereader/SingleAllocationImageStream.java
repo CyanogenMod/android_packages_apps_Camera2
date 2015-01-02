@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2.sharedimagereader;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.view.Surface;
 
 import com.android.camera.async.BufferQueue;
@@ -27,6 +25,8 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.ReservableTicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An ImageQueueCaptureStream with a fixed-capacity which reserves space on
@@ -38,9 +38,19 @@ class SingleAllocationImageStream extends ImageStreamImpl {
     /**
      * True if the stream has been bound at least once.
      */
-    private boolean mBound;
-    private boolean mClosed;
+    private AtomicBoolean mBound;
+    private AtomicBoolean mClosed;
 
+    /**
+     * @param capacity The capacity to reserve on first bind.
+     * @param ticketPool The ticket pool to reserve capacity in. Note that this
+     *            class takes ownership of this ticket pool.
+     * @param imageStream The output to the images queue.
+     * @param imageStreamController The input to the image queue.
+     * @param imageDistributor The image distributor to register with on bind()
+     *            such that the image queue begins receiving images.
+     * @param surface
+     */
     public SingleAllocationImageStream(
             int capacity, ReservableTicketPool ticketPool,
             BufferQueue<ImageProxy> imageStream,
@@ -49,18 +59,14 @@ class SingleAllocationImageStream extends ImageStreamImpl {
         super(imageStream, imageStreamController, imageDistributor, surface);
         mCapacity = capacity;
         mTicketPool = ticketPool;
-        mBound = false;
-        mClosed = false;
+        mBound = new AtomicBoolean(false);
+        mClosed = new AtomicBoolean(false);
     }
 
     @Override
-    public synchronized Surface bind(BufferQueue<Long> timestamps) throws InterruptedException,
+    public Surface bind(BufferQueue<Long> timestamps) throws InterruptedException,
             ResourceAcquisitionFailedException {
-        if (mClosed) {
-            throw new ResourceAcquisitionFailedException();
-        }
-        if (!mBound) {
-            mBound = true;
+        if (!mBound.getAndSet(true)) {
             try {
                 mTicketPool.reserveCapacity(mCapacity);
             } catch (TicketPool.NoCapacityAvailableException e) {
@@ -72,11 +78,10 @@ class SingleAllocationImageStream extends ImageStreamImpl {
     }
 
     @Override
-    public synchronized void close() {
-        if (mClosed) {
+    public void close() {
+        if (mClosed.getAndSet(true)) {
             return;
         }
-        mClosed = true;
         mTicketPool.close();
         super.close();
     }

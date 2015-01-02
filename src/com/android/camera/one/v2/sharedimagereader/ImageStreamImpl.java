@@ -46,6 +46,7 @@ class ImageStreamImpl extends ForwardingBufferQueue<ImageProxy> implements
         mImageDistributor = imageDistributor;
         mImageStreamController = imageStreamController;
         mLifetime = new Lifetime();
+        mLifetime.add(imageStream);
         mLifetime.add(mImageStreamController);
     }
 
