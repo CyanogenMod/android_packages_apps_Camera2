@@ -19,9 +19,6 @@ package com.android.camera;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,27 +35,22 @@ import com.android.camera2.R;
 /**
  * Contains the UI for the CaptureModule.
  */
-public class CaptureModuleUI implements
-        PreviewStatusListener {
+public class CaptureModuleUI implements PreviewStatusListener.PreviewAreaChangedListener {
+
+    public interface CaptureModuleUIListener {
+        public void onZoomRatioChanged(float zoomRatio);
+    }
 
     private static final Log.Tag TAG = new Log.Tag("CaptureModuleUI");
 
     private final CameraActivity mActivity;
-    private final CaptureModule mModule;
+    private final CaptureModuleUIListener mListener;
     private final View mRootView;
 
     private final PreviewOverlay mPreviewOverlay;
     private final ProgressOverlay mProgressOverlay;
-    private final View.OnLayoutChangeListener mLayoutListener;
     private final TextureView mPreviewView;
 
-    private final GestureDetector.OnGestureListener mPreviewGestureListener = new GestureDetector.SimpleOnGestureListener() {
-        @Override
-        public boolean onSingleTapUp(MotionEvent ev) {
-            mModule.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
-            return true;
-        }
-    };
     private final FocusRing mFocusRing;
     private final CountDownView mCountdownView;
 
@@ -72,7 +64,7 @@ public class CaptureModuleUI implements
     private final OnZoomChangedListener mZoomChancedListener  = new OnZoomChangedListener() {
         @Override
         public void onZoomValueChanged(float ratio) {
-            mModule.setZoom(ratio);
+            mListener.onZoomRatioChanged(ratio);
         }
 
         @Override
@@ -84,52 +76,10 @@ public class CaptureModuleUI implements
         }
     };
 
-    public void onPreviewAreaChanged(RectF previewArea) {
-        // TODO: mFaceView.onPreviewAreaChanged(previewArea);
-        mCountdownView.onPreviewAreaChanged(previewArea);
-    }
-
-    @Override
-    public void onPreviewLayoutChanged(View v, int left, int top, int right,
-            int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        if (mLayoutListener != null) {
-            mLayoutListener.onLayoutChange(v, left, top, right, bottom, oldLeft, oldTop, oldRight,
-                    oldBottom);
-        }
-    }
-
-    @Override
-    public boolean shouldAutoAdjustTransformMatrixOnLayout() {
-        return false;
-    }
-
-    @Override
-    public boolean shouldAutoAdjustBottomBar() {
-        return true;
-    }
-
-    @Override
-    public void onPreviewFlipped() {
-        // Do nothing because when preview is flipped, TextureView will lay
-        // itself out again, which will then trigger a transform matrix update.
-    }
-
-    @Override
-    public GestureDetector.OnGestureListener getGestureListener() {
-        return mPreviewGestureListener;
-    }
-
-    @Override
-    public View.OnTouchListener getTouchListener() {
-        return null;
-    }
-
-    public CaptureModuleUI(CameraActivity activity, CaptureModule module, View parent,
-            View.OnLayoutChangeListener layoutListener) {
+    public CaptureModuleUI(CameraActivity activity, View parent, CaptureModuleUIListener listener) {
         mActivity = activity;
-        mModule = module;
+        mListener = listener;
         mRootView = parent;
-        mLayoutListener = layoutListener;
 
         ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
         mActivity.getLayoutInflater().inflate(R.layout.capture_module, moduleRoot, true);
@@ -141,30 +91,6 @@ public class CaptureModuleUI implements
 
         mFocusRing = (FocusRing) mRootView.findViewById(R.id.focus_ring);
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
-    }
-
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        mModule.onSurfaceTextureAvailable(surface, width, height);
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return mModule.onSurfaceTextureDestroyed(surface);
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-        mModule.onSurfaceTextureSizeChanged(surface, width, height);
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        mModule.onSurfaceTextureUpdated(surface);
-    }
-
-    public void positionProgressOverlay(RectF area) {
-        mProgressOverlay.setBounds(area);
     }
 
     /**
@@ -248,5 +174,12 @@ public class CaptureModuleUI implements
     public void initializeZoom(float maxZoom) {
         mMaxZoom = maxZoom;
         mPreviewOverlay.setupZoom(mMaxZoom, 0, mZoomChancedListener);
+    }
+
+    @Override
+    public void onPreviewAreaChanged(RectF previewArea) {
+        // TODO: mFaceView.onPreviewAreaChanged(previewArea);
+        mCountdownView.onPreviewAreaChanged(previewArea);
+        mProgressOverlay.setBounds(previewArea);
     }
 }

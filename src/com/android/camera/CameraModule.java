@@ -51,7 +51,8 @@ public abstract class CameraModule implements ModuleController {
     public abstract boolean onKeyUp(int keyCode, KeyEvent event);
 
     @Deprecated
-    public abstract void onSingleTapUp(View view, int x, int y);
+    public void onSingleTapUp(View view, int x, int y) {
+    }
 
     /**
      * @return An instance containing common services to be used by the module.
