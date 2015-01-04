@@ -76,6 +76,7 @@ public class Keys {
             "pref_should_show_settings_button_cling";
     public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
     public static final String KEY_MAX_BRIGHTNESS = "pref_max_brightness";
+    public static final String KEY_STORAGE = "pref_camera_storage_key";
 
     /**
      * Set some number of defaults for the defined keys.

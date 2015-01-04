@@ -41,13 +41,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Storage {
-    public static final String DCIM =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-    public static final String DIRECTORY = DCIM + "/Camera";
     public static final String JPEG_POSTFIX = ".jpg";
-    // Match the code in MediaProvider.computeBucketValues().
-    public static final String BUCKET_ID =
-            String.valueOf(DIRECTORY.toLowerCase().hashCode());
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
@@ -61,6 +55,7 @@ public class Storage {
     private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<Uri, Point>();
     private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions =
         new HashMap<Uri, Integer>();
+    private static String mRoot = Environment.getExternalStorageDirectory().toString();
 
     /**
      * Save the image with default JPEG MIME type and add it to the MediaStore.
@@ -253,6 +248,10 @@ public class Storage {
         }
     }
 
+    public static void setRoot(String root) {
+        mRoot = root;
+    }
+
     /**
      * Writes the JPEG data to a file. If there's EXIF info, the EXIF header
      * will be added.
@@ -328,8 +327,28 @@ public class Storage {
         return resultUri;
     }
 
-    private static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+    public static String generateFilepath(String title) {
+        return generateDirectory() + '/' + title + ".jpg";
+    }
+
+    private static String generateDCIM() {
+        return new File(mRoot, Environment.DIRECTORY_DCIM).toString();
+    }
+
+    public static String generateDirectory() {
+        return generateDCIM() + "/Camera";
+    }
+
+    public static String generateRawDirectory() {
+        return generateDirectory() + "/raw";
+    }
+
+    public static String generateBucketId() {
+        return String.valueOf(generateBucketIdInt());
+    }
+
+    public static int generateBucketIdInt() {
+        return generateDirectory().toLowerCase().hashCode();
     }
 
     /**
@@ -394,23 +413,20 @@ public class Storage {
     }
 
     public static long getAvailableSpace() {
-        String state = Environment.getExternalStorageState();
-        Log.d(TAG, "External storage state=" + state);
-        if (Environment.MEDIA_CHECKING.equals(state)) {
-            return PREPARING;
-        }
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            return UNAVAILABLE;
+        String folder = generateDirectory();
+        long status = isValidStorage(folder);
+        if (status != 0) {
+            return status;
         }
 
-        File dir = new File(DIRECTORY);
+        File dir = new File(folder);
         dir.mkdirs();
         if (!dir.isDirectory() || !dir.canWrite()) {
             return UNAVAILABLE;
         }
 
         try {
-            StatFs stat = new StatFs(DIRECTORY);
+            StatFs stat = new StatFs(generateDirectory());
             return stat.getAvailableBlocks() * (long) stat.getBlockSize();
         } catch (Exception e) {
             Log.i(TAG, "Fail to access external storage", e);
@@ -423,10 +439,21 @@ public class Storage {
      * imported. This is a temporary fix for bug#1655552.
      */
     public static void ensureOSXCompatible() {
-        File nnnAAAAA = new File(DCIM, "100ANDRO");
+        File nnnAAAAA = new File(generateDCIM(), "100ANDRO");
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }
     }
 
+    public static long isValidStorage(String folder) {
+        File dir = new File(folder);
+        String state = Environment.getStorageState(dir);
+        if (Environment.MEDIA_CHECKING.equals(state)) {
+            return PREPARING;
+        }
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            return UNAVAILABLE;
+        }
+        return 0;
+    }
 }
