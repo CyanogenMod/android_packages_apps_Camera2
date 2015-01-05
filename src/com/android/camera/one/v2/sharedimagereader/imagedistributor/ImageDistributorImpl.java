@@ -21,15 +21,18 @@ import com.android.camera.async.BufferQueueController;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * Distributes incoming images to output {@link BufferQueueController}s
  * according to their timestamp.
  */
+@ParametersAreNonnullByDefault
 class ImageDistributorImpl implements ImageDistributor {
     /**
      * An input timestamp stream and an output image stream to receive images
@@ -51,6 +54,7 @@ class ImageDistributorImpl implements ImageDistributor {
      * the {@link BufferQueueController} to receive images with those
      * timestamps.
      */
+    @GuardedBy("mDispatchTable")
     private final Set<DispatchRecord> mDispatchTable;
 
     /**
@@ -68,7 +72,7 @@ class ImageDistributorImpl implements ImageDistributor {
      */
     public ImageDistributorImpl(BufferQueue<Long> globalTimestampBufferQueue) {
         mGlobalTimestampBufferQueue = globalTimestampBufferQueue;
-        mDispatchTable = Collections.synchronizedSet(new HashSet<DispatchRecord>());
+        mDispatchTable = new HashSet<>();
     }
 
     /**
@@ -85,8 +89,6 @@ class ImageDistributorImpl implements ImageDistributor {
      * @param image The image to distribute.
      */
     public void distributeImage(ImageProxy image) {
-        // TODO Profile GC impact, and pool all allocations if necessary &
-        // possible.
         final long timestamp = image.getTimestamp();
 
         // Wait until the global timestamp stream indicates that either the
@@ -98,7 +100,10 @@ class ImageDistributorImpl implements ImageDistributor {
         // stream associated with a {@link DispatchRecord} are updated on the
         // same thread in order.
         try {
-            while (mGlobalTimestampBufferQueue.getNext() <= timestamp) {
+            while (true) {
+                if (mGlobalTimestampBufferQueue.getNext() > timestamp) {
+                    break;
+                }
             }
         } catch (InterruptedException e) {
             image.close();
@@ -113,7 +118,10 @@ class ImageDistributorImpl implements ImageDistributor {
 
         // mDispatchTable may be modified in {@link #addRoute} while iterating,
         // so to avoid unnecessary locking, make a copy to iterate over.
-        Set<DispatchRecord> recordsToProcess = new HashSet<>(mDispatchTable);
+        Set<DispatchRecord> recordsToProcess;
+        synchronized (mDispatchTable) {
+            recordsToProcess = new HashSet<>(mDispatchTable);
+        }
         for (DispatchRecord dispatchRecord : recordsToProcess) {
             // If either the input timestampBufferQueue or the output
             // imageStream is closed, then the route can be removed.
@@ -125,14 +133,16 @@ class ImageDistributorImpl implements ImageDistributor {
             if (requestedImageTimestamp == null) {
                 continue;
             }
-            if (requestedImageTimestamp.longValue() == timestamp) {
+            if (requestedImageTimestamp == timestamp) {
                 // Discard the value we just looked at.
                 dispatchRecord.timestampBufferQueue.discardNext();
                 streamsToReceiveImage.add(dispatchRecord.imageStream);
             }
         }
 
-        mDispatchTable.removeAll(deadRecords);
+        synchronized (mDispatchTable) {
+            mDispatchTable.removeAll(deadRecords);
+        }
 
         RefCountedImageProxy sharedImage = new RefCountedImageProxy(image,
                 streamsToReceiveImage.size());
@@ -161,6 +171,8 @@ class ImageDistributorImpl implements ImageDistributor {
     @Override
     public void addRoute(BufferQueue<Long> inputTimestampBufferQueue,
             BufferQueueController<ImageProxy> outputStream) {
-        mDispatchTable.add(new DispatchRecord(inputTimestampBufferQueue, outputStream));
+        synchronized (mDispatchTable) {
+            mDispatchTable.add(new DispatchRecord(inputTimestampBufferQueue, outputStream));
+        }
     }
 }

@@ -20,6 +20,9 @@ import com.android.camera.async.BufferQueue;
 import com.android.camera.async.BufferQueueController;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public interface ImageDistributor {
     /**
      * Begins routing new images with timestamps matching those found in
