@@ -9,6 +9,7 @@ LOCAL_STATIC_JAVA_LIBRARIES += android-ex-camera2-portability
 LOCAL_STATIC_JAVA_LIBRARIES += xmp_toolkit
 LOCAL_STATIC_JAVA_LIBRARIES += glide
 LOCAL_STATIC_JAVA_LIBRARIES += guava
+LOCAL_STATIC_JAVA_LIBRARIES += jsr305
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
