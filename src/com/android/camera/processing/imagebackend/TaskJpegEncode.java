@@ -52,13 +52,13 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      *
      * @param image Image reference that is required for computation
      * @param executor Executor to avoid thread control leakage
-     * @param imageBackend ImageBackend associated with
+     * @param imageTaskManager ImageBackend associated with
      * @param preferredLane Preferred processing priority for this task
      * @param captureSession Session associated for UI handling
      */
-    public TaskJpegEncode(ImageToProcess image, Executor executor, ImageBackend imageBackend,
+    public TaskJpegEncode(ImageToProcess image, Executor executor, ImageTaskManager imageTaskManager,
             TaskImageContainer.ProcessingPriority preferredLane, CaptureSession captureSession) {
-        super(image, executor, imageBackend, preferredLane, captureSession);
+        super(image, executor, imageTaskManager, preferredLane, captureSession);
     }
 
     /**
@@ -178,7 +178,7 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      */
     public void onJpegEncodeDone(long id, TaskImage input, TaskImage result, byte[] data) {
         TaskInfo job = new TaskInfo(id, input, result);
-        final ImageProcessorListener listener = mImageBackend.getProxyListener();
+        final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
         listener.onResultCompressed(job, new CompressedPayload(data));
     }
 

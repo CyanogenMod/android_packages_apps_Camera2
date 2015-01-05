@@ -42,12 +42,12 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      *
      * @param image Image required for computation
      * @param executor Executor to run events
-     * @param imageBackend Link to ImageBackend for reference counting
+     * @param imageTaskManager Link to ImageBackend for reference counting
      * @param captureSession Handler for UI/Disk events
      */
-    TaskCompressImageToJpeg(ImageToProcess image, Executor executor, ImageBackend imageBackend,
+    TaskCompressImageToJpeg(ImageToProcess image, Executor executor, ImageTaskManager imageTaskManager,
             CaptureSession captureSession) {
-        super(image, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
+        super(image, executor, imageTaskManager, ProcessingPriority.SLOW, captureSession);
     }
 
     private void logWrapper(String message) {
@@ -89,7 +89,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         compressedData.rewind();
 
         // Release the image now that you have a usable copy
-        mImageBackend.releaseSemaphoreReference(img, mExecutor);
+        mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
 
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
                 resultImage.orientation.getDegrees(), createExif(resultImage), null);
