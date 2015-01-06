@@ -31,10 +31,25 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     // 24 bit-vector to be written for images that are out of bounds.
     public final static int OUT_OF_BOUNDS_COLOR = 0x00000000;
 
+    /**
+     * Quick n' Dirty YUV to RGB conversion
+     * <ol>
+     *     <li> R = Y + 1.402V' </li>
+     *     <li> G = Y - 0.344U'- 0.714V' </li>
+     *     <li> B = Y + 1.770U' </li>
+     * </ol>
+     *  to be calculated at compile time.
+     */
+    public final static int SHIFTED_BIT_APPROXIMATION = 8 ;
+    public final static double SHIFTED_BITS_AS_VALUE = (double) (1 << SHIFTED_BIT_APPROXIMATION);
+    public final static int V_FACTOR_FOR_R = (int) ( 1.402 * SHIFTED_BITS_AS_VALUE);
+    public final static int U_FACTOR_FOR_G = (int) ( -0.344 * SHIFTED_BITS_AS_VALUE);
+    public final static int V_FACTOR_FOR_G = (int) ( -0.714 * SHIFTED_BITS_AS_VALUE);
+    public final static int U_FACTOR_FOR_B = (int) ( 1.772 * SHIFTED_BITS_AS_VALUE);
+
     protected final static Log.Tag TAG = new Log.Tag("TaskRGBPreview");
 
     private int mTargetHeight;
-
     private int mTargetWidth;
 
     /**
@@ -175,10 +190,6 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         int[] colors = new int[len];
         int alpha = 255 << 24;
 
-        /*
-         * Quick n' Dirty YUV to RGB conversion R = Y + 1.403V' G = Y - 0.344U'
-         * - 0.714V' B = Y + 1.770U'
-         */
 
         Log.v(TAG, "TIMER_BEGIN Starting Native Java YUV420-to-RGB Quick n' Dirty Conversion 4");
         Log.v(TAG, "\t Y-Plane Size=" + w + "x" + h);
@@ -229,9 +240,9 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 // for all pixels in the 2x2 block
                 int u = (int) (bufU.get(offsetU) & 255) - 128;
                 int v = (int) (bufV.get(offsetV) & 255) - 128;
-                int redDiff = (v * 45) >> 4;
-                int greenDiff = 0 - ((u * 11 + v * 22) >> 4);
-                int blueDiff = (u * 58) >> 4;
+                int redDiff = (v * V_FACTOR_FOR_R) >> SHIFTED_BIT_APPROXIMATION;
+                int greenDiff = ((u * U_FACTOR_FOR_G + v * V_FACTOR_FOR_G) >> SHIFTED_BIT_APPROXIMATION);
+                int blueDiff = (u * U_FACTOR_FOR_B) >> SHIFTED_BIT_APPROXIMATION;
 
                 if (i > circleMax0 || i < circleMin0) {
                     colors[offsetColor] = OUT_OF_BOUNDS_COLOR;
@@ -386,7 +397,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      *
      * @param img YUV420_888 Image to convert
      * @param subsample width/height subsample factor
-     * @returns inscribed image as ARGB_8888
+     * @return inscribed image as ARGB_8888
      */
     protected int[] dummyColorInscribedDataCircleFromYuvImage(ImageProxy img, int subsample) {
         Log.e(TAG, "RUNNING DUMMY dummyColorInscribedDataCircleFromYuvImage");
