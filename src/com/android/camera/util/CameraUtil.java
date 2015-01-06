@@ -486,16 +486,11 @@ public class CameraUtil {
      */
     public static int getOptimalPreviewSizeIndex(Context context,
             List<Size> sizes, double targetRatio) {
-        // Use a very small tolerance because we want an exact match.
-        final double aspectRatioTolerance;
-        // HTC 4:3 ratios is over .01 from true 4:3, targeted fix for those
-        // devices here, see b/18241645
-        if (ApiHelper.IS_HTC && targetRatio > 1.3433 && targetRatio < 1.35) {
-            Log.w(TAG, "4:3 ratio out of normal tolerance, increasing tolerance to 0.02");
-            aspectRatioTolerance = 0.02;
-        } else {
-            aspectRatioTolerance = 0.01;
-        }
+        // Use a very small tolerance because we want an exact match. HTC 4:3
+        // ratios is over .01 from true 4:3, so this value must be above .01,
+        // see b/18241645.
+        final double aspectRatioTolerance = 0.02;
+
         return getOptimalPreviewSizeIndex(context, sizes, targetRatio, aspectRatioTolerance);
     }
 
