@@ -69,7 +69,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * respective task {@link TaskLuckyShotSession} {@link LuckyShotSession}</li>
  * </ol>
  */
-public class ImageBackend implements ImageConsumer {
+public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
     protected static final int FAST_THREAD_PRIORITY = Thread.MAX_PRIORITY;
 
@@ -78,8 +78,6 @@ public class ImageBackend implements ImageConsumer {
     protected static final int NUM_THREADS_FAST = 2;
 
     protected static final int NUM_THREADS_SLOW = 2;
-
-    protected final SimpleCache mSimpleCache;
 
     protected final Map<ImageToProcess, ImageReleaseProtocol> mImageSemaphoreMap;
 
@@ -106,7 +104,6 @@ public class ImageBackend implements ImageConsumer {
         mThreadPoolSlow = Executors.newFixedThreadPool(NUM_THREADS_SLOW, new SlowThreadFactory());
         mProxyListener = new ImageProcessorProxyListener();
         mImageSemaphoreMap = new HashMap<>();
-        mSimpleCache = new SimpleCache(NUM_THREADS_SLOW);
     }
 
     /**
@@ -122,7 +119,6 @@ public class ImageBackend implements ImageConsumer {
         mThreadPoolSlow = slowService;
         mProxyListener = imageProcessorProxyListener;
         mImageSemaphoreMap = new HashMap<>();
-        mSimpleCache = new SimpleCache(NUM_THREADS_SLOW);
     }
 
     // REMOVE When plumbed properly
@@ -175,20 +171,9 @@ public class ImageBackend implements ImageConsumer {
         return mCameraAppUI;
     }
 
-    /**
-     * Simple getter for the simple cache functionality associated with this
-     * instantiation. Needs to be accessed by the tasks in order to get/return
-     * memory. TODO: Replace with something better.
-     *
-     * @return cache object that implements a simple memory pool for this
-     *         object.
-     */
-    public SimpleCache getCache() {
-        return mSimpleCache;
-    }
 
     /**
-     * Simple getting for the associated listener object associated with this
+     * Simple getter for the associated listener object associated with this
      * instantiation that handles registration of events listeners.
      *
      * @return listener proxy that handles events messaging for this object.
@@ -236,6 +221,7 @@ public class ImageBackend implements ImageConsumer {
      *            image close is run by the calling thread (usually the main
      *            task thread).
      */
+    @Override
     public void releaseSemaphoreReference(final ImageToProcess img, Executor executor) {
         synchronized (mImageSemaphoreMap) {
             ImageReleaseProtocol protocol = mImageSemaphoreMap.get(img);
@@ -276,16 +262,17 @@ public class ImageBackend implements ImageConsumer {
     }
 
     /**
-     * Spawns dependent tasks from internal implementation of a task. If a
-     * dependent task does NOT require the image reference, it should be passed
-     * a null pointer as an image reference. In general, this method should be
-     * called after the task has completed its own computations, but before it
-     * has released its own image reference (via the releaseSemaphoreReference
-     * call).
+     * Spawns dependent tasks from internal implementation of a set of tasks. If
+     * a dependent task does NOT require the image reference, it should be
+     * passed a null pointer as an image reference. In general, this method
+     * should be called after the task has completed its own computations, but
+     * before it has released its own image reference (via the
+     * releaseSemaphoreReference call).
      *
      * @param tasks The set of tasks to be run
      * @return whether tasks are successfully submitted.
      */
+    @Override
     public boolean appendTasks(ImageToProcess img, Set<TaskImageContainer> tasks) {
         // Make sure that referred images are all the same, if it exists.
         // And count how image references need to be kept track of.
@@ -307,6 +294,7 @@ public class ImageBackend implements ImageConsumer {
      * @param task The task to be run
      * @return whether tasks are successfully submitted.
      */
+    @Override
     public boolean appendTasks(ImageToProcess img, TaskImageContainer task) {
         Set<TaskImageContainer> tasks = new HashSet<TaskImageContainer>(1);
         tasks.add(task);
@@ -330,11 +318,11 @@ public class ImageBackend implements ImageConsumer {
      */
     @Override
     public boolean receiveImage(ImageToProcess img, TaskImageContainer task,
-            boolean blockUntilImageRelease, boolean closeOnImageRelease, CaptureSession session)
+            boolean blockUntilImageRelease, boolean closeOnImageRelease)
             throws InterruptedException {
         Set<TaskImageContainer> passTasks = new HashSet<TaskImageContainer>(1);
         passTasks.add(task);
-        return receiveImage(img, passTasks, blockUntilImageRelease, closeOnImageRelease, session);
+        return receiveImage(img, passTasks, blockUntilImageRelease, closeOnImageRelease);
     }
 
     /**
@@ -355,7 +343,7 @@ public class ImageBackend implements ImageConsumer {
      */
     @Override
     public boolean receiveImage(ImageToProcess img, Set<TaskImageContainer> tasks,
-            boolean blockUntilImageRelease, boolean closeOnImageRelease, CaptureSession session)
+            boolean blockUntilImageRelease, boolean closeOnImageRelease)
             throws InterruptedException {
 
         // Short circuit if no tasks submitted.
@@ -435,7 +423,7 @@ public class ImageBackend implements ImageConsumer {
 
         receiveImage(img, tasksToExecute,
                 processingFlags.contains(ImageTaskFlags.BLOCK_UNTIL_IMAGE_RELEASE),
-                processingFlags.contains(ImageTaskFlags.CLOSE_IMAGE_ON_RELEASE), session);
+                processingFlags.contains(ImageTaskFlags.CLOSE_IMAGE_ON_RELEASE));
 
         return true;
     }
@@ -515,8 +503,6 @@ public class ImageBackend implements ImageConsumer {
      * Increments the semaphore count for the image. Should ONLY be internally
      * via appendTasks by internal tasks. Otherwise, image references could get
      * out of whack.
-     *
-     * @return Number of Image references currently held by this instance
      */
     protected void incrementSemaphoreReferenceCount(ImageToProcess img, int count)
             throws RuntimeException {
@@ -634,10 +620,11 @@ public class ImageBackend implements ImageConsumer {
                     // Spin to deal with spurious signals.
                     mSignal.await();
                 }
-                mLock.unlock();
             } catch (InterruptedException e) {
                 // TODO: on interruption, figure out what to do.
                 throw (e);
+            } finally {
+                mLock.unlock();
             }
         }
 
@@ -665,28 +652,6 @@ public class ImageBackend implements ImageConsumer {
             Thread t = new Thread(r);
             t.setPriority(SLOW_THREAD_PRIORITY);
             return t;
-        }
-    }
-
-    // TODO: Remove with a better implementation. Just to avoid
-    // the GC not getting rid of elements. Should be hooked up to properly
-    // implemented memory pool.
-    public class SimpleCache extends ArrayList<byte[]> {
-
-        public SimpleCache(int numEntries) {
-            super(numEntries);
-        }
-
-        public synchronized void cacheSave(byte[] mem) {
-            add(mem);
-        }
-
-        public synchronized byte[] cacheGet() {
-            if (size() < 1) {
-                return null;
-            } else {
-                return mSimpleCache.remove(0);
-            }
         }
     }
 

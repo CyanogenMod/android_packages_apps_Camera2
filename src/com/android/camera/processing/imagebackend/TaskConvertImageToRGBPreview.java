@@ -37,10 +37,23 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
 
     private int mTargetWidth;
 
+    /**
+     * Constructor
+     *
+     * @param image Image that the computation is dependent on
+     * @param executor Executor to fire off an events
+     * @param imageTaskManager Image task manager that allows reference counting
+     *            and task spawning
+     * @param captureSession Capture session that bound to this image
+     * @param targetWidth Approximate viewable pixel height of the desired
+     *            preview Image (Resultant image may NOT be of this width)
+     * @param targetHeight Approximate viewable pixel width of the desired
+     *            preview Image (Resulant image may NOT be of this height)
+     */
     TaskConvertImageToRGBPreview(ImageToProcess image, Executor executor,
-            ImageBackend imageBackend, CaptureSession captureSession, int targetWidth,
+            ImageTaskManager imageTaskManager, CaptureSession captureSession, int targetWidth,
             int targetHeight) {
-        super(image, executor, imageBackend, ProcessingPriority.FAST, captureSession);
+        super(image, executor, imageTaskManager, ProcessingPriority.FAST, captureSession);
         mTargetWidth = targetWidth;
         mTargetHeight = targetHeight;
     }
@@ -417,7 +430,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         // dummyColorInscribedDataCircleFromYuvImage
         final int[] convertedImage = colorInscribedDataCircleFromYuvImage(img.proxy, subsample);
         // Signal backend that reference has been released
-        mImageBackend.releaseSemaphoreReference(img, mExecutor);
+        mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
 
         onPreviewDone(resultImage, inputImage, convertedImage);
     }
@@ -431,7 +444,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      */
     public void onPreviewDone(TaskImage resultImage, TaskImage inputImage, int[] colors) {
         TaskInfo job = new TaskInfo(mId, inputImage, resultImage);
-        final ImageProcessorListener listener = mImageBackend.getProxyListener();
+        final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
 
         listener.onResultUncompressed(job, new UncompressedPayload(colors));
     }

@@ -48,10 +48,10 @@ public interface ImageConsumer {
     /**
      * Provides the basic functionality of camera processing via a more general-
      * purpose method call. Tasks can be extended off of the TaskImageContainer,
-     * or created from factory method provided by implementor.
+     * or created from factory method provided by implementation.
      *
      * @param img The Image to be Processed
-     * @param sharedTask Set of Tasks to be run on the given image
+     * @param sharedTask a single task to be run
      * @param blockOnImageRelease If true, call blocks until the object img is
      *            no longer referred by any task. If false, call is non-blocking
      * @param closeOnImageRelease If true, images is closed when the object img
@@ -60,14 +60,13 @@ public interface ImageConsumer {
      *         need to clean up image closes manually.
      */
     public boolean receiveImage(ImageToProcess img, TaskImageContainer sharedTask,
-            boolean blockOnImageRelease, boolean closeOnImageRelease,
-            CaptureSession captureSession)
+            boolean blockOnImageRelease, boolean closeOnImageRelease)
             throws InterruptedException;
 
     /**
      * Provides the basic functionality of camera processing via a more general-
      * purpose method call. Tasks can be extended off of the TaskImageContainer,
-     * or created from factory method provided by implementor.
+     * or created from factory method provided by the implementation.
      *
      * @param img The Image to be Processed
      * @param sharedTasks Set of tasks to be run on the given image
@@ -80,8 +79,7 @@ public interface ImageConsumer {
      *         need to clean up image closes manually.
      */
     public boolean receiveImage(ImageToProcess img, Set<TaskImageContainer> sharedTasks,
-            boolean blockOnImageRelease, boolean closeOnImageRelease,
-            CaptureSession captureSession)
+            boolean blockOnImageRelease, boolean closeOnImageRelease)
             throws InterruptedException;
 
     /**
@@ -99,7 +97,7 @@ public interface ImageConsumer {
     public void shutdown();
 
     /**
-     * Getter to the object that manages the ListenerEvents. Reigster listeners
+     * Getter to the object that manages the ListenerEvents. Register listeners
      * to this object.
      */
     public ImageProcessorProxyListener getProxyListener();

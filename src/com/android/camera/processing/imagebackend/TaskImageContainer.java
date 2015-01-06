@@ -109,7 +109,7 @@ public abstract class TaskImageContainer implements Runnable {
 
     protected final static Log.Tag TAG = new Log.Tag("TaskImgContain");
 
-    final protected ImageBackend mImageBackend;
+    final protected ImageTaskManager mImageTaskManager;
 
     final protected Executor mExecutor;
 
@@ -130,7 +130,7 @@ public abstract class TaskImageContainer implements Runnable {
     public TaskImageContainer(TaskImageContainer otherTask, ProcessingPriority processingPriority) {
         mId = otherTask.mId;
         mExecutor = otherTask.mExecutor;
-        mImageBackend = otherTask.mImageBackend;
+        mImageTaskManager = otherTask.mImageTaskManager;
         mProcessingPriority = processingPriority;
         mSession = otherTask.mSession;
         mImage = null;
@@ -141,16 +141,16 @@ public abstract class TaskImageContainer implements Runnable {
      *
      * @param image Image reference that needs to be released.
      * @param Executor Executor to run the event handling
-     * @param imageBackend a reference to the ImageBackend, in case, you need to spawn other tasks
+     * @param imageTaskManager a reference to the ImageBackend, in case, you need to spawn other tasks
      * @param preferredLane Priority that the derived task will run at
      * @param captureSession Session that handles image processing events
      */
-    public TaskImageContainer(ImageToProcess image, Executor Executor, ImageBackend imageBackend,
+    public TaskImageContainer(ImageToProcess image, Executor Executor, ImageTaskManager imageTaskManager,
             ProcessingPriority preferredLane, CaptureSession captureSession) {
         mImage = image;
         mId = mImage.proxy.getTimestamp();
         mExecutor = Executor;
-        mImageBackend = imageBackend;
+        mImageTaskManager = imageTaskManager;
         mProcessingPriority = preferredLane;
         mSession = captureSession;
     }
@@ -164,7 +164,7 @@ public abstract class TaskImageContainer implements Runnable {
      */
     public void onStart(long id, TaskImage input, TaskImage result) {
         TaskInfo job = new TaskInfo(id, input, result);
-        final ImageProcessorListener listener = mImageBackend.getProxyListener();
+        final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
         listener.onStart(job);
     }
 

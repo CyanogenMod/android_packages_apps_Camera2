@@ -32,8 +32,8 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
     private final static Log.Tag TAG = new Log.Tag("TaskChainJpg");
 
     TaskChainedCompressImageToJpeg(ImageToProcess image, Executor executor,
-            ImageBackend imageBackend, CaptureSession captureSession) {
-        super(image, executor, imageBackend, ProcessingPriority.SLOW, captureSession);
+            ImageTaskManager imageTaskManager, CaptureSession captureSession) {
+        super(image, executor, imageTaskManager, ProcessingPriority.SLOW, captureSession);
     }
 
     private void logWrapper(String message) {
@@ -60,15 +60,11 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
         strides[2] = 2 * img.proxy.getPlanes()[2].getRowStride()
                 / img.proxy.getPlanes()[2].getPixelStride();
 
-        byte[] dataCopy = mImageBackend.getCache().cacheGet();
-        if (dataCopy == null) {
-            dataCopy = convertYUV420ImageToPackedNV21(img.proxy);
-        } else {
-            convertYUV420ImageToPackedNV21(img.proxy, dataCopy);
-        }
+        // TODO: For performance, use a cache subsystem for buffer reuse.
+        byte[] dataCopy = convertYUV420ImageToPackedNV21(img.proxy);
 
         // Release the image now that you have a usable copy
-        mImageBackend.releaseSemaphoreReference(img, mExecutor);
+        mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
 
         final byte[] chainedDataCopy = dataCopy;
         final int[] chainedStrides = strides;
@@ -82,13 +78,12 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
                 byte[] compressedData = convertNv21toJpeg(chainedDataCopy,
                         resultImage.height, resultImage.width, chainedStrides);
                 onJpegEncodeDone(mId, inputImage, resultImage, compressedData);
-                mImageBackend.getCache().cacheSave(chainedDataCopy);
                 logWrapper("Finished off a chained task now that image is released.");
             }
         };
 
         // Passed null, since the image has already been released.
-        mImageBackend.appendTasks(null, chainedTask);
+        mImageTaskManager.appendTasks(null, chainedTask);
         logWrapper("Kicking off a chained task now that image is released.");
     }
 }
