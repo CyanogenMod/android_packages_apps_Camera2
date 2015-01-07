@@ -21,6 +21,7 @@ import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -58,8 +59,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         mTargetHeight = targetHeight;
     }
 
-    private void logWrapper(String message) {
-        // Do nothing.
+    public void logWrapper(String message) {
+        Log.v(TAG, message);
     }
 
     /**
@@ -98,7 +99,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      *            raw pixels
      * @param targetHeight height of the image as it will be seen on the screen
      *            in raw pixels
-     * @returns inscribed image as ARGB_8888
+     * @return inscribed image as ARGB_8888
      */
     protected int calculateBestSubsampleFactor(int height, int width, int targetWidth,
             int targetHeight) {
@@ -123,17 +124,22 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * Converts an Android Image to a inscribed circle bitmap of ARGB_8888 in a
      * super-optimized loop unroll. Guarantees only one subsampled pass over the
      * YUV data. This version of the function should be used in production and
-     * also feathers the edges with 50% alpha on its edges. NOTE: To get the
-     * size of the resultant bitmap, you need to call inscribedCircleRadius(w,
-     * h) outside of this function. Runs in ~10-15ms for 4K image with a
-     * subsample of 13. TODO: Implement horizontal alpha feathering of the edge
-     * of the image, if necessary.
+     * also feathers the edges with 50% alpha on its edges. <br>
+     * NOTE: To get the size of the resultant bitmap, you need to call
+     * inscribedCircleRadius(w, h) outside of this function. Runs in ~10-15ms
+     * for 4K image with a subsample of 13. <br>
+     * TODO: Implement horizontal alpha feathering of the edge of the image.
      *
      * @param img YUV420_888 Image to convert
      * @param subsample width/height subsample factor
-     * @returns inscribed image as ARGB_8888
+     * @return inscribed image as ARGB_8888
      */
     protected int[] colorInscribedDataCircleFromYuvImage(ImageProxy img, int subsample) {
+        final List<ImageProxy.Plane> planeList = img.getPlanes();
+        if (planeList.size() != 3) {
+            throw new IllegalArgumentException("Incorrect number planes ("+planeList.size()+") in YUV Image Object");
+        }
+
         int w = img.getWidth() / subsample;
         int h = img.getHeight() / subsample;
         int r = inscribedCircleRadius(w, h);
@@ -158,15 +164,15 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
             inscribedYMax = quantizeBy2(h / 2 + r);
         }
 
-        ByteBuffer buf0 = img.getPlanes()[0].getBuffer();
-        ByteBuffer bufU = img.getPlanes()[1].getBuffer(); // Downsampled by 2
-        ByteBuffer bufV = img.getPlanes()[2].getBuffer(); // Downsampled by 2
-        int yByteStride = img.getPlanes()[0].getRowStride() * subsample;
-        int uByteStride = img.getPlanes()[1].getRowStride() * subsample;
-        int vByteStride = img.getPlanes()[2].getRowStride() * subsample;
-        int yPixelStride = img.getPlanes()[0].getPixelStride() * subsample;
-        int uPixelStride = img.getPlanes()[1].getPixelStride() * subsample;
-        int vPixelStride = img.getPlanes()[2].getPixelStride() * subsample;
+        ByteBuffer buf0 = planeList.get(0).getBuffer();
+        ByteBuffer bufU = planeList.get(1).getBuffer(); // Downsampled by 2
+        ByteBuffer bufV = planeList.get(2).getBuffer(); // Downsampled by 2
+        int yByteStride = planeList.get(0).getRowStride() * subsample;
+        int uByteStride = planeList.get(1).getRowStride() * subsample;
+        int vByteStride = planeList.get(2).getRowStride() * subsample;
+        int yPixelStride = planeList.get(0).getPixelStride() * subsample;
+        int uPixelStride = planeList.get(1).getPixelStride() * subsample;
+        int vPixelStride = planeList.get(2).getPixelStride() * subsample;
         int outputPixelStride = r * 2;
         int centerY = h / 2;
         int centerX = w / 2;
@@ -180,14 +186,12 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
          * - 0.714V' B = Y + 1.770U'
          */
 
-        Log.v(TAG, "TIMER_BEGIN Starting Native Java YUV420-to-RGB Quick n' Dirty Conversion 4");
-        Log.v(TAG, "\t Y-Plane Size=" + w + "x" + h);
-        Log.v(TAG,
-                "\t U-Plane Size=" + img.getPlanes()[1].getRowStride() + " Pixel Stride="
-                        + img.getPlanes()[1].getPixelStride());
-        Log.v(TAG,
-                "\t V-Plane Size=" + img.getPlanes()[2].getRowStride() + " Pixel Stride="
-                        + img.getPlanes()[2].getPixelStride());
+        logWrapper("TIMER_BEGIN Starting Native Java YUV420-to-RGB Quick n' Dirty Conversion 4");
+        logWrapper("\t Y-Plane Size=" + w + "x" + h);
+        logWrapper("\t U-Plane Size=" + planeList.get(1).getRowStride() + " Pixel Stride="
+                + planeList.get(1).getPixelStride());
+        logWrapper("\t V-Plane Size=" + planeList.get(2).getRowStride() + " Pixel Stride="
+                + planeList.get(2).getPixelStride());
         // Take in vertical lines by factor of two because of the u/v component
         // subsample
         for (int j = inscribedYMin; j < inscribedYMax; j += 2) {
@@ -374,7 +378,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
 
             }
         }
-        Log.v(TAG, "TIMER_END Starting Native Java YUV420-to-RGB Quick n' Dirty Conversion 4");
+        logWrapper("TIMER_END Starting Native Java YUV420-to-RGB Quick n' Dirty Conversion 4");
 
         return colors;
     }
@@ -386,10 +390,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      *
      * @param img YUV420_888 Image to convert
      * @param subsample width/height subsample factor
-     * @returns inscribed image as ARGB_8888
+     * @return inscribed image as ARGB_8888
      */
     protected int[] dummyColorInscribedDataCircleFromYuvImage(ImageProxy img, int subsample) {
-        Log.e(TAG, "RUNNING DUMMY dummyColorInscribedDataCircleFromYuvImage");
+        logWrapper("RUNNING DUMMY dummyColorInscribedDataCircleFromYuvImage");
         int w = img.getWidth() / subsample;
         int h = img.getHeight() / subsample;
         int r = inscribedCircleRadius(w, h);

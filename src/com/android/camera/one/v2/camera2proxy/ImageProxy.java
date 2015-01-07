@@ -17,13 +17,39 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
+import android.media.Image;
 
 import com.android.camera.async.SafeCloseable;
+
+import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * Wraps {@link android.media.Image} with a mockable interface.
  */
 public interface ImageProxy extends SafeCloseable {
+
+    /**
+     * Wraps the inner class {@link android.media.Image} with a mockable interface.
+     */
+    public interface Plane {
+
+        /**
+         * @see {@link android.media.Image.Plane#getRowStride()}
+         */
+        public int getRowStride();
+
+        /**
+         * @see {@link android.media.Image.Plane#getPixelStride()}
+         */
+        public int getPixelStride();
+
+        /**
+         * @see {@link android.media.Image.Plane#getBuffer()}
+         */
+        public ByteBuffer getBuffer();
+    }
+
     /**
      * @see {@link android.media.Image#getCropRect}
      */
@@ -47,7 +73,7 @@ public interface ImageProxy extends SafeCloseable {
     /**
      * @see {@link android.media.Image#getPlanes}
      */
-    public android.media.Image.Plane[] getPlanes();
+    public List<Plane> getPlanes();
 
     /**
      * @see {@link android.media.Image#getTimestamp}

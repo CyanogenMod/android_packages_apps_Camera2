@@ -17,8 +17,12 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
+import android.media.Image;
 
 import com.android.camera.async.SafeCloseable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Forwards all {@link ImageProxy} methods.
@@ -61,7 +65,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getPlanes}
      */
-    public android.media.Image.Plane[] getPlanes() {
+    public List<Plane> getPlanes() {
         return mImpl.getPlanes();
     }
 

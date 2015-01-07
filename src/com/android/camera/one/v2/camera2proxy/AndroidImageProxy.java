@@ -17,11 +17,54 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
+import android.media.Image;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An {@link ImageProxy} backed by an {@link android.media.Image}.
  */
 public class AndroidImageProxy implements ImageProxy {
+
+    /**
+     * An {@link ImageProxy.Plane} backed by an
+     * {@link android.media.Image.Plane}.
+     */
+    public class Plane implements ImageProxy.Plane {
+        private final Image.Plane mPlane;
+
+        public Plane(Image.Plane imagePlane) {
+            mPlane = imagePlane;
+        }
+
+        /**
+         * @see {@link android.media.Image.Plane#getRowStride}
+         */
+        @Override
+        public int getRowStride() {
+            return mPlane.getRowStride();
+        }
+
+        /**
+         * @see {@link android.media.Image.Plane#getPixelStride}
+         */
+        @Override
+        public int getPixelStride() {
+            return mPlane.getPixelStride();
+        }
+
+        /**
+         * @see {@link android.media.Image.Plane#getBuffer}
+         */
+        @Override
+        public ByteBuffer getBuffer() {
+            return mPlane.getBuffer();
+        }
+
+    }
+
     private final android.media.Image mImage;
 
     public AndroidImageProxy(android.media.Image image) {
@@ -61,11 +104,29 @@ public class AndroidImageProxy implements ImageProxy {
     }
 
     /**
+     * <p>
+     * NOTE:This wrapper is functionally correct, but has some performance
+     * implications: it dynamically allocates a small array (usually 1-3
+     * elements) and iteratively constructs each element of this array every
+     * time it is called. This function definitely should <b>NOT</b> be called
+     * within an tight inner loop, as it may litter the GC with lots of little
+     * allocations. However, a proper caching of this object needs to be tied to
+     * the Android Image updates, which would be a little more complex than this
+     * object needs to be. So, just consider the performance when using this
+     * function wrapper.
+     * </p>
      * @see {@link android.media.Image#getPlanes}
      */
     @Override
-    public android.media.Image.Plane[] getPlanes() {
-        return mImage.getPlanes();
+    public List<ImageProxy.Plane> getPlanes() {
+        Image.Plane[] planes = mImage.getPlanes();
+
+        List<ImageProxy.Plane> wrappedPlanes = new ArrayList<>(planes.length);
+
+        for (int i = 0; i < planes.length; i++) {
+            wrappedPlanes.add(new Plane(planes[i]));
+        }
+        return wrappedPlanes;
     }
 
     /**

@@ -27,6 +27,7 @@ import com.android.camera.session.CaptureSession;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -70,9 +71,11 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      * @return byte array of NV21 packed image
      */
     public byte[] convertYUV420ImageToPackedNV21(ImageProxy img) {
-        ByteBuffer y_buffer = img.getPlanes()[0].getBuffer();
-        ByteBuffer u_buffer = img.getPlanes()[1].getBuffer();
-        ByteBuffer v_buffer = img.getPlanes()[2].getBuffer();
+        final List<ImageProxy.Plane> planeList = img.getPlanes();
+
+        ByteBuffer y_buffer = planeList.get(0).getBuffer();
+        ByteBuffer u_buffer = planeList.get(1).getBuffer();
+        ByteBuffer v_buffer = planeList.get(2).getBuffer();
         byte[] dataCopy = new byte[y_buffer.capacity() + u_buffer.capacity() + v_buffer.capacity()];
 
         return convertYUV420ImageToPackedNV21(img, dataCopy);
@@ -92,11 +95,12 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
         // Get all the relevant information and then release the image.
         final int w = img.getWidth();
         final int h = img.getHeight();
+        final List<ImageProxy.Plane> planeList = img.getPlanes();
 
-        ByteBuffer y_buffer = img.getPlanes()[0].getBuffer();
-        ByteBuffer u_buffer = img.getPlanes()[1].getBuffer();
-        ByteBuffer v_buffer = img.getPlanes()[2].getBuffer();
-        final int color_pixel_stride = img.getPlanes()[1].getPixelStride();
+        ByteBuffer y_buffer = planeList.get(0).getBuffer();
+        ByteBuffer u_buffer = planeList.get(1).getBuffer();
+        ByteBuffer v_buffer = planeList.get(2).getBuffer();
+        final int color_pixel_stride = planeList.get(1).getPixelStride();
         final int y_size = y_buffer.capacity();
         final int u_size = u_buffer.capacity();
         final int data_offset = w * h;

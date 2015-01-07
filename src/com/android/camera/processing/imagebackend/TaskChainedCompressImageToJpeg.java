@@ -19,14 +19,17 @@ package com.android.camera.processing.imagebackend;
 import android.graphics.ImageFormat;
 
 import com.android.camera.debug.Log;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- *  Implements the conversion of a YUV_420_888 image to compressed JPEG byte array,
- *  as two separate tasks: the first to copy from the image to NV21 memory layout, and the second
- *  to convert the image into JPEG, using the built-in Android compressor.
+ * Implements the conversion of a YUV_420_888 image to compressed JPEG byte
+ * array, as two separate tasks: the first to copy from the image to NV21 memory
+ * layout, and the second to convert the image into JPEG, using the built-in
+ * Android compressor.
  */
 class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
     private final static Log.Tag TAG = new Log.Tag("TaskChainJpg");
@@ -43,6 +46,7 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
     @Override
     public void run() {
         ImageToProcess img = mImage;
+        final List<ImageProxy.Plane> planeList = img.proxy.getPlanes();
 
         final TaskImage inputImage = new TaskImage(mImage.rotation, img.proxy.getWidth(),
                 img.proxy.getHeight(), img.proxy.getFormat());
@@ -53,12 +57,12 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
 
         int[] strides = new int[3];
         // Do the byte copy
-        strides[0] = img.proxy.getPlanes()[0].getRowStride()
-                / img.proxy.getPlanes()[0].getPixelStride();
-        strides[1] = 2 * img.proxy.getPlanes()[1].getRowStride()
-                / img.proxy.getPlanes()[1].getPixelStride();
-        strides[2] = 2 * img.proxy.getPlanes()[2].getRowStride()
-                / img.proxy.getPlanes()[2].getPixelStride();
+        strides[0] = planeList.get(0).getRowStride()
+                / planeList.get(0).getPixelStride();
+        strides[1] = planeList.get(1).getRowStride()
+                / planeList.get(1).getPixelStride();
+        strides[2] = 2 * planeList.get(2).getRowStride()
+                / planeList.get(2).getPixelStride();
 
         // TODO: For performance, use a cache subsystem for buffer reuse.
         byte[] dataCopy = convertYUV420ImageToPackedNV21(img.proxy);
