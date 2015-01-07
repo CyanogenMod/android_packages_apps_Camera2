@@ -1729,6 +1729,10 @@ public class CameraActivity extends QuickActivity
 
         mMotionManager.stop();
 
+        // Always stop recording location when paused. Resume will start
+        // location recording again if the location setting is on.
+        mLocationManager.recordLocation(false);
+
         UsageStatistics.instance().backgrounded();
 
         // Camera is in fatal state. A fatal dialog is presented to users, but users just hit home
@@ -1880,7 +1884,8 @@ public class CameraActivity extends QuickActivity
 
         mPanoramaViewHelper.onResume();
         ReleaseHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
-        syncLocationManagerSetting();
+        // Record location if the setting is active
+        Keys.syncLocationManager(mSettingsManager, mLocationManager);
 
         final int previewVisibility = getPreviewVisibility();
         updatePreviewRendering(previewVisibility);
@@ -2587,13 +2592,6 @@ public class CameraActivity extends QuickActivity
         CameraUtil.showErrorAndFinish(this, messageId);
     }
 
-    /**
-     * Reads the current location recording settings and passes it on to the
-     * location manager.
-     */
-    public void syncLocationManagerSetting() {
-        Keys.syncLocationManager(mSettingsManager, mLocationManager);
-    }
 
     private void keepScreenOnForAWhile() {
         if (mKeepScreenOn) {
