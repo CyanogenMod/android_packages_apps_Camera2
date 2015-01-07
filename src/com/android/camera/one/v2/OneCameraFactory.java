@@ -23,6 +23,7 @@ import com.android.camera.async.Observable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
+import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.util.Size;
 
 import java.util.concurrent.Executor;
@@ -32,5 +33,6 @@ public interface OneCameraFactory {
             OneCameraCharacteristics characteristics,
             MainThreadExecutor mainThreadExecutor,
             Size pictureSize,
+            ImageSaver.Builder imageSaverBuilder,
             Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting);
 }

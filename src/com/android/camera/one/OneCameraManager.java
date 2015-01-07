@@ -29,6 +29,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
@@ -51,12 +52,13 @@ public abstract class OneCameraManager {
      * @param enableHdr if an HDR feature exists, open a camera that supports it
      * @param captureSize the capture size. This must be one of the supported
      *            sizes.
+     * @param imageSaverBuilder the builder that will be used to create {@link ImageSaver}.
      * @param callback this listener is called when the camera was opened or
      *            when it failed to open.
      * @param handler the handler on which callback methods are invoked.
      */
     public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
-            OpenCallback callback, Handler handler);
+            ImageSaver.Builder imageSaverBuilder, OpenCallback callback, Handler handler);
 
     // TODO: Move this to OneCameraCharacteristics class.
     /**

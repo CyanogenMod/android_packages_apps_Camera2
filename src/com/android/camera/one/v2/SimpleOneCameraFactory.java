@@ -43,11 +43,8 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
-import com.android.camera.one.v2.photo.ImageRotationCalculator;
-import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
-import com.android.camera.one.v2.photo.YuvImageBackendImageSaver;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Size;
@@ -80,7 +77,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
     @Override
     public OneCamera createOneCamera(final CameraDeviceProxy device,
             final OneCameraCharacteristics characteristics, final MainThreadExecutor mainExecutor,
-            Size pictureSize,
+            Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
 
         final ImageReader imageReader = ImageReader.newInstance(pictureSize.getWidth(),
@@ -137,15 +134,6 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
 
                 RequestBuilder.Factory meteredZooomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
-
-                // Create the image saver.
-                // Used to rotate images the right way based on the sensor used
-                // for taking the image.
-                ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
-                        .from(characteristics);
-                // FIXME Create based on mImageFormat
-                ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(mainExecutor,
-                        imageRotationCalculator);
 
                 // Create the picture-taker.
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(

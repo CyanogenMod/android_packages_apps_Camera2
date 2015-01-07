@@ -45,6 +45,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.FirstRunDialog;
 import com.android.camera.app.LocationManager;
+import com.android.camera.async.MainThreadExecutor;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
@@ -61,8 +62,14 @@ import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
+import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.OneCameraManagerImpl;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
+import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
+import com.android.camera.one.v2.photo.ImageSaver;
+import com.android.camera.one.v2.photo.YuvImageBackendImageSaver;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
@@ -1211,6 +1218,13 @@ public class CaptureModule extends CameraModule implements
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
         }
+        OneCameraCharacteristics oneCameraCharacteristics;
+        try {
+            oneCameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
+        } catch (OneCameraAccessException ocae) {
+            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            return;
+        }
         if (mCameraManager == null) {
             Log.e(TAG, "no available OneCameraManager, showing error dialog");
             mCameraOpenCloseLock.release();
@@ -1224,10 +1238,19 @@ public class CaptureModule extends CameraModule implements
             return;
         }
 
+        // Create the image saver.
+        // Used to rotate images the right way based on the sensor used
+        // for taking the image.
+        MainThreadExecutor mainThreadExecutor = MainThreadExecutor.create();
+        ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
+                .from(oneCameraCharacteristics);
+        ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(
+                mainThreadExecutor, imageRotationCalculator);
+
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
         Size pictureSize = getPictureSizeFromSettings();
-        mCameraManager.open(mCameraFacing, useHdr, pictureSize,
+        mCameraManager.open(mCameraFacing, useHdr, pictureSize, imageSaverBuilder,
                 new OpenCallback() {
                     @Override
                     public void onFailure() {
