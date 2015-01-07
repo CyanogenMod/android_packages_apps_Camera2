@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * This also manages the lifecycle of {@link Image}s within the application as
  * they are passed in from the lower-level camera2 API.
  */
-@TargetApi(Build.VERSION_CODES.L)
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback implements
         ImageReader.OnImageAvailableListener {
     /**

@@ -24,6 +24,7 @@ import android.media.Image;
 import android.media.Image.Plane;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * Provides direct access to libjpeg-turbo via the NDK.
@@ -77,7 +78,7 @@ public class JpegUtilNative {
     private static native void copyImagePlaneToBitmap(int width, int height, Object planeBuf,
             int pStride, int rStride, Object outBitmap, int rot90);
 
-    public static void copyImagePlaneToBitmap(Image.Plane plane, Bitmap bitmap, int rot90) {
+    public static void copyImagePlaneToBitmap(ImageProxy.Plane plane, Bitmap bitmap, int rot90) {
         if (bitmap.getConfig() != Bitmap.Config.ALPHA_8) {
             throw new RuntimeException("Unsupported bitmap format");
         }
@@ -121,8 +122,9 @@ public class JpegUtilNative {
         }
 
         final int NUM_PLANES = 3;
+        final List<ImageProxy.Plane> planeList = img.getPlanes();
 
-        if (img.getPlanes().length != NUM_PLANES) {
+        if (planeList.size() != NUM_PLANES) {
             throw new RuntimeException("Output buffer must be direct.");
         }
 
@@ -135,7 +137,7 @@ public class JpegUtilNative {
         int[] rowStride = new int[NUM_PLANES];
 
         for (int i = 0; i < NUM_PLANES; i++) {
-            Plane plane = img.getPlanes()[i];
+            ImageProxy.Plane plane = planeList.get(i);
 
             if (!plane.getBuffer().isDirect()) {
                 return -1;
@@ -174,6 +176,8 @@ public class JpegUtilNative {
      */
     public static int compressJpegFromYUV420Image(ImageProxy img, ByteBuffer outBuf, int quality,
             int degrees) {
+        final List<ImageProxy.Plane> planeList = img.getPlanes();
+
         if (degrees != 0 && degrees != 90 && degrees != 180 && degrees != 270) {
             throw new RuntimeException("Unsupported rotation angle");
         }
@@ -188,7 +192,7 @@ public class JpegUtilNative {
 
         final int NUM_PLANES = 3;
 
-        if (img.getPlanes().length != NUM_PLANES) {
+        if (img.getPlanes().size() != NUM_PLANES) {
             throw new RuntimeException("Output buffer must be direct.");
         }
 
@@ -201,7 +205,7 @@ public class JpegUtilNative {
         int[] rowStride = new int[NUM_PLANES];
 
         for (int i = 0; i < NUM_PLANES; i++) {
-            Plane plane = img.getPlanes()[i];
+            ImageProxy.Plane plane = planeList.get(i);
 
             if (!plane.getBuffer().isDirect()) {
                 return -1;
