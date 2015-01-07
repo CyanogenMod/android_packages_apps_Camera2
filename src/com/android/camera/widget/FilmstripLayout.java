@@ -17,6 +17,7 @@
 package com.android.camera.widget;
 
 import android.animation.Animator;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -35,6 +36,8 @@ import android.widget.FrameLayout;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.ui.FilmstripGestureRecognizer;
+import com.android.camera.util.ApiHelper;
+import com.android.camera.util.Gusterpolator;
 import com.android.camera2.R;
 
 /**
@@ -122,8 +125,14 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private void init(Context context) {
         mGestureRecognizer = new FilmstripGestureRecognizer(context, new MyGestureListener());
         mFilmstripAnimator.setDuration(DEFAULT_DURATION_MS);
-        mFilmstripAnimator.setInterpolator(AnimationUtils.loadInterpolator(
-                getContext(), android.R.interpolator.fast_out_slow_in));
+        TimeInterpolator interpolator;
+        if (ApiHelper.isLOrHigher()) {
+            interpolator = AnimationUtils.loadInterpolator(
+                    getContext(), android.R.interpolator.fast_out_slow_in);
+        } else {
+            interpolator = Gusterpolator.INSTANCE;
+        }
+        mFilmstripAnimator.setInterpolator(interpolator);
         mFilmstripAnimator.addUpdateListener(mFilmstripAnimatorUpdateListener);
         mFilmstripAnimator.addListener(mFilmstripAnimatorListener);
         mHandler = new Handler(Looper.getMainLooper());
