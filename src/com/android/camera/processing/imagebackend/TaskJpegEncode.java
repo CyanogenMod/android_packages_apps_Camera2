@@ -19,6 +19,7 @@ package com.android.camera.processing.imagebackend;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.net.Uri;
 
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
@@ -186,4 +187,17 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
         listener.onResultCompressed(job, new CompressedPayload(data));
     }
 
+    /**
+     * Wraps the onResultUri listener for ease of use.
+     *
+     * @param id Unique content id
+     * @param input Specification of image input size
+     * @param result Specification of resultant input size
+     * @param imageUri URI of the saved image.
+     */
+    public void onUriResolved(long id, TaskImage input, TaskImage result, final Uri imageUri) {
+        final TaskInfo job = new TaskInfo(id, input, result);
+        final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
+        listener.onResultUri(job, imageUri);
+    }
 }

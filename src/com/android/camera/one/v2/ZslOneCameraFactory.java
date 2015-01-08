@@ -70,7 +70,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
     public OneCamera createOneCamera(final CameraDeviceProxy device,
             final OneCameraCharacteristics characteristics,
             final MainThreadExecutor mainThreadExecutor,
-            Size pictureSize,
+            Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
 
         final ImageReader imageReader = ImageReader.newInstance(pictureSize.getWidth(),
@@ -129,14 +129,6 @@ public class ZslOneCameraFactory implements OneCameraFactory {
 
                 RequestBuilder.Factory meteredZooomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
-
-                // Create the image saver.
-                // Used to rotate images the right way based on the sensor used
-                // for taking the image.
-                ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
-                        .from(characteristics);
-                ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(
-                        mainThreadExecutor, imageRotationCalculator);
 
                 // Create the picture-taker.
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(

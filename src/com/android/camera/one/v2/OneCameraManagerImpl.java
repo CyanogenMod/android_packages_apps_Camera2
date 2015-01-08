@@ -34,6 +34,7 @@ import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.util.Size;
 
 /**
@@ -66,7 +67,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
     public void open(Facing facing, final boolean useHdr, final Size pictureSize,
-            final OpenCallback openCallback, Handler handler) {
+            final ImageSaver.Builder imageSaverBuilder, final OpenCallback openCallback, Handler handler) {
         try {
             final String cameraId = getCameraId(facing);
             Log.i(TAG, "Opening Camera ID " + cameraId);
@@ -115,9 +116,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
                                     .getCameraCharacteristics(device.getId());
                             // TODO: Set boolean based on whether HDR+ is enabled.
                             OneCamera oneCamera = OneCameraCreator.create(mAppController, useHdr,
-                                    device, characteristics, pictureSize, mMaxMemoryMB,
-                                    mDisplayMetrics,
-                                    mSoundPlayer);
+                                    device, characteristics, pictureSize, imageSaverBuilder,
+                                    mMaxMemoryMB, mDisplayMetrics, mSoundPlayer);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {
                             Log.d(TAG, "Could not get camera characteristics");

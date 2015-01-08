@@ -24,11 +24,13 @@ import android.util.DisplayMetrics;
 import com.android.camera.app.AppController;
 import com.android.camera.SoundPlayer;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.v2.photo.ImageSaver;
 import com.android.camera.util.Size;
 
 public class OneCameraCreator {
     public static OneCamera create(AppController context, boolean useHdr, CameraDevice device,
-            CameraCharacteristics characteristics, Size pictureSize, int maxMemoryMB,
+            CameraCharacteristics characteristics, Size pictureSize,
+            ImageSaver.Builder imageSaverBuilder, int maxMemoryMB,
             DisplayMetrics displayMetrics, SoundPlayer soundPlayer) {
         // TODO: Might want to switch current camera to vendor HDR.
         return new OneCameraImpl(device, characteristics, pictureSize);

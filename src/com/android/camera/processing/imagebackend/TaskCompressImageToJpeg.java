@@ -17,7 +17,9 @@
 package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
+import android.net.Uri;
 
+import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.session.CaptureSession;
@@ -70,6 +72,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 ImageFormat.JPEG);
 
         onStart(mId, inputImage, resultImage);
+        mSession.startEmpty();
         logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.proxy.getWidth() + " h="
                 + img.proxy.getHeight() + " of format " + img.proxy.getFormat()
                 + " (35==YUV_420_888)");
@@ -91,9 +94,16 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         // Release the image now that you have a usable copy
         mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
 
-        mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
-                resultImage.orientation.getDegrees(), createExif(resultImage), null);
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut);
+
+        mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
+                resultImage.orientation.getDegrees(), createExif(resultImage),
+                new MediaSaver.OnMediaSavedListener() {
+                    @Override
+                    public void onMediaSaved(Uri uri) {
+                        onUriResolved(mId, inputImage, resultImage, uri);
+                    }
+                });
     }
 
     private static ExifInterface createExif(TaskImage image) {
