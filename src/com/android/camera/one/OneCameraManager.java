@@ -17,8 +17,6 @@
 package com.android.camera.one;
 
 import android.content.Context;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -29,7 +27,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
-import com.android.camera.one.v2.photo.ImageSaver;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 

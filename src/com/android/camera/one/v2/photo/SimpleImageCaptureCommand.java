@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2.photo;
 
-import java.util.Arrays;
-
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 
@@ -28,8 +26,11 @@ import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
+
+import java.util.Arrays;
 
 /**
  * Captures single images.
@@ -52,24 +53,24 @@ class SimpleImageCaptureCommand implements ImageCaptureCommand {
     public void run(Updatable<Void> imageExposureUpdatable, ImageSaver imageSaver) throws
             InterruptedException, CameraAccessException, CameraCaptureSessionClosedException,
             ResourceAcquisitionFailedException {
-        try (FrameServer.Session session = mFrameServer.createSession()) {
+        try (FrameServer.Session session = mFrameServer.createSession();
+                ImageStream imageStream = mImageReader.createStream(1)) {
             RequestBuilder photoRequest = mBuilderFactory.create(CameraDevice
                     .TEMPLATE_STILL_CAPTURE);
+            photoRequest.addStream(imageStream);
+            photoRequest.addResponseListener(new FrameExposureResponseListener(
+                    imageExposureUpdatable));
+            session.submitRequest(Arrays.asList(photoRequest.build()),
+                    FrameServer.RequestType.NON_REPEATING);
 
-            try (ImageStream imageStream = mImageReader.createStream(1)) {
-                photoRequest.addStream(imageStream);
-                photoRequest.addResponseListener(new FrameExposureResponseListener(
-                        imageExposureUpdatable));
-                session.submitRequest(Arrays.asList(photoRequest.build()),
-                        FrameServer.RequestType.NON_REPEATING);
-
-                ImageProxy image = imageStream.getNext();
-                imageSaver.saveAndCloseImage(image);
-            } catch (BufferQueue.BufferQueueClosedException e) {
-                // If we get here, the request was submitted, but the image
-                // never arrived.
-                // TODO Log failure and notify the caller
-            }
+            ImageProxy image = imageStream.getNext();
+            imageSaver.addFullSizeImage(image);
+        } catch (BufferQueue.BufferQueueClosedException e) {
+            // If we get here, the request was submitted, but the image
+            // never arrived.
+            // TODO Log failure and notify the caller
+        } finally {
+            imageSaver.close();
         }
     }
 }

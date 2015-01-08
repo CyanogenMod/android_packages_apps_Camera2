@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -31,7 +30,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -65,10 +63,12 @@ import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.OneCameraManagerImpl;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
+import com.android.camera.one.v2.imagesaver.YuvImageBackendImageSaver;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
-import com.android.camera.one.v2.photo.ImageSaver;
-import com.android.camera.one.v2.photo.YuvImageBackendImageSaver;
+import com.android.camera.processing.ProcessingServiceManager;
+import com.android.camera.processing.imagebackend.ImageBackend;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
@@ -165,11 +165,11 @@ public class CaptureModule extends CameraModule implements
     /** The listener to respond preview area changes. */
     private final PreviewStatusListener.PreviewAreaChangedListener mPreviewAreaChangedListener =
             new PreviewStatusListener.PreviewAreaChangedListener() {
-        @Override
-        public void onPreviewAreaChanged(RectF previewArea) {
-            mPreviewArea = previewArea;
-        }
-    };
+                @Override
+                public void onPreviewAreaChanged(RectF previewArea) {
+                    mPreviewArea = previewArea;
+                }
+            };
 
     /** The listener to listen events from the preview. */
     private final PreviewStatusListener mPreviewStatusListener = new PreviewStatusListener() {
@@ -190,7 +190,8 @@ public class CaptureModule extends CameraModule implements
         @Override
         public void onPreviewFlipped() {
             // Do nothing because when preview is flipped, TextureView will lay
-            // itself out again, which will then trigger a transform matrix update.
+            // itself out again, which will then trigger a transform matrix
+            // update.
         }
 
         @Override
@@ -248,7 +249,8 @@ public class CaptureModule extends CameraModule implements
         }
     };
 
-    private OneCamera.PictureSaverCallback mPictureSaverCallback = new OneCamera.PictureSaverCallback() {
+    private final OneCamera.PictureSaverCallback mPictureSaverCallback =
+            new OneCamera.PictureSaverCallback() {
         @Override
         public void onThumbnailProcessingBegun() {
             mMainHandler.post(new Runnable() {
@@ -272,7 +274,7 @@ public class CaptureModule extends CameraModule implements
         }
     };
 
-  /** State by the module state machine. */
+    /** State by the module state machine. */
     private static enum ModuleState {
         IDLE,
         WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED,
@@ -321,7 +323,6 @@ public class CaptureModule extends CameraModule implements
 
     /** The current preview transformation matrix. */
     private Matrix mPreviewTranformationMatrix = new Matrix();
-
 
     /** The burst manager for controlling the burst. */
     private final BurstFacade mBurstController;
@@ -565,7 +566,8 @@ public class CaptureModule extends CameraModule implements
         mHdrEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS) == 1;
 
-        // The lock only exists for HDR and causes trouble for non-HDR OneCameras.
+        // The lock only exists for HDR and causes trouble for non-HDR
+        // OneCameras.
         // TODO: Fix for removing the locks completely is tracked at b/17985028
         if (!mHdrEnabled) {
             mCameraOpenCloseLock.release();
@@ -597,8 +599,8 @@ public class CaptureModule extends CameraModule implements
 
                 @Override
                 public void onAspectRatioPreferenceConfirmed(Rational chosenAspectRatio) {
-                    // Open the camera. This dialog will be dismissed in onPreviewStarted() after
-                    // preview is started.
+                    // Open the camera. This dialog will be dismissed in
+                    // onPreviewStarted() after preview is started.
                     openCameraAndStartPreview();
                 }
             });
@@ -766,10 +768,10 @@ public class CaptureModule extends CameraModule implements
         // Log touch (screen coordinates).
         if (mZoomValue == 1f) {
             TouchCoordinate touchCoordinate = new TouchCoordinate(
-                  viewX - mPreviewArea.left,
-                  viewY - mPreviewArea.top,
-                  mPreviewArea.width(),
-                  mPreviewArea.height());
+                    viewX - mPreviewArea.left,
+                    viewY - mPreviewArea.top,
+                    mPreviewArea.width(),
+                    mPreviewArea.height());
             // TODO: Add to logging: duration, rotation.
             UsageStatistics.instance().tapToFocus(touchCoordinate, null);
         }
@@ -787,8 +789,8 @@ public class CaptureModule extends CameraModule implements
         // TODO: Some passive focus scans may trigger on a location
         // instead of the center of the screen.
         mFocusController.showPassiveFocusAt(
-              (int) (mPreviewArea.width() / 2.0f),
-              (int) (mPreviewArea.height() / 2.0f));
+                (int) (mPreviewArea.width() / 2.0f),
+                (int) (mPreviewArea.height() / 2.0f));
     }
 
     /**
@@ -1174,9 +1176,10 @@ public class CaptureModule extends CameraModule implements
             // CaptureReadyCallback.onSetupFailed or onReadyForCapture will
             // be called (see below), so it's possible that
             // mCameraOpenCloseLock.release() is never called under extremely
-            // rare cases.  If we leak the lock, this timeout ensures that we at
+            // rare cases. If we leak the lock, this timeout ensures that we at
             // least crash so we don't deadlock the app.
-            if (!mCameraOpenCloseLock.tryAcquire(CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
+            if (!mCameraOpenCloseLock.tryAcquire(CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS,
+                    TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to acquire camera-open lock.");
             }
         } catch (InterruptedException e) {
@@ -1208,8 +1211,9 @@ public class CaptureModule extends CameraModule implements
         MainThreadExecutor mainThreadExecutor = MainThreadExecutor.create();
         ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
                 .from(oneCameraCharacteristics);
+        ImageBackend imageBackend = ProcessingServiceManager.getImageBackendInstance();
         ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(
-                mainThreadExecutor, imageRotationCalculator);
+                mainThreadExecutor, imageRotationCalculator, imageBackend);
 
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
@@ -1245,7 +1249,8 @@ public class CaptureModule extends CameraModule implements
                         mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
                         Log.d(TAG, "starting preview ...");
 
-                        // TODO: make mFocusController final and remove null check.
+                        // TODO: make mFocusController final and remove null
+                        // check.
                         if (mFocusController != null) {
                             camera.setFocusDistanceListener(mFocusController);
                         }
@@ -1255,46 +1260,49 @@ public class CaptureModule extends CameraModule implements
                                 new CaptureReadyCallback() {
                                     @Override
                                     public void onSetupFailed() {
-                                        // We must release this lock here, before posting
-                                        // to the main handler since we may be blocked
-                                        // in pause(), getting ready to close the camera.
+                                        // We must release this lock here,
+                                        // before posting to the main handler
+                                        // since we may be blocked in pause(),
+                                        // getting ready to close the camera.
                                         mCameraOpenCloseLock.release();
                                         Log.e(TAG, "Could not set up preview.");
                                         mMainHandler.post(new Runnable() {
-                                           @Override
-                                           public void run() {
-                                               if (mCamera == null) {
-                                                   Log.d(TAG, "Camera closed, aborting.");
-                                                   return;
-                                               }
-                                               mCamera.close();
-                                               mCamera = null;
-                                               // TODO: Show an error message and exit.
-                                           }
+                                            @Override
+                                            public void run() {
+                                                if (mCamera == null) {
+                                                    Log.d(TAG, "Camera closed, aborting.");
+                                                    return;
+                                                }
+                                                mCamera.close();
+                                                mCamera = null;
+                                                // TODO: Show an error message
+                                                // and exit.
+                                            }
                                         });
                                     }
 
                                     @Override
                                     public void onReadyForCapture() {
-                                        // We must release this lock here, before posting
-                                        // to the main handler since we may be blocked
-                                        // in pause(), getting ready to close the camera.
+                                        // We must release this lock here,
+                                        // before posting to the main handler
+                                        // since we may be blocked in pause(),
+                                        // getting ready to close the camera.
                                         mCameraOpenCloseLock.release();
                                         mMainHandler.post(new Runnable() {
-                                           @Override
-                                           public void run() {
-                                               Log.d(TAG, "Ready for capture.");
-                                               if (mCamera == null) {
-                                                   Log.d(TAG, "Camera closed, aborting.");
-                                                   return;
-                                               }
-                                               onPreviewStarted();
-                                               // Enable zooming after preview has
-                                               // started.
-                                               mUI.initializeZoom(mCamera.getMaxZoom());
-                                               mCamera.setFocusStateListener(CaptureModule.this);
-                                               mCamera.setReadyStateChangedListener(CaptureModule.this);
-                                           }
+                                            @Override
+                                            public void run() {
+                                                Log.d(TAG, "Ready for capture.");
+                                                if (mCamera == null) {
+                                                    Log.d(TAG, "Camera closed, aborting.");
+                                                    return;
+                                                }
+                                                onPreviewStarted();
+                                                // Enable zooming after preview
+                                                // has started.
+                                                mUI.initializeZoom(mCamera.getMaxZoom());
+                                                mCamera.setFocusStateListener(CaptureModule.this);
+                                                mCamera.setReadyStateChangedListener(CaptureModule.this);
+                                            }
                                         });
                                     }
                                 });
@@ -1320,15 +1328,6 @@ public class CaptureModule extends CameraModule implements
     }
 
     /**
-     * @return Whether we are resuming from within the lockscreen.
-     */
-    private static boolean isResumeFromLockscreen(Activity activity) {
-        String action = activity.getIntent().getAction();
-        return (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action)
-                || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action));
-    }
-
-    /**
      * Re-initialize the camera if e.g. the HDR mode or facing property changed.
      */
     private void switchCamera() {
@@ -1338,12 +1337,6 @@ public class CaptureModule extends CameraModule implements
         cancelCountDown();
         mAppController.freezeScreenUntilPreviewReady();
         initSurfaceTextureConsumer();
-
-        // TODO: Un-comment once we have focus back.
-        // if (mFocusManager != null) {
-        // mFocusManager.removeMessages();
-        // }
-        // mFocusManager.setMirror(mMirror);
     }
 
     private Size getPictureSizeFromSettings() {
