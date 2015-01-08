@@ -32,9 +32,12 @@ import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 
 import java.util.Arrays;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Captures single images.
  */
+@ParametersAreNonnullByDefault
 class SimpleImageCaptureCommand implements ImageCaptureCommand {
     private final FrameServer mFrameServer;
     private final RequestBuilder.Factory mBuilderFactory;

@@ -16,6 +16,8 @@
 
 package com.android.camera.async;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps a {@link BufferQueueController} with reference counting.
  */
@@ -27,7 +29,7 @@ public class RefCountedBufferQueueController<T> implements BufferQueueController
     }
 
     @Override
-    public void update(T element) {
+    public void update(@Nonnull T element) {
         mBuffer.get().update(element);
     }
 

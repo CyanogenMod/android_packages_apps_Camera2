@@ -24,6 +24,8 @@ import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Splits a {@link OneCamera.PictureCallback} into separate thread-safe
  * callbacks for each method.
@@ -41,7 +43,7 @@ class PictureCallbackAdapter {
     public Updatable<Void> provideQuickExposeUpdatable() {
         return new Updatable<Void>() {
             @Override
-            public void update(Void v) {
+            public void update(@Nonnull Void v) {
                 mMainExecutor.execute(new Runnable() {
                     public void run() {
                         mPictureCallback.onQuickExpose();
@@ -54,7 +56,7 @@ class PictureCallbackAdapter {
     public Updatable<byte[]> provideThumbnailUpdatable() {
         return new Updatable<byte[]>() {
             @Override
-            public void update(final byte[] jpegData) {
+            public void update(@Nonnull final byte[] jpegData) {
                 mMainExecutor.execute(new Runnable() {
                     public void run() {
                         mPictureCallback.onThumbnailResult(jpegData);
@@ -67,7 +69,7 @@ class PictureCallbackAdapter {
     public Updatable<CaptureSession> providePictureTakenUpdatable() {
         return new Updatable<CaptureSession>() {
             @Override
-            public void update(final CaptureSession session) {
+            public void update(@Nonnull final CaptureSession session) {
                 mMainExecutor.execute(new Runnable() {
                     public void run() {
                         mPictureCallback.onPictureTaken(session);
@@ -80,7 +82,7 @@ class PictureCallbackAdapter {
     public Updatable<Uri> providePictureSavedUpdatable() {
         return new Updatable<Uri>() {
             @Override
-            public void update(final Uri uri) {
+            public void update(@Nonnull final Uri uri) {
                 mMainExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -94,7 +96,7 @@ class PictureCallbackAdapter {
     public Updatable<Void> providePictureTakingFailedUpdatable() {
         return new Updatable<Void>() {
             @Override
-            public void update(Void v) {
+            public void update(@Nonnull Void v) {
                 mMainExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -108,7 +110,7 @@ class PictureCallbackAdapter {
     public Updatable<Float> providePictureTakingProgressUpdatable() {
         return new Updatable<Float>() {
             @Override
-            public void update(final Float progress) {
+            public void update(@Nonnull final Float progress) {
                 mMainExecutor.execute(new Runnable() {
                     @Override
                     public void run() {

@@ -16,15 +16,14 @@
 
 package com.android.camera.one.v2.initialization;
 
-import android.hardware.camera2.TotalCaptureResult;
 import android.view.Surface;
 
-import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.photo.PictureTaker;
 
 /**
@@ -66,6 +65,6 @@ public interface CameraStarter {
             CameraCaptureSessionProxy cameraCaptureSession,
             Surface previewSurface,
             Observable<Float> zoomState,
-            Updatable<TotalCaptureResult> metadataCallback,
+            Updatable<TotalCaptureResultProxy> metadataCallback,
             Updatable<Boolean> readyStateCallback);
 }

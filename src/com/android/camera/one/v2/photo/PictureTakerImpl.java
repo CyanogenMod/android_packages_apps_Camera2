@@ -68,9 +68,6 @@ class PictureTakerImpl implements PictureTaker {
         final Updatable<Void> failureCallback =
                 pictureCallbackAdapter.providePictureTakingFailedUpdatable();
 
-        final Updatable<byte[]> thumbnailCallback =
-                pictureCallbackAdapter.provideThumbnailUpdatable();
-
         final ImageSaver imageSaver = mImageSaverBuilder.build(
                 params.saverCallback,
                 OrientationManager.DeviceOrientation.from(params.orientation),

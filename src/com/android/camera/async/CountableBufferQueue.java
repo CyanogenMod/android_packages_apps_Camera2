@@ -19,6 +19,8 @@ package com.android.camera.async;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Like {@link ConcurrentBufferQueue}, but also tracks the number of objects
  * currently in the queue.
@@ -102,7 +104,7 @@ public class CountableBufferQueue<T> implements BufferQueueController<T>, Buffer
     }
 
     @Override
-    public void update(T element) {
+    public void update(@Nonnull T element) {
         // This is tricky since mBufferQueue.update() may immediately discard
         // the element if the queue is closed. Sending redundant updates for 0
         // size is acceptable, but sending updates indicating that the size has

@@ -24,6 +24,8 @@ import java.util.concurrent.Executor;
 
 import com.android.camera.util.Callback;
 
+import javax.annotation.Nonnull;
+
 /**
  * Generic asynchronous state wrapper which supports two methods of interaction:
  * polling for the latest value and listening for updates.
@@ -70,7 +72,7 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
      * Updates the state to the latest value, notifying all listeners.
      */
     @Override
-    public void update(T newValue) {
+    public void update(@Nonnull T newValue) {
         List<ExecutorListenerPair<T>> listeners = new ArrayList<>();
         synchronized (mLock) {
             mValue = newValue;

@@ -19,6 +19,8 @@ package com.android.camera.one.v2.photo;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.core.ResponseListener;
 
+import javax.annotation.Nonnull;
+
 /**
  * Invokes a callback every time a frame is exposed by the hardware.
  */

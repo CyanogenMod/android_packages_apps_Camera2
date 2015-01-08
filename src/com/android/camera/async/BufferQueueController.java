@@ -16,6 +16,8 @@
 
 package com.android.camera.async;
 
+import javax.annotation.Nonnull;
+
 /**
  * An output stream of objects which can be closed from either the producer or
  * the consumer.
@@ -28,7 +30,7 @@ public interface BufferQueueController<T> extends Updatable<T>, SafeCloseable {
      * @param element The element to add.
      */
     @Override
-    public void update(T element);
+    public void update(@Nonnull T element);
 
     /**
      * Closes the stream. Implementations must tolerate multiple calls to close.

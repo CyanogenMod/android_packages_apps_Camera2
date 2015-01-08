@@ -22,6 +22,8 @@ import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketProvider;
 import com.android.camera.one.v2.sharedimagereader.util.TicketImageProxy;
 
+import javax.annotation.Nonnull;
+
 /**
  * Decorates a BufferQueueController by attaching incoming images with a ticket
  * from a TicketPool. If no ticket can be acquired, the incoming image is
@@ -38,7 +40,7 @@ class TicketRequiredFilter implements BufferQueueController<ImageProxy> {
     }
 
     @Override
-    public void update(ImageProxy image) {
+    public void update(@Nonnull ImageProxy image) {
         Ticket ticket = mTicketProvider.tryAcquire();
         if (ticket == null) {
             image.close();

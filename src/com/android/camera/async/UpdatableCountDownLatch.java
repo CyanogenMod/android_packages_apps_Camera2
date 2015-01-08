@@ -18,6 +18,8 @@ package com.android.camera.async;
 
 import java.util.concurrent.CountDownLatch;
 
+import javax.annotation.Nonnull;
+
 /**
  * Counts down on each update.
  */
@@ -27,7 +29,7 @@ public class UpdatableCountDownLatch extends CountDownLatch implements Updatable
     }
 
     @Override
-    public void update(Void v) {
+    public void update(@Nonnull Void v) {
         countDown();
     }
 }
