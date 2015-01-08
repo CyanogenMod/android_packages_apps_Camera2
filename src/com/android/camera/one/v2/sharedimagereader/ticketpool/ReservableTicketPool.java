@@ -261,22 +261,18 @@ public class ReservableTicketPool implements TicketPool, SafeCloseable {
             if (mTicketWaiters.isEmpty()) {
                 acquiredParentTickets = tryAcquireAtomically(tickets);
             }
+            Waiter thisWaiter = new Waiter(mLock.newCondition(), tickets);
+            mTicketWaiters.add(thisWaiter);
+            try {
+                while (acquiredParentTickets == null) {
+                    thisWaiter.mDoneCondition.await();
+                    acquiredParentTickets = tryAcquireAtomically(tickets);
+                }
+            } finally {
+                mTicketWaiters.remove(thisWaiter);
+            }
         } finally {
             mLock.unlock();
-        }
-        // If enough tickets were not available, wait on mTicketWaiters and
-        // repeatedly try again.
-        while (acquiredParentTickets == null) {
-            mLock.lock();
-            try {
-                Waiter thisWaiter = new Waiter(mLock.newCondition(), tickets);
-                mTicketWaiters.add(thisWaiter);
-                thisWaiter.mDoneCondition.await();
-                mTicketWaiters.remove(thisWaiter);
-                acquiredParentTickets = tryAcquireAtomically(tickets);
-            } finally {
-                mLock.unlock();
-            }
         }
         return acquiredParentTickets;
     }
@@ -313,9 +309,11 @@ public class ReservableTicketPool implements TicketPool, SafeCloseable {
         try {
             // Release waiters, in order, so long as their requests can be
             // fulfilled.
+            int numTicketsReadilyAvailable = mParentTickets.size();
             while (mTicketWaiters.size() > 0) {
                 Waiter nextWaiter = mTicketWaiters.peek();
-                if (nextWaiter.mRequestedTicketCount <= mParentTickets.size()) {
+                if (nextWaiter.mRequestedTicketCount <= numTicketsReadilyAvailable) {
+                    numTicketsReadilyAvailable -= nextWaiter.mRequestedTicketCount;
                     nextWaiter.mDoneCondition.signal();
                     mTicketWaiters.poll();
                 } else {
