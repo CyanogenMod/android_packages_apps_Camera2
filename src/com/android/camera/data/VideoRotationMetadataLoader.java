@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.android.camera.data;
 
 import android.media.MediaMetadataRetriever;
@@ -6,47 +22,32 @@ import com.android.camera.debug.Log;
 
 public class VideoRotationMetadataLoader {
     private static final Log.Tag TAG = new Log.Tag("VidRotDataLoader");
-    private static final String ROTATION_KEY = "metadata_video_rotation";
-    private static final String WIDTH_KEY = "metadata_video_width";
-    private static final String HEIGHT_KEY = "metadata_video_height";
 
     private static final String ROTATE_90 = "90";
     private static final String ROTATE_270 = "270";
 
-    static boolean isRotated(LocalData localData) {
-        final String rotation = localData.getMetadata().getString(ROTATION_KEY);
+    static boolean isRotated(FilmstripItem filmstripItem) {
+        final String rotation = filmstripItem.getMetadata().getVideoOrientation();
         return ROTATE_90.equals(rotation) || ROTATE_270.equals(rotation);
     }
 
-    static int getWidth(LocalData localData) {
-        return localData.getMetadata().getInt(WIDTH_KEY);
-
-    }
-
-    static int getHeight(LocalData localData) {
-        return localData.getMetadata().getInt(HEIGHT_KEY);
-    }
-
-    static void loadRotationMetdata(final LocalData data) {
-        final String path = data.getPath();
+    static void loadRotationMetadata(final FilmstripItem data) {
+        final String path = data.getData().getFilePath();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
             retriever.setDataSource(path);
-            String rotation = retriever.extractMetadata(
-                MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-            data.getMetadata().putString(ROTATION_KEY, rotation);
+            data.getMetadata().setVideoOrientation(retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
 
             String val = retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-            int width = Integer.parseInt(val);
 
-            data.getMetadata().putInt(WIDTH_KEY, width);
+            data.getMetadata().setVideoWidth(Integer.parseInt(val));
 
             val = retriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-            int height = Integer.parseInt(val);
 
-            data.getMetadata().putInt(HEIGHT_KEY, height);
+            data.getMetadata().setVideoHeight(Integer.parseInt(val));
         } catch (RuntimeException ex) {
             // setDataSource() can cause RuntimeException beyond
             // IllegalArgumentException. e.g: data contain *.avi file.

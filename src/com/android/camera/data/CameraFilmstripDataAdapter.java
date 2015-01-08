@@ -23,102 +23,106 @@ import android.os.AsyncTask;
 import android.view.View;
 
 import com.android.camera.Storage;
-import com.android.camera.data.LocalData.ActionCallback;
-import com.android.camera.data.PhotoData.PhotoDataFactory;
-import com.android.camera.data.VideoData.VideoDataFactory;
+import com.android.camera.data.FilmstripItem.VideoClickedCallback;
 import com.android.camera.debug.Log;
-import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.Callback;
+import com.google.common.base.Optional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * A {@link LocalDataAdapter} that provides data in the camera folder.
+ * A {@link LocalFilmstripDataAdapter} that provides data in the camera folder.
  */
-public class CameraDataAdapter implements LocalDataAdapter {
+public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
     private static final Log.Tag TAG = new Log.Tag("CameraDataAdapter");
 
     private static final int DEFAULT_DECODE_SIZE = 1600;
 
     private final Context mContext;
+    private final int mPlaceHolderResourceId;
+    private final PhotoItemFactory mPhotoItemFactory;
+    private final VideoItemFactory mVideoItemFactory;
 
-    private LocalDataList mImages;
+    private FilmstripItemList mFilmstripItems;
+
 
     private Listener mListener;
-    private LocalDataListener mLocalDataListener;
-    private final int mPlaceHolderResourceId;
+    private FilmstripItemListener mFilmstripItemListener;
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
-    private long mLastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
+    private long mLastPhotoId = FilmstripItemBase.QUERY_ALL_MEDIA_ID;
 
-    private LocalData mLocalDataToDelete;
+    private FilmstripItem mFilmstripItemToDelete;
 
-    public CameraDataAdapter(Context context, int placeholderResource) {
+    public CameraFilmstripDataAdapter(Context context, int placeholderResource,
+          PhotoItemFactory photoItemFactory, VideoItemFactory videoItemFactory) {
         mContext = context;
-        mImages = new LocalDataList();
+        mFilmstripItems = new FilmstripItemList();
         mPlaceHolderResourceId = placeholderResource;
+        mPhotoItemFactory = photoItemFactory;
+        mVideoItemFactory = videoItemFactory;
     }
 
     @Override
-    public void setLocalDataListener(LocalDataListener listener) {
-        mLocalDataListener = listener;
+    public void setLocalDataListener(FilmstripItemListener listener) {
+        mFilmstripItemListener = listener;
     }
 
     @Override
     public void requestLoadNewPhotos() {
-        LoadNewPhotosTask ltask = new LoadNewPhotosTask(mLastPhotoId);
+        LoadNewPhotosTask ltask = new LoadNewPhotosTask(mContext, mLastPhotoId);
         ltask.execute(mContext.getContentResolver());
     }
 
     @Override
-    public void requestLoad(Callback<Void> doneCallback) {
-        QueryTask qtask = new QueryTask(doneCallback);
+    public void requestLoad(Callback<Void> onDone) {
+        QueryTask qtask = new QueryTask(onDone);
         qtask.execute(mContext);
     }
 
     @Override
-    public AsyncTask updateMetadata(int dataId) {
+    public AsyncTask updateMetadataAt(int index) {
         MetadataUpdateTask result = new MetadataUpdateTask();
-        result.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataId);
+        result.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, index);
         return result;
     }
 
     @Override
-    public boolean isMetadataUpdated(int dataId) {
-        if (dataId < 0 || dataId >= mImages.size()) {
+    public boolean isMetadataUpdatedAt(int index) {
+        if (index < 0 || index >= mFilmstripItems.size()) {
             return true;
         }
-        return mImages.get(dataId).isMetadataUpdated();
+        return mFilmstripItems.get(index).getMetadata().isLoaded();
     }
 
     @Override
-    public int getItemViewType(int dataId) {
-        if (dataId < 0 || dataId >= mImages.size()) {
+    public int getItemViewType(int index) {
+        if (index < 0 || index >= mFilmstripItems.size()) {
             return -1;
         }
 
-        return mImages.get(dataId).getItemViewType().ordinal();
+        return mFilmstripItems.get(index).getItemViewType().ordinal();
     }
 
     @Override
-    public LocalData getLocalData(int dataID) {
-        if (dataID < 0 || dataID >= mImages.size()) {
+    public FilmstripItem getItemAt(int index) {
+        if (index < 0 || index >= mFilmstripItems.size()) {
             return null;
         }
-        return mImages.get(dataID);
+        return mFilmstripItems.get(index);
     }
 
     @Override
     public int getTotalNumber() {
-        return mImages.size();
+        return mFilmstripItems.size();
     }
 
     @Override
-    public ImageData getImageData(int id) {
-        return getLocalData(id);
+    public FilmstripItem getFilmstripItemAt(int index) {
+        return getItemAt(index);
     }
 
     @Override
@@ -128,175 +132,174 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public View getView(Context context, View recycled, int dataID,
-            ActionCallback actionCallback) {
-        if (dataID >= mImages.size() || dataID < 0) {
+    public View getView(View recycled, int index,
+            VideoClickedCallback videoClickedCallback) {
+        if (index >= mFilmstripItems.size() || index < 0) {
             return null;
         }
 
-        return mImages.get(dataID).getView(
-                context, recycled, mSuggestedWidth, mSuggestedHeight,
-                mPlaceHolderResourceId, this, /* inProgress */ false, actionCallback);
+        return mFilmstripItems.get(index).getView(Optional.fromNullable(recycled), mSuggestedWidth,
+              mSuggestedHeight, mPlaceHolderResourceId, this, /* inProgress */ false,
+              videoClickedCallback);
     }
 
     @Override
-    public void resizeView(Context context, int dataID, View view, int w, int h) {
-        if (dataID >= mImages.size() || dataID < 0) {
+    public void resizeView(int index, View view, int w, int h) {
+        if (index >= mFilmstripItems.size() || index < 0) {
             return;
         }
-        mImages.get(dataID).loadFullImage(context, mSuggestedWidth, mSuggestedHeight, view, this);
+        mFilmstripItems.get(index).loadFullImage(mSuggestedWidth, mSuggestedHeight, view);
     }
 
     @Override
     public void setListener(Listener listener) {
         mListener = listener;
-        if (mImages.size() != 0) {
-            mListener.onDataLoaded();
+        if (mFilmstripItems.size() != 0) {
+            mListener.onFilmstripItemLoaded();
         }
     }
 
     @Override
-    public boolean canSwipeInFullScreen(int dataID) {
-        if (dataID < mImages.size() && dataID > 0) {
-            return mImages.get(dataID).canSwipeInFullScreen();
+    public boolean canSwipeInFullScreen(int item) {
+        if (item < mFilmstripItems.size() && item > 0) {
+            return mFilmstripItems.get(item).getAttributes().canSwipeInFullScreen();
         }
         return true;
     }
 
     @Override
-    public void removeData(int dataID) {
-        LocalData d = mImages.remove(dataID);
+    public void removeAt(int index) {
+        FilmstripItem d = mFilmstripItems.remove(index);
         if (d == null) {
             return;
         }
 
         // Delete previously removed data first.
         executeDeletion();
-        mLocalDataToDelete = d;
-        mListener.onDataRemoved(dataID, d);
+        mFilmstripItemToDelete = d;
+        mListener.onFilmstripItemRemoved(index, d);
     }
 
     @Override
-    public boolean addData(LocalData newData) {
-        final Uri uri = newData.getUri();
-        int pos = findDataByContentUri(uri);
+    public boolean addOrUpdate(FilmstripItem item) {
+        final Uri uri = item.getData().getUri();
+        int pos = findByContentUri(uri);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
             Log.v(TAG, "found duplicate data: " + uri);
-            updateData(pos, newData);
+            updateItemAt(pos, item);
             return false;
         } else {
             // a new data.
-            insertData(newData);
+            insertItem(item);
             return true;
         }
     }
 
     @Override
-    public int findDataByContentUri(Uri uri) {
+    public int findByContentUri(Uri uri) {
         // LocalDataList will return in O(1) if the uri is not contained.
         // Otherwise the performance is O(n), but this is acceptable as we will
         // most often call this to find an element at the beginning of the list.
-        return mImages.indexOf(uri);
+        return mFilmstripItems.indexOf(uri);
     }
 
     @Override
-    public boolean undoDataRemoval() {
-        if (mLocalDataToDelete == null) {
+    public boolean undoDeletion() {
+        if (mFilmstripItemToDelete == null) {
             return false;
         }
-        LocalData d = mLocalDataToDelete;
-        mLocalDataToDelete = null;
-        insertData(d);
+        FilmstripItem d = mFilmstripItemToDelete;
+        mFilmstripItemToDelete = null;
+        insertItem(d);
         return true;
     }
 
     @Override
     public boolean executeDeletion() {
-        if (mLocalDataToDelete == null) {
+        if (mFilmstripItemToDelete == null) {
             return false;
         }
 
         DeletionTask task = new DeletionTask();
-        task.execute(mLocalDataToDelete);
-        mLocalDataToDelete = null;
+        task.execute(mFilmstripItemToDelete);
+        mFilmstripItemToDelete = null;
         return true;
     }
 
     @Override
-    public void flush() {
-        replaceData(new LocalDataList());
+    public void clear() {
+        replaceItemList(new FilmstripItemList());
     }
 
     @Override
     public void refresh(Uri uri) {
-        final int pos = findDataByContentUri(uri);
+        final int pos = findByContentUri(uri);
         if (pos == -1) {
             return;
         }
 
-        LocalData data = mImages.get(pos);
-        LocalData refreshedData = data.refresh(mContext);
+        FilmstripItem data = mFilmstripItems.get(pos);
+        FilmstripItem refreshedData = data.refresh();
 
         // Refresh failed. Probably removed already.
         if (refreshedData == null && mListener != null) {
-            mListener.onDataRemoved(pos, data);
+            mListener.onFilmstripItemRemoved(pos, data);
             return;
         }
-        updateData(pos, refreshedData);
+        updateItemAt(pos, refreshedData);
     }
 
     @Override
-    public void updateData(final int pos, LocalData data) {
-        mImages.set(pos, data);
+    public void updateItemAt(final int pos, FilmstripItem item) {
+        mFilmstripItems.set(pos, item);
         if (mListener != null) {
-            mListener.onDataUpdated(new UpdateReporter() {
+            mListener.onFilmstripItemUpdated(new UpdateReporter() {
                 @Override
-                public boolean isDataRemoved(int dataID) {
+                public boolean isDataRemoved(int index) {
                     return false;
                 }
 
                 @Override
-                public boolean isDataUpdated(int dataID) {
-                    return (dataID == pos);
+                public boolean isDataUpdated(int index) {
+                    return (index == pos);
                 }
             });
         }
     }
 
-    private void insertData(LocalData data) {
+    private void insertItem(FilmstripItem item) {
         // Since this function is mostly for adding the newest data,
         // a simple linear search should yield the best performance over a
         // binary search.
         int pos = 0;
-        Comparator<LocalData> comp = new LocalData.NewestFirstComparator();
-        for (; pos < mImages.size()
-                && comp.compare(data, mImages.get(pos)) > 0; pos++) {
-            ;
+        Comparator<FilmstripItem> comp = new NewestFirstComparator();
+        for (; pos < mFilmstripItems.size()
+                && comp.compare(item, mFilmstripItems.get(pos)) > 0; pos++) {
         }
-        mImages.add(pos, data);
+        mFilmstripItems.add(pos, item);
         if (mListener != null) {
-            mListener.onDataInserted(pos, data);
+            mListener.onFilmstripItemInserted(pos, item);
         }
     }
 
     /** Update all the data */
-    private void replaceData(LocalDataList list) {
-        if (list.size() == 0 && mImages.size() == 0) {
+    private void replaceItemList(FilmstripItemList list) {
+        if (list.size() == 0 && mFilmstripItems.size() == 0) {
             return;
         }
-        mImages = list;
+        mFilmstripItems = list;
         if (mListener != null) {
-            mListener.onDataLoaded();
+            mListener.onFilmstripItemLoaded();
         }
     }
 
     @Override
     public List<AsyncTask> preloadItems(List<Integer> items) {
-        List<AsyncTask> result = new ArrayList<AsyncTask>();
+        List<AsyncTask> result = new ArrayList<>();
         for (Integer id : items) {
-            if (!isMetadataUpdated(id)) {
-                result.add(updateMetadata(id));
+            if (!isMetadataUpdatedAt(id)) {
+                result.add(updateMetadataAt(id));
             }
         }
         return result;
@@ -313,7 +316,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
     @Override
     public List<Integer> getItemsInRange(int startPosition, int endPosition) {
-        List<Integer> result = new ArrayList<Integer>();
+        List<Integer> result = new ArrayList<>();
         for (int i = Math.max(0, startPosition); i < endPosition; i++) {
             result.add(i);
         }
@@ -325,11 +328,13 @@ public class CameraDataAdapter implements LocalDataAdapter {
         return getTotalNumber();
     }
 
-    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<LocalData>> {
+    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<FilmstripItem>> {
 
         private final long mMinPhotoId;
+        private final Context mContext;
 
-        public LoadNewPhotosTask(long lastPhotoId) {
+        public LoadNewPhotosTask(Context context, long lastPhotoId) {
+            mContext = context;
             mMinPhotoId = lastPhotoId;
         }
 
@@ -339,49 +344,49 @@ public class CameraDataAdapter implements LocalDataAdapter {
          * @return An {@link java.util.ArrayList} containing any new data.
          */
         @Override
-        protected List<LocalData> doInBackground(ContentResolver... contentResolvers) {
-            if (mMinPhotoId != LocalMediaData.QUERY_ALL_MEDIA_ID) {
+        protected List<FilmstripItem> doInBackground(ContentResolver... contentResolvers) {
+            if (mMinPhotoId != FilmstripItemBase.QUERY_ALL_MEDIA_ID) {
                 Log.v(TAG, "updating media metadata with photos newer than id: " + mMinPhotoId);
                 final ContentResolver cr = contentResolvers[0];
-                return PhotoDataFactory.queryAll(cr, PhotoData.CONTENT_URI,
-                      mMinPhotoId);
+                return mPhotoItemFactory.queryAll(PhotoDataQuery.CONTENT_URI, mMinPhotoId);
             }
-            return new ArrayList<LocalData>(0);
+            return new ArrayList<>(0);
         }
 
         @Override
-        protected void onPostExecute(List<LocalData> newPhotoData) {
+        protected void onPostExecute(List<FilmstripItem> newPhotoData) {
             if (newPhotoData == null) {
                 Log.w(TAG, "null data returned from new photos query");
                 return;
             }
             Log.v(TAG, "new photos query return num items: " + newPhotoData.size());
             if (!newPhotoData.isEmpty()) {
-                LocalData newestPhoto = newPhotoData.get(0);
+                FilmstripItem newestPhoto = newPhotoData.get(0);
                 // We may overlap with another load task or a query task, in which case we want
                 // to be sure we never decrement the oldest seen id.
-                long newLastPhotoId = newestPhoto.getContentId();
+                long newLastPhotoId = newestPhoto.getData().getContentId();
                 Log.v(TAG, "updating last photo id (old:new) " +
                         mLastPhotoId + ":" + newLastPhotoId);
                 mLastPhotoId = Math.max(mLastPhotoId, newLastPhotoId);
             }
-            // We may add data that is already present, but if we do, it will be deduped in addData.
-            // addData does not dedupe session items, so we ignore them here
-            for (LocalData localData : newPhotoData) {
-                Uri sessionUri = Storage.getSessionUriFromContentUri(localData.getUri());
+            // We may add data that is already present, but if we do, it will be deduped in addOrUpdate.
+            // addOrUpdate does not dedupe session items, so we ignore them here
+            for (FilmstripItem filmstripItem : newPhotoData) {
+                Uri sessionUri = Storage.getSessionUriFromContentUri(
+                      filmstripItem.getData().getUri());
                 if (sessionUri == null) {
-                    addData(localData);
+                    addOrUpdate(filmstripItem);
                 }
             }
         }
     }
 
     private class QueryTaskResult {
-        public LocalDataList mLocalDataList;
+        public FilmstripItemList mFilmstripItemList;
         public long mLastPhotoId;
 
-        public QueryTaskResult(LocalDataList localDataList, long lastPhotoId) {
-            mLocalDataList = localDataList;
+        public QueryTaskResult(FilmstripItemList filmstripItemList, long lastPhotoId) {
+            mFilmstripItemList = filmstripItemList;
             mLastPhotoId = lastPhotoId;
         }
     }
@@ -401,25 +406,28 @@ public class CameraDataAdapter implements LocalDataAdapter {
          * and combine them into one single list.
          *
          * @param contexts {@link Context} to load all the data.
-         * @return An {@link com.android.camera.data.CameraDataAdapter.QueryTaskResult} containing
+         * @return An {@link CameraFilmstripDataAdapter.QueryTaskResult} containing
          *  all loaded data and the highest photo id in the dataset.
          */
         @Override
         protected QueryTaskResult doInBackground(Context... contexts) {
             final Context context = contexts[0];
-            final ContentResolver cr = context.getContentResolver();
-            LocalDataList l = new LocalDataList();
+            FilmstripItemList l = new FilmstripItemList();
             // Photos and videos
-            List<LocalData> photoData = PhotoDataFactory.queryAll(cr);
-            List<LocalData> videoData = VideoDataFactory.queryAll(cr);
+            List<FilmstripItem> photoData = mPhotoItemFactory.queryAll();
+            List<FilmstripItem> videoData = mVideoItemFactory.queryAll();
 
-            long lastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
+            long lastPhotoId = FilmstripItemBase.QUERY_ALL_MEDIA_ID;
             if (photoData != null && !photoData.isEmpty()) {
                 // This relies on {@link LocalMediaData.QUERY_ORDER} returning
                 // items sorted descending by ID, as such we can just pull the
                 // ID from the first item in the result to establish the last
                 // (max) photo ID.
-                lastPhotoId = photoData.get(0).getContentId();
+                FilmstripItemData firstPhotoData = photoData.get(0).getData();
+
+                if(firstPhotoData != null) {
+                    lastPhotoId = firstPhotoData.getContentId();
+                }
             }
 
             if (photoData != null) {
@@ -434,12 +442,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
             // Photos should be sorted within photo/video by ID, which in most
             // cases should correlate well to the date taken/modified. This sort
             // operation makes all photos/videos sorted by date in one list.
-            l.sort(new LocalData.NewestFirstComparator());
+            l.sort(new NewestFirstComparator());
             Log.v(TAG, "sorted video/photo metadata");
 
             // Load enough metadata so it's already loaded when we open the filmstrip.
             for (int i = 0; i < MAX_METADATA && i < l.size(); i++) {
-                LocalData data = l.get(i);
+                FilmstripItem data = l.get(i);
                 MetadataLoader.loadMetadata(context, data);
             }
             return new QueryTaskResult(l, lastPhotoId);
@@ -450,25 +458,25 @@ public class CameraDataAdapter implements LocalDataAdapter {
             // Since we're wiping away all of our data, we should always replace any existing last
             // photo id with the new one we just obtained so it matches the data we're showing.
             mLastPhotoId = result.mLastPhotoId;
-            replaceData(result.mLocalDataList);
+            replaceItemList(result.mFilmstripItemList);
             if (mDoneCallback != null) {
                 mDoneCallback.onCallback(null);
             }
             // Now check for any photos added since this task was kicked off
-            LoadNewPhotosTask ltask = new LoadNewPhotosTask(mLastPhotoId);
+            LoadNewPhotosTask ltask = new LoadNewPhotosTask(mContext, mLastPhotoId);
             ltask.execute(mContext.getContentResolver());
         }
     }
 
-    private class DeletionTask extends AsyncTask<LocalData, Void, Void> {
+    private class DeletionTask extends AsyncTask<FilmstripItem, Void, Void> {
         @Override
-        protected Void doInBackground(LocalData... data) {
-            for (int i = 0; i < data.length; i++) {
-                if (!data[i].isDataActionSupported(LocalData.DATA_ACTION_DELETE)) {
-                    Log.v(TAG, "Deletion is not supported:" + data[i]);
+        protected Void doInBackground(FilmstripItem... items) {
+            for (FilmstripItem item : items) {
+                if (!item.getAttributes().canDelete()) {
+                    Log.v(TAG, "Deletion is not supported:" + item);
                     continue;
                 }
-                data[i].delete(mContext);
+                item.delete();
             }
             return null;
         }
@@ -477,12 +485,12 @@ public class CameraDataAdapter implements LocalDataAdapter {
     private class MetadataUpdateTask extends AsyncTask<Integer, Void, List<Integer> > {
         @Override
         protected List<Integer> doInBackground(Integer... dataId) {
-            List<Integer> updatedList = new ArrayList<Integer>();
+            List<Integer> updatedList = new ArrayList<>();
             for (Integer id : dataId) {
-                if (id < 0 || id >= mImages.size()) {
+                if (id < 0 || id >= mFilmstripItems.size()) {
                     continue;
                 }
-                final LocalData data = mImages.get(id);
+                final FilmstripItem data = mFilmstripItems.get(id);
                 if (MetadataLoader.loadMetadata(mContext, data)) {
                     updatedList.add(id);
                 }
@@ -497,22 +505,22 @@ public class CameraDataAdapter implements LocalDataAdapter {
             // because ImageData.getWidth() and ImageData.getHeight() now may
             // return different values due to the metadata.
             if (mListener != null) {
-                mListener.onDataUpdated(new UpdateReporter() {
+                mListener.onFilmstripItemUpdated(new UpdateReporter() {
                     @Override
-                    public boolean isDataRemoved(int dataID) {
+                    public boolean isDataRemoved(int index) {
                         return false;
                     }
 
                     @Override
-                    public boolean isDataUpdated(int dataID) {
-                        return updatedData.contains(dataID);
+                    public boolean isDataUpdated(int index) {
+                        return updatedData.contains(index);
                     }
                 });
             }
-            if (mLocalDataListener == null) {
+            if (mFilmstripItemListener == null) {
                 return;
             }
-            mLocalDataListener.onMetadataUpdated(updatedData);
+            mFilmstripItemListener.onMetadataUpdated(updatedData);
         }
     }
 }

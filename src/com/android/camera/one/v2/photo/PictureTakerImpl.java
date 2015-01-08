@@ -29,8 +29,6 @@ import com.android.camera.one.v2.commands.LoggingCameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.session.CaptureSession;
 
-import java.util.concurrent.Executor;
-
 class PictureTakerImpl implements PictureTaker {
     private final MainThreadExecutor mMainExecutor;
     private final CameraCommandExecutor mCameraCommandExecutor;
@@ -58,19 +56,19 @@ class PictureTakerImpl implements PictureTaker {
         OneCamera.PhotoCaptureParameters.Flash flashMode = params.flashMode;
         OneCamera.PictureCallback pictureCallback = params.callback;
 
-        // Wrap the pictureCallback with a thread-safe adaptor which guarantees
+        // Wrap the pictureCallback with a thread-safe adapter which guarantees
         // that they are always invoked on the main thread.
-        PictureCallbackAdaptor pictureCallbackAdaptor =
-                new PictureCallbackAdaptor(pictureCallback, mMainExecutor);
+        PictureCallbackAdapter pictureCallbackAdapter =
+                new PictureCallbackAdapter(pictureCallback, mMainExecutor);
 
         final Updatable<Void> imageExposureCallback =
-                pictureCallbackAdaptor.provideQuickExposeUpdatable();
+                pictureCallbackAdapter.provideQuickExposeUpdatable();
 
         final Updatable<Void> failureCallback =
-                pictureCallbackAdaptor.providePictureTakingFailedUpdatable();
+                pictureCallbackAdapter.providePictureTakingFailedUpdatable();
 
         final Updatable<byte[]> thumbnailCallback =
-                pictureCallbackAdaptor.provideThumbnailUpdatable();
+                pictureCallbackAdapter.provideThumbnailUpdatable();
 
         final ImageSaver imageSaver = mImageSaverBuilder.build(OrientationManager
                 .DeviceOrientation.from(params.orientation), session);

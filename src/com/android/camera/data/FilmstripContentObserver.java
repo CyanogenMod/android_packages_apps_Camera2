@@ -22,7 +22,7 @@ import android.database.ContentObserver;
  * Listening to the changes to the local image and video data. onChange will
  * happen on the main thread.
  */
-public class LocalMediaObserver extends ContentObserver {
+public class FilmstripContentObserver extends ContentObserver {
 
     private ChangeListener mChangeListener;
 
@@ -33,7 +33,7 @@ public class LocalMediaObserver extends ContentObserver {
     private boolean mActivityPaused = false;
     private boolean mMediaDataChangedDuringPause = false;
 
-    public LocalMediaObserver() {
+    public FilmstripContentObserver() {
         super(null);
     }
 

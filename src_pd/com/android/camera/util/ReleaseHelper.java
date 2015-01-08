@@ -18,7 +18,7 @@ package com.android.camera.util;
 
 import android.app.Activity;
 
-import com.android.camera.data.LocalData;
+import com.android.camera.data.FilmstripItem;
 import com.android.camera.settings.SettingsManager;
 
 public class ReleaseHelper {
@@ -31,7 +31,7 @@ public class ReleaseHelper {
         callback.onCallback(null);
     }
 
-    public static boolean shouldShowReleaseInfoDialogOnShare(LocalData data) {
+    public static boolean shouldShowReleaseInfoDialogOnShare(FilmstripItem data) {
         return false;
     }
 

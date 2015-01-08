@@ -24,9 +24,6 @@ import android.media.MediaMetadataRetriever;
 
 import com.android.camera.debug.Log;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.khronos.opengles.GL11;
@@ -34,7 +31,7 @@ import javax.microedition.khronos.opengles.GL11;
 /**
  * An utility class for data in content provider.
  */
-public class LocalDataUtil {
+public class FilmstripItemUtils {
 
     private static final Log.Tag TAG = new Log.Tag("LocalDataUtil");
 
@@ -56,30 +53,6 @@ public class LocalDataUtil {
         return mimeType != null && mimeType.startsWith("image/");
     }
 
-    /**
-     * Decodes the dimension of a bitmap.
-     *
-     * @param path The path to the bitmap.
-     * @return The decoded width/height is stored in Point.x/Point.y
-     *         respectively.
-     */
-    public static Point decodeBitmapDimension(String path) {
-        Point size = null;
-        InputStream is = null;
-        try {
-            is = new FileInputStream(path);
-            size = decodeBitmapDimension(is);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) { }
-            }
-        }
-        return size;
-    }
 
     /**
      * Decodes the dimension of a bitmap.

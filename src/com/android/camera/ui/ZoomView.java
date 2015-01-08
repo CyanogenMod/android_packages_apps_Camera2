@@ -29,7 +29,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.android.camera.data.LocalDataUtil;
+import com.android.camera.data.FilmstripItemUtils;
 import com.android.camera.debug.Log;
 
 import java.io.FileNotFoundException;
@@ -69,7 +69,7 @@ public class ZoomView extends ImageView {
                 return null;
             }
 
-            Point imageSize = LocalDataUtil.decodeBitmapDimension(isForDimensions);
+            Point imageSize = FilmstripItemUtils.decodeBitmapDimension(isForDimensions);
             try {
                 isForDimensions.close();
             } catch (IOException e) {

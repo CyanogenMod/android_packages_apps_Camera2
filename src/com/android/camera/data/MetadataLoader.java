@@ -20,11 +20,9 @@ import android.content.Context;
 
 /**
  * A helper class to load the metadata of
- * {@link com.android.camera.data.LocalData}.
+ * {@link FilmstripItem}.
  */
 public class MetadataLoader {
-
-    private static final String KEY_METADATA_CACHED = "metadata_cached";
 
     /**
      * Adds information to the data's metadata bundle if any is available and returns
@@ -32,26 +30,26 @@ public class MetadataLoader {
      * a flag indicating that we've cached any available metadata and don't need to
      * load metadata again for this particular item.
      *
+     * TODO: Replace with more explicit polymorphism.
+     *
      * @param context A context.
      * @param data The data to update metadata for.
      * @return true if any metadata was added to the data, false otherwise.
      */
-    public static boolean loadMetadata(final Context context, final LocalData data) {
+    public static boolean loadMetadata(final Context context, final FilmstripItem data) {
         boolean metadataAdded = false;
-        if (data.getLocalDataType() == LocalData.LOCAL_IMAGE) {
-            PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getUri(),
+        if (data.getAttributes().isImage()) {
+            PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getData().getUri(),
                     data.getMetadata());
-            RgbzMetadataLoader.loadRgbzMetadata(context, data.getUri(), data.getMetadata());
+            RgbzMetadataLoader.loadRgbzMetadata(context, data.getData().getUri(),
+                  data.getMetadata());
             metadataAdded = true;
-        } else if (data.getLocalDataType() == LocalData.LOCAL_VIDEO) {
-            VideoRotationMetadataLoader.loadRotationMetdata(data);
+        } else if (data.getAttributes().isVideo()) {
+            VideoRotationMetadataLoader.loadRotationMetadata(data);
             metadataAdded = true;
         }
-        data.getMetadata().putBoolean(MetadataLoader.KEY_METADATA_CACHED, true);
+        data.getMetadata().setLoaded(true);
         return metadataAdded;
     }
-
-    static boolean isMetadataCached(final LocalData data) {
-        return data.getMetadata().getBoolean(MetadataLoader.KEY_METADATA_CACHED);
-    }
 }
+

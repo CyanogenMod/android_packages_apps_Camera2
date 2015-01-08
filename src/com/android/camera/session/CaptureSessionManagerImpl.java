@@ -27,7 +27,7 @@ import android.os.Looper;
 
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
-import com.android.camera.data.LocalData;
+import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.FileUtil;
@@ -196,7 +196,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
             // TODO: This needs to happen outside the UI thread.
             mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
-                    orientation, exif, data, width, height, LocalData.MIME_TYPE_JPEG);
+                    orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
 
             removeSession(mUri.toString());
             notifyTaskDone(mPlaceHolderSession.outputUri);

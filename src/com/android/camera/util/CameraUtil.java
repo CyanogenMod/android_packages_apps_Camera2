@@ -51,8 +51,8 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
+import com.android.camera.data.FilmstripItem;
 import com.android.camera.debug.Log;
-import com.android.camera.filmstrip.ImageData;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraSettings;
@@ -1022,11 +1022,6 @@ public class CameraUtil {
             imageWidth = imageHeight;
             imageHeight = savedWidth;
         }
-        if (imageWidth == ImageData.SIZE_FULL
-                || imageHeight == ImageData.SIZE_FULL) {
-            imageWidth = boundWidth;
-            imageHeight = boundHeight;
-        }
 
         Point p = new Point();
         p.x = boundWidth;
@@ -1072,15 +1067,14 @@ public class CameraUtil {
         }
     }
 
-    public static void playVideo(Activity activity, Uri uri, String title) {
+    public static void playVideo(CameraActivity activity, Uri uri, String title) {
         try {
-            CameraActivity cameraActivity = (CameraActivity) activity;
-            boolean isSecureCamera = cameraActivity.isSecureCamera();
+            boolean isSecureCamera = activity.isSecureCamera();
             if (!isSecureCamera) {
                 Intent intent = IntentHelper.getVideoPlayerIntent(uri)
                         .putExtra(Intent.EXTRA_TITLE, title)
                         .putExtra(KEY_TREAT_UP_AS_BACK, true);
-                cameraActivity.launchActivityByIntent(intent);
+                activity.launchActivityByIntent(intent);
             } else {
                 // In order not to send out any intent to be intercepted and
                 // show the lock screen immediately, we just let the secure
