@@ -26,9 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Implements the ability for the object to send events to multiple listeners in a thread-safe
- * manner. Also, listeners can also filter messages based on the a specific image result. TODO:
- * Replace this object with a more generic listener classes.
+ * Implements the ability for the object to send events to multiple listeners in
+ * a thread-safe manner. Also, listeners can also filter messages based on the a
+ * specific image result. TODO: Replace this object with a more generic listener
+ * classes.
  */
 public class ImageProcessorProxyListener implements ImageProcessorListener {
 
@@ -37,6 +38,15 @@ public class ImageProcessorProxyListener implements ImageProcessorListener {
     private List<ImageProcessorListener> mRegisteredListeners = null;
 
     private HashMap<ImageProcessorListener, Long> mImageFilter = null;
+
+    /**
+     * Wrapper for the log to avoid direct references to Android Log objects that will
+     * crash unit tests.  Subclasses may override this method for debugging.
+     * @param message
+     */
+    protected void logWrapper(String message) {
+        // Do Nothing
+    }
 
     ImageProcessorProxyListener() {
         mRegisteredListeners = new ArrayList<ImageProcessorListener>();
@@ -77,9 +87,9 @@ public class ImageProcessorProxyListener implements ImageProcessorListener {
             if (mRegisteredListeners.contains(listener)) {
                 mRegisteredListeners.remove(listener);
                 mImageFilter.remove(listener);
-                Log.e(TAG, "There are " + mRegisteredListeners.size() + " listeners after removal");
+                logWrapper("There are " + mRegisteredListeners.size() + " listeners after removal");
             } else {
-                Log.e(TAG, "Couldn't find listener.  There are " + mRegisteredListeners.size()
+                logWrapper("Couldn't find listener.  There are " + mRegisteredListeners.size()
                         + " listeners after removal");
             }
         }

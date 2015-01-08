@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * TaskJpegEncode are the base class of tasks that wish to do JPEG encoding/decoding.
- * Various helper functions are held in this class.
+ * TaskJpegEncode are the base class of tasks that wish to do JPEG
+ * encoding/decoding. Various helper functions are held in this class.
  */
 public abstract class TaskJpegEncode extends TaskImageContainer {
 
@@ -50,7 +50,8 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
     }
 
     /**
-     * Constructor to use for initial task definition or complex shared state sharing.
+     * Constructor to use for initial task definition or complex shared state
+     * sharing.
      *
      * @param image Image reference that is required for computation
      * @param executor Executor to avoid thread control leakage
@@ -58,15 +59,16 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      * @param preferredLane Preferred processing priority for this task
      * @param captureSession Session associated for UI handling
      */
-    public TaskJpegEncode(ImageToProcess image, Executor executor, ImageTaskManager imageTaskManager,
+    public TaskJpegEncode(ImageToProcess image, Executor executor,
+            ImageTaskManager imageTaskManager,
             TaskImageContainer.ProcessingPriority preferredLane, CaptureSession captureSession) {
         super(image, executor, imageTaskManager, preferredLane, captureSession);
     }
 
     /**
-     * Converts the YUV420_888 Image into a packed NV21 of a single byte array, suitable for JPEG
-     * compression by the method convertNv21toJpeg. This version will allocate its own byte buffer
-     * memory.
+     * Converts the YUV420_888 Image into a packed NV21 of a single byte array,
+     * suitable for JPEG compression by the method convertNv21toJpeg. This
+     * version will allocate its own byte buffer memory.
      *
      * @param img image to be converted
      * @return byte array of NV21 packed image
@@ -83,10 +85,11 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
     }
 
     /**
-     * Converts the YUV420_888 Image into a packed NV21 of a single byte array, suitable for JPEG
-     * compression by the method convertNv21toJpeg. Creates a memory block with the y component at
-     * the head and interleaves the u,v components following the y component. Caller is responsible
-     * to allocate a large enough buffer for results.
+     * Converts the YUV420_888 Image into a packed NV21 of a single byte array,
+     * suitable for JPEG compression by the method convertNv21toJpeg. Creates a
+     * memory block with the y component at the head and interleaves the u,v
+     * components following the y component. Caller is responsible to allocate a
+     * large enough buffer for results.
      *
      * @param img image to be converted
      * @param dataCopy buffer to write NV21 packed image
@@ -127,28 +130,28 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      */
     public void dummyConvertYUV420ImageToPackedNV21(byte[] dataCopy,
             final int w, final int h) {
-        final int y_size = w*h;
-        final int data_offset = w*h;
+        final int y_size = w * h;
+        final int data_offset = w * h;
 
-        for (int i = 0; i < y_size ; i++) {
-            dataCopy[i] = (byte)((((i % w)*255)/w) & 255);
+        for (int i = 0; i < y_size; i++) {
+            dataCopy[i] = (byte) ((((i % w) * 255) / w) & 255);
             dataCopy[i] = 0;
         }
 
-        for (int i = 0; i < h/2 ; i++) {
-            for (int j = 0; j < w/2 ; j++) {
-                int offset=data_offset + w*i + j*2;
-                dataCopy[offset] = (byte) ((255*i)/(h/2) & 255);
-                dataCopy[offset+1] = (byte) ((255*j)/(w/2) & 255);
+        for (int i = 0; i < h / 2; i++) {
+            for (int j = 0; j < w / 2; j++) {
+                int offset = data_offset + w * i + j * 2;
+                dataCopy[offset] = (byte) ((255 * i) / (h / 2) & 255);
+                dataCopy[offset + 1] = (byte) ((255 * j) / (w / 2) & 255);
             }
         }
     }
 
-
     /**
-     * Wraps the Android built-in YUV to Jpeg conversion routine. Pass in a valid NV21 image and get
-     * back a compressed JPEG buffer. A good default JPEG compression implementation that should be
-     * supported on all platforms.
+     * Wraps the Android built-in YUV to Jpeg conversion routine. Pass in a
+     * valid NV21 image and get back a compressed JPEG buffer. A good default
+     * JPEG compression implementation that should be supported on all
+     * platforms.
      *
      * @param data_copy byte buffer that contains the NV21 image
      * @param w width of NV21 image
@@ -172,7 +175,6 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
         return postViewBytes.toByteArray();
     }
 
-
     /**
      * Wraps the onResultCompressed listener for ease of use.
      *
@@ -181,8 +183,9 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      * @param result Specification of resultant input size
      * @param data Container for uncompressed data that represents image
      */
-    public void onJpegEncodeDone(long id, TaskImage input, TaskImage result, byte[] data) {
-        TaskInfo job = new TaskInfo(id, input, result);
+    public void onJpegEncodeDone(long id, TaskImage input, TaskImage result, byte[] data,
+            TaskInfo.Destination aDestination) {
+        TaskInfo job = new TaskInfo(id, input, result, aDestination);
         final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
         listener.onResultCompressed(job, new CompressedPayload(data));
     }
@@ -194,9 +197,11 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
      * @param input Specification of image input size
      * @param result Specification of resultant input size
      * @param imageUri URI of the saved image.
+     * @param destination Specifies the purpose of the image artifact
      */
-    public void onUriResolved(long id, TaskImage input, TaskImage result, final Uri imageUri) {
-        final TaskInfo job = new TaskInfo(id, input, result);
+    public void onUriResolved(long id, TaskImage input, TaskImage result, final Uri imageUri,
+            TaskInfo.Destination destination) {
+        final TaskInfo job = new TaskInfo(id, input, result, destination);
         final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
         listener.onResultUri(job, imageUri);
     }

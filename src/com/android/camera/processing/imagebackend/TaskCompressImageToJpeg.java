@@ -71,7 +71,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 DeviceOrientation.CLOCKWISE_0, resultSize.getWidth(), resultSize.getHeight(),
                 ImageFormat.JPEG);
 
-        onStart(mId, inputImage, resultImage);
+        onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
         logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.proxy.getWidth() + " h="
                 + img.proxy.getHeight() + " of format " + img.proxy.getFormat()
                 + " (35==YUV_420_888)");
@@ -93,7 +93,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         // Release the image now that you have a usable copy
         mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
 
-        onJpegEncodeDone(mId, inputImage, resultImage, writeOut);
+        onJpegEncodeDone(mId, inputImage, resultImage, writeOut, TaskInfo.Destination.FINAL_IMAGE);
 
         // TODO: the app actually crashes here on a race condition: TaskCompressImageToJpeg might
         // complete before TaskConvertImageToRGBPreview.
@@ -102,7 +102,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 new MediaSaver.OnMediaSavedListener() {
                     @Override
                     public void onMediaSaved(Uri uri) {
-                        onUriResolved(mId, inputImage, resultImage, uri);
+                        onUriResolved(mId, inputImage, resultImage, uri,
+                                TaskInfo.Destination.FINAL_IMAGE);
                     }
                 });
     }

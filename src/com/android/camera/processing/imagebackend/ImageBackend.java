@@ -20,6 +20,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.util.Size;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +87,22 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     protected final ExecutorService mThreadPoolSlow;
 
     private final static Log.Tag TAG = new Log.Tag("ImageBackend");
+
+    /**
+     * Approximate viewable size (in pixels) for the fast thumbnail in the
+     * current UX definition of the product. Note that these values will be the
+     * minimum size of FAST_THUMBNAIL target for the
+     * CONVERT_IMAGE_TO_RGB_PREVIEW task.
+     */
+    private final static Size FAST_THUMBNAIL_TARGET_SIZE = new Size(160, 100);
+
+    /**
+     * A standard viewable size (in pixels) for the filmstrip thumbnail in the
+     * current UX definition of the product. Note that this size is the minimum
+     * size for the Preview on the filmstrip associated with
+     * COMPRESS_IMAGE_TO_JPEG task.
+     */
+    private final static Size FILMSTRIP_THUMBNAIL_TARGET_SIZE = new Size(512, 384);
 
     // Some invariants to know that we're keeping track of everything
     // that reflect the state of mImageSemaphoreMap
@@ -355,13 +372,17 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         if (processingFlags.contains(ImageTaskFlags.COMPRESS_IMAGE_TO_JPEG)
                 || processingFlags.contains(ImageTaskFlags.WRITE_IMAGE_TO_DISK)) {
             // Add this type of task to the appropriate queue.
-            tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
+            // tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
+            tasksToExecute.add(new TaskPreviewChainedJpeg(img, executor, this, session,
+                   FILMSTRIP_THUMBNAIL_TARGET_SIZE));
         }
 
         if (processingFlags.contains(ImageTaskFlags.CONVERT_IMAGE_TO_RGB_PREVIEW)) {
             // Add this type of task to the appropriate queue.
-            tasksToExecute.add(new TaskConvertImageToRGBPreview(img, executor, this, session, 160,
-                    100));
+            tasksToExecute.add(new TaskConvertImageToRGBPreview(img, executor,
+                    this, TaskImageContainer.ProcessingPriority.FAST, session,
+                    FAST_THUMBNAIL_TARGET_SIZE,
+                    TaskConvertImageToRGBPreview.ThumbnailShape.SQUARE_ASPECT_CIRCULAR_INSET));
         }
 
         if (processingFlags.contains(ImageTaskFlags.WRITE_IMAGE_TO_DISK)) {
@@ -382,10 +403,11 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      */
     public TaskConvertImageToRGBPreview createTaskConvertImageToRGBPreview(
             ImageToProcess image, Executor executor, ImageBackend imageBackend,
-            CaptureSession session, int targetWidth, int targetHeight) {
-        return new TaskConvertImageToRGBPreview(image, executor, imageBackend, session,
-                targetWidth,
-                targetHeight);
+            CaptureSession session, Size targetSize,
+            TaskConvertImageToRGBPreview.ThumbnailShape thumbnailShape) {
+        return new TaskConvertImageToRGBPreview(image, executor, imageBackend,
+                TaskImageContainer.ProcessingPriority.FAST, session,
+                FAST_THUMBNAIL_TARGET_SIZE, thumbnailShape);
     }
 
     public TaskCompressImageToJpeg createTaskCompressImageToJpeg(ImageToProcess image,

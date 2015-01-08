@@ -53,7 +53,7 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
         final TaskImage resultImage = new TaskImage(mImage.rotation, img.proxy.getWidth(),
                 img.proxy.getHeight(), ImageFormat.JPEG);
 
-        onStart(mId, inputImage, resultImage);
+        onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
 
         int[] strides = new int[3];
         // Do the byte copy
@@ -81,7 +81,8 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
                 // Image is closed by now. Do NOT reference image directly.
                 byte[] compressedData = convertNv21toJpeg(chainedDataCopy,
                         resultImage.height, resultImage.width, chainedStrides);
-                onJpegEncodeDone(mId, inputImage, resultImage, compressedData);
+                onJpegEncodeDone(mId, inputImage, resultImage, compressedData,
+                        TaskInfo.Destination.FINAL_IMAGE);
                 logWrapper("Finished off a chained task now that image is released.");
             }
         };

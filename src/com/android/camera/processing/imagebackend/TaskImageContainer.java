@@ -29,7 +29,6 @@ import java.util.concurrent.Executor;
  */
 public abstract class TaskImageContainer implements Runnable {
 
-
     /**
      * Simple helper class to encapsulate uncompressed payloads.  Could be more complex in
      * the future.
@@ -85,9 +84,32 @@ public abstract class TaskImageContainer implements Runnable {
      * Simple helper class to encapsulate input and resultant image specification.
      * TasksImageContainer classes can be uniquely identified by triplet of its content (currently,
      * the global timestamp of when the object was taken), the image specification of the input and
-     * the desired output image specification.
+     * the desired output image specification.  Added a field to specify the destination of the
+     * image artifact, since spawn tasks may created multiple un/compressed artifacts of
+     * different size that need to be routed to different components.
      */
     static public class TaskInfo {
+
+        /**
+         * A single task graph can often create multiple imaging processing
+         * artifacts and the listener needs to distinguish an uncompressed image
+         * meant for image destinations. The different destinations are as
+         * follows:
+         * <ul>
+         * <li>FAST_THUMBNAIL: Small image required as soon as possible</li>
+         * <li>INTERMEDIATE_THUMBNAIL: Mid-sized image required for filmstrips
+         * at approximately 100-500ms latency</li>
+         * <li>FINAL_IMAGE: Full-resolution image artifact where latency > 500
+         * ms</li>
+         * </ul>
+         */
+        public enum Destination {
+            FAST_THUMBNAIL,
+            INTERMEDIATE_THUMBNAIL,
+            FINAL_IMAGE
+        }
+
+        public final Destination destination;
         // The unique Id of the image being processed.
         public final long contentId;
 
@@ -95,10 +117,11 @@ public abstract class TaskImageContainer implements Runnable {
 
         public final TaskImage result;
 
-        TaskInfo(long aContentId, TaskImage inputSpec, TaskImage outputSpec) {
+        TaskInfo(long aContentId, TaskImage inputSpec, TaskImage outputSpec, Destination aDestination) {
             contentId = aContentId;
             input = inputSpec;
             result = outputSpec;
+            destination = aDestination;
         }
 
     }
@@ -161,9 +184,10 @@ public abstract class TaskImageContainer implements Runnable {
      * @param id Id for image content
      * @param input Image specification for task input
      * @param result Image specification for task result
+     * @param aDestination Purpose of image processing artifact
      */
-    public void onStart(long id, TaskImage input, TaskImage result) {
-        TaskInfo job = new TaskInfo(id, input, result);
+    public void onStart(long id, TaskImage input, TaskImage result, TaskInfo.Destination aDestination) {
+        TaskInfo job = new TaskInfo(id, input, result, aDestination);
         final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
         listener.onStart(job);
     }

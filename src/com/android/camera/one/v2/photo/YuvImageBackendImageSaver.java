@@ -15,6 +15,7 @@
 package com.android.camera.one.v2.photo;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
@@ -83,11 +84,18 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
 
                 final ImageProcessorListener previewListener = new ImageProcessorListener() {
                     @Override
-                    public void onStart(TaskImageContainer.TaskInfo task) {
-                        // Start Animation
-                        if (task.result.format
-                        == TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
-                            pictureSaverCallback.onThumbnailProcessingBegun();
+                    public synchronized void onStart(TaskImageContainer.TaskInfo task) {
+                        switch (task.destination) {
+                            case FAST_THUMBNAIL:
+                                // Start Animation
+                                if (task.result.format
+                                == TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
+                                    pictureSaverCallback.onThumbnailProcessingBegun();
+                                }
+                                break;
+                            case INTERMEDIATE_THUMBNAIL:
+                                // Do nothing
+                                break;
                         }
                     }
 
@@ -99,26 +107,44 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                     @Override
                     public void onResultUncompressed(TaskImageContainer.TaskInfo task,
                             TaskImageContainer.UncompressedPayload payload) {
-                        final Bitmap bitmap = Bitmap.createBitmap(payload.data,
-                                task.result.width,
-                                task.result.height, Bitmap.Config.ARGB_8888);
-                        pictureSaverCallback.onThumbnailAvailable(bitmap, imageRotation.getDegrees());
+                        // Load bitmap into CameraAppUI
+                        switch (task.destination) {
+                            case FAST_THUMBNAIL:
+                                final Bitmap bitmap = Bitmap.createBitmap(payload.data,
+                                        task.result.width,
+                                        task.result.height, Bitmap.Config.ARGB_8888);
+                                pictureSaverCallback.onThumbnailAvailable(bitmap,
+                                        imageRotation.getDegrees());
+                                break;
+                            case INTERMEDIATE_THUMBNAIL:
+                                final Bitmap bitmapIntermediate = Bitmap.createBitmap(payload.data,
+                                        task.result.width,
+                                        task.result.height, Bitmap.Config.ARGB_8888);
+                                Matrix matrix = new Matrix();
+                                matrix.postRotate(imageRotation.getDegrees());
+                                final Bitmap bitmapIntermediateRotated = Bitmap.createBitmap(
+                                        bitmapIntermediate, 0, 0, bitmapIntermediate.getWidth(),
+                                        bitmapIntermediate.getHeight(), matrix, true);
+                                mExecutor.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // TODO: Put proper I18n string message here.
+                                        session.startSession(bitmapIntermediateRotated,
+                                                "Saving rotated image ...");
+                                        session.setProgress(20);
+                                    }
+                                });
+                                break;
+                        }
 
-                        mExecutor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                // TODO: Finalize and I18N string.
-                                session.startSession(bitmap, "Saving image ...");
-                                session.setProgress(42);
-                            }
-                        });
-
-                        // Remove yourself from the listener
-                        listenerProxy.unregisterListener(this);
                     }
 
                     @Override
                     public void onResultUri(TaskImageContainer.TaskInfo task, Uri uri) {
+                        // Remove yourself from the listener after JPEG save.
+                        // TODO: This should really be done by the ImageBackend to guarantee
+                        // ordering, since technically this could happen out of order.
+                        listenerProxy.unregisterListener(this);
                     }
                 };
 
