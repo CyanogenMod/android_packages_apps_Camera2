@@ -72,7 +72,6 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 ImageFormat.JPEG);
 
         onStart(mId, inputImage, resultImage);
-        mSession.startEmpty();
         logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.proxy.getWidth() + " h="
                 + img.proxy.getHeight() + " of format " + img.proxy.getFormat()
                 + " (35==YUV_420_888)");
@@ -96,6 +95,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut);
 
+        // TODO: the app actually crashes here on a race condition: TaskCompressImageToJpeg might
+        // complete before TaskConvertImageToRGBPreview.
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
                 resultImage.orientation.getDegrees(), createExif(resultImage),
                 new MediaSaver.OnMediaSavedListener() {
