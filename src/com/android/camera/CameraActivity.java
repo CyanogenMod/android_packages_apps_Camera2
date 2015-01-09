@@ -25,10 +25,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -48,6 +50,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -61,6 +64,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
@@ -157,7 +161,8 @@ import java.util.concurrent.TimeUnit;
 public class CameraActivity extends Activity
         implements AppController, CameraAgent.CameraOpenCallback,
         ShareActionProvider.OnShareTargetSelectedListener,
-        OrientationManager.OnOrientationChangeListener {
+        OrientationManager.OnOrientationChangeListener,
+        ICameraActivity {
 
     private static final Log.Tag TAG = new Log.Tag("CameraActivity");
 
@@ -261,9 +266,41 @@ public class CameraActivity extends Activity
     private MemoryManager mMemoryManager;
     private MotionManager mMotionManager;
 
+    private CameraService mCameraService;
+    private boolean mPendingResume = false;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mCameraService = ((CameraService.LocalBinder)iBinder).getService();
+            onBinded();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mCameraService = null;
+        }
+    };
+
+
     @Override
     public CameraAppUI getCameraAppUI() {
         return mCameraAppUI;
+    }
+
+    @Override
+    public CameraActivity getCameraActivity() {
+        return this;
+    }
+
+    @Override
+    public boolean isCameraActivity() {
+        return true;
+    }
+
+    @Override
+    public SurfaceHolder getSurfaceHolder() {
+        return null;
     }
 
     @Override
@@ -1336,7 +1373,7 @@ public class CameraActivity extends Activity
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
-        mModuleManager = new ModuleManagerImpl();
+        mModuleManager = ModuleManagerImpl.getInstance();
         GcamHelper.init(getContentResolver());
         ModulesInfo.setupModules(mAppContext, mModuleManager);
 
@@ -1436,7 +1473,7 @@ public class CameraActivity extends Activity
         mOrientationManager = new OrientationManagerImpl(this);
         mOrientationManager.addOnOrientationChangeListener(mMainHandler, this);
 
-        setModuleFromModeIndex(getModeIndex());
+        setModuleFromModeIndex(0);
         mCameraAppUI.prepareModuleUI();
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
 
@@ -1544,6 +1581,9 @@ public class CameraActivity extends Activity
                 modeIndex = photoIndex;
             }
         }
+
+
+
         return modeIndex;
     }
 
@@ -1738,6 +1778,14 @@ public class CameraActivity extends Activity
         mPeekAnimationThread.start();
         mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper());
 
+        if (mCameraService == null) {
+            mPendingResume = true;
+        } else {
+            resumeContinue();
+        }
+    }
+
+    private void resumeContinue() {
         mCurrentModule.hardResetSettings(mSettingsManager);
         mCurrentModule.resume();
         UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
@@ -1779,11 +1827,11 @@ public class CameraActivity extends Activity
         if (!mSecureCamera) {
             mLocalImagesObserver.setForegroundChangeListener(
                     new LocalMediaObserver.ChangeListener() {
-                @Override
-                public void onChange() {
-                    mDataAdapter.requestLoadNewPhotos();
-                }
-            });
+                        @Override
+                        public void onChange() {
+                            mDataAdapter.requestLoadNewPhotos();
+                        }
+                    });
         }
 
         keepScreenOnForAWhile();
@@ -1808,6 +1856,8 @@ public class CameraActivity extends Activity
         updatePreviewRendering(previewVisibility);
 
         mMotionManager.start();
+
+        mPendingResume = false;
     }
 
     private void fillTemporarySessions() {
@@ -1823,6 +1873,14 @@ public class CameraActivity extends Activity
     public void onStart() {
         super.onStart();
         mIsActivityRunning = true;
+
+        Intent i = new  Intent(this, CameraService.class);
+        bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void onBinded() {
+        Log.d(TAG, "onBinded!");
+
         mPanoramaViewHelper.onStart();
 
         /*
@@ -1835,10 +1893,16 @@ public class CameraActivity extends Activity
          *
          * Right now we exclude capture intents from this logic.
          */
-        int modeIndex = getModeIndex();
-        if (!isCaptureIntent() && mCurrentModeIndex != modeIndex) {
-            onModeSelected(modeIndex);
+        if (!isServiceRecording()) {
+            int modeIndex = getModeIndex();
+
+
+            if (!isCaptureIntent() && mCurrentModeIndex != modeIndex) {
+                onModeSelected(modeIndex);
+            }
         }
+
+        checkCameraService();
 
         if (mResetToPreviewOnResume) {
             mCameraAppUI.resume();
@@ -1846,8 +1910,58 @@ public class CameraActivity extends Activity
         }
     }
 
+    public boolean isServiceRecording() {
+        return mCameraService != null && mCameraService.isRecording();
+    }
+
+    public void checkCameraService() {
+        if (isServiceRecording()) {
+            Log.d(new Log.Tag("Linus"), "-----------------------Creating camera service");
+
+            mCameraController = mCameraService.mCameraController;
+            mCameraController.mCallbackReceiver = this;
+            mCameraController.setCameraAgent(CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.API_1),
+                    CameraAgentFactory.getAndroidCameraAgent(this, CameraAgentFactory.CameraApi.AUTO));
+            mCameraController.setCameraDefaultExceptionCallback(mCameraDefaultExceptionCallback,
+                    mMainHandler);
+            mCameraController.mCallbackHandler = mMainHandler;
+            mCameraController.mCameraProxy = mCameraService.mCameraController.mCameraProxy;
+            mCameraController.mRequestingCameraId = CameraController.EMPTY_REQUEST;
+            mCameraAppUI.mTextureViewHelper.mCameraProvider = getCameraProvider();
+
+            onModeSelected(mCameraService.mCurrentModeIndex, mCameraService.mCurrentModule);
+
+            Log.d(new Log.Tag("Linus"), "VideoModules are: " + (mCurrentModule == mCameraService.mCurrentModule ? "same" : "different"));
+
+            Log.d(new Log.Tag("Linus"), "Media Recorder is: " + ((VideoModule)mCurrentModule).mMediaRecorder == null ? "null" : "not null");
+
+
+            VideoModule currentVidModule = ((VideoModule)mCurrentModule);
+            VideoModule serviceVidModule = ((VideoModule)mCameraService.mCurrentModule);
+
+            /*currentVidModule.mMediaRecorder =  serviceVidModule.mMediaRecorder;
+            currentVidModule.mCurrentVideoUri = serviceVidModule.mCurrentVideoUri;*/
+
+            currentVidModule.reinit(this);
+
+            //SurfaceTexture texture = mCameraService.getSurfaceTexture();
+            //mCameraAppUI.setSurfaceTexture(texture);
+
+            mCameraService.clear();
+            mCameraAppUI.hideModeCover();
+        }
+
+        if (mPendingResume) {
+            resumeContinue();
+        }
+    }
+
     @Override
     protected void onStop() {
+        if (mCameraService != null) {
+            unbindService(mConnection);
+        }
+
         mIsActivityRunning = false;
         mPanoramaViewHelper.onStop();
 
@@ -2106,7 +2220,11 @@ public class CameraActivity extends Activity
 
     @Override
     public void onModeSelected(int modeIndex) {
-        if (mCurrentModeIndex == modeIndex) {
+        onModeSelected(modeIndex, null);
+    }
+
+    public void onModeSelected(int modeIndex, CameraModule replacementModule) {
+        if (mCurrentModeIndex == modeIndex && replacementModule == null) {
             return;
         }
 
@@ -2124,6 +2242,10 @@ public class CameraActivity extends Activity
         // Select the correct module index from the mode switcher index.
         modeIndex = getPreferredChildModeIndex(modeIndex);
         setModuleFromModeIndex(modeIndex);
+
+        if (replacementModule != null) {
+            mCurrentModule = replacementModule;
+        }
 
         mCameraAppUI.resetBottomControls(mCurrentModule, modeIndex);
         mCameraAppUI.addShutterListener(mCurrentModule);
@@ -2310,8 +2432,19 @@ public class CameraActivity extends Activity
     }
 
     private void openModule(CameraModule module) {
+        boolean continueVideo = mCameraService != null && mCameraService.isRecording() && module instanceof VideoModule;
+        if (continueVideo) {
+            SurfaceTexture texture = mCameraService.getSurfaceTexture();
+
+            texture.detachFromGLContext();
+            mCameraAppUI.setSurfaceTexture(texture);
+        }
+
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.hardResetSettings(mSettingsManager);
+        if (continueVideo) {
+            ((VideoModule)module).mPreviewing = true;
+        }
         module.resume();
         UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
                 NavigationChange.InteractionCause.BUTTON);

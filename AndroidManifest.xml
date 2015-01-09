@@ -138,6 +138,21 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service android:name="com.android.camera.CameraService"
+                 android:label="@string/mode_camera_service">
+            <intent-filter>
+                <action android:name="com.android.camera2.start" />
+            </intent-filter>
+        </service>
+        <activity android:name="com.android.camera.CameraServiceActivity"
+                  android:label="@string/mode_camera_service">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+      </activity>
     </application>
 
 </manifest>

@@ -50,7 +50,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     public static final float MATCH_SCREEN = 0f;
     private static final int UNSET = -1;
     private final TextureView mPreview;
-    private final CameraProvider mCameraProvider;
+    public CameraProvider mCameraProvider;
     private int mWidth = 0;
     private int mHeight = 0;
     private RectF mPreviewArea = new RectF();

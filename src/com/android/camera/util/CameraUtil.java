@@ -288,6 +288,11 @@ public class CameraUtil {
     }
 
     public static void showErrorAndFinish(final Activity activity, int msgId) {
+        try {
+            throw new Exception("Showing Exception");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
                     @Override

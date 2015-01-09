@@ -34,18 +34,18 @@ import com.android.ex.camera2.portability.CameraDeviceInfo;
  */
 public class CameraController implements CameraAgent.CameraOpenCallback, CameraProvider {
     private static final Log.Tag TAG = new Log.Tag("CameraController");
-    private static final int EMPTY_REQUEST = -1;
+    public static final int EMPTY_REQUEST = -1;
     private final Context mContext;
-    private CameraAgent.CameraOpenCallback mCallbackReceiver;
-    private final Handler mCallbackHandler;
-    private final CameraAgent mCameraAgent;
-    private final CameraAgent mCameraAgentNg;
+    public CameraAgent.CameraOpenCallback mCallbackReceiver;
+    public Handler mCallbackHandler;
+    private CameraAgent mCameraAgent;
+    private CameraAgent mCameraAgentNg;
 
     /** The one for the API that is currently in use (deprecated one by default). */
     private CameraDeviceInfo mInfo;
 
-    private CameraAgent.CameraProxy mCameraProxy;
-    private int mRequestingCameraId = EMPTY_REQUEST;
+    public CameraAgent.CameraProxy mCameraProxy;
+    public int mRequestingCameraId = EMPTY_REQUEST;
 
     /**
      * Determines which of mCameraAgent and mCameraAgentNg is currently in use.
@@ -72,14 +72,18 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         mContext = context;
         mCallbackReceiver = callbackReceiver;
         mCallbackHandler = handler;
-        mCameraAgent = cameraManager;
         // If the new implementation is the same as the old, the
         // CameraAgentFactory decided this device doesn't support the new API.
-        mCameraAgentNg = cameraManagerNg != cameraManager ? cameraManagerNg : null;
+        setCameraAgent(cameraManager, cameraManagerNg);
         mInfo = mCameraAgent.getCameraDeviceInfo();
         if (mInfo == null && mCallbackReceiver != null) {
             mCallbackReceiver.onDeviceOpenFailure(-1, "GETTING_CAMERA_INFO");
         }
+    }
+
+    public void setCameraAgent(CameraAgent cameraManager, CameraAgent cameraManagerNg) {
+        mCameraAgent = cameraManager;
+        mCameraAgentNg = cameraManagerNg != cameraManager ? cameraManagerNg : null;
     }
 
     @Override
