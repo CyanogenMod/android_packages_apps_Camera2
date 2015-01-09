@@ -519,7 +519,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private View mFocusOverlay;
     private FrameLayout mTutorialsPlaceHolderWrapper;
     private BottomBarModeOptionsWrapper mIndicatorBottomBarWrapper;
-    private TextureViewHelper mTextureViewHelper;
+    public TextureViewHelper mTextureViewHelper;
     private final GestureDetector mGestureDetector;
     private DisplayManager.DisplayListener mDisplayListener;
     private int mLastRotation;
@@ -1040,7 +1040,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     }
 
-    private void hideModeCover() {
+    public void hideModeCover() {
         if (mHideCoverRunnable != null) {
             mAppRootView.post(mHideCoverRunnable);
             mHideCoverRunnable = null;
@@ -1519,6 +1519,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         return mSurface;
     }
 
+    public void setSurfaceTexture(SurfaceTexture texture) {
+        Log.d(TAG, "Replacing surface texture");
+        mTextureView.setSurfaceTexture(texture);
+        mSkipSurfaceTextureEvent = true;
+    }
+
     /**
      * Return the shared {@link android.graphics.SurfaceTexture}'s width.
      */
@@ -1533,13 +1539,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         return mSurfaceHeight;
     }
 
+    private boolean mSkipSurfaceTextureEvent = false;
+
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         mSurface = surface;
         mSurfaceWidth = width;
         mSurfaceHeight = height;
         Log.v(TAG, "SurfaceTexture is available");
-        if (mPreviewStatusListener != null) {
+
+        if (mSkipSurfaceTextureEvent) {
+            Log.d(new Log.Tag("Linus"), "Skipping Surface Texture Created Callback");
+            mSkipSurfaceTextureEvent = false;
+        } else if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureAvailable(surface, width, height);
         }
         enableModeOptions();
@@ -1547,6 +1559,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        Log.v(new Log.Tag("Linus"), "onSurfaceTextureSizeChanged");
         mSurface = surface;
         mSurfaceWidth = width;
         mSurfaceHeight = height;
@@ -1559,6 +1572,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         mSurface = null;
         Log.v(TAG, "SurfaceTexture is destroyed");
+
+        if (mSkipSurfaceTextureEvent) {
+            Log.d(new Log.Tag("Linus"), "Skipping Surface Texture Destroyed Callback");
+            return true;
+        }
+
         if (mPreviewStatusListener != null) {
             return mPreviewStatusListener.onSurfaceTextureDestroyed(surface);
         }
@@ -1567,11 +1586,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        //Log.v(new Log.Tag("Linus"), "onSurfaceTextureUpdated");
         mSurface = surface;
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureUpdated(surface);
         }
-        if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
+        if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE ||
+                mModeCoverState == COVER_SHOWN) {
             Log.v(TAG, "hiding cover via onSurfaceTextureUpdated");
             CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
             hideModeCover();

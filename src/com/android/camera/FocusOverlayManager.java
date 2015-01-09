@@ -97,12 +97,12 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     private final List<CameraCapabilities.FocusMode> mDefaultFocusModes;
     private CameraCapabilities.FocusMode mOverrideFocusMode;
     private CameraCapabilities mCapabilities;
-    private final AppController mAppController;
+    public AppController mAppController;
     private final SettingsManager mSettingsManager;
-    private final Handler mHandler;
+    public Handler mHandler;
     Listener mListener;
     private boolean mPreviousMoving;
-    private final FocusUI mUI;
+    public FocusUI mUI;
     private final Rect mPreviewRect = new Rect(0, 0, 0, 0);
     private boolean mFocusLocked;
 

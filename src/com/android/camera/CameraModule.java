@@ -102,4 +102,9 @@ public abstract class CameraModule implements ModuleController {
      * @return An accessibility String to be announced during the peek animation.
      */
     public abstract String getPeekAccessibilityString();
+
+    @Override
+    public void initHack(ICameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
+        throw new UnsupportedOperationException("Unexpected codepath here");
+    }
 }

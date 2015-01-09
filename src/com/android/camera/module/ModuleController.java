@@ -17,6 +17,7 @@
 package com.android.camera.module;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.ICameraActivity;
 import com.android.camera.ShutterButton;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.hardware.HardwareSpec;
@@ -51,6 +52,7 @@ public interface ModuleController extends ShutterButton.OnShutterButtonListener 
      * @param isCaptureIntent Whether the app is in capture intent mode.
      */
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent);
+    public void initHack(ICameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent);
 
     /**
      * Resumes the module. Always call this method whenever it's being put in

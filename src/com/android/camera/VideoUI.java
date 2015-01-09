@@ -95,23 +95,36 @@ public class VideoUI implements PreviewStatusListener {
         }
     };
 
-    public VideoUI(CameraActivity activity, VideoController controller, View parent) {
+    public VideoUI(CameraActivity activity, VideoController controller) {
         mActivity = activity;
-        mController = controller;
-        mRootView = parent;
-        ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
-        mActivity.getLayoutInflater().inflate(R.layout.video_module,
-                moduleRoot, true);
+        if (mActivity != null) {
+            mController = controller;
+            mRootView = mActivity.getCameraAppUI().getModuleRootView();
+            ViewGroup moduleRoot = (ViewGroup) mRootView.findViewById(R.id.module_layout);
+            mActivity.getLayoutInflater().inflate(R.layout.video_module,
+                    moduleRoot, true);
 
-        mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
+            mPreviewOverlay = (PreviewOverlay) mRootView.findViewById(R.id.preview_overlay);
 
-        initializeMiscControls();
-        mAnimationManager = new AnimationManager();
-        mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
-        mVideoHints = (VideoRecordingHints) mRootView.findViewById(R.id.video_shooting_hints);
+            initializeMiscControls();
+            mAnimationManager = new AnimationManager();
+            mFocusUI = (FocusOverlay) mRootView.findViewById(R.id.focus_overlay);
+            mVideoHints = (VideoRecordingHints) mRootView.findViewById(R.id.video_shooting_hints);
+        } else {
+            mPreviewOverlay = null;
+            mController = null;
+            mAnimationManager = null;
+            mRootView = null;
+            mFocusUI = null;
+            mVideoHints = null;
+        }
     }
 
     public void setPreviewSize(int width, int height) {
+        if (mActivity == null) {
+            return;
+        }
+
         if (width == 0 || height == 0) {
             Log.w(TAG, "Preview size should not be 0.");
             return;
@@ -133,6 +146,10 @@ public class VideoUI implements PreviewStatusListener {
      * Starts a flash animation
      */
     public void animateFlash() {
+        if (mActivity == null) {
+            return;
+        }
+
         mController.startPreCaptureAnimation();
     }
 
@@ -140,10 +157,18 @@ public class VideoUI implements PreviewStatusListener {
      * Cancels on-going animations
      */
     public void cancelAnimations() {
+        if (mActivity == null) {
+            return;
+        }
+
         mAnimationManager.cancelAnimations();
     }
 
     public void setOrientationIndicator(int orientation, boolean animation) {
+        if (mActivity == null) {
+            return;
+        }
+
         // We change the orientation of the linearlayout only for phone UI
         // because when in portrait the width is not enough.
         if (mLabelsLinearLayout != null) {
@@ -157,6 +182,10 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     private void initializeMiscControls() {
+        if (mActivity == null) {
+            return;
+        }
+
         mReviewImage = (ImageView) mRootView.findViewById(R.id.review_image);
         mRecordingTimeView = (TextView) mRootView.findViewById(R.id.recording_time);
         mRecordingTimeRect = (RotateLayout) mRootView.findViewById(R.id.recording_time_rect);
@@ -169,6 +198,10 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     public void setAspectRatio(float ratio) {
+        if (mActivity == null) {
+            return;
+        }
+
         if (ratio <= 0) {
             return;
         }
@@ -180,6 +213,10 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     public void setSwipingEnabled(boolean enable) {
+        if (mActivity == null) {
+            return;
+        }
+
         mActivity.setSwipingEnabled(enable);
     }
 
@@ -188,6 +225,10 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     public void showRecordingUI(boolean recording) {
+        if (mActivity == null) {
+            return;
+        }
+
         mRecordingStarted = recording;
         if (recording) {
             mRecordingTimeView.setText("");
@@ -202,16 +243,28 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     public void showReviewImage(Bitmap bitmap) {
+        if (mActivity == null) {
+            return;
+        }
+
         mReviewImage.setImageBitmap(bitmap);
         mReviewImage.setVisibility(View.VISIBLE);
     }
 
     public void showReviewControls() {
+        if (mActivity == null) {
+            return;
+        }
+
         mActivity.getCameraAppUI().transitionToIntentReviewLayout();
         mReviewImage.setVisibility(View.VISIBLE);
     }
 
     public void initializeZoom(CameraSettings settings, CameraCapabilities capabilities) {
+        if (mActivity == null) {
+            return;
+        }
+
         mZoomMax = capabilities.getMaxZoomRatio();
         // Currently we use immediate zoom for fast zooming to get better UX and
         // there is no plan to take advantage of the smooth zoom.
@@ -221,10 +274,18 @@ public class VideoUI implements PreviewStatusListener {
     }
 
     public void setRecordingTime(String text) {
+        if (mActivity == null) {
+            return;
+        }
+
         mRecordingTimeView.setText(text);
     }
 
     public void setRecordingTimeTextColor(int color) {
+        if (mActivity == null) {
+            return;
+        }
+
         mRecordingTimeView.setTextColor(color);
     }
 
@@ -248,6 +309,10 @@ public class VideoUI implements PreviewStatusListener {
      * @param show shows focus UI when true, hides it otherwise
      */
     public void showFocusUI(boolean show) {
+        if (mActivity == null) {
+            return;
+        }
+
         if (mFocusUI != null) {
             mFocusUI.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
         }
@@ -259,6 +324,10 @@ public class VideoUI implements PreviewStatusListener {
      * @param show shows video recording hints when true, hides it otherwise.
      */
     public void showVideoRecordingHints(boolean show) {
+        if (mActivity == null) {
+            return;
+        }
+
         mVideoHints.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
@@ -266,10 +335,18 @@ public class VideoUI implements PreviewStatusListener {
      * @return The size of the available preview area.
      */
     public Point getPreviewScreenSize() {
+        if (mActivity == null) {
+            return new Point(1080, 1776);
+        }
+
         return new Point(mRootView.getMeasuredWidth(), mRootView.getMeasuredHeight());
     }
 
     public void onOrientationChanged(int orientation) {
+        if (mActivity == null) {
+            return;
+        }
+
         mVideoHints.onOrientationChanged(orientation);
     }
 
@@ -291,11 +368,19 @@ public class VideoUI implements PreviewStatusListener {
     // SurfaceTexture callbacks
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        if (mActivity == null) {
+            return;
+        }
+
         mController.onPreviewUIReady();
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        if (mActivity == null) {
+            return true;
+        }
+
         mController.onPreviewUIDestroyed();
         Log.d(TAG, "surfaceTexture is destroyed");
         return true;

@@ -115,7 +115,7 @@ public class VideoModule extends CameraModule
             "android.intent.extra.quickCapture";
 
     // module fields
-    private CameraActivity mActivity;
+    private ICameraActivity mActivity;
     private boolean mPaused;
 
     // if, during and intent capture, the activity is paused (e.g. when app switching or reviewing a
@@ -138,10 +138,10 @@ public class VideoModule extends CameraModule
     private boolean mIsVideoCaptureIntent;
     private boolean mQuickCapture;
 
-    private MediaRecorder mMediaRecorder;
+    public MediaRecorder mMediaRecorder;
 
     private boolean mSwitchingCamera;
-    private boolean mMediaRecorderRecording = false;
+    public boolean mMediaRecorderRecording = false;
     private long mRecordingStartTime;
     private boolean mRecordingTimeCountsDown = false;
     private long mOnResumeTime;
@@ -153,7 +153,7 @@ public class VideoModule extends CameraModule
     // The video file that has already been recorded, and that is being
     // examined by the user.
     private String mCurrentVideoFilename;
-    private Uri mCurrentVideoUri;
+    public Uri mCurrentVideoUri;
     private boolean mCurrentVideoUriFromMediaSaved;
     private ContentValues mCurrentVideoValues;
 
@@ -162,7 +162,7 @@ public class VideoModule extends CameraModule
     // The video duration limit. 0 means no limit.
     private int mMaxVideoDurationInMs;
 
-    boolean mPreviewing = false; // True if preview is started.
+    public boolean mPreviewing = false; // True if preview is started.
     // The display rotation in degrees. This is only valid when mPreviewing is
     // true.
     private int mDisplayRotation;
@@ -193,7 +193,7 @@ public class VideoModule extends CameraModule
                         mCurrentVideoUri = uri;
                         mCurrentVideoUriFromMediaSaved = true;
                         onVideoSaved();
-                        mActivity.notifyNewMedia(uri);
+                        mAppController.notifyNewMedia(uri);
                     }
                 }
             };
@@ -203,7 +203,7 @@ public class VideoModule extends CameraModule
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        mActivity.notifyNewMedia(uri);
+                        mAppController.notifyNewMedia(uri);
                     }
                 }
             };
@@ -257,7 +257,7 @@ public class VideoModule extends CameraModule
                     // down and camera app is opened. Rotation animation will
                     // take some time and the rotation value we have got may be
                     // wrong. Framework does not have a callback for this now.
-                    if ((CameraUtil.getDisplayRotation(mActivity) != mDisplayRotation)
+                    if ((CameraUtil.getDisplayRotation(mAppController.getAndroidContext()) != mDisplayRotation)
                             && !mMediaRecorderRecording && !mSwitchingCamera) {
                         startPreview();
                     }
@@ -297,8 +297,9 @@ public class VideoModule extends CameraModule
             if (action.equals(Intent.ACTION_MEDIA_EJECT)) {
                 stopVideoRecording();
             } else if (action.equals(Intent.ACTION_MEDIA_SCANNER_STARTED)) {
-                Toast.makeText(mActivity,
-                        mActivity.getResources().getString(R.string.wait), Toast.LENGTH_LONG).show();
+                Toast.makeText(mAppController.getAndroidContext(),
+                        mAppController.getAndroidContext().getResources().getString(R.string.wait),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -322,7 +323,7 @@ public class VideoModule extends CameraModule
     private String createName(long dateTaken) {
         Date date = new Date(dateTaken);
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                mActivity.getString(R.string.video_file_name_format));
+                mAppController.getAndroidContext().getString(R.string.video_file_name_format));
 
         return dateFormat.format(date);
     }
@@ -334,17 +335,66 @@ public class VideoModule extends CameraModule
 
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
+        initHack(activity, isSecureCamera, isCaptureIntent);
+    }
+
+    public void reinit(CameraActivity activity) {
+        mActivity = activity;
+        mAppController = mActivity;
+        mActivity.getCameraActivity().updateStorageSpaceAndHint(null);
+        mUI = new VideoUI(mActivity.getCameraActivity(), this);
+        mAppController.getCameraAppUI().setPreviewStatusListener(mUI);
+
+        mFocusManager.mAppController = mAppController;
+        mFocusManager.mUI = mUI.getFocusUI();
+        //mFocusManager.mHandler = new MainHandler(mAppController.getAndroidContext().getMainLooper());
+
+        mUI.setOrientationIndicator(0, false);
+        mAppController.lockOrientation();
+        mRecordingStartTime = SystemClock.uptimeMillis();
+
+        // A special case of mode options closing: during capture it should
+        // not be possible to change mode state.
+        if (mActivity.isCameraActivity()) {
+            mAppController.getCameraAppUI().hideModeOptions();
+            mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
+        }
+        mUI.cancelAnimations();
+        mUI.setSwipingEnabled(false);
+        mUI.showFocusUI(false);
+        mUI.showVideoRecordingHints(false);
+        mUI.showRecordingUI(true);
+        mMediaRecorderRecording = true;
+
+        mAppController.lockOrientation();
+        mRecordingStartTime = SystemClock.uptimeMillis();
+
+        mAppController.getCameraAppUI().hideModeOptions();
+        mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
+
+        setFocusParameters();
+
+        updateRecordingTime();
+        mAppController.enableKeepScreenOn(true);
+    }
+
+    @Override
+    public void initHack(ICameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         mActivity = activity;
         // TODO: Need to look at the controller interface to see if we can get
         // rid of passing in the activity directly.
         mAppController = mActivity;
 
-        mActivity.updateStorageSpaceAndHint(null);
+        if (mActivity.isCameraActivity()) {
+            mActivity.getCameraActivity().updateStorageSpaceAndHint(null);
+        }
 
-        mUI = new VideoUI(mActivity, this,  mActivity.getModuleLayoutRoot());
-        mActivity.setPreviewStatusListener(mUI);
+        mUI = new VideoUI(mActivity.getCameraActivity(), this);
+        if (mActivity.isCameraActivity()) {
+            mAppController.getCameraAppUI().setPreviewStatusListener(mUI);
+        }
 
-        SettingsManager settingsManager = mActivity.getSettingsManager();
+        SettingsManager settingsManager = mAppController.getSettingsManager();
         mCameraId = settingsManager.getInteger(mAppController.getModuleScope(),
                                                Keys.KEY_CAMERA_ID);
 
@@ -354,14 +404,14 @@ public class VideoModule extends CameraModule
          */
         requestCamera(mCameraId);
 
-        mContentResolver = mActivity.getContentResolver();
+        mContentResolver = mAppController.getAndroidContext().getContentResolver();
 
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
         mIsVideoCaptureIntent = isVideoCaptureIntent();
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mLocationManager = mActivity.getLocationManager();
+        mLocationManager = mAppController.getLocationManager();
 
         mUI.setOrientationIndicator(0, false);
         setDisplayOrientation();
@@ -380,7 +430,9 @@ public class VideoModule extends CameraModule
     private void initializeControlByIntent() {
         if (isVideoCaptureIntent()) {
             if (!mDontResetIntentUiOnResume) {
-                mActivity.getCameraAppUI().transitionToIntentCaptureLayout();
+                if (mActivity.isCameraActivity()) {
+                    mAppController.getCameraAppUI().transitionToIntentCaptureLayout();
+                }
             }
             // reset the flag
             mDontResetIntentUiOnResume = false;
@@ -471,7 +523,7 @@ public class VideoModule extends CameraModule
             mFocusManager.removeMessages();
         } else {
             mMirror = isCameraFrontFacing();
-            String[] defaultFocusModesStrings = mActivity.getResources().getStringArray(
+            String[] defaultFocusModesStrings = mAppController.getAndroidContext().getResources().getStringArray(
                     R.array.pref_camera_focusmode_default_array);
             CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
             ArrayList<CameraCapabilities.FocusMode> defaultFocusModes =
@@ -484,7 +536,7 @@ public class VideoModule extends CameraModule
             }
             mFocusManager = new FocusOverlayManager(mAppController,
                     defaultFocusModes, mCameraCapabilities, this, mMirror,
-                    mActivity.getMainLooper(), mUI.getFocusUI());
+                    mAppController.getAndroidContext().getMainLooper(), mUI.getFocusUI());
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
     }
@@ -587,6 +639,7 @@ public class VideoModule extends CameraModule
 
     @Override
     public void onCameraAvailable(CameraProxy cameraProxy) {
+        Log.d(TAG, "onCameraAvailable");
         if (cameraProxy == null) {
             Log.w(TAG, "onCameraAvailable returns a null CameraProxy object");
             return;
@@ -605,7 +658,9 @@ public class VideoModule extends CameraModule
         // parameters are up to date.
         mFocusManager.updateCapabilities(mCameraCapabilities);
 
-        startPreview();
+        if (!mPreviewing) {
+            startPreview();
+        }
         initializeVideoSnapshot();
         mUI.initializeZoom(mCameraSettings, mCameraCapabilities);
         initializeControlByIntent();
@@ -615,7 +670,7 @@ public class VideoModule extends CameraModule
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(mCurrentVideoUri, convertOutputFormatToMimeType(mProfile.fileFormat));
         try {
-            mActivity.launchActivityByIntent(intent);
+            mAppController.launchActivityByIntent(intent);
         } catch (ActivityNotFoundException ex) {
             Log.e(TAG, "Couldn't view video " + mCurrentVideoUri, ex);
         }
@@ -654,7 +709,9 @@ public class VideoModule extends CameraModule
     }
 
     private void onStopVideoRecording() {
-        mAppController.getCameraAppUI().setSwipeEnabled(true);
+        if (mActivity.isCameraActivity()) {
+            mAppController.getCameraAppUI().setSwipeEnabled(true);
+        }
         boolean recordFail = stopVideoRecording();
         if (mIsVideoCaptureIntent) {
             if (mQuickCapture) {
@@ -724,7 +781,7 @@ public class VideoModule extends CameraModule
     private void readVideoPreferences() {
         // The preference stores values from ListPreference and is thus string type for all values.
         // We need to convert it to int manually.
-        SettingsManager settingsManager = mActivity.getSettingsManager();
+        SettingsManager settingsManager = mAppController.getSettingsManager();
         String videoQualityKey = isCameraFrontFacing() ? Keys.KEY_VIDEO_QUALITY_FRONT
             : Keys.KEY_VIDEO_QUALITY_BACK;
         String videoQuality = settingsManager
@@ -829,13 +886,13 @@ public class VideoModule extends CameraModule
         intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
         intentFilter.addDataScheme("file");
         mReceiver = new MyBroadcastReceiver();
-        mActivity.registerReceiver(mReceiver, intentFilter);
+        mAppController.getAndroidContext().registerReceiver(mReceiver, intentFilter);
     }
 
     private void setDisplayOrientation() {
-        mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
+        mDisplayRotation = CameraUtil.getDisplayRotation(mAppController.getAndroidContext());
         Characteristics info =
-                mActivity.getCameraProvider().getCharacteristics(mCameraId);
+                mAppController.getCameraProvider().getCharacteristics(mCameraId);
         mCameraDisplayOrientation = info.getPreviewOrientation(mDisplayRotation);
         // Change the camera display orientation
         if (mCameraDevice != null) {
@@ -851,7 +908,7 @@ public class VideoModule extends CameraModule
         if (mMediaRecorderRecording) {
             return;
         }
-        if (mDisplayRotation != CameraUtil.getDisplayRotation(mActivity)) {
+        if (mDisplayRotation != CameraUtil.getDisplayRotation(mAppController.getAndroidContext())) {
             setDisplayOrientation();
         }
     }
@@ -886,8 +943,14 @@ public class VideoModule extends CameraModule
     private void startPreview() {
         Log.i(TAG, "startPreview");
 
-        SurfaceTexture surfaceTexture = mActivity.getCameraAppUI().getSurfaceTexture();
-        if (!mPreferenceRead || surfaceTexture == null || mPaused == true ||
+        SurfaceTexture surfaceTexture = null;
+        if (mActivity.isCameraActivity()) {
+            surfaceTexture = mAppController.getCameraAppUI().getSurfaceTexture();
+        } else {
+            surfaceTexture = ((CameraService)mActivity).getSurfaceTexture();
+        }
+
+        if (!mPreferenceRead || mPaused == true ||
                 mCameraDevice == null) {
             return;
         }
@@ -923,14 +986,20 @@ public class VideoModule extends CameraModule
             Log.v(TAG, "on L, no one shot callback necessary");
         }
         try {
-            mCameraDevice.setPreviewTexture(surfaceTexture);
+            //if (surfaceTexture != null) {
+                mCameraDevice.setPreviewTexture(surfaceTexture);
+            //} else {
+                //mCameraDevice.setPreviewDisplay(mActivity.getSurfaceHolder());
+            //}
+
             mCameraDevice.startPreviewWithCallback(new Handler(Looper.getMainLooper()),
                     new CameraAgent.CameraStartPreviewCallback() {
-                @Override
-                public void onPreviewStarted() {
-                    VideoModule.this.onPreviewStarted();
-                }
-            });
+                        @Override
+                        public void onPreviewStarted() {
+                            VideoModule.this.onPreviewStarted();
+                        }
+                    });
+
             mPreviewing = true;
         } catch (Throwable ex) {
             closeCamera();
@@ -939,6 +1008,7 @@ public class VideoModule extends CameraModule
     }
 
     private void onPreviewStarted() {
+        Log.d(TAG, "onPreviewStarted");
         mAppController.setShutterEnabled(true);
         mAppController.onPreviewStarted();
         if (mFocusManager != null) {
@@ -952,6 +1022,13 @@ public class VideoModule extends CameraModule
 
     @Override
     public void stopPreview() {
+        try {
+            throw new Exception("test");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        Log.d(TAG, "stopPreview");
         if (!mPreviewing) {
             Log.v(TAG, "Skip stopPreview since it's not mPreviewing");
             return;
@@ -971,13 +1048,18 @@ public class VideoModule extends CameraModule
 
     private void closeCamera() {
         Log.i(TAG, "closeCamera");
+        try {
+            throw new Exception("Closing Camera");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         if (mCameraDevice == null) {
             Log.d(TAG, "already stopped.");
             return;
         }
         mCameraDevice.setZoomChangeListener(null);
         mCameraDevice.setErrorCallback(null, null);
-        mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
+        mAppController.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
         mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
@@ -1053,8 +1135,10 @@ public class VideoModule extends CameraModule
         } else {
             resultCode = Activity.RESULT_CANCELED;
         }
-        mActivity.setResultEx(resultCode, resultIntent);
-        mActivity.finish();
+        if (mActivity.isCameraActivity()) {
+            mActivity.getCameraActivity().setResultEx(resultCode, resultIntent);
+            mActivity.getCameraActivity().finish();
+        }
     }
 
     private void cleanupEmptyFile() {
@@ -1095,6 +1179,9 @@ public class VideoModule extends CameraModule
             }
             requestedSizeLimit = myExtras.getLong(MediaStore.EXTRA_SIZE_LIMIT);
         }
+
+        Log.d(new Log.Tag("Linus"), "---- creating media Recorder");
+
         mMediaRecorder = new MediaRecorder();
         // Unlock the camera object before passing it to media recorder.
         mCameraDevice.unlock();
@@ -1118,18 +1205,30 @@ public class VideoModule extends CameraModule
         }
 
         // Set maximum file size.
-        long maxFileSize = mActivity.getStorageSpaceBytes() - Storage.LOW_STORAGE_THRESHOLD_BYTES;
-        if (requestedSizeLimit > 0 && requestedSizeLimit < maxFileSize) {
-            maxFileSize = requestedSizeLimit;
-        }
+        if (mActivity.isCameraActivity()) {
+            long maxFileSize = mActivity.getCameraActivity().getStorageSpaceBytes() - Storage
+                    .LOW_STORAGE_THRESHOLD_BYTES;
+            if (requestedSizeLimit > 0 && requestedSizeLimit < maxFileSize) {
+                maxFileSize = requestedSizeLimit;
+            }
 
-        try {
-            mMediaRecorder.setMaxFileSize(maxFileSize);
-        } catch (RuntimeException exception) {
-            // We are going to ignore failure of setMaxFileSize here, as
-            // a) The composer selected may simply not support it, or
-            // b) The underlying media framework may not handle 64-bit range
-            // on the size restriction.
+            try {
+                mMediaRecorder.setMaxFileSize(maxFileSize);
+            } catch (RuntimeException exception) {
+                // We are going to ignore failure of setMaxFileSize here, as
+                // a) The composer selected may simply not support it, or
+                // b) The underlying media framework may not handle 64-bit range
+                // on the size restriction.
+            }
+        } else {
+            try {
+                mMediaRecorder.setMaxFileSize(500 * 1000 * 1000);
+            } catch (RuntimeException exception) {
+                // We are going to ignore failure of setMaxFileSize here, as
+                // a) The composer selected may simply not support it, or
+                // b) The underlying media framework may not handle 64-bit range
+                // on the size restriction.
+            }
         }
 
         // See com.android.camera.cameradevice.CameraSettings.setPhotoRotationDegrees
@@ -1140,7 +1239,7 @@ public class VideoModule extends CameraModule
         int rotation = 0;
         if (mOrientation != OrientationEventListener.ORIENTATION_UNKNOWN) {
             Characteristics info =
-                    mActivity.getCameraProvider().getCharacteristics(mCameraId);
+                    mAppController.getCameraProvider().getCharacteristics(mCameraId);
             if (isCameraFrontFacing()) {
                 rotation = (info.getSensorOrientation() - mOrientation + 360) % 360;
             } else if (isCameraBackFacing()) {
@@ -1176,7 +1275,12 @@ public class VideoModule extends CameraModule
     }
 
     private void releaseMediaRecorder() {
-        Log.i(TAG, "Releasing media recorder.");
+        Log.i(TAG, "---------Releasing media recorder.");
+        try {
+            throw new Exception("Mediarecorder");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         if (mMediaRecorder != null) {
             cleanupEmptyFile();
             mMediaRecorder.reset();
@@ -1216,10 +1320,10 @@ public class VideoModule extends CameraModule
     }
 
     private void logVideoCapture(long duration) {
-        String flashSetting = mActivity.getSettingsManager()
+        String flashSetting = mAppController.getSettingsManager()
                 .getString(mAppController.getCameraScope(),
                            Keys.KEY_VIDEOCAMERA_FLASH_MODE);
-        boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
+        boolean gridLinesOn = Keys.areGridLinesOn(mAppController.getSettingsManager());
         int width = (Integer) mCurrentVideoValues.get(Video.Media.WIDTH);
         int height = (Integer) mCurrentVideoValues.get(Video.Media.HEIGHT);
         long size = new File(mCurrentVideoFilename).length();
@@ -1260,7 +1364,9 @@ public class VideoModule extends CameraModule
         if (what == MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN) {
             // We may have run out of space on the sdcard.
             stopVideoRecording();
-            mActivity.updateStorageSpaceAndHint(null);
+            if (mActivity.isCameraActivity()) {
+                mActivity.getCameraActivity().updateStorageSpaceAndHint(null);
+            }
         }
     }
 
@@ -1277,7 +1383,7 @@ public class VideoModule extends CameraModule
             }
 
             // Show the toast.
-            Toast.makeText(mActivity, R.string.video_reach_size_limit,
+            Toast.makeText(mAppController.getAndroidContext(), R.string.video_reach_size_limit,
                     Toast.LENGTH_LONG).show();
         }
     }
@@ -1287,7 +1393,7 @@ public class VideoModule extends CameraModule
      * MediaPlaybackService to pause playback.
      */
     private void pauseAudioPlayback() {
-        AudioManager am = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) mActivity.getAndroidContext().getSystemService(Context.AUDIO_SERVICE);
         am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
@@ -1297,82 +1403,96 @@ public class VideoModule extends CameraModule
     }
 
     private void startVideoRecording() {
-        Log.i(TAG, "startVideoRecording: " + Thread.currentThread());
+        Log.d(TAG, "startVideoRecording: " + Thread.currentThread());
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
         mUI.showFocusUI(false);
         mUI.showVideoRecordingHints(false);
 
-        mActivity.updateStorageSpaceAndHint(new CameraActivity.OnStorageUpdateDoneListener() {
-            @Override
-            public void onStorageUpdateDone(long bytes) {
-                if (bytes <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
-                    Log.w(TAG, "Storage issue, ignore the start request");
-                } else {
-                    if (mCameraDevice == null) {
-                        Log.v(TAG, "in storage callback after camera closed");
-                        return;
+        // TODO: Comeback to this
+        if (mActivity.isCameraActivity()) {
+            mActivity.getCameraActivity().updateStorageSpaceAndHint(new CameraActivity.OnStorageUpdateDoneListener() {
+                @Override
+                public void onStorageUpdateDone(long bytes) {
+                    if (bytes <= Storage.LOW_STORAGE_THRESHOLD_BYTES) {
+                        Log.w(TAG, "Storage issue, ignore the start request");
+                    } else {
+                        if (mCameraDevice == null) {
+                            Log.v(TAG, "in storage callback after camera closed");
+                            return;
+                        }
+                        if (mPaused == true) {
+                            Log.v(TAG, "in storage callback after module paused");
+                            return;
+                        }
+
+                        // Monkey is so fast so it could trigger startVideoRecording twice. To prevent
+                        // app crash (b/17313985), do nothing here for the second storage-checking
+                        // callback because recording is already started.
+                        if (mMediaRecorderRecording) {
+                            Log.v(TAG, "in storage callback after recording started");
+                            return;
+                        }
+
+                        beginRecording();
                     }
-                    if (mPaused == true) {
-                        Log.v(TAG, "in storage callback after module paused");
-                        return;
-                    }
-
-                    // Monkey is so fast so it could trigger startVideoRecording twice. To prevent
-                    // app crash (b/17313985), do nothing here for the second storage-checking
-                    // callback because recording is already started.
-                    if (mMediaRecorderRecording) {
-                        Log.v(TAG, "in storage callback after recording started");
-                        return;
-                    }
-
-                    mCurrentVideoUri = null;
-
-                    initializeRecorder();
-                    if (mMediaRecorder == null) {
-                        Log.e(TAG, "Fail to initialize media recorder");
-                        return;
-                    }
-
-                    pauseAudioPlayback();
-
-                    try {
-                        mMediaRecorder.start(); // Recording is now started
-                    } catch (RuntimeException e) {
-                        Log.e(TAG, "Could not start media recorder. ", e);
-                        releaseMediaRecorder();
-                        // If start fails, frameworks will not lock the camera for us.
-                        mCameraDevice.lock();
-                        return;
-                    }
-                    mAppController.getCameraAppUI().setSwipeEnabled(false);
-
-                    // The parameters might have been altered by MediaRecorder already.
-                    // We need to force mCameraDevice to refresh before getting it.
-                    mCameraDevice.refreshSettings();
-                    // The parameters may have been changed by MediaRecorder upon starting
-                    // recording. We need to alter the parameters if we support camcorder
-                    // zoom. To reduce latency when setting the parameters during zoom, we
-                    // update the settings here once.
-                    mCameraSettings = mCameraDevice.getSettings();
-
-                    mMediaRecorderRecording = true;
-                    mActivity.lockOrientation();
-                    mRecordingStartTime = SystemClock.uptimeMillis();
-
-                    // A special case of mode options closing: during capture it should
-                    // not be possible to change mode state.
-                    mAppController.getCameraAppUI().hideModeOptions();
-                    mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
-                    mUI.showRecordingUI(true);
-
-                    setFocusParameters();
-
-                    updateRecordingTime();
-                    mActivity.enableKeepScreenOn(true);
                 }
-            }
-        });
+            });
+        } else {
+            beginRecording();
+        }
+    }
+
+    private void beginRecording() {
+        Log.d(TAG, "beginRecording: " + Thread.currentThread());
+        mCurrentVideoUri = null;
+
+        initializeRecorder();
+        if (mMediaRecorder == null) {
+            Log.e(TAG, "Fail to initialize media recorder");
+            return;
+        }
+
+        pauseAudioPlayback();
+
+        try {
+            mMediaRecorder.start(); // Recording is now started
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Could not start media recorder. ", e);
+            releaseMediaRecorder();
+            // If start fails, frameworks will not lock the camera for us.
+            mCameraDevice.lock();
+            return;
+        }
+        if (mActivity.isCameraActivity()) {
+            mAppController.getCameraAppUI().setSwipeEnabled(false);
+        }
+
+        // The parameters might have been altered by MediaRecorder already.
+        // We need to force mCameraDevice to refresh before getting it.
+        mCameraDevice.refreshSettings();
+        // The parameters may have been changed by MediaRecorder upon starting
+        // recording. We need to alter the parameters if we support camcorder
+        // zoom. To reduce latency when setting the parameters during zoom, we
+        // update the settings here once.
+        mCameraSettings = mCameraDevice.getSettings();
+
+        mMediaRecorderRecording = true;
+        mAppController.lockOrientation();
+        mRecordingStartTime = SystemClock.uptimeMillis();
+
+        // A special case of mode options closing: during capture it should
+        // not be possible to change mode state.
+        if (mActivity.isCameraActivity()) {
+            mAppController.getCameraAppUI().hideModeOptions();
+            mAppController.getCameraAppUI().animateBottomBarToVideoStop(R.drawable.ic_stop);
+        }
+        mUI.showRecordingUI(true);
+
+        setFocusParameters();
+
+        updateRecordingTime();
+        mAppController.enableKeepScreenOn(true);
     }
 
     private Bitmap getVideoThumbnail() {
@@ -1441,7 +1561,7 @@ public class VideoModule extends CameraModule
                 fail = true;
             }
             mMediaRecorderRecording = false;
-            mActivity.unlockOrientation();
+            mAppController.unlockOrientation();
 
             // If the activity is paused, this means activity is interrupted
             // during recording. Release the camera as soon as possible because
@@ -1458,7 +1578,7 @@ public class VideoModule extends CameraModule
             // The orientation was fixed during video recording. Now make it
             // reflect the device orientation as video recording is stopped.
             mUI.setOrientationIndicator(0, true);
-            mActivity.enableKeepScreenOn(false);
+            mAppController.enableKeepScreenOn(false);
             if (shouldAddToMediaStoreNow && !fail) {
                 if (mVideoFileDescriptor == null) {
                     saveVideo();
@@ -1471,8 +1591,10 @@ public class VideoModule extends CameraModule
         // release media recorder
         releaseMediaRecorder();
 
-        mAppController.getCameraAppUI().showModeOptions();
-        mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
+        if (mActivity.isCameraActivity()) {
+            mAppController.getCameraAppUI().showModeOptions();
+            mAppController.getCameraAppUI().animateBottomBarToFullSize(mShutterIconId);
+        }
         if (!mPaused && mCameraDevice != null) {
             setFocusParameters();
             mCameraDevice.lock();
@@ -1490,7 +1612,9 @@ public class VideoModule extends CameraModule
         // latency. It's true that someone else could write to the SD card
         // in the mean time and fill it, but that could have happened
         // between the shutter press and saving the file too.
-        mActivity.updateStorageSpaceAndHint(null);
+        if (mActivity.isCameraActivity()) {
+            mActivity.getCameraActivity().updateStorageSpaceAndHint(null);
+        }
 
         return fail;
     }
@@ -1570,7 +1694,8 @@ public class VideoModule extends CameraModule
             // when it needs changing.
             mRecordingTimeCountsDown = countdownRemainingTime;
 
-            int color = mActivity.getResources().getColor(R.color.recording_time_remaining_text);
+            int color = mAppController.getAndroidContext().getResources().getColor(R.color
+                    .recording_time_remaining_text);
 
             mUI.setRecordingTimeTextColor(color);
         }
@@ -1585,7 +1710,7 @@ public class VideoModule extends CameraModule
 
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
-        SettingsManager settingsManager = mActivity.getSettingsManager();
+        SettingsManager settingsManager = mAppController.getSettingsManager();
 
         mCameraSettings.setPreviewSize(new Size(mDesiredPreviewWidth, mDesiredPreviewHeight));
         // This is required for Samsung SGH-I337 and probably other Samsung S4 versions
@@ -1730,7 +1855,7 @@ public class VideoModule extends CameraModule
         closeVideoFileDescriptor();
 
         if (mReceiver != null) {
-            mActivity.unregisterReceiver(mReceiver);
+            mAppController.getAndroidContext().unregisterReceiver(mReceiver);
             mReceiver = null;
         }
 
@@ -1763,7 +1888,7 @@ public class VideoModule extends CameraModule
         if (mPaused)  {
             return;
         }
-        SettingsManager settingsManager = mActivity.getSettingsManager();
+        SettingsManager settingsManager = mAppController.getSettingsManager();
 
         Log.d(TAG, "Start to switch camera.");
         mCameraId = mPendingSwitchCameraId;
@@ -1821,11 +1946,11 @@ public class VideoModule extends CameraModule
      * @param enable Whether torch mode can be enabled.
      */
     private void enableTorchMode(boolean enable) {
-        if (mCameraSettings.getCurrentFlashMode() == null) {
+        if (mCameraSettings == null || mCameraSettings.getCurrentFlashMode() == null) {
             return;
         }
 
-        SettingsManager settingsManager = mActivity.getSettingsManager();
+        SettingsManager settingsManager = mAppController.getSettingsManager();
 
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         CameraCapabilities.FlashMode flashMode;
@@ -1883,9 +2008,9 @@ public class VideoModule extends CameraModule
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
 
-        String flashSetting = mActivity.getSettingsManager()
+        String flashSetting = mAppController.getSettingsManager()
             .getString(mAppController.getCameraScope(), Keys.KEY_VIDEOCAMERA_FLASH_MODE);
-        Boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
+        Boolean gridLinesOn = Keys.areGridLinesOn(mAppController.getSettingsManager());
         UsageStatistics.instance().photoCaptureDoneEvent(
                 eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
                 isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn,
@@ -1937,7 +2062,7 @@ public class VideoModule extends CameraModule
     }
 
     private void requestCamera(int id) {
-        mActivity.getCameraProvider().requestCamera(id);
+        mAppController.getCameraProvider().requestCamera(id);
     }
 
     @Override
