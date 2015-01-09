@@ -18,6 +18,8 @@ package com.android.camera.gl;
 
 import android.graphics.SurfaceTexture;
 
+import com.android.camera.debug.Log;
+import com.android.camera.debug.Log.Tag;
 import com.android.camera.gl.FrameDistributor;
 import com.android.camera.gl.FrameDistributor.FrameConsumer;
 
@@ -25,8 +27,9 @@ import com.android.camera.gl.FrameDistributor.FrameConsumer;
  * Consumes frames from a {@link FrameDistributor} and passes them into a
  * SurfaceTexture.
  */
-//TODO: Document this class a bit more and add a test for this class.
+// TODO: Document this class a bit more and add a test for this class.
 public class SurfaceTextureConsumer implements FrameConsumer {
+    private static final Tag TAG = new Tag("SurfaceTexConsumer");
 
     private SurfaceTexture mSurfaceTexture;
     private final float[] mTransform = new float[16];
@@ -42,7 +45,8 @@ public class SurfaceTextureConsumer implements FrameConsumer {
     public synchronized void onNewFrameAvailable(FrameDistributor frameDistributor,
             long timestampNs) {
         if (mSurfaceTexture == null) {
-            throw new IllegalStateException("Receiving frames without a SurfaceTexture!");
+            Log.d(TAG, "Ignoring frame without a SurfaceTexture!");
+            return;
         }
         if (mTarget == null) {
             mTarget = frameDistributor.getRenderTarget().forSurfaceTexture(mSurfaceTexture);
