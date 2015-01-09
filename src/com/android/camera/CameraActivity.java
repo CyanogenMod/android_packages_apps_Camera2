@@ -61,6 +61,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
@@ -157,7 +158,8 @@ import java.util.concurrent.TimeUnit;
 public class CameraActivity extends Activity
         implements AppController, CameraAgent.CameraOpenCallback,
         ShareActionProvider.OnShareTargetSelectedListener,
-        OrientationManager.OnOrientationChangeListener {
+        OrientationManager.OnOrientationChangeListener,
+        ICameraActivity {
 
     private static final Log.Tag TAG = new Log.Tag("CameraActivity");
 
@@ -264,6 +266,21 @@ public class CameraActivity extends Activity
     @Override
     public CameraAppUI getCameraAppUI() {
         return mCameraAppUI;
+    }
+
+    @Override
+    public CameraActivity getCameraActivity() {
+        return this;
+    }
+
+    @Override
+    public boolean isCameraActivity() {
+        return true;
+    }
+
+    @Override
+    public SurfaceHolder getSurfaceHolder() {
+        return null;
     }
 
     @Override

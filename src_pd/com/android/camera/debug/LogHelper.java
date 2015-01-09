@@ -27,6 +27,6 @@ public class LogHelper {
      * the system log level. Return 0 to instead defer to system log level.
      */
     public static int getOverrideLevel() {
-        return 0;
+        return android.util.Log.VERBOSE;
     }
 }
