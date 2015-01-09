@@ -351,16 +351,14 @@ public interface AppController {
     public OrientationManager getOrientationManager();
 
     /**
-     * Returns the {@link com.android.camera.LocationManager}.
+     * Returns the {@link LocationManager}.
      *
      * @return {@code null} if not available yet.
      */
     public LocationManager getLocationManager();
 
     /**
-     * Returns the {@link com.android.camera.SettingsManager}.
-     *
-     * @return {@code null} if not available yet.
+     * Returns the {@link SettingsManager}.
      */
     public SettingsManager getSettingsManager();
 

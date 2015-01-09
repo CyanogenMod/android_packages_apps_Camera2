@@ -47,7 +47,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * <li>Auto exposure, based on the current flash-setting</li>
  * <li>Metering regions</li>
  * <li>Zoom</li>
- * <li>Logging of OS/driver-level errors</li>
+ * <li>TODO Logging of OS/driver-level errors</li>
  * </ul>
  * <p>
  * Note that this does not include functionality for taking pictures, since this
@@ -78,6 +78,8 @@ public class BasicCameraFactory {
             Observable<Float> zoom, int templateType) {
         RequestTemplate previewBuilder = new RequestTemplate(rootBuilder);
         previewBuilder.setParam(
+                CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+        previewBuilder.setParam(
                 CaptureRequest.CONTROL_AE_MODE, new FlashBasedAEMode(flash));
 
         Supplier<Rect> cropRegion = new ZoomedCropRegion(
@@ -96,10 +98,11 @@ public class BasicCameraFactory {
         // changes to apply the new setting.
         // Also, de-register these callbacks when the camera is closed (to
         // not leak memory).
-        SafeCloseable zoomCallback = zoom.addCallback(new CallbackRunnable(mPreviewStarter),
-                threadPool);
+        SafeCloseable zoomCallback = zoom.addCallback(
+                new CallbackRunnable<Float>(mPreviewStarter), threadPool);
         lifetime.add(zoomCallback);
-        SafeCloseable flashCallback = flash.addCallback(new CallbackRunnable(mPreviewStarter),
+        SafeCloseable flashCallback = flash.addCallback(
+                new CallbackRunnable<OneCamera.PhotoCaptureParameters.Flash>(mPreviewStarter),
                 threadPool);
         lifetime.add(flashCallback);
 

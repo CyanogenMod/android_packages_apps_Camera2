@@ -85,6 +85,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * TODO: Determine what the maximum number of full YUV capture frames is.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+@Deprecated
 public class OneCameraZslImpl extends AbstractOneCamera {
     private static final Tag TAG = new Tag("OneCameraZslImpl2");
 
@@ -464,22 +465,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                         || aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
                     return false;
                 }
-                switch (params.flashMode) {
-                    case OFF:
-                        break;
-                    case ON:
-                        if (flashState != CaptureResult.FLASH_STATE_FIRED
-                                || flashMode != CaptureResult.FLASH_MODE_SINGLE) {
-                            return false;
-                        }
-                        break;
-                    case AUTO:
-                        if (aeState == CaptureResult.CONTROL_AE_STATE_FLASH_REQUIRED
-                                && flashState != CaptureResult.FLASH_STATE_FIRED) {
-                            return false;
-                        }
-                        break;
-                }
 
                 if (afState == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
                         || afState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN) {
@@ -519,7 +504,9 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                 // already, capture the next good image.
                 // TODO Disable the shutter button until this image is captured.
 
-                if (params.flashMode == Flash.ON || params.flashMode == Flash.AUTO) {
+                Flash flashMode = Flash.OFF;
+
+                if (flashMode == Flash.ON || flashMode == Flash.AUTO) {
                     // We must issue a request for a single capture using the
                     // flash, including an AE precapture trigger.
 
@@ -554,7 +541,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                                 }
                             });
 
-                    sendAutoExposureTriggerRequest(params.flashMode);
+                    sendAutoExposureTriggerRequest(flashMode);
                 } else {
                     // We may get here if, for example, the auto focus is in the
                     // middle of a scan.
@@ -805,7 +792,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
             builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 
-            addFlashToCaptureRequestBuilder(builder, params.flashMode);
+            Flash flashMode = Flash.OFF;
+            addFlashToCaptureRequestBuilder(builder, flashMode);
             addRegionsToCaptureRequestBuilder(builder);
 
             builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);

@@ -19,7 +19,7 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.MainThread;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
@@ -31,30 +31,21 @@ import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.session.CaptureSession;
 
 class PictureTakerImpl implements PictureTaker {
-    private final MainThreadExecutor mMainExecutor;
+    private final MainThread mMainExecutor;
     private final CameraCommandExecutor mCameraCommandExecutor;
     private final ImageSaver.Builder mImageSaverBuilder;
-    private final ImageCaptureCommand mFlashOffCommand;
-    private final ImageCaptureCommand mFlashOnCommand;
-    private final ImageCaptureCommand mFlashAutoCommand;
+    private final ImageCaptureCommand mCommand;
 
-    public PictureTakerImpl(MainThreadExecutor mainExecutor,
-            CameraCommandExecutor cameraCommandExecutor,
-            ImageSaver.Builder imageSaverBuilder,
-            ImageCaptureCommand flashOffCommand,
-            ImageCaptureCommand flashOnCommand,
-            ImageCaptureCommand flashAutoCommand) {
+    public PictureTakerImpl(MainThread mainExecutor, CameraCommandExecutor cameraCommandExecutor,
+            ImageSaver.Builder imageSaverBuilder, ImageCaptureCommand command) {
         mMainExecutor = mainExecutor;
         mCameraCommandExecutor = cameraCommandExecutor;
         mImageSaverBuilder = imageSaverBuilder;
-        mFlashOffCommand = flashOffCommand;
-        mFlashOnCommand = flashOnCommand;
-        mFlashAutoCommand = flashAutoCommand;
+        mCommand = command;
     }
 
     @Override
     public void takePicture(OneCamera.PhotoCaptureParameters params, CaptureSession session) {
-        OneCamera.PhotoCaptureParameters.Flash flashMode = params.flashMode;
         OneCamera.PictureCallback pictureCallback = params.callback;
 
         // Wrap the pictureCallback with a thread-safe adapter which guarantees
@@ -73,24 +64,13 @@ class PictureTakerImpl implements PictureTaker {
                 OrientationManager.DeviceOrientation.from(params.orientation),
                 session);
 
-        ImageCaptureCommand imageCommand;
-        if (flashMode == OneCamera.PhotoCaptureParameters.Flash.ON) {
-            imageCommand = mFlashOnCommand;
-        } else if (flashMode == OneCamera.PhotoCaptureParameters.Flash.OFF) {
-            imageCommand = mFlashOffCommand;
-        } else {
-            imageCommand = mFlashAutoCommand;
-        }
-
-        final ImageCaptureCommand finalImageCommand = imageCommand;
-
         mCameraCommandExecutor.execute(new LoggingCameraCommand(new CameraCommand() {
             @Override
             public void run() throws InterruptedException, CameraAccessException,
                     CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
                 boolean failed = true;
                 try {
-                    finalImageCommand.run(imageExposureCallback, imageSaver);
+                    mCommand.run(imageExposureCallback, imageSaver);
                     failed = false;
                 } catch (Exception e) {
                     failureCallback.update(null);

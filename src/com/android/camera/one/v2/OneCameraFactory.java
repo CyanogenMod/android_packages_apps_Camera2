@@ -16,7 +16,7 @@
 
 package com.android.camera.one.v2;
 
-import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
@@ -27,7 +27,7 @@ import com.android.camera.util.Size;
 public interface OneCameraFactory {
     OneCamera createOneCamera(CameraDeviceProxy cameraDevice,
             OneCameraCharacteristics characteristics,
-            MainThreadExecutor mainThreadExecutor,
+            MainThread mainThread,
             Size pictureSize,
             ImageSaver.Builder imageSaverBuilder,
             Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting);
