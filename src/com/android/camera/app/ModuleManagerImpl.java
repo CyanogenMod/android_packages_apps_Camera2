@@ -37,7 +37,17 @@ public class ModuleManagerImpl implements ModuleManager {
             SparseArray<ModuleAgent>(2);
     private int mDefaultModuleId = MODULE_INDEX_NONE;
 
-    public ModuleManagerImpl() {
+    private static ModuleManagerImpl sInstance;
+
+    private ModuleManagerImpl() {
+    }
+
+    public static ModuleManagerImpl getInstance() {
+        if (sInstance == null) {
+            sInstance = new ModuleManagerImpl();
+        }
+
+        return sInstance;
     }
 
     @Override
@@ -51,9 +61,10 @@ public class ModuleManagerImpl implements ModuleManager {
                     "ModuleManager: The module ID can not be " + "MODULE_INDEX_NONE");
         }
         if (mRegisteredModuleAgents.get(moduleId) != null) {
-            throw new IllegalArgumentException("Module ID is registered already:" + moduleId);
+            Log.d(TAG, "Module ID is registered already:" + moduleId);
+        } else {
+            mRegisteredModuleAgents.put(moduleId, agent);
         }
-        mRegisteredModuleAgents.put(moduleId, agent);
     }
 
     @Override
