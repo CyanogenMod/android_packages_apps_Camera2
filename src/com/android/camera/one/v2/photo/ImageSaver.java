@@ -20,13 +20,16 @@ import android.location.Location;
 
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.Updatable;
+import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 public interface ImageSaver {
     public interface Builder {
-        public ImageSaver build(OrientationManager.DeviceOrientation orientation,
-                                final CaptureSession session);
+        public ImageSaver build(
+                OneCamera.PictureSaverCallback pictureSaverCallback,
+                OrientationManager.DeviceOrientation orientation,
+                final CaptureSession session);
     }
 
     /**

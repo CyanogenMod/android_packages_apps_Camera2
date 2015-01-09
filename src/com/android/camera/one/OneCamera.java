@@ -17,6 +17,7 @@
 package com.android.camera.one;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.view.Surface;
@@ -179,6 +180,22 @@ public interface OneCamera {
     }
 
     /**
+     * A class implementing this interface can be passed to a picture saver
+     * in order to receive image processing events.
+     */
+    public static interface PictureSaverCallback {
+        /**
+         * Called when start generating a thumbnail image.
+         */
+        public void onThumbnailProcessingBegun();
+
+        /**
+         * Called when a thumbnail image is available.
+         */
+        public void onThumbnailAvailable(Bitmap thumbnailBitmap, int rotation);
+    }
+
+    /**
      * Classes implementing this interface will be called when the state of the
      * focus changes. Guaranteed not to stay stuck in scanning state past some
      * reasonable timeout even if Camera API is stuck.
@@ -289,6 +306,7 @@ public interface OneCamera {
 
         /** Called when the capture is completed or failed. */
         public final PictureCallback callback;
+        public final PictureSaverCallback saverCallback;
         /** The heading of the device at time of capture. In degrees. */
         public final int heading;
         /** Flash mode for this capture. */
@@ -299,10 +317,11 @@ public interface OneCamera {
         public final float timerSeconds;
 
         public PhotoCaptureParameters(String title, int orientation, Location location, File
-                debugDataFolder, PictureCallback callback, int heading,
-                Flash flashMode, float zoom, float timerSeconds) {
+                debugDataFolder, PictureCallback callback, PictureSaverCallback saverCallback,
+                int heading, Flash flashMode, float zoom, float timerSeconds) {
             super(title, orientation, location, debugDataFolder);
             this.callback = callback;
+            this.saverCallback = saverCallback;
             this.heading = heading;
             this.flashMode = flashMode;
             this.zoom = zoom;

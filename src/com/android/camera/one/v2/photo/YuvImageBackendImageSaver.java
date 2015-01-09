@@ -19,6 +19,7 @@ import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.processing.imagebackend.ImageBackend;
@@ -59,7 +60,9 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
      * @return Instantiated interface object
      */
     @Override
-    public ImageSaver build(OrientationManager.DeviceOrientation orientation,
+    public ImageSaver build(
+            final OneCamera.PictureSaverCallback pictureSaverCallback,
+            final OrientationManager.DeviceOrientation orientation,
             final CaptureSession session) {
         final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
                 .toImageRotation(orientation);
@@ -84,17 +87,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                         // Start Animation
                         if (task.result.format
                         == TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
-                            if (imageBackend.hasValidUI()) {
-                                mExecutor.execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        imageBackend.getAppUI()
-                                                .startCaptureIndicatorRevealAnimation(
-                                                        "PUT STRING FOR REVEAL"); // FIXME
-                                                                                  // TODO
-                                    }
-                                });
-                            }
+                            pictureSaverCallback.onThumbnailProcessingBegun();
                         }
                     }
 
@@ -106,22 +99,19 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                     @Override
                     public void onResultUncompressed(TaskImageContainer.TaskInfo task,
                             TaskImageContainer.UncompressedPayload payload) {
-                        // Load bitmap into CameraAppUI
-                        if (imageBackend.hasValidUI()) {
-                            final Bitmap bitmap = Bitmap.createBitmap(payload.data,
-                                    task.result.width,
-                                    task.result.height, Bitmap.Config.ARGB_8888);
-                            mExecutor.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // TODO: Finalize and I18N string.
-                                    session.startSession(bitmap, "Saving image ...");
-                                    session.setProgress(42);
-                                    imageBackend.getAppUI().updateCaptureIndicatorThumbnail(bitmap,
-                                            imageRotation.getDegrees());
-                                }
-                            });
-                        }
+                        final Bitmap bitmap = Bitmap.createBitmap(payload.data,
+                                task.result.width,
+                                task.result.height, Bitmap.Config.ARGB_8888);
+                        pictureSaverCallback.onThumbnailAvailable(bitmap, imageRotation.getDegrees());
+
+                        mExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                // TODO: Finalize and I18N string.
+                                session.startSession(bitmap, "Saving image ...");
+                                session.setProgress(42);
+                            }
+                        });
 
                         // Remove yourself from the listener
                         listenerProxy.unregisterListener(this);

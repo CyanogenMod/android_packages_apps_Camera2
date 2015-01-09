@@ -121,57 +121,6 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         mImageSemaphoreMap = new HashMap<>();
     }
 
-    // REMOVE When plumbed properly
-
-    /**
-     * Receiver to a valid UI that can handle events started by the
-     * ImageBackend.
-     */
-    private CameraAppUI mCameraAppUI;
-
-    // REMOVE When plumbed properly
-
-    /**
-     * Returns whether the ImageBackend has a valid handle to UI event handler.
-     * NOTE: there are still synchronization issues
-     *
-     * @return whether the ImageBackend has a valid handle to UI event handler
-     */
-    public synchronized boolean hasValidUI() {
-        return (mCameraAppUI != null);
-    }
-
-    // REMOVE When plumbed properly
-
-    /**
-     * Setter for a valid UI handle. Should be called when the Activity has
-     * created or resumed its UI Handler.
-     *
-     * @param cameraAppUI
-     */
-    public synchronized void registerAppUI(CameraAppUI cameraAppUI) {
-        mCameraAppUI = cameraAppUI;
-    }
-
-    // REMOVE When plumbed properly
-    /**
-     * Invalidates the UI Handle.  Should be called when the Activity has destroyed or paused its UI Handler.
-     */
-    public synchronized void unregisterAppUI() {
-        mCameraAppUI = null;
-    }
-
-    // REMOVE When plumbed properly
-
-    /**
-     * Getter for Valid UI Handler
-     * @return Valid UI Handler.  If null, there is no valid UI Handler.
-     */
-    public synchronized CameraAppUI getAppUI() {
-        return mCameraAppUI;
-    }
-
-
     /**
      * Simple getter for the associated listener object associated with this
      * instantiation that handles registration of events listeners.

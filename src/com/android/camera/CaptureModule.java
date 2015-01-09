@@ -19,6 +19,7 @@ package com.android.camera;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -250,6 +251,30 @@ public class CaptureModule extends CameraModule implements
         }
     };
 
+    private OneCamera.PictureSaverCallback mPictureSaverCallback = new OneCamera.PictureSaverCallback() {
+        @Override
+        public void onThumbnailProcessingBegun() {
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAppController.getCameraAppUI().startCaptureIndicatorRevealAnimation(
+                            getPeekAccessibilityString());
+                }
+            });
+        }
+
+        @Override
+        public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAppController.getCameraAppUI().updateCaptureIndicatorThumbnail(
+                            thumbnailBitmap, rotation);
+                }
+            });
+        }
+    };
+
   /** State by the module state machine. */
     private static enum ModuleState {
         IDLE,
@@ -440,7 +465,7 @@ public class CaptureModule extends CameraModule implements
         // the SessionStorage API. Need to sync with gcam if that's OK.
         PhotoCaptureParameters params = new PhotoCaptureParameters(
                 session.getTitle(), orientation, session.getLocation(),
-                mContext.getExternalCacheDir(), this,
+                mContext.getExternalCacheDir(), this, mPictureSaverCallback,
                 mHeading, getFlashModeFromSettings(), mZoomValue, 0);
 
         mCamera.takePicture(params, session);
