@@ -499,6 +499,9 @@ public class VideoModule extends CameraModule
         new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
+                if (mPaused) {
+                    return;
+                }
                 // Update flash parameters.
                 enableTorchMode(true);
             }
