@@ -24,9 +24,6 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.MediaActionSound;
@@ -55,6 +52,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.Rational;
 import com.android.camera.hardware.HardwareSpec;
+import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.AutoFocusState;
@@ -107,8 +105,7 @@ public class CaptureModule extends CameraModule implements
         OneCamera.PictureCallback,
         OneCamera.FocusStateListener,
         OneCamera.ReadyStateChangedListener,
-        RemoteCameraModule,
-        SensorEventListener {
+        RemoteCameraModule {
 
     private static final Tag TAG = new Tag("CaptureModule");
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
@@ -292,21 +289,8 @@ public class CaptureModule extends CameraModule implements
     /** Records beginning time of each AF scan in uptimeMillis. */
     private long mAutoFocusScanStartTime;
 
-    /** Sensor manager we use to get the heading of the device. */
-    private SensorManager mSensorManager;
-    /** Accelerometer. */
-    private Sensor mAccelerometerSensor;
-    /** Compass. */
-    private Sensor mMagneticSensor;
-
-    /** Accelerometer data. */
-    private final float[] mGData = new float[3];
-    /** Magnetic sensor data. */
-    private final float[] mMData = new float[3];
-    /** Temporary rotation matrix. */
-    private final float[] mR = new float[16];
-    /** Current compass heading. */
-    private int mHeading = -1;
+    /** Heading sensor. */
+    private HeadingSensor mHeadingSensor;
 
     /** Used to fetch and embed the location into captured images. */
     private final LocationManager mLocationManager;
@@ -393,9 +377,8 @@ public class CaptureModule extends CameraModule implements
                 mAppController.getCameraAppUI().getSurfaceWidth(),
                 mAppController.getCameraAppUI().getSurfaceHeight());
 
-        mSensorManager = (SensorManager) (mContext.getSystemService(Context.SENSOR_SERVICE));
-        mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mHeadingSensor = new HeadingSensor(
+                (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE));
 
         View cancelButton = activity.findViewById(R.id.shutter_cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -466,7 +449,7 @@ public class CaptureModule extends CameraModule implements
         PhotoCaptureParameters params = new PhotoCaptureParameters(
                 session.getTitle(), orientation, session.getLocation(),
                 mContext.getExternalCacheDir(), this, mPictureSaverCallback,
-                mHeading, getFlashModeFromSettings(), mZoomValue, 0);
+                mHeadingSensor.getCurrentHeading(), getFlashModeFromSettings(), mZoomValue, 0);
 
         mCamera.takePicture(params, session);
     }
@@ -525,37 +508,6 @@ public class CaptureModule extends CameraModule implements
     }
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        // This is literally the same as the GCamModule implementation.
-        int type = event.sensor.getType();
-        float[] data;
-        if (type == Sensor.TYPE_ACCELEROMETER) {
-            data = mGData;
-        } else if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-            data = mMData;
-        } else {
-            Log.w(TAG, String.format("Unexpected sensor type %s", event.sensor.getName()));
-            return;
-        }
-        for (int i = 0; i < 3; i++) {
-            data[i] = event.values[i];
-        }
-        float[] orientation = new float[3];
-        SensorManager.getRotationMatrix(mR, null, mGData, mMData);
-        SensorManager.getOrientation(mR, orientation);
-        mHeading = (int) (orientation[0] * 180f / Math.PI) % 360;
-
-        if (mHeading < 0) {
-            mHeading += 360;
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     public void onRemoteShutterPress() {
         Log.d(TAG, "onRemoteShutterPress");
         // TODO: Check whether shutter is enabled.
@@ -610,15 +562,6 @@ public class CaptureModule extends CameraModule implements
         mAppController.getCameraAppUI().enableModeOptions();
         mAppController.setShutterEnabled(true);
 
-        // Get events from the accelerometer and magnetic sensor.
-        if (mAccelerometerSensor != null) {
-            mSensorManager.registerListener(this, mAccelerometerSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        }
-        if (mMagneticSensor != null) {
-            mSensorManager.registerListener(this, mMagneticSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        }
         mHdrEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS) == 1;
 
@@ -637,6 +580,8 @@ public class CaptureModule extends CameraModule implements
 
         mSoundPlayer.loadSound(R.raw.timer_final_second);
         mSoundPlayer.loadSound(R.raw.timer_increment);
+
+        mHeadingSensor.activate();
 
         if (mFirstRunDialog.shouldShow()) {
             mFirstRunDialog.setListener(new FirstRunDialog.FirstRunDialogListener() {
@@ -664,6 +609,8 @@ public class CaptureModule extends CameraModule implements
     @Override
     public void pause() {
         mPaused = true;
+        mHeadingSensor.deactivate();
+
         mAppController.removePreviewAreaSizeChangedListener(mUI);
         mAppController.removePreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         getServices().getRemoteShutterListener().onModuleExit();
@@ -676,14 +623,6 @@ public class CaptureModule extends CameraModule implements
         mSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
         mMainHandler.removeCallbacksAndMessages(null);
-
-        // Unregister the sensors.
-        if (mAccelerometerSensor != null) {
-            mSensorManager.unregisterListener(this, mAccelerometerSensor);
-        }
-        if (mMagneticSensor != null) {
-            mSensorManager.unregisterListener(this, mMagneticSensor);
-        }
     }
 
     @Override
