@@ -1657,10 +1657,12 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         return new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int state) {
-                if (Keys.areGridLinesOn(mController.getSettingsManager())) {
-                    showGridLines();
-                } else {
-                    hideGridLines();
+                if (!mController.isPaused()) {
+                    if (Keys.areGridLinesOn(mController.getSettingsManager())) {
+                        showGridLines();
+                    } else {
+                        hideGridLines();
+                    }
                 }
             }
         };
