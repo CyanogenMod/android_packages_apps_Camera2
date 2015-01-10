@@ -57,6 +57,7 @@ import com.android.camera.exif.ExifTag;
 import com.android.camera.exif.Rational;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
+import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.CameraPictureSizesCacher;
@@ -102,7 +103,6 @@ public class PhotoModule
         ModuleController,
         MemoryListener,
         FocusOverlayManager.Listener,
-        SensorEventListener,
         SettingsManager.OnSettingChangedListener,
         RemoteCameraModule,
         CountDownView.OnCountDownStatusListener {
@@ -243,14 +243,11 @@ public class PhotoModule
     private final Handler mHandler = new MainHandler(this);
 
     private boolean mQuickCapture;
-    private SensorManager mSensorManager;
-    private final float[] mGData = new float[3];
-    private final float[] mMData = new float[3];
-    private final float[] mR = new float[16];
-    private int mHeading = -1;
 
     /** Used to detect motion. We use this to release focus lock early. */
     private MotionManager mMotionManager;
+
+    private HeadingSensor mHeadingSensor;
 
     /** True if all the parameters needed to start preview is ready. */
     private boolean mCameraPreviewParamsReady = false;
@@ -436,7 +433,8 @@ public class PhotoModule
         mIsImageCaptureIntent = isImageCaptureIntent();
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mSensorManager = (SensorManager) (mActivity.getSystemService(Context.SENSOR_SERVICE));
+        mHeadingSensor = new HeadingSensor(
+                (SensorManager) mActivity.getSystemService(Context.SENSOR_SERVICE));
         mUI.setCountdownFinishedListener(this);
         mCountdownSoundPlayer = new SoundPlayer(mAppController.getAndroidContext());
 
@@ -1094,14 +1092,15 @@ public class PhotoModule
                     if (date == -1) {
                         date = mCaptureStartTime;
                     }
-                    if (mHeading >= 0) {
+                    int heading = mHeadingSensor.getCurrentHeading();
+                    if (heading != HeadingSensor.INVALID_HEADING) {
                         // heading direction has been updated by the sensor.
                         ExifTag directionRefTag = exif.buildTag(
                                 ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
                                 ExifInterface.GpsTrackRef.MAGNETIC_DIRECTION);
                         ExifTag directionTag = exif.buildTag(
                                 ExifInterface.TAG_GPS_IMG_DIRECTION,
-                                new Rational(mHeading, 1));
+                                new Rational(heading, 1));
                         exif.setTag(directionRefTag);
                         exif.setTag(directionTag);
                     }
@@ -1557,15 +1556,7 @@ public class PhotoModule
             initializeSecondTime();
         }
 
-        Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (gsensor != null) {
-            mSensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-
-        Sensor msensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        if (msensor != null) {
-            mSensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
+        mHeadingSensor.activate();
 
         getServices().getRemoteShutterListener().onModuleReady(this);
         SessionStatsCollector.instance().sessionActive(true);
@@ -1630,15 +1621,7 @@ public class PhotoModule
         getServices().getRemoteShutterListener().onModuleExit();
         SessionStatsCollector.instance().sessionActive(false);
 
-        Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (gsensor != null) {
-            mSensorManager.unregisterListener(this, gsensor);
-        }
-
-        Sensor msensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        if (msensor != null) {
-            mSensorManager.unregisterListener(this, msensor);
-        }
+        mHeadingSensor.deactivate();
 
         // Reset the focus first. Camera CTS does not guarantee that
         // cancelAutoFocus is allowed after preview stops.
@@ -2322,34 +2305,6 @@ public class PhotoModule
     @Override
     public void onLowMemory() {
         // Not much we can do in the photo module.
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        int type = event.sensor.getType();
-        float[] data;
-        if (type == Sensor.TYPE_ACCELEROMETER) {
-            data = mGData;
-        } else if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-            data = mMData;
-        } else {
-            // we should not be here.
-            return;
-        }
-        for (int i = 0; i < 3; i++) {
-            data[i] = event.values[i];
-        }
-        float[] orientation = new float[3];
-        SensorManager.getRotationMatrix(mR, null, mGData, mMData);
-        SensorManager.getOrientation(mR, orientation);
-        mHeading = (int) (orientation[0] * 180f / Math.PI) % 360;
-        if (mHeading < 0) {
-            mHeading += 360;
-        }
     }
 
     // For debugging only.
