@@ -15,7 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="app_name">کامێرا</string>
   <string name="video_camera_label">کۆدەری کامێرا</string>
   <string name="details_ms">%1$02d:%2$02d</string>
   <string name="details_hms">%1$d:%2$02d:%3$02d</string>
@@ -27,12 +26,7 @@
   <string name="deleted">سڕایەوە</string>
   <string name="undo">نه‌کردن</string>
   <string name="details">وردەکاریی</string>
-  <string name="close">داخستن</string>
   <plurals name="number_of_items_selected">
-    <item quantity="one">%1$d دیارییکرا</item>
-    <item quantity="other">%1$d دیارییکرا</item>
-  </plurals>
-  <plurals name="number_of_groups_selected">
     <item quantity="one">%1$d دیارییکرا</item>
     <item quantity="other">%1$d دیارییکرا</item>
   </plurals>
@@ -48,12 +42,10 @@
 وێنە بڕاوەکه‌ له‌ <xliff:g id="folder_name">%s</xliff:g> دا پاشه‌که‌وت کرا.</string>
   <string name="title">ناونیشان</string>
   <string name="description">پێناسه</string>
-  <string name="time">کات</string>
   <string name="location">شوێن</string>
   <string name="path">ڕێچکە</string>
   <string name="width">پانیی</string>
   <string name="height">بەرزیی</string>
-  <string name="orientation">باری پیشاندان</string>
   <string name="duration">ماوه‌</string>
   <string name="mimetype">جۆری MIME</string>
   <string name="file_size">قەبارەی پەڕگە</string>
@@ -70,7 +62,6 @@
   <string name="auto">خۆکار</string>
   <string name="flash_on">فلاش لێدان</string>
   <string name="flash_off">بێ فلاش</string>
-  <string name="unknown">نەناسراو</string>
   <string name="try_to_set_local_album_available_offline">
 ئەم بڕگەیە له‌ ناوخۆدا پاشەکەوتکراوە و به‌بێ هێڵیش به‌رده‌سته‌.</string>
   <string name="please_wait">تکایه‌ چاوه‌ڕێبه‌</string>
@@ -170,7 +161,6 @@
   <string name="pref_camera_hdr_label">HDR</string>
   <string name="pref_camera_id_label_back">کامێرای پێشەوە</string>
   <string name="pref_camera_id_label_front">کامێرای دواوە</string>
-  <string name="dialog_ok">باشه‌</string>
   <string name="spaceIsLow_content" product="default">بیرگه‌که‌ت بۆشایی تێدا نه‌ماوه‌. ڕێکخستنی جۆرایه‌تی بگۆڕه‌ یان چه‌ند وێنه‌ و فایلێک بسڕه‌وه‌.</string>
   <string name="video_reach_size_limit">قەبارەی دیاریکراو تێپەڕیوە.</string>
   <string name="pano_too_fast_prompt">زۆر خێرا</string>
@@ -183,7 +173,6 @@
   <string name="pano_review_rendering">کارپێکردنی پانۆراما</string>
   <string name="tap_to_focus">په‌نجه‌ی سه‌رنج داگره‌.</string>
   <string name="pref_video_effect_title">کاریگه‌رییه‌کان</string>
-  <string name="effect_none">هیچ</string>
   <string name="effect_goofy_face_squeeze">گوشین</string>
   <string name="effect_goofy_face_big_eyes">چاوی گەورە</string>
   <string name="effect_goofy_face_big_mouth">دەمی گەورە</string>
@@ -191,7 +180,6 @@
   <string name="effect_goofy_face_big_nose">لوتی گەورە</string>
   <string name="effect_goofy_face_small_eyes">چاوی بچوک</string>
   <string name="effect_backdropper_space">لە بۆشایی</string>
-  <string name="effect_backdropper_sunset">خۆراوا</string>
   <string name="effect_backdropper_gallery">ڤیدیۆکه‌ت</string>
   <string name="video_snapshot_hint">له‌ کاتی تۆمارکردندا ده‌ستی لێده‌ بۆ وێنه‌گرتن.</string>
   <string name="video_recording_started">تۆمارکردنی ڤیدیۆ دەستی پێکردووه‌.</string>

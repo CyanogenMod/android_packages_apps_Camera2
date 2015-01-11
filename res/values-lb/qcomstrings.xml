@@ -43,7 +43,7 @@
   <string name="pref_camera_redeyereduction_title">Reduktioun vu rouden Aen</string>
   <string name="error_app_unsupported_hfr_selection">HFR gëtt net ënnerstëtzt wann d\'Videostabiliséierung, en Zäitraffer oder HDR-Video un ass</string>
   <string name="error_app_unsupported_hfr">HFR gëtt bei der gewieltener Opléisung net ënnerstëtzt</string>
-  <string name="error_app_unsupported_hfr_codec">Am HFR-Modus gëtt d\'Videokodéierung just mat H.264 ënnerstëtzt</string>
+  <string name="error_app_unsupported_hfr_codec">Am HFR-Modus gëtt d\'Videocodéierung just mat H.264 ënnerstëtzt</string>
   <string name="error_app_unsupported">Déi ausgewielten Opléisung gëtt vun dësem Codec net ënnerstëtzt</string>
   <string name="error_app_unsupported_dis">Videostabiliséierung gëtt fir déi gewielten Opléisung net ënnerstëtzt</string>
   <string name="pref_camera_ae_bracket_hdr_title">Beliichtungsrei</string>

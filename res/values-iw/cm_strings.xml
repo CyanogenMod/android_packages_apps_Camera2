@@ -18,22 +18,30 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_picturesize_entry_20_7mp">20.7 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_18mp">18 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_15_9mp_wide">15.9 מגה פיקסל (16:9)</string>
   <string name="pref_camera_picturesize_entry_12_8mp">12.8 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_12_7mp">12.7 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_12mp">12 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_11_9mp">11.9 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_11_5mp">11.5 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_10_4mp">10.4 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_10mp">10 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_9_7mp_wide">9.7 מגה פיקסל (16:9)</string>
   <string name="pref_camera_picturesize_entry_9mp">9 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_8_2mp_wide">8.2 מגה פיקסל (16:9)</string>
   <string name="pref_camera_picturesize_entry_7_7mp">7.7 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_6_4mp">6.4 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_6mp_wide">6 מגה פיקסל (16:9)</string>
   <string name="pref_camera_picturesize_entry_4_5mp">4.5 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_4mp">4 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_3_7mp_wide">3.7 מגה פיקסל (16:9)</string>
   <string name="pref_camera_picturesize_entry_2_5mp">2.5 מגה פיקסל</string>
+  <string name="pref_camera_picturesize_entry_2_1mp_wide">2.1 מגה פיקסל (16:9)</string>
   <string name="pref_camera_picturesize_entry_1_9mp">1.9 מגה פיקסל</string>
   <string name="pref_camera_picturesize_entry_wxga">WXGA</string>
   <string name="pref_camera_picturesize_entry_xga">XGA</string>
   <string name="pref_camera_picturesize_entry_svga">SVGA</string>
+  <string name="pref_camera_picturesize_entry_nhd_wide">nHD (16:9)</string>
   <string name="pref_camera_picturesize_entry_wvga">WVGA</string>
   <string name="pref_camera_picturesize_entry_wqvga">WQVGA</string>
   <string name="pref_camera_scenemode_entry_antimotionblur">הפחתת טשטוש תנועה</string>
@@ -125,5 +133,6 @@
   <string name="camera_menu_beauty_mode_label">יפייף</string>
   <string name="camera_menu_asd_label">סצנה חכמה</string>
   <string name="pref_camera_power_shutter_title">לחצן צילום</string>
+  <string name="pref_camera_max_brightness_title">מסך בהיר</string>
   <string name="pref_superzoom_title">הגדל</string>
 </resources>

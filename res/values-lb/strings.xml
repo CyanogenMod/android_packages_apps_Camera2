@@ -88,7 +88,7 @@
   <string name="wait">Waart w.e.g.\u2026</string>
   <string name="no_storage" product="default">Maach eng SD-Kaart dran ier s du d\'Kamera benotzt.</string>
   <string name="preparing_sd" product="default">SD-Kaart gëtt preparéiert\u2026</string>
-  <string name="access_sd_fail" product="default">Keen Zougrëff op USB-Späicher méiglech.</string>
+  <string name="access_sd_fail" product="default">Keen Zougrëff op d\'SD-Kaart méiglech.</string>
   <string name="time_lapse_title">Zäitrafferopnam</string>
   <string name="capturing">Gëtt opgeholl</string>
   <string name="pref_camera_id_title">Kamera auswielen</string>
@@ -159,12 +159,12 @@
   <string name="pref_camera_scenemode_entry_turn_hdr_plus_off">HDR+ AUS</string>
   <string name="pref_camera_scenemode_entry_turn_hdr_on">HDR UN</string>
   <string name="pref_camera_scenemode_entry_turn_hdr_off">HDR AUS</string>
-  <string name="pref_camera_scenemode_entry_action">Action</string>
+  <string name="pref_camera_scenemode_entry_action">Aktioun</string>
   <string name="pref_camera_scenemode_entry_night">Nuecht</string>
   <string name="pref_camera_scenemode_entry_sunset">Sonnenënnergank</string>
   <string name="pref_camera_scenemode_entry_party">Party</string>
   <string name="pref_camera_scenemode_label_auto">KEEN</string>
-  <string name="pref_camera_scenemode_label_action">ACTION</string>
+  <string name="pref_camera_scenemode_label_action">AKTIOUN</string>
   <string name="pref_camera_scenemode_label_night">NUECHT</string>
   <string name="pref_camera_scenemode_label_sunset">SONNENËNNERGANK</string>
   <string name="pref_camera_scenemode_label_party">PARTY</string>

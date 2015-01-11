@@ -42,7 +42,7 @@
   <string name="pref_camera_facedetection_title">人臉檢測</string>
   <string name="pref_camera_redeyereduction_title">消除紅眼</string>
   <string name="error_app_unsupported_hfr_selection">當啟用影片防震、延時錄影或 HDR 影片時，無法使用 HFR</string>
-  <string name="error_app_unsupported_hfr">HFR 不支持所選則的解像度</string>
+  <string name="error_app_unsupported_hfr">HFR 不支持所選的解像度</string>
   <string name="error_app_unsupported_hfr_codec">當 HFR 開啟時只支援 H.264 視頻編碼</string>
   <string name="error_app_unsupported">影片解像度不支援此編碼器類型</string>
   <string name="error_app_unsupported_dis">影片防震不支援所選的解像度</string>
@@ -99,7 +99,7 @@
   <string name="pref_camera_touchafaec_title">輕觸 AF/AEC</string>
   <string name="pref_camera_dis_title">影片防震</string>
   <string name="pref_camera_facerc_title">人臉識別</string>
-  <string name="pref_camera_sharpness_title">銳度</string>
+  <string name="pref_camera_sharpness_title">銳利度</string>
   <string name="pref_camera_sharpness_entry_level0">0 級</string>
   <string name="pref_camera_sharpness_entry_level1">1 級</string>
   <string name="pref_camera_sharpness_entry_level2">2 級（預設值）</string>
@@ -131,7 +131,7 @@
   <string name="pref_camera_saturation_entry_level8">8 級</string>
   <string name="pref_camera_saturation_entry_level9">9 級</string>
   <string name="pref_camera_saturation_entry_level10">10 級</string>
-  <string name="pref_camera_picture_format_title">圖片格式</string>
+  <string name="pref_camera_picture_format_title">相片格式</string>
   <string name="pref_camera_jpegquality_title">相片品質</string>
   <string name="pref_camera_jpegquality_entry_0">55%</string>
   <string name="pref_camera_jpegquality_entry_1">65% (一般)</string>
