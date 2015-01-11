@@ -99,8 +99,4 @@ public class ApiHelper {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 || "L".equals(Build.VERSION.CODENAME);
     }
-
-    public static boolean shouldShowAspectRatioDialog() {
-        return IS_NEXUS_4 || IS_NEXUS_5 || IS_NEXUS_6;
-    }
 }

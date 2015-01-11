@@ -20,6 +20,10 @@ import com.android.camera.exif.Rational;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
+import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -370,4 +374,15 @@ public class ResolutionUtil {
         }
         return maxSize;
     }
+
+    public static DisplayMetrics getDisplayMetrics(Context context) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager)
+                context.getSystemService(Context.WINDOW_SERVICE);
+        if (wm != null) {
+            wm.getDefaultDisplay().getMetrics(displayMetrics);
+        }
+        return displayMetrics;
+    }
+
 }

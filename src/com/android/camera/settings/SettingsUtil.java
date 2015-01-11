@@ -148,26 +148,6 @@ public class SettingsUtil {
             new SparseArray<SelectedVideoQualities>(2);
 
     /**
-     * Based on the selected size, this method selects the matching concrete
-     * resolution and sets it as the picture size.
-     *
-     * @param sizeSetting The setting selected by the user. One of "large",
-     *            "medium, "small" or two integers separated by "x".
-     * @param supported The list of supported resolutions.
-     * @param settings The Camera settings to set the selected picture
-     *            resolution on.
-     * @param cameraId This is used for caching the results for finding the
-     *            different sizes.
-     */
-    public static void setCameraPictureSize(String sizeSetting, List<Size> supported,
-            CameraSettings settings, int cameraId) {
-        Size selectedSize = getCameraPictureSize(sizeSetting, supported, cameraId);
-        Log.d(TAG, "Selected " + sizeSetting + " resolution: " + selectedSize.getWidth() + "x" +
-                selectedSize.getHeight());
-        settings.setPhotoSize(selectedSize.toPortabilitySize());
-    }
-
-    /**
      * Based on the selected size, this method returns the matching concrete
      * resolution.
      *

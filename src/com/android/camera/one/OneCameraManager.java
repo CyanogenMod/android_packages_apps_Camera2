@@ -16,19 +16,16 @@
 
 package com.android.camera.one;
 
-import android.content.Context;
-import android.hardware.camera2.CameraManager;
+import com.google.common.base.Optional;
+
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.view.WindowManager;
 
 import com.android.camera.CameraActivity;
-import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
-import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 /**
@@ -83,8 +80,9 @@ public abstract class OneCameraManager {
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
      */
-    public static OneCameraManager get(CameraActivity activity) throws OneCameraException {
-        return create(activity);
+    public static OneCameraManager get(CameraActivity activity, DisplayMetrics displayMetrics)
+            throws OneCameraException {
+        return create(activity, displayMetrics);
     }
 
     /**
@@ -93,32 +91,16 @@ public abstract class OneCameraManager {
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
      */
-    private static OneCameraManager create(CameraActivity activity) throws OneCameraException {
-        DisplayMetrics displayMetrics = getDisplayMetrics(activity);
-        CameraManager cameraManager = null;
-
-        try {
-            cameraManager = ApiHelper.HAS_CAMERA_2_API ? (CameraManager) activity
-                    .getSystemService(Context.CAMERA_SERVICE) : null;
-        } catch (IllegalStateException ex) {
-            cameraManager = null;
-            Log.e(TAG, "Could not get camera service v2", ex);
+    private static OneCameraManager create(CameraActivity activity, DisplayMetrics displayMetrics)
+            throws OneCameraException {
+        Optional<OneCameraManager> manager =
+                com.android.camera.one.v2.OneCameraManagerImpl.create(activity, displayMetrics);
+        if (!manager.isPresent()) {
+            manager = com.android.camera.one.v1.OneCameraManagerImpl.create(activity);
         }
-        int maxMemoryMB = activity.getServices().getMemoryManager()
-                .getMaxAllowedNativeMemoryAllocation();
-        return new com.android.camera.one.v2.OneCameraManagerImpl(
-                activity, cameraManager, maxMemoryMB,
-                displayMetrics, activity.getSoundPlayer());
-    }
-
-    private static DisplayMetrics getDisplayMetrics(Context context) {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager)
-                context.getSystemService(Context.WINDOW_SERVICE);
-        if (wm != null) {
-            displayMetrics = new DisplayMetrics();
-            wm.getDefaultDisplay().getMetrics(displayMetrics);
+        if (!manager.isPresent()) {
+            throw new OneCameraException("No camera manager is available.");
         }
-        return displayMetrics;
+        return manager.get();
     }
 }

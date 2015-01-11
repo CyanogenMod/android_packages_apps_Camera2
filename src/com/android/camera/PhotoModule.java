@@ -24,9 +24,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.CameraProfile;
@@ -59,12 +56,13 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
+import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.CameraPictureSizesCacher;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
@@ -269,43 +267,6 @@ public class PhotoModule
      */
     private String mFlashModeBeforeSceneMode;
 
-    /**
-     * This callback gets called when user select whether or not to
-     * turn on geo-tagging.
-     */
-    public interface LocationDialogCallback {
-        /**
-         * Gets called after user selected/unselected geo-tagging feature.
-         *
-         * @param selected whether or not geo-tagging feature is selected
-         */
-        public void onLocationTaggingSelected(boolean selected);
-    }
-
-    /**
-     * This callback defines the text that is shown in the aspect ratio selection
-     * dialog, provides the current aspect ratio, and gets notified when user changes
-     * aspect ratio selection in the dialog.
-     */
-    public interface AspectRatioDialogCallback {
-        /**
-         * Returns current aspect ratio that is being used to set as default.
-         */
-        public Rational getCurrentAspectRatio();
-
-        /**
-         * Gets notified when user has made the aspect ratio selection.
-         *
-         * @param chosenAspectRatio The aspect ratio that user has selected
-         * @param dialogHandlingFinishedRunnable runnable to run when the operations
-         *                                       needed to handle changes from dialog
-         *                                       are finished.
-         */
-        public void onAspectRatioSelected(
-                Rational chosenAspectRatio,
-                Runnable dialogHandlingFinishedRunnable);
-    }
-
     private void checkDisplayRotation() {
         // Need to just be a no-op for the quick resume-pause scenario.
         if (mPaused) {
@@ -475,95 +436,6 @@ public class PhotoModule
         mAppController.setShutterEnabled(true);
         setCameraState(IDLE);
         startFaceDetection();
-        settingsFirstRun();
-    }
-
-    /**
-     * Prompt the user to pick to record location and choose aspect ratio for the
-     * very first run of camera only.
-     */
-    private void settingsFirstRun() {
-        final SettingsManager settingsManager = mActivity.getSettingsManager();
-
-        if (mActivity.isSecureCamera() || isImageCaptureIntent()) {
-            return;
-        }
-
-        boolean locationPrompt = !settingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
-                                                        Keys.KEY_RECORD_LOCATION);
-        boolean aspectRatioPrompt = !settingsManager.getBoolean(
-            SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
-        if (!locationPrompt && !aspectRatioPrompt) {
-            return;
-        }
-
-        // Check if the back camera exists
-        int backCameraId = mAppController.getCameraProvider().getFirstBackCameraId();
-        if (backCameraId == -1) {
-            // If there is no back camera, do not show the prompt.
-            return;
-        }
-
-        if (locationPrompt) {
-            // Show both location and aspect ratio selection dialog.
-            mUI.showLocationAndAspectRatioDialog(new LocationDialogCallback(){
-                @Override
-                public void onLocationTaggingSelected(boolean selected) {
-                    Keys.setLocation(mActivity.getSettingsManager(), selected,
-                                     mActivity.getLocationManager());
-                }
-            }, createAspectRatioDialogCallback());
-        } else {
-            // App upgrade. Only show aspect ratio selection.
-            boolean wasShown = mUI.showAspectRatioDialog(createAspectRatioDialogCallback());
-            if (!wasShown) {
-                // If the dialog was not shown, set this flag to true so that we
-                // never have to check for it again. It means that we don't need
-                // to show the dialog on this device.
-                mActivity.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                        Keys.KEY_USER_SELECTED_ASPECT_RATIO, true);
-            }
-        }
-    }
-
-    private AspectRatioDialogCallback createAspectRatioDialogCallback() {
-        Size currentSize = new Size(mCameraSettings.getCurrentPhotoSize());
-        final Rational currentAspectRatio = ResolutionUtil.getAspectRatio(currentSize);
-        AspectRatioDialogCallback callback = new AspectRatioDialogCallback() {
-            @Override
-            public Rational getCurrentAspectRatio() {
-                return currentAspectRatio;
-            }
-
-            @Override
-            public void onAspectRatioSelected(
-                    Rational chosenAspectRatio, Runnable dialogHandlingFinishedRunnable) {
-                List<Size> supportedPhotoSizes = Size.convert(mCameraCapabilities.getSupportedPhotoSizes());
-                Size largestPictureSize = ResolutionUtil.getLargestPictureSize(
-                        chosenAspectRatio, supportedPhotoSizes);
-                mActivity.getSettingsManager().set(
-                        SettingsManager.SCOPE_GLOBAL,
-                        Keys.KEY_PICTURE_SIZE_BACK,
-                        SettingsUtil.sizeToSettingString(largestPictureSize));
-                mActivity.getSettingsManager().set(
-                        SettingsManager.SCOPE_GLOBAL,
-                        Keys.KEY_USER_SELECTED_ASPECT_RATIO,
-                        true);
-                String aspectRatio = mActivity.getSettingsManager().getString(
-                    SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_USER_SELECTED_ASPECT_RATIO);
-                Log.e(TAG, "aspect ratio after setting it to true=" + aspectRatio);
-                if (chosenAspectRatio != currentAspectRatio) {
-                    Log.i(TAG, "changing aspect ratio from dialog");
-                    stopPreview();
-                    startPreview();
-                    mUI.setRunnableForNextFrame(dialogHandlingFinishedRunnable);
-                } else {
-                    mHandler.post(dialogHandlingFinishedRunnable);
-                }
-            }
-        };
-        return callback;
     }
 
     @Override
@@ -2053,21 +1925,22 @@ public class PhotoModule
             return;
         }
 
-        SettingsManager settingsManager = mActivity.getSettingsManager();
-        String pictureSizeKey = isCameraFrontFacing() ? Keys.KEY_PICTURE_SIZE_FRONT
-            : Keys.KEY_PICTURE_SIZE_BACK;
-        String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL,
-                                                       pictureSizeKey);
-
-        List<com.android.camera.util.Size> supported =
-                com.android.camera.util.Size.convert(mCameraCapabilities.getSupportedPhotoSizes());
+        List<Size> supported = Size.convert(mCameraCapabilities.getSupportedPhotoSizes());
         CameraPictureSizesCacher.updateSizesForCamera(mAppController.getAndroidContext(),
                 mCameraDevice.getCameraId(), supported);
-        SettingsUtil.setCameraPictureSize(pictureSize, supported, mCameraSettings,
-                mCameraDevice.getCameraId());
 
-        Size size = SettingsUtil.getPhotoSize(pictureSize, supported,
-                mCameraDevice.getCameraId());
+        OneCamera.Facing cameraFacing =
+                isCameraFrontFacing() ? OneCamera.Facing.FRONT : OneCamera.Facing.BACK;
+        Size pictureSize;
+        try {
+            pictureSize = mAppController.getResolutionSetting().getPictureSize(cameraFacing);
+        } catch (OneCameraAccessException ex) {
+            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            return;
+        }
+
+        mCameraSettings.setPhotoSize(pictureSize.toPortabilitySize());
+
         if (ApiHelper.IS_NEXUS_5) {
             if (ResolutionUtil.NEXUS_5_LARGE_16_BY_9.equals(pictureSize)) {
                 mShouldResizeTo16x9 = true;
@@ -2080,7 +1953,7 @@ public class PhotoModule
         // the right aspect ratio.
         List<Size> sizes = Size.convert(mCameraCapabilities.getSupportedPreviewSizes());
         Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
-                (double) size.width() / size.height());
+                (double) pictureSize.width() / pictureSize.height());
         Size original = new Size(mCameraSettings.getCurrentPreviewSize());
         if (!optimalSize.equals(original)) {
             Log.v(TAG, "setting preview size. optimal: " + optimalSize + "original: " + original);

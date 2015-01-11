@@ -33,17 +33,12 @@ import android.widget.ImageView;
 
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
-import com.android.camera.exif.Rational;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.focus.FocusRing;
-import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.GservicesHelper;
-import com.android.camera.widget.AspectRatioDialogLayout;
-import com.android.camera.widget.LocationDialogLayout;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraCapabilities;
@@ -91,7 +86,6 @@ public class PhotoUI implements PreviewStatusListener,
             mDialog = null;
         }
     };
-    private Runnable mRunnableForNextFrame = null;
     private final CountDownView mCountdownView;
 
     @Override
@@ -123,13 +117,6 @@ public class PhotoUI implements PreviewStatusListener,
     @Override
     public void onPreviewFlipped() {
         mController.updateCameraOrientation();
-    }
-
-    /**
-     * Sets the runnable to run when the next frame comes in.
-     */
-    public void setRunnableForNextFrame(Runnable runnable) {
-        mRunnableForNextFrame = runnable;
     }
 
     /**
@@ -314,14 +301,6 @@ public class PhotoUI implements PreviewStatusListener,
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        if (mRunnableForNextFrame != null) {
-            mRootView.post(mRunnableForNextFrame);
-            mRunnableForNextFrame = null;
-        }
-    }
-
-    public View getRootView() {
-        return mRootView;
     }
 
     private void initIndicators() {
@@ -349,105 +328,6 @@ public class PhotoUI implements PreviewStatusListener,
         if (mController.isImageCaptureIntent()) {
             hidePostCaptureAlert();
         }
-    }
-
-    public void showLocationAndAspectRatioDialog(
-            final PhotoModule.LocationDialogCallback locationCallback,
-            final PhotoModule.AspectRatioDialogCallback aspectRatioDialogCallback) {
-        setDialog(new Dialog(mActivity,
-                android.R.style.Theme_Black_NoTitleBar_Fullscreen));
-        final LocationDialogLayout locationDialogLayout = new LocationDialogLayout(
-                mActivity, true);
-        locationDialogLayout.setListener(new LocationDialogLayout.LocationDialogListener() {
-            @Override
-            public void onConfirm(boolean selected) {
-                // Update setting.
-                locationCallback.onLocationTaggingSelected(selected);
-
-                if (showAspectRatioDialogOnThisDevice()) {
-                    // Go to next page.
-                    showAspectRatioDialog(aspectRatioDialogCallback, mDialog);
-                } else {
-                    // If we don't want to show the aspect ratio dialog,
-                    // dismiss the dialog right after the user chose the
-                    // location setting.
-                    if (mDialog != null) {
-                        mDialog.dismiss();
-                    }
-                }
-            }
-        });
-        mDialog.setContentView(locationDialogLayout, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mDialog.show();
-    }
-
-    /**
-     * Dismisses previous dialog if any, sets current dialog to the given dialog,
-     * and set the on dismiss listener for the given dialog.
-     * @param dialog dialog to show
-     */
-    private void setDialog(Dialog dialog) {
-        if (mDialog != null) {
-            mDialog.setOnDismissListener(null);
-            mDialog.dismiss();
-        }
-        mDialog = dialog;
-        if (mDialog != null) {
-            mDialog.setOnDismissListener(mOnDismissListener);
-        }
-    }
-
-    /**
-     * @return Whether the dialog was shown.
-     */
-    public boolean showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback) {
-        if (showAspectRatioDialogOnThisDevice()) {
-            setDialog(new Dialog(mActivity, android.R.style.Theme_Black_NoTitleBar_Fullscreen));
-            showAspectRatioDialog(callback, mDialog);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean showAspectRatioDialog(final PhotoModule.AspectRatioDialogCallback callback,
-            final Dialog aspectRatioDialog) {
-        if (aspectRatioDialog == null) {
-            Log.e(TAG, "Dialog for aspect ratio is null.");
-            return false;
-        }
-        final AspectRatioDialogLayout aspectRatioDialogLayout = new AspectRatioDialogLayout(
-                mActivity, callback.getCurrentAspectRatio());
-        aspectRatioDialogLayout.setListener(
-                new AspectRatioDialogLayout.AspectRatioDialogListener() {
-                    @Override
-                    public void onConfirm(Rational chosenAspectRatio) {
-                        callback.onAspectRatioSelected(chosenAspectRatio, new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mDialog != null) {
-                                    mDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-                });
-        aspectRatioDialog.setContentView(aspectRatioDialogLayout, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        aspectRatioDialog.show();
-        return true;
-    }
-
-    /**
-     * @return Whether this is a device that we should show the aspect ratio
-     *         intro dialog on.
-     */
-    private boolean showAspectRatioDialogOnThisDevice() {
-        // We only want to show that dialog on N4/N5/N6
-        // Don't show if using API2 portability, b/17462976
-        return !GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity) &&
-                (ApiHelper.IS_NEXUS_4 || ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6);
     }
 
     public void initializeZoom(CameraCapabilities capabilities, CameraSettings settings) {

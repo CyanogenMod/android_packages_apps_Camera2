@@ -16,13 +16,17 @@
 
 package com.android.camera.one.v2;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 
+import com.android.camera.CameraActivity;
 import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
 import com.android.camera.debug.Log;
@@ -34,11 +38,15 @@ import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+
+import com.google.common.base.Optional;
 
 /**
  * The {@link OneCameraManager} implementation on top of Camera2 API.
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class OneCameraManagerImpl extends OneCameraManager {
     private static final Tag TAG = new Tag("OneCameraMgrImpl2");
 
@@ -47,6 +55,25 @@ public class OneCameraManagerImpl extends OneCameraManager {
     private final int mMaxMemoryMB;
     private final DisplayMetrics mDisplayMetrics;
     private final SoundPlayer mSoundPlayer;
+
+    public static Optional<OneCameraManager> create(CameraActivity activity, DisplayMetrics displayMetrics) {
+        if (!ApiHelper.HAS_CAMERA_2_API) {
+            return Optional.absent();
+        }
+        CameraManager cameraManager;
+        try {
+            cameraManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+        } catch (IllegalStateException ex) {
+            Log.e(TAG, "camera2.CameraManager is not available.");
+            return Optional.absent();
+        }
+        final int maxMemoryMB = activity.getServices().getMemoryManager()
+                .getMaxAllowedNativeMemoryAllocation();
+        final SoundPlayer soundPlayer = activity.getSoundPlayer();
+        OneCameraManager oneCameraManager = new OneCameraManagerImpl(
+                activity, cameraManager, maxMemoryMB, displayMetrics, soundPlayer);
+        return Optional.of(oneCameraManager);
+    }
 
     /**
      * Instantiates a new {@link OneCameraManager} for Camera2 API.
