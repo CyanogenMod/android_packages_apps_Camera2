@@ -16,11 +16,10 @@
 
 package com.android.camera.one.v2;
 
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.ImageReader;
-import android.util.Range;
 import android.view.Surface;
 
 import com.android.camera.async.HandlerFactory;
@@ -43,12 +42,14 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
+import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.one.v2.photo.ImageSaver;
+import com.android.camera.one.v2.photo.YuvImageBackendImageSaver;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
-import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -63,25 +64,6 @@ public class ZslOneCameraFactory implements OneCameraFactory {
     public ZslOneCameraFactory(int imageFormat, int maxImageCount) {
         mImageFormat = imageFormat;
         mMaxImageCount = maxImageCount;
-    }
-
-    /**
-     * Slows down the requested camera frame for Nexus 5 back camera issue. This
-     * hack is for the Back Camera for Nexus 5. Requesting on full YUV frames at
-     * 30 fps causes the video preview to deliver frames out of order, mostly
-     * likely due to the overloading of the ISP, and/or image bandwith. The
-     * short-term solution is to back off the frame rate to unadvertised, valid
-     * frame rate of 24 fps. The long-term solution is to advertise this [7,24]
-     * frame rate range in the HAL and get buy-in from the manufacturer to
-     * support and CTS this feature. Then framerate process can occur in more
-     * integrated manner. The tracking bug for this issue is b/18950682.
-     *
-     * @param requestTemplate Request template that will be applied to the
-     *            current camera device
-     */
-    private void applyNexusFiveBackCameraFrameRateWorkaround(RequestTemplate requestTemplate) {
-        Range frameRateBackOff = new Range(7, 24);
-        requestTemplate.setParam(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, frameRateBackOff);
     }
 
     @Override
@@ -144,13 +126,6 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         (cameraLifetime), characteristics, frameServer, rootBuilder,
                         miscThreadPool, flashSetting, zoomState, CameraDevice
                         .TEMPLATE_ZERO_SHUTTER_LAG);
-
-                boolean isBackCamera = characteristics.getCameraDirection() ==
-                        OneCamera.Facing.BACK;
-
-                if (isBackCamera && ApiHelper.IS_NEXUS_5) {
-                    applyNexus5BackCameraFrameRateWorkaround(rootBuilder);
-                }
 
                 RequestBuilder.Factory meteredZooomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
