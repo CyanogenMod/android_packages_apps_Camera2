@@ -266,8 +266,16 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             mRequestingCameraId = EMPTY_REQUEST;
             return;
         }
-        if (mCameraProxy.getCameraId() != id) {
-            throw new IllegalStateException("Trying to release an unopened camera.");
+        int currentId = mCameraProxy.getCameraId();
+        if (currentId != id) {
+            if (mRequestingCameraId == id) {
+                Log.w(TAG, "Releasing camera which was requested but not yet "
+                        + "opened (current:requested): " + currentId + ":" + id);
+            } else {
+                throw new IllegalStateException("Trying to release a camera neither opened"
+                        + "nor requested (current:requested:for-release): "
+                        + currentId + ":" + mRequestingCameraId + ":" + id);
+            }
         }
         mRequestingCameraId = EMPTY_REQUEST;
     }
