@@ -367,6 +367,7 @@ class BurstFacadeImpl implements BurstFacade {
                     @Override
                     protected void onPostExecute(Void result) {
                         mBurstModuleState.set(BurstModuleState.IDLE);
+                        mActiveStackSaver = null;
                         // Re-enable the shutter button.
                         mReadyStateListener.onBurstReadyStateChanged(true);
                     }
