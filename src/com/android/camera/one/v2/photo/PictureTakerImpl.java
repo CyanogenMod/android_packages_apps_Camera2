@@ -27,6 +27,7 @@ import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.LoggingCameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.session.CaptureSession;
 
 class PictureTakerImpl implements PictureTaker {

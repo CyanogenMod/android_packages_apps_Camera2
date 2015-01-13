@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.photo;
+package com.android.camera.one.v2.imagesaver;
 
-import android.location.Location;
-
-import com.android.camera.app.OrientationManager;
-import com.android.camera.async.Updatable;
-import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
-import com.android.camera.session.CaptureSession;
+import com.google.common.base.Optional;
 
-public interface ImageSaver {
-    public interface Builder {
-        public ImageSaver build(
-                OneCamera.PictureSaverCallback pictureSaverCallback,
-                OrientationManager.DeviceOrientation orientation,
-                final CaptureSession session);
-    }
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    /**
-     * Asynchronously saves and closes the image.
-     */
-    public void saveAndCloseImage(ImageProxy imageProxy);
+@ParametersAreNonnullByDefault
+interface SingleImageSaver {
+    public void saveAndCloseImage(ImageProxy fullSize, Optional<ImageProxy> thumbnail);
 }

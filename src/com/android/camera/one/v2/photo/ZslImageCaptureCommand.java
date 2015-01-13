@@ -23,6 +23,7 @@ import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -47,12 +48,11 @@ class ZslImageCaptureCommand implements ImageCaptureCommand {
             // only use it if 3A is converged.
             ImageProxy image = mZslRingBuffer.getNext(0, TimeUnit.SECONDS);
             imageExposeCallback.update(null);
-            imageSaver.saveAndCloseImage(image);
+            imageSaver.addFullSizeImage(image);
+            imageSaver.close();
             zslImageCaptured = true;
         } catch (TimeoutException timeout) {
-            if (!zslImageCaptured) {
-                mFallbackCommand.run(imageExposeCallback, imageSaver);
-            }
+            mFallbackCommand.run(imageExposeCallback, imageSaver);
         } catch (BufferQueue.BufferQueueClosedException e) {
             // The zsl ring buffer has been closed, so do nothing since the
             // system is shutting down.

@@ -16,7 +16,6 @@
 
 package com.android.camera.one.v2;
 
-import android.content.Context;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.util.DisplayMetrics;
@@ -24,7 +23,7 @@ import android.util.DisplayMetrics;
 import com.android.camera.app.AppController;
 import com.android.camera.SoundPlayer;
 import com.android.camera.one.OneCamera;
-import com.android.camera.one.v2.photo.ImageSaver;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.util.Size;
 
 public class OneCameraCreator {

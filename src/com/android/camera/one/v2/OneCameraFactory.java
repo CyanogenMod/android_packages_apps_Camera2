@@ -16,17 +16,13 @@
 
 package com.android.camera.one.v2;
 
-import android.os.Handler;
-
 import com.android.camera.async.MainThreadExecutor;
 import com.android.camera.async.Observable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
-import com.android.camera.one.v2.photo.ImageSaver;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.util.Size;
-
-import java.util.concurrent.Executor;
 
 public interface OneCameraFactory {
     OneCamera createOneCamera(CameraDeviceProxy cameraDevice,

@@ -20,9 +20,9 @@ import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 
 public interface ImageCaptureCommand {
     /**
