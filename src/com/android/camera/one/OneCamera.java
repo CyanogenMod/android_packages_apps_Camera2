@@ -193,6 +193,12 @@ public interface OneCamera {
          * Called when a thumbnail image is available.
          */
         public void onThumbnailAvailable(Bitmap thumbnailBitmap, int rotation);
+
+        /**
+         * Called when compressed data for Thumbnail on a remote device (such as
+         * Android wear) is available.
+         */
+        public void onRemoteThumbnailAvailable(byte[] jpegImage);
     }
 
     /**
