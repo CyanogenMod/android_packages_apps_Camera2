@@ -992,7 +992,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         // Show UI that is meant to only be used when spoken feedback is
         // enabled.
         mAccessibilityEnabled = isSpokenFeedbackAccessibilityEnabled();
-        mAccessibilityAffordances.setVisibility(mAccessibilityEnabled ? View.VISIBLE : View.GONE);
+        mAccessibilityAffordances.setVisibility(
+                (!mIsCaptureIntent && mAccessibilityEnabled) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -1063,7 +1064,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mAccessibilityAffordances.setVisibility(View.GONE);
         } else {
             setIndicatorBottomBarWrapperVisible(true);
-            if (mAccessibilityEnabled) {
+            if (!mIsCaptureIntent && mAccessibilityEnabled) {
                 mAccessibilityAffordances.setVisibility(View.VISIBLE);
             } else {
                 mAccessibilityAffordances.setVisibility(View.GONE);
@@ -1815,6 +1816,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToCapture();
+        showModeOptions();
     }
 
     /**
@@ -1825,6 +1827,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
                 moduleController.getBottomBarSpec());
         mBottomBar.transitionToCancel();
+        hideModeOptions();
     }
 
     /**
@@ -1835,6 +1838,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToIntentCaptureLayout();
+        showModeOptions();
     }
 
     /**
@@ -1845,6 +1849,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToIntentReviewLayout();
+        hideModeOptions();
     }
 
     /**
