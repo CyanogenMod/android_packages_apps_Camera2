@@ -24,6 +24,9 @@ import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public interface ImageCaptureCommand {
     /**
      * Like {@link CameraCommand}, but takes parameters and callbacks.

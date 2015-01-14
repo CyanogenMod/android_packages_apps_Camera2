@@ -17,18 +17,20 @@
 package com.android.camera.one.v2.initialization;
 
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
 
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 /**
  * Distributes metadata to more-specific callbacks.
  */
-public class MetadataCallback implements Updatable<TotalCaptureResult> {
+public class MetadataCallback implements Updatable<TotalCaptureResultProxy> {
     private final Updatable<Integer> mFocusState;
     private final Updatable<OneCamera.FocusState> mOneCameraFocusState;
     private final Updatable<Integer> mFocusMode;
@@ -43,27 +45,27 @@ public class MetadataCallback implements Updatable<TotalCaptureResult> {
     }
 
     @Override
-    public void update(TotalCaptureResult totalCaptureResult) {
+    public void update(@Nonnull TotalCaptureResultProxy totalCaptureResult) {
         updateFocusMode(totalCaptureResult);
         updateFocusState(totalCaptureResult);
         updateOneCameraFocusState(totalCaptureResult);
     }
 
-    private void updateFocusMode(TotalCaptureResult totalCaptureResult) {
+    private void updateFocusMode(TotalCaptureResultProxy totalCaptureResult) {
         Integer focusMode = totalCaptureResult.get(CaptureResult.CONTROL_AF_MODE);
         if (focusMode != null) {
             mFocusMode.update(focusMode);
         }
     }
 
-    private void updateFocusState(TotalCaptureResult totalCaptureResult) {
+    private void updateFocusState(TotalCaptureResultProxy totalCaptureResult) {
         Integer focusState = totalCaptureResult.get(CaptureResult.CONTROL_AF_STATE);
         if (focusState != null) {
             mFocusState.update(focusState);
         }
     }
 
-    private void updateOneCameraFocusState(TotalCaptureResult totalCaptureResult) {
+    private void updateOneCameraFocusState(TotalCaptureResultProxy totalCaptureResult) {
         Float focusDistance = totalCaptureResult.get(CaptureResult.LENS_FOCUS_DISTANCE);
         Integer focusState = totalCaptureResult.get(CaptureResult.CONTROL_AF_STATE);
         if (focusDistance != null && focusState != null) {

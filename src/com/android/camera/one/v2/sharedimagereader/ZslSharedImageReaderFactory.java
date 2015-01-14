@@ -18,11 +18,19 @@ package com.android.camera.one.v2.sharedimagereader;
 
 import android.media.ImageReader;
 
+import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.common.TimestampResponseListener;
+import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
+import com.android.camera.one.v2.core.RequestBuilder;
+import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributorFactory;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
+import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.MetadataPool;
+import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.MetadataPoolFactory;
 import com.android.camera.one.v2.sharedimagereader.ringbuffer.DynamicRingBufferFactory;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.FiniteTicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
@@ -33,9 +41,10 @@ import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
  * from the {@link ImageStreamFactory}.
  */
 public class ZslSharedImageReaderFactory {
-    private final Updatable<Long> mGlobalTimestampQueue;
     private final ImageStreamFactory mSharedImageReader;
     private final ImageStream mZslCaptureStream;
+    private final MetadataPool mMetadataPool;
+    private final RequestTemplate mRequestTemplate;
 
     /**
      * @param lifetime The lifetime of the SharedImageReader, and other
@@ -44,11 +53,13 @@ public class ZslSharedImageReaderFactory {
      * @param imageReader The ImageReader to wrap. Note that this can outlive
      *            the resulting SharedImageReader instance.
      */
-    public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReader imageReader) {
+    public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReader imageReader, RequestBuilder
+            .Factory rootRequestTemplate) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(lifetime,
                 imageReader);
         ImageDistributor imageDistributor = imageDistributorFactory.provideImageDistributor();
-        mGlobalTimestampQueue = imageDistributorFactory.provideGlobalTimestampCallback();
+        Updatable<Long> globalTimestampQueue = imageDistributorFactory
+                .provideGlobalTimestampCallback();
 
         // TODO Try using 1 instead.
         TicketPool rootTicketPool = new FiniteTicketPool(imageReader.getMaxImages() - 2);
@@ -56,24 +67,40 @@ public class ZslSharedImageReaderFactory {
         DynamicRingBufferFactory ringBufferFactory = new DynamicRingBufferFactory(
                 new Lifetime(lifetime), rootTicketPool);
 
-        mZslCaptureStream = new ImageStreamImpl(ringBufferFactory
-                .provideRingBufferOutput(), ringBufferFactory.provideRingBufferInput(),
+        MetadataPoolFactory metadataPoolFactory = new MetadataPoolFactory(
+                ringBufferFactory.provideRingBufferInput());
+
+        mZslCaptureStream = new ImageStreamImpl(
+                ringBufferFactory.provideRingBufferOutput(),
+                metadataPoolFactory.provideImageQueue(),
                 imageDistributor, imageReader.getSurface());
+
+        mMetadataPool = metadataPoolFactory.provideMetadataPool();
 
         mSharedImageReader = new ImageStreamFactory(
                 new Lifetime(lifetime), ringBufferFactory.provideTicketPool(),
                 imageReader.getSurface(), imageDistributor);
-    }
 
-    public Updatable<Long> provideGlobalTimestampQueue() {
-        return mGlobalTimestampQueue;
+        mRequestTemplate = new RequestTemplate(rootRequestTemplate);
+        mRequestTemplate.addStream(mZslCaptureStream);
+        mRequestTemplate.addResponseListener(new TimestampResponseListener(globalTimestampQueue));
+        mRequestTemplate.addResponseListener(new TotalCaptureResultResponseListener(
+                metadataPoolFactory.provideMetadataCallback()));
     }
 
     public ImageStreamFactory provideSharedImageReader() {
         return mSharedImageReader;
     }
 
-    public ImageStream provideZSLCaptureStream() {
+    public BufferQueue<ImageProxy> provideZSLCaptureStream() {
         return mZslCaptureStream;
+    }
+
+    public MetadataPool provideMetadataPool() {
+        return mMetadataPool;
+    }
+
+    public RequestBuilder.Factory provideRequestTemplate() {
+        return mRequestTemplate;
     }
 }

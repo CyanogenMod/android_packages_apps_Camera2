@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.common;
+package com.android.camera.one.v2.sharedimagereader.metadatasynchronizer;
 
 import android.hardware.camera2.TotalCaptureResult;
 
-import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
-import com.android.camera.one.v2.core.ResponseListener;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import javax.annotation.Nonnull;
 
 /**
- * A {@link ResponseListener} which provides a stream of
- * {@link TotalCaptureResult}s.
+ * Holds metadata for images which have not yet been closed.
  */
-public class TotalCaptureResultResponseListener extends ResponseListener {
-    private final Updatable<TotalCaptureResultProxy> mResults;
-
-    public TotalCaptureResultResponseListener(Updatable<TotalCaptureResultProxy> results) {
-        mResults = results;
-    }
-
-    @Override
-    public void onCompleted(TotalCaptureResult result) {
-        mResults.update(new TotalCaptureResultProxy(result));
-    }
+public interface MetadataPool {
+    @Nonnull
+    public ListenableFuture<TotalCaptureResultProxy> removeMetadataFuture(long timestamp);
 }

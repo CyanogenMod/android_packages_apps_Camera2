@@ -16,6 +16,8 @@
 
 package com.android.camera.async;
 
+import javax.annotation.Nonnull;
+
 /**
  * This provides empty, NoOp implementation of generic updateable
  * objects.
@@ -31,5 +33,5 @@ public final class NoOp<T> implements Updatable<T> {
     private NoOp() { }
 
     @Override
-    public void update(T t) { }
+    public void update(@Nonnull T t) { }
 }

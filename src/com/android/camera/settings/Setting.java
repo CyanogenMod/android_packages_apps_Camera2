@@ -26,6 +26,8 @@ import com.android.camera.util.Callback;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps a {@link SettingsManager} setting with thread-safe interfaces for
  * updating the value and observing changes.
@@ -117,7 +119,7 @@ public class Setting<T> implements Updatable<T>, Observable<T>, SafeCloseable {
     }
 
     @Override
-    public void update(T t) {
+    public void update(@Nonnull T t) {
         synchronized (mSettingsManager) {
             if (mTClass.equals(Integer.class)) {
                 mSettingsManager.set(mScope, mKey, (Integer) t);

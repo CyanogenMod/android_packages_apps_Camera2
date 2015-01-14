@@ -37,6 +37,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nonnull;
+
 /**
  * A generic, composable {@link OneCamera}.
  * <p>
@@ -141,12 +143,12 @@ class GenericOneCameraImpl implements OneCamera {
         ListenableFuture<Void> result = mPreviewStarter.startPreview(surface);
         Futures.addCallback(result, new FutureCallback<Void>() {
             @Override
-            public void onSuccess(Void aVoid) {
+            public void onSuccess(@Nonnull Void aVoid) {
                 listener.onReadyForCapture();
             }
 
             @Override
-            public void onFailure(Throwable throwable) {
+            public void onFailure(@Nonnull Throwable throwable) {
                 listener.onSetupFailed();
             }
         }, mMainExecutor);

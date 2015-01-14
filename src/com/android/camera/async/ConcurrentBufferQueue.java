@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Nonnull;
+
 /**
  * A {@link BufferQueue} implementation useful for thread-safe producer-consumer
  * interactions.<br>
@@ -138,7 +140,7 @@ public class ConcurrentBufferQueue<T> implements BufferQueue<T>, BufferQueueCont
     }
 
     @Override
-    public void update(T element) {
+    public void update(@Nonnull T element) {
         boolean closed = false;
         synchronized (mLock) {
             closed = mClosed.get();

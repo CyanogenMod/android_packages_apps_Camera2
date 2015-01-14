@@ -17,8 +17,8 @@
 package com.android.camera.one.v2;
 
 import android.annotation.TargetApi;
+import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.TotalCaptureResult;
 import android.media.ImageReader;
 import android.os.Build;
 import android.view.Surface;
@@ -33,10 +33,12 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
 import com.android.camera.one.v2.common.TimestampResponseListener;
+import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestBuilder;
@@ -97,7 +99,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                     CameraCaptureSessionProxy cameraCaptureSession,
                     Surface previewSurface,
                     Observable<Float> zoomState,
-                    Updatable<TotalCaptureResult> metadataCallback,
+                    Updatable<TotalCaptureResultProxy> metadataCallback,
                     Updatable<Boolean> readyState) {
                 // Create the FrameServer from the CaptureSession.
                 FrameServer frameServer = new FrameServerFactory(
@@ -125,6 +127,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 rootBuilder.addResponseListener(
                         new TimestampResponseListener(globalTimestampCallback));
                 rootBuilder.addStream(new SimpleCaptureStream(previewSurface));
+                rootBuilder.addResponseListener(new TotalCaptureResultResponseListener(
+                        metadataCallback));
 
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime

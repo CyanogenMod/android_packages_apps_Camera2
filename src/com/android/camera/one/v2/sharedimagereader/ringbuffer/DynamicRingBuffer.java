@@ -23,6 +23,8 @@ import com.android.camera.one.v2.sharedimagereader.util.TicketImageProxy;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketProvider;
 
+import javax.annotation.Nonnull;
+
 /**
  * A ring-buffer which uses all of the residual tickets in the provided ticket
  * pool to store as many images as possible.
@@ -48,7 +50,7 @@ class DynamicRingBuffer implements BufferQueueController<ImageProxy> {
     }
 
     @Override
-    public void update(ImageProxy image) {
+    public void update(@Nonnull ImageProxy image) {
         // Try to acquire a ticket to expand the ring-buffer and save the image.
         Ticket ticket = mTicketPool.tryAcquire();
         if (ticket == null) {

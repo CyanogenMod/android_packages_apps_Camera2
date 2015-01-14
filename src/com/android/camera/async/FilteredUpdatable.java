@@ -16,6 +16,8 @@
 
 package com.android.camera.async;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wraps an {@link com.android.camera.async.Updatable} by filtering out
  * duplicate updates.
@@ -34,7 +36,7 @@ public class FilteredUpdatable<T> implements Updatable<T> {
     }
 
     @Override
-    public void update(T t) {
+    public void update(@Nonnull T t) {
         synchronized (mLock) {
             if (!mValueSet) {
                 setNewValue(t);

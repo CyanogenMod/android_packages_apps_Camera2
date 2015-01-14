@@ -16,6 +16,9 @@
 
 package com.android.camera.async;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * A thread-safe callback.
  * <p>
@@ -29,6 +32,7 @@ package com.android.camera.async;
  * </ul>
  * </p>
  */
+@ThreadSafe
 public interface Updatable<T> {
     /**
      * Implementations MUST ALWAYS satisfy the following constraints:
@@ -41,5 +45,5 @@ public interface Updatable<T> {
      * invoke callbacks which may violate the above constraints)</li>
      * </ul>
      */
-    public void update(T t);
+    public void update(@Nonnull T t);
 }

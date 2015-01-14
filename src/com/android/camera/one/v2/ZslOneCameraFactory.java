@@ -18,7 +18,6 @@ package com.android.camera.one.v2;
 
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
 import android.media.ImageReader;
 import android.util.Range;
 import android.view.Surface;
@@ -33,21 +32,19 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
-import com.android.camera.one.v2.common.TimestampResponseListener;
+import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
-import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
-import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
@@ -108,7 +105,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                     CameraCaptureSessionProxy cameraCaptureSession,
                     Surface previewSurface,
                     Observable<Float> zoomState,
-                    Updatable<TotalCaptureResult> metadataCallback,
+                    Updatable<TotalCaptureResultProxy> metadataCallback,
                     Updatable<Boolean> readyState) {
                 // Create the FrameServer from the CaptureSession.
                 FrameServer frameServer = new FrameServerFactory(
@@ -118,32 +115,19 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // Create a thread pool on which to execute camera operations.
                 ScheduledExecutorService miscThreadPool = Executors.newScheduledThreadPool(1);
 
-                // Create the shared image reader.
-                ZslSharedImageReaderFactory sharedImageReaderFactory =
-                        new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime), imageReader);
-                Updatable<Long> globalTimestampCallback =
-                        sharedImageReaderFactory.provideGlobalTimestampQueue();
-                ImageStreamFactory imageStreamFactory =
-                        sharedImageReaderFactory.provideSharedImageReader();
-                ImageStream zslStream = sharedImageReaderFactory.provideZSLCaptureStream();
-
                 // Create the request builder used by all camera operations.
                 // Streams, ResponseListeners, and Parameters added to
                 // this will be applied to *all* requests sent to the camera.
-                RequestTemplate rootBuilder = new RequestTemplate
-                        (new CameraDeviceRequestBuilderFactory(device));
-                // The shared image reader must be wired to receive every
-                // timestamp for every image (including the preview).
-                rootBuilder.addResponseListener(
-                        new TimestampResponseListener(globalTimestampCallback));
+                RequestTemplate rootBuilder = new RequestTemplate(
+                        new CameraDeviceRequestBuilderFactory(device));
                 rootBuilder.addStream(new SimpleCaptureStream(previewSurface));
-                rootBuilder.addStream(zslStream);
+                rootBuilder.addResponseListener(
+                        new TotalCaptureResultResponseListener(metadataCallback));
 
-                // Create basic functionality (zoom, AE, AF).
-                BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
-                        (cameraLifetime), characteristics, frameServer, rootBuilder,
-                        miscThreadPool, flashSetting, zoomState, CameraDevice
-                        .TEMPLATE_ZERO_SHUTTER_LAG);
+                // Create the shared image reader.
+                ZslSharedImageReaderFactory sharedImageReaderFactory =
+                        new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime),
+                                imageReader, rootBuilder);
 
                 boolean isBackCamera = characteristics.getCameraDirection() ==
                         OneCamera.Facing.BACK;
@@ -152,16 +136,26 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                     applyNexus5BackCameraFrameRateWorkaround(rootBuilder);
                 }
 
-                RequestBuilder.Factory meteredZooomedRequestBuilder =
-                        basicCameraFactory.provideMeteredZoomedRequestBuilder();
+                // Create basic functionality (zoom, AE, AF).
+                BasicCameraFactory basicCameraFactory = new BasicCameraFactory(
+                        new Lifetime(cameraLifetime), characteristics,
+                        frameServer, sharedImageReaderFactory.provideRequestTemplate(),
+                        miscThreadPool, flashSetting, zoomState,
+                        CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
 
                 // Create the picture-taker.
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
                         miscThreadPool);
 
                 ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(
-                        mainThreadExecutor, cameraCommandExecutor, imageSaverBuilder, frameServer,
-                        meteredZooomedRequestBuilder, imageStreamFactory, zslStream);
+                        mainThreadExecutor,
+                        cameraCommandExecutor,
+                        imageSaverBuilder,
+                        frameServer,
+                        basicCameraFactory.provideMeteredZoomedRequestBuilder(),
+                        sharedImageReaderFactory.provideSharedImageReader(),
+                        sharedImageReaderFactory.provideZSLCaptureStream(),
+                        sharedImageReaderFactory.provideMetadataPool());
 
                 basicCameraFactory.providePreviewStarter().run();
 
