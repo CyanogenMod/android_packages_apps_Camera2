@@ -159,7 +159,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * exceptions in Unit Tests.
      */
     public void logWrapper(String message) {
-        Log.e(TAG, message);
+        Log.v(TAG, message);
     }
 
     /**
