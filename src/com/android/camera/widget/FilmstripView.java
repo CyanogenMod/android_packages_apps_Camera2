@@ -1043,7 +1043,7 @@ public class FilmstripView extends ViewGroup {
         final int currentViewCenter = currItem.getCenterX();
         if (mController.isScrolling() || mIsUserScrolling
                 || isCurrentItemCentered()) {
-            Log.d(TAG, "[fling] = mController.isScrolling() " + mController.isScrolling());
+            Log.d(TAG, "[fling] mController.isScrolling() - " + mController.isScrolling());
             return;
         }
 
@@ -1741,8 +1741,12 @@ public class FilmstripView extends ViewGroup {
 
         Log.d(TAG, "updateViewItem(bufferIndex: " + bufferIndex + ")");
         Log.d(TAG, "updateViewItem() - mIsUserScrolling: " + mIsUserScrolling);
+        Log.d(TAG, "updateViewItem() - mController.isScrolling() - " + mController.isScrolling());
 
-        if (!mIsUserScrolling) {
+        // Relying on only isScrolling or isUserScrolling independently
+        // is unreliable. Load the full resolution if either value
+        // reports that the item is not scrolling.
+        if (!mController.isScrolling() || !mIsUserScrolling) {
             ensureItemAtMaxSize(bufferIndex);
         }
 
