@@ -19,7 +19,6 @@ package com.android.camera.one.v2;
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraDevice;
-import android.media.ImageReader;
 import android.os.Build;
 import android.view.Surface;
 
@@ -30,9 +29,11 @@ import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
+import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
@@ -43,9 +44,9 @@ import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
-import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
@@ -81,10 +82,13 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             final OneCameraCharacteristics characteristics, final MainThread mainExecutor,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
+        Lifetime lifetime = new Lifetime();
 
-        final ImageReader imageReader = ImageReader.newInstance(pictureSize.getWidth(),
-                pictureSize.getHeight(), mImageFormat, mMaxImageCount);
-        // FIXME TODO Close the ImageReader when all images have been freed!
+        final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
+                LoggingImageReader.create(
+                        AndroidImageReaderProxy.newInstance(pictureSize.getWidth(),
+                                pictureSize.getHeight(), mImageFormat, mMaxImageCount)));
+        lifetime.add(imageReader);
 
         List<Surface> outputSurfaces = new ArrayList<>();
         outputSurfaces.add(imageReader.getSurface());
@@ -159,7 +163,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
         List<Size> supportedPreviewSizes = characteristics.getSupportedPreviewSizes();
         OneCamera.Facing direction = characteristics.getCameraDirection();
 
-        return new InitializedOneCameraFactory(cameraStarter, device, outputSurfaces, mainExecutor,
-                new HandlerFactory(), maxZoom, supportedPreviewSizes, direction).provideOneCamera();
+        return new InitializedOneCameraFactory(lifetime, cameraStarter, device, outputSurfaces,
+                mainExecutor, new HandlerFactory(), maxZoom, supportedPreviewSizes, direction)
+                .provideOneCamera();
     }
 }

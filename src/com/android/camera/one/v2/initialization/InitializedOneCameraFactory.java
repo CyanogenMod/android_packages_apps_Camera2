@@ -70,19 +70,14 @@ public class InitializedOneCameraFactory {
      *            capture session.
      */
     public InitializedOneCameraFactory(
-            final CameraStarter cameraStarter, CameraDeviceProxy device,
+            final Lifetime lifetime, final CameraStarter cameraStarter, CameraDeviceProxy device,
             List<Surface> outputSurfaces, Executor mainThreadExecutor,
             HandlerFactory handlerFactory, float maxZoom, List<Size> supportedPreviewSizes,
             OneCamera.Facing direction) {
         // Assembles and returns a OneCamera based on the CameraStarter.
 
-        // All resources tied to the camera are contained (directly or
-        // transitively) by this.
-        final Lifetime cameraLifetime = new Lifetime();
-        cameraLifetime.add(device);
-
         // Create/wrap required threads.
-        final Handler cameraHandler = handlerFactory.create(cameraLifetime, "CameraHandler");
+        final Handler cameraHandler = handlerFactory.create(lifetime, "CameraHandler");
 
         final ExecutorService miscThreadPool = Executors.newCachedThreadPool();
 
@@ -146,7 +141,7 @@ public class InitializedOneCameraFactory {
                     public void onCameraCaptureSessionCreated(CameraCaptureSessionProxy session,
                             Surface previewSurface) {
                         CameraStarter.CameraControls controls = cameraStarter.startCamera(
-                                new Lifetime(cameraLifetime),
+                                new Lifetime(lifetime),
                                 session, previewSurface,
                                 zoomState, metadataCallback, readyState);
                         mPictureTaker.set(controls.getPictureTaker());
@@ -156,7 +151,7 @@ public class InitializedOneCameraFactory {
 
         PreviewSizeSelector previewSizeSelector = new PreviewSizeSelector(supportedPreviewSizes);
 
-        mOneCamera = new GenericOneCameraImpl(cameraLifetime, pictureTaker, manualAutoFocus,
+        mOneCamera = new GenericOneCameraImpl(lifetime, pictureTaker, manualAutoFocus,
                 mainThreadExecutor, afStateListenable, focusStateListenable, readyStateListenable,
                 maxZoom, zoomState, direction, previewSizeSelector, mPreviewStarter);
     }

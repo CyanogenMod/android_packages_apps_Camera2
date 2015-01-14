@@ -16,12 +16,11 @@
 
 package com.android.camera.one.v2.sharedimagereader;
 
-import android.media.ImageReader;
-
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.common.TimestampResponseListener;
 import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.RequestBuilder;
@@ -53,7 +52,7 @@ public class ZslSharedImageReaderFactory {
      * @param imageReader The ImageReader to wrap. Note that this can outlive
      *            the resulting SharedImageReader instance.
      */
-    public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReader imageReader, RequestBuilder
+    public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader, RequestBuilder
             .Factory rootRequestTemplate) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(lifetime,
                 imageReader);

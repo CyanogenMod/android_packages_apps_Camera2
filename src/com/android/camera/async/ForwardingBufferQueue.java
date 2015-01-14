@@ -22,41 +22,46 @@ import java.util.concurrent.TimeoutException;
 /**
  * A BufferQueue which forwards all methods to another.
  */
-public class ForwardingBufferQueue<T> implements BufferQueue<T> {
-    private final BufferQueue<T> mBufferQueue;
+public abstract class ForwardingBufferQueue<T> implements BufferQueue<T> {
+    private final BufferQueue<T> mDelegate;
 
-    public ForwardingBufferQueue(BufferQueue<T> bufferQueue) {
-        mBufferQueue = bufferQueue;
+    public ForwardingBufferQueue(BufferQueue<T> delegate) {
+        mDelegate = delegate;
     }
 
     @Override
     public void close() {
-        mBufferQueue.close();
+        mDelegate.close();
     }
 
     @Override
     public T getNext() throws InterruptedException, BufferQueueClosedException {
-        return mBufferQueue.getNext();
+        return mDelegate.getNext();
     }
 
     @Override
     public T getNext(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException,
             BufferQueueClosedException {
-        return mBufferQueue.getNext(timeout, unit);
+        return mDelegate.getNext(timeout, unit);
     }
 
     @Override
     public T peekNext() {
-        return mBufferQueue.peekNext();
+        return mDelegate.peekNext();
     }
 
     @Override
     public void discardNext() {
-        mBufferQueue.discardNext();
+        mDelegate.discardNext();
     }
 
     @Override
     public boolean isClosed() {
-        return mBufferQueue.isClosed();
+        return mDelegate.isClosed();
+    }
+
+    @Override
+    public String toString() {
+        return mDelegate.toString();
     }
 }
