@@ -24,10 +24,14 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowTitleSize">0dp</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:colorBackground">@android:color/black</item>
-        <item name="android:colorBackgroundCacheHint">@android:color/black</item>
+        <item name="android:windowBackground">@color/mode_cover_default_color</item>
+        <item name="android:colorBackground">@color/mode_cover_default_color</item>
+        <item name="android:colorBackgroundCacheHint">@color/mode_cover_default_color</item>
         <item name="android:actionBarStyle">@style/Camera.ActionBar</item>
+    </style>
+
+    <style name="Theme.SecureCamera" parent="@style/Theme.Camera">
+        <item name="android:windowBackground">@drawable/cover</item>
     </style>
 
     <style name="Camera.ActionBar" parent="android:Widget.Holo.Light.ActionBar">

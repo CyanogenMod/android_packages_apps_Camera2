@@ -1433,6 +1433,15 @@ public class CameraActivity extends QuickActivity
         Keys.setDefaults(mSettingsManager, mAppContext);
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        // We suppress this flag via theme when drawing the system preview
+        // background, but once we create activity here, reactivate to the
+        // default value. The default is important for L, we don't want to
+        // change app behavior, just starting background drawable layout.
+        if (ApiHelper.isLOrHigher()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
+        // We set a background drawable for startup background, reset to black
+        getWindow().setBackgroundDrawableResource(android.R.color.black);
         setContentView(R.layout.activity_main);
 
         mActionBar = getActionBar();
