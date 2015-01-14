@@ -763,7 +763,7 @@ public class FilmstripView extends ViewGroup {
         int index = item.getAdapterIndex();
         FilmstripItem imageData = mDataAdapter.getFilmstripItemAt(index);
         if (imageData == null) {
-            Log.e(TAG, "trying to measure a null item");
+            Log.w(TAG, "measureViewItem() - Trying to measure a null item!");
             return;
         }
 
@@ -887,7 +887,7 @@ public class FilmstripView extends ViewGroup {
         FilmstripItem data = mDataAdapter.getFilmstripItemAt(
               mViewItems[bufferIndex].getAdapterIndex());
         if (data == null) {
-            Log.e(TAG, "trying to remove a null item");
+            Log.w(TAG, "removeItem() - Trying to remove a null item!");
             return;
         }
         mViewItems[bufferIndex].removeViewFromHierarchy(false);
@@ -1043,7 +1043,7 @@ public class FilmstripView extends ViewGroup {
         final int currentViewCenter = currItem.getCenterX();
         if (mController.isScrolling() || mIsUserScrolling
                 || isCurrentItemCentered()) {
-            Log.e(TAG, "[fling] = mController.isScrolling() " + mController.isScrolling());
+            Log.d(TAG, "[fling] = mController.isScrolling() " + mController.isScrolling());
             return;
         }
 
@@ -1051,7 +1051,7 @@ public class FilmstripView extends ViewGroup {
                 * ((float) Math.abs(mCenterX - currentViewCenter))
                 / mDrawArea.width());
 
-        Log.e(TAG, "[fling] Scroll to center.");
+        Log.d(TAG, "[fling] Scroll to center.");
         mController.scrollToPosition(currentViewCenter,
               snapInTime, false);
         if (isViewTypeSticky(currItem) && !mController.isScaling() && mScale != FULL_SCREEN_SCALE) {
@@ -1075,14 +1075,14 @@ public class FilmstripView extends ViewGroup {
     private void translateLeftViewItem(
             int index, int drawAreaWidth, float scaleFraction) {
         if (index < 0 || index > BUFFER_SIZE - 1) {
-            Log.e(TAG, "index out of bound.");
+            Log.w(TAG, "translateLeftViewItem() - Index out of bound!");
             return;
         }
 
         final ViewItem curr = mViewItems[index];
         final ViewItem next = mViewItems[index + 1];
         if (curr == null || next == null) {
-            Log.e(TAG, "Invalid view item (curr or next == null). curr = "
+            Log.w(TAG, "translateLeftViewItem() - Invalid view item (curr or next == null). curr = "
                     + index);
             return;
         }
@@ -1112,15 +1112,15 @@ public class FilmstripView extends ViewGroup {
      */
     private void fadeAndScaleRightViewItem(int bufferIndex) {
         if (bufferIndex < 1 || bufferIndex > BUFFER_SIZE) {
-            Log.e(TAG, "index id out of bound.");
+            Log.w(TAG, "fadeAndScaleRightViewItem() - bufferIndex out of bound!");
             return;
         }
 
         final ViewItem item = mViewItems[bufferIndex];
         final ViewItem previousItem = mViewItems[bufferIndex - 1];
         if (item == null || previousItem == null) {
-            Log.e(TAG, "Invalid view item (curr or prev == null). curr = "
-                    + bufferIndex);
+            Log.w(TAG, "fadeAndScaleRightViewItem() - Invalid view item (curr or prev == null)."
+                  + "curr = " + bufferIndex);
             return;
         }
 
@@ -1556,7 +1556,6 @@ public class FilmstripView extends ViewGroup {
             return;
         }
 
-        // TODO: Ensure newly visible items are loaded at full size.
         if (bufferIndex >= BUFFER_CENTER) {
             if (bufferIndex == BUFFER_CENTER) {
                 viewItem.setLeftPosition(mViewItems[BUFFER_CENTER].getLeftPosition());
@@ -1588,10 +1587,12 @@ public class FilmstripView extends ViewGroup {
         }
 
         mViewItems[bufferIndex] = viewItem;
+        ensureItemAtMaxSize(bufferIndex);
         viewItem.setAlpha(0f);
         viewItem.setTranslationY(getHeight() / 8);
         slideViewBack(viewItem);
         adjustChildZOrder();
+
         invalidate();
     }
 
@@ -1622,8 +1623,7 @@ public class FilmstripView extends ViewGroup {
                 if (mListener != null) {
                     mListener.onDataFocusChanged(index, getCurrentItemAdapterIndex());
                 }
-                Log.d(TAG, "[ensureItemAtMaxSize] [ensureBufferItemsAtMaxSize]"
-                      + " onFilmstripItemInserted()");
+                Log.d(TAG, "onFilmstripItemInserted()");
                 ensureBufferItemsAtMaxSize();
             }
 
@@ -1633,8 +1633,7 @@ public class FilmstripView extends ViewGroup {
                 if (mListener != null) {
                     mListener.onDataFocusChanged(index, getCurrentItemAdapterIndex());
                 }
-                Log.d(TAG, "[ensureItemAtMaxSize] [ensureBufferItemsAtMaxSize]"
-                      + " onFilmstripItemRemoved()");
+                Log.d(TAG, "onFilmstripItemRemoved()");
                 ensureBufferItemsAtMaxSize();
             }
         });
@@ -1719,14 +1718,14 @@ public class FilmstripView extends ViewGroup {
     private void updateViewItem(int bufferIndex) {
         ViewItem item = mViewItems[bufferIndex];
         if (item == null) {
-            Log.e(TAG, "trying to update an null item");
+            Log.w(TAG, "updateViewItem() - Trying to update an null item!");
             return;
         }
         item.removeViewFromHierarchy(true);
 
         ViewItem newItem = buildViewItemAt(item.getAdapterIndex());
         if (newItem == null) {
-            Log.e(TAG, "new item is null");
+            Log.w(TAG, "updateViewItem() - New item is null!");
             // keep using the old data.
             item.addViewToHierarchy();
             return;
@@ -1740,7 +1739,12 @@ public class FilmstripView extends ViewGroup {
             mController.stopScrolling(true);
         }
 
-        Log.d(TAG, "[ensureItemAtMaxSize] updateViewItem()");
+        Log.d(TAG, "updateViewItem(bufferIndex: " + bufferIndex + ")");
+        Log.d(TAG, "updateViewItem() - mIsUserScrolling: " + mIsUserScrolling);
+
+        if (!mIsUserScrolling) {
+            ensureItemAtMaxSize(bufferIndex);
+        }
 
         adjustChildZOrder();
         invalidate();
@@ -1866,7 +1870,7 @@ public class FilmstripView extends ViewGroup {
 
         adjustChildZOrder();
 
-        Log.d(TAG, "[ensureItemAtMaxSize] [ensureBufferItemsAtMaxSize] reload()");
+        Log.d(TAG, "reload() - Ensure all items are loaded at max size.");
         ensureBufferItemsAtMaxSize();
         invalidate();
 
@@ -1889,6 +1893,7 @@ public class FilmstripView extends ViewGroup {
     }
 
     private void onEnterFilmstrip() {
+        Log.d(TAG, "onEnterFilmstrip()");
         if (mListener != null) {
             mListener.onEnterFilmstrip(getCurrentItemAdapterIndex());
         }
@@ -1956,11 +1961,9 @@ public class FilmstripView extends ViewGroup {
                     public void onScrollUpdate(int currX, int currY) {
                         mCenterX = currX;
 
-                        Log.e(TAG, "[fling] onScrollUpdate X: " + currX + ", Y: " + currY);
-
                         boolean stopScroll = clampCenterX();
                         if (stopScroll) {
-                            Log.e(TAG, "[fling] stopScrolling!");
+                            Log.d(TAG, "[fling] onScrollUpdate() - stopScrolling!");
                             mController.stopScrolling(true);
                         }
                         invalidate();
@@ -1969,7 +1972,7 @@ public class FilmstripView extends ViewGroup {
                     @Override
                     public void onScrollEnd() {
                         mCanStopScroll = true;
-                        Log.e(TAG, "[fling] onScrollEnd " + BUFFER_CENTER);
+                        Log.d(TAG, "[fling] onScrollEnd() - onScrollEnd");
                         if (mViewItems[BUFFER_CENTER] == null) {
                             return;
                         }
@@ -1984,6 +1987,9 @@ public class FilmstripView extends ViewGroup {
                             // Since these are getting pushed into a queue,
                             // we want to ensure the item that is "most in view" is
                             // the first one rendered at max size.
+
+                            Log.d(TAG, "[fling] onScrollEnd() - Ensuring that items are at"
+                                  + " full resolution.");
                             ensureItemAtMaxSize(BUFFER_CENTER);
                             ensureItemAtMaxSize(BUFFER_CENTER + 1);
                             ensureItemAtMaxSize(BUFFER_CENTER - 1);
@@ -2545,7 +2551,7 @@ public class FilmstripView extends ViewGroup {
             public void run() {
                 boolean newPosition = mScroller.computeScrollOffset();
                 if (!newPosition) {
-                    Log.e(TAG, "[fling] onScrollEnd from computeScrollOffset");
+                    Log.d(TAG, "[fling] onScrollEnd from computeScrollOffset");
                     mListener.onScrollEnd();
                     return;
                 }
@@ -2567,26 +2573,25 @@ public class FilmstripView extends ViewGroup {
                 new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        Log.e(TAG, "[fling] mXScrollAnimatorListener.onAnimationCancel");
+                        Log.d(TAG, "[fling] mXScrollAnimatorListener.onAnimationCancel");
                         // Do nothing.
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-
-                        Log.e(TAG, "[fling] onScrollEnd from mXScrollAnimatorListener.onAnimationEnd");
+                        Log.d(TAG, "[fling] onScrollEnd from mXScrollAnimatorListener.onAnimationEnd");
                         mListener.onScrollEnd();
                     }
 
                     @Override
                     public void onAnimationRepeat(Animator animation) {
-                        Log.e(TAG, "[fling] mXScrollAnimatorListener.onAnimationRepeat");
+                        Log.d(TAG, "[fling] mXScrollAnimatorListener.onAnimationRepeat");
                         // Do nothing.
                     }
 
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        Log.e(TAG, "[fling] mXScrollAnimatorListener.onAnimationStart");
+                        Log.d(TAG, "[fling] mXScrollAnimatorListener.onAnimationStart");
                         // Do nothing.
                     }
                 };
