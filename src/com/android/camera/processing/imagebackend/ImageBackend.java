@@ -17,6 +17,9 @@
 package com.android.camera.processing.imagebackend;
 
 import com.android.camera.debug.Log;
+import com.android.camera.processing.ProcessingService;
+import com.android.camera.processing.ProcessingServiceManager;
+import com.android.camera.processing.ProcessingTaskConsumer;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
@@ -66,6 +69,17 @@ import java.util.concurrent.locks.ReentrantLock;
  * implementation for a concrete example for this shared object and its
  * respective task {@link TaskLuckyShotSession} {@link LuckyShotSession}</li>
  * </ol>
+ * To integrate with the ProcessingServiceManager, ImageBackend also signals to
+ * the ProcessingServiceManager its processing state by enqueuing
+ * ImageShadowTasks on each ImageBackend::receiveIamge call. These ImageShadow
+ * tasks have no implementation, but emulate the processing delay by blocking
+ * until all tasks submitted and spawned by a particular receiveImage call have
+ * completed their processing. This emulated functionality ensures that other
+ * ProcessingTasks associated with Lens Blur and Panorama are not processing
+ * while the ImageBackend is running. Unfairly, the ImageBackend proceeds with
+ * its own processing regardless of the state of ImageShadowTask.
+ * ImageShadowTasks that are associated with ImageBackend tasks that have
+ * already been completed should return immediately on its process call.
  */
 public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
@@ -77,7 +91,17 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
     protected static final int NUM_THREADS_SLOW = 2;
 
+    protected final ProcessingTaskConsumer mProcessingTaskConsumer;
+
+    /**
+     * Map for TaskImageContainer and the release of ImageProxy Book-keeping
+     */
     protected final Map<ImageToProcess, ImageReleaseProtocol> mImageSemaphoreMap;
+    /**
+     * Map for ImageShadowTask and release of blocking on
+     * ImageShadowTask::process
+     */
+    protected final Map<CaptureSession, ImageShadowTask> mShadowTaskMap;
 
     protected final ExecutorService mThreadPoolFast;
 
@@ -88,8 +112,8 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     /**
      * Approximate viewable size (in pixels) for the fast thumbnail in the
      * current UX definition of the product. Note that these values will be the
-     * minimum size of FAST_THUMBNAIL target for the
-     * CONVERT_TO_RGB_PREVIEW task.
+     * minimum size of FAST_THUMBNAIL target for the CONVERT_TO_RGB_PREVIEW
+     * task.
      */
     private final static Size FAST_THUMBNAIL_TARGET_SIZE = new Size(160, 100);
 
@@ -113,11 +137,13 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     private ImageProcessorProxyListener mProxyListener = null;
 
     // Default constructor, values are conservatively targeted to the Nexus 6
-    public ImageBackend() {
+    public ImageBackend(ProcessingTaskConsumer processingTaskConsumer) {
         mThreadPoolFast = Executors.newFixedThreadPool(NUM_THREADS_FAST, new FastThreadFactory());
         mThreadPoolSlow = Executors.newFixedThreadPool(NUM_THREADS_SLOW, new SlowThreadFactory());
         mProxyListener = new ImageProcessorProxyListener();
         mImageSemaphoreMap = new HashMap<>();
+        mShadowTaskMap = new HashMap<>();
+        mProcessingTaskConsumer = processingTaskConsumer;
     }
 
     /**
@@ -128,11 +154,14 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * @param imageProcessorProxyListener iamge proxy listener to be used
      */
     public ImageBackend(ExecutorService fastService, ExecutorService slowService,
-            ImageProcessorProxyListener imageProcessorProxyListener) {
+            ImageProcessorProxyListener imageProcessorProxyListener,
+            ProcessingTaskConsumer processingTaskConsumer) {
         mThreadPoolFast = fastService;
         mThreadPoolSlow = slowService;
         mProxyListener = imageProcessorProxyListener;
         mImageSemaphoreMap = new HashMap<>();
+        mShadowTaskMap = new HashMap<>();
+        mProcessingTaskConsumer = processingTaskConsumer;
     }
 
     /**
@@ -145,6 +174,11 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         return mProxyListener;
     }
 
+    /**
+     * Sets a listener that receive events from all tasks, regardless of image
+     *
+     * @param listener Listener to receive all events
+     */
     public void setCameraImageProcessorListener(ImageProcessorListener listener) {
         this.mProxyListener.registerListener(listener, null);
     }
@@ -163,12 +197,26 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * @return Number of Image references currently held by this instance
      */
     @Override
-    public int numberOfReservedOpenImages() {
+    public int getNumberOfReservedOpenImages() {
         synchronized (mImageSemaphoreMap) {
             // since mOutstandingImageOpened, mOutstandingImageClosed reflect
             // the historical state of mImageSemaphoreMap, we need to lock on
             // before we return a value.
             return mOutstandingImageOpened - mOutstandingImageClosed;
+        }
+    }
+
+    /**
+     * Returns of the number of receiveImage calls that are currently enqueued
+     * and/or being processed.
+     *
+     * @return The number of receiveImage calls that are currently enqueued
+     *         and/or being processed
+     */
+    @Override
+    public int getNumberOfOutstandingCalls() {
+        synchronized (mShadowTaskMap) {
+            return mShadowTaskMap.size();
         }
     }
 
@@ -247,6 +295,9 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
             incrementSemaphoreReferenceCount(img, countImageRefs);
         }
 
+        // Update the done count on the new tasks.
+        incrementTaskDone(tasks);
+
         scheduleTasks(tasks);
         return true;
     }
@@ -323,6 +374,9 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         // And count how image references need to be kept track of.
         int countImageRefs = numPropagatedImageReferences(img, tasks);
 
+        // Initialize the counters for process-level tasks
+        initializeTaskDone(tasks);
+
         // Set the semaphore, given that the number of tasks that need to be
         // scheduled
         // and the boolean flags for imaging closing and thread blocking
@@ -369,11 +423,13 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         if (processingFlags.contains(ImageTaskFlags.COMPRESS_TO_JPEG_AND_WRITE_TO_DISK)) {
             if (processingFlags.contains(ImageTaskFlags.CREATE_EARLY_FILMSTRIP_PREVIEW)) {
                 // Request job that creates both filmstrip thumbnail from YUV,
-                // JPEG compression of the YUV Image, and writes the result to disk
+                // JPEG compression of the YUV Image, and writes the result to
+                // disk
                 tasksToExecute.add(new TaskPreviewChainedJpeg(img, executor, this, session,
                         FILMSTRIP_THUMBNAIL_TARGET_SIZE));
             } else {
-                // Request job that only does JPEG compression and writes the result to disk
+                // Request job that only does JPEG compression and writes the
+                // result to disk
                 tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
             }
         }
@@ -420,17 +476,101 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     }
 
     /**
+     * For a given set of starting tasks, initialize the associated sessions
+     * with a proper blocking semaphore and value of number of tasks to be run.
+     * For each semaphore, a ImageShadowTask will be instantiated and enqueued
+     * onto the selected ProcessingSerivceManager.
+     *
+     * @param tasks The set of ImageContainer tasks to be run on ImageBackend
+     */
+    protected void initializeTaskDone(Set<TaskImageContainer> tasks) {
+        Set<CaptureSession> sessionSet = new HashSet<>();
+        Map<CaptureSession, Integer> sessionTaskCount = new HashMap<>();
+
+        // Create a set w/ no session duplicates and count them
+        for (TaskImageContainer task : tasks) {
+            sessionSet.add(task.mSession);
+            Integer currentCount = sessionTaskCount.get(task.mSession);
+            if (currentCount == null) {
+                sessionTaskCount.put(task.mSession, 1);
+            } else {
+                sessionTaskCount.put(task.mSession, currentCount + 1);
+            }
+        }
+
+        // Create a new blocking semaphore for each set of tasks on a given
+        // session.
+        synchronized (mShadowTaskMap) {
+            for (CaptureSession captureSession : sessionSet) {
+                BlockSignalProtocol protocol = new BlockSignalProtocol();
+                protocol.setCount(sessionTaskCount.get(captureSession));
+                ImageShadowTask shadowTask = new ImageShadowTask(protocol, captureSession);
+                mShadowTaskMap.put(captureSession, shadowTask);
+                mProcessingTaskConsumer.enqueueTask(shadowTask);
+            }
+        }
+    }
+
+    /**
+     * For ImageBackend tasks that spawn their own tasks, increase the semaphore
+     * count to take into account the new tasks being spawned.
+     *
+     * @param tasks The set of tasks to be spawned.
+     */
+    protected void incrementTaskDone(Set<TaskImageContainer> tasks) throws RuntimeException {
+        // TODO: Add invariant test so that all sessions are the same.
+        synchronized (mShadowTaskMap) {
+            for (TaskImageContainer task : tasks) {
+                ImageShadowTask shadowTask = mShadowTaskMap.get(task.mSession);
+                if (shadowTask == null) {
+                    throw new RuntimeException(
+                            "Session NOT previously registered."
+                                    + " ImageShadowTask booking-keeping is incorrect.");
+                }
+                shadowTask.getProtocol().addCount(1);
+            }
+        }
+    }
+
+    /**
+     * Decrement the semaphore count of the ImageShadowTask. Should be called
+     * when a task completes its processing in ImageBackend.
+     *
+     * @param imageShadowTask The ImageShadow task that contains the blocking
+     *            semaphore.
+     */
+    protected void decrementTaskDone(ImageShadowTask imageShadowTask) {
+        synchronized (mShadowTaskMap) {
+            int remainingTasks = imageShadowTask.getProtocol().addCount(-1);
+            if (remainingTasks == 0) {
+                mShadowTaskMap.remove(imageShadowTask.getSession());
+                imageShadowTask.getProtocol().signal();
+            }
+        }
+
+    }
+
+    /**
      * Puts the tasks on the specified queue. May be more complicated in the
      * future.
      *
      * @param tasks The set of tasks to be run
      */
     protected void scheduleTasks(Set<TaskImageContainer> tasks) {
-        for (TaskImageContainer task : tasks) {
-            if (task.getProcessingPriority() == TaskImageContainer.ProcessingPriority.FAST) {
-                mThreadPoolFast.execute(task);
-            } else {
-                mThreadPoolSlow.execute(task);
+        synchronized (mShadowTaskMap) {
+            for (TaskImageContainer task : tasks) {
+                ImageShadowTask shadowTask = mShadowTaskMap.get(task.mSession);
+                if (shadowTask == null) {
+                    throw new IllegalStateException("Scheduling a task with a unknown session.");
+                }
+                // Before scheduling, wrap TaskImageContainer inside of the
+                // TaskDoneWrapper to add
+                // instrumentation for managing ImageShadowTasks
+                if (task.getProcessingPriority() == TaskImageContainer.ProcessingPriority.FAST) {
+                    mThreadPoolFast.execute(new TaskDoneWrapper(this, shadowTask, task));
+                } else {
+                    mThreadPoolSlow.execute(new TaskDoneWrapper(this, shadowTask, task));
+                }
             }
         }
     }
@@ -446,13 +586,14 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         synchronized (mImageSemaphoreMap) {
             if (mImageSemaphoreMap.get(img) != null) {
                 throw new RuntimeException(
-                        "ERROR: Rewriting of Semaphore Lock.  Image references may not freed properly");
+                        "ERROR: Rewriting of Semaphore Lock."
+                                + "  Image references may not freed properly");
             }
 
             // Create the new booking-keeping object.
             ImageReleaseProtocol protocol = new ImageReleaseProtocol(blockUntilRelease,
                     closeOnRelease);
-            protocol.count = count;
+            protocol.setCount(count);
 
             mImageSemaphoreMap.put(img, protocol);
             mOutstandingImageRefs += count;
@@ -469,6 +610,11 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * Increments the semaphore count for the image. Should ONLY be internally
      * via appendTasks by internal tasks. Otherwise, image references could get
      * out of whack.
+     *
+     * @param img The Image associated with the set of tasks running on it.
+     * @param count The number of tasks to be added
+     * @throws RuntimeException Indicates image Closing Bookkeeping is screwed
+     *             up.
      */
     protected void incrementSemaphoreReferenceCount(ImageToProcess img, int count)
             throws RuntimeException {
@@ -535,23 +681,51 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     }
 
     /**
-     * A simple tuple class to keep track of image reference, and whether to
-     * block and/or close on final image release. Instantiated on every task
-     * submission call.
+     * Simple wrapper task to instrument when tasks ends so that ImageBackend
+     * can fire events when set of tasks created by a ReceiveImage call have all
+     * completed.
      */
-    static private class ImageReleaseProtocol {
+    private class TaskDoneWrapper implements Runnable {
+        private final ImageBackend mImageBackend;
+        private final ImageShadowTask mImageShadowTask;
+        private final Runnable mTaskToRun;
 
-        public final boolean blockUntilRelease;
+        /**
+         * Constructor
+         * 
+         * @param imageBackend ImageBackend that the task is running on
+         * @param imageShadowTask ImageShadowTask that is blocking on the
+         *            completion of the task
+         * @param taskToRun The task to be run w/o instrumentation
+         */
+        public TaskDoneWrapper(ImageBackend imageBackend, ImageShadowTask imageShadowTask,
+                Runnable taskToRun) {
+            mImageBackend = imageBackend;
+            mImageShadowTask = imageShadowTask;
+            mTaskToRun = taskToRun;
+        }
 
-        public final boolean closeOnRelease;
+        /**
+         * Adds instrumentation that runs when a Runnable completes.
+         */
+        @Override
+        public void run() {
+            mTaskToRun.run();
+            // Decrement count
+            mImageBackend.decrementTaskDone(mImageShadowTask);
+        }
+    }
 
+    /**
+     * Encapsulates all synchronization for semaphore signaling and blocking.
+     */
+    static public class BlockSignalProtocol {
         private int count;
 
         private final ReentrantLock mLock = new ReentrantLock();
 
         private Condition mSignal;
 
-        // TODO: Backport to Reentrant lock
         public void setCount(int value) {
             mLock.lock();
             count = value;
@@ -566,15 +740,17 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
             return value;
         }
 
-        public void addCount(int value) {
+        public int addCount(int value) {
             mLock.lock();
-            count += value;
-            mLock.unlock();
+            try {
+                count += value;
+                return count;
+            } finally {
+                mLock.unlock();
+            }
         }
 
-        ImageReleaseProtocol(boolean block, boolean close) {
-            blockUntilRelease = block;
-            closeOnRelease = close;
+        BlockSignalProtocol() {
             count = 0;
             mSignal = mLock.newCondition();
         }
@@ -598,6 +774,25 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
             mLock.lock();
             mSignal.signal();
             mLock.unlock();
+        }
+
+    }
+
+    /**
+     * A simple tuple class to keep track of image reference, and whether to
+     * block and/or close on final image release. Instantiated on every task
+     * submission call.
+     */
+    static public class ImageReleaseProtocol extends BlockSignalProtocol {
+
+        public final boolean blockUntilRelease;
+
+        public final boolean closeOnRelease;
+
+        ImageReleaseProtocol(boolean block, boolean close) {
+            super();
+            blockUntilRelease = block;
+            closeOnRelease = close;
         }
 
     }
