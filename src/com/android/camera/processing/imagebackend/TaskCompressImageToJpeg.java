@@ -47,8 +47,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      * @param imageTaskManager Link to ImageBackend for reference counting
      * @param captureSession Handler for UI/Disk events
      */
-    TaskCompressImageToJpeg(ImageToProcess image, Executor executor, ImageTaskManager imageTaskManager,
-            CaptureSession captureSession) {
+    TaskCompressImageToJpeg(ImageToProcess image, Executor executor,
+            ImageTaskManager imageTaskManager, CaptureSession captureSession) {
         super(image, executor, imageTaskManager, ProcessingPriority.SLOW, captureSession);
     }
 
@@ -79,8 +79,12 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         ByteBuffer compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
                 * resultImage.height);
 
-        int numBytes = JpegUtilNative.compressJpegFromYUV420Image(img.proxy, compressedData,
-                DEFAULT_JPEG_COMPRESSION_QUALITY, inputImage.orientation.getDegrees());
+        // If Orientation is UNKNOWN, treat input image orientation as
+        // CLOCKWISE_0.
+        int numBytes = JpegUtilNative.compressJpegFromYUV420Image(
+                img.proxy, compressedData, DEFAULT_JPEG_COMPRESSION_QUALITY,
+                (inputImage.orientation == DeviceOrientation.UNKNOWN) ? 0 : inputImage.orientation
+                        .getDegrees());
 
         if (numBytes < 0) {
             throw new RuntimeException("Error compressing jpeg.");
@@ -95,8 +99,9 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut, TaskInfo.Destination.FINAL_IMAGE);
 
-        // TODO: the app actually crashes here on a race condition: TaskCompressImageToJpeg might
-        // complete before TaskConvertImageToRGBPreview.
+        // TODO: the app actually crashes here on a race condition:
+        // TaskCompressImageToJpeg might complete before
+        // TaskConvertImageToRGBPreview.
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
                 resultImage.orientation.getDegrees(), createExif(resultImage),
                 new MediaSaver.OnMediaSavedListener() {
