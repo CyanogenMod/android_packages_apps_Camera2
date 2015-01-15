@@ -24,11 +24,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
 import android.view.Surface;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.ConcurrentBufferQueue;
+import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
+import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.common.TimestampResponseListener;
 
 /**
@@ -134,6 +139,8 @@ public class RequestBuilder {
      * Adds the given response listener. Duplicate listeners are only added
      * once.
      *
+     * @See {@link ResponseListeners}
+     *
      * @param listener the listener to add.
      */
     public void addResponseListener(ResponseListener listener) {
@@ -160,13 +167,11 @@ public class RequestBuilder {
      */
     public void addStream(CaptureStream captureStream) {
         ConcurrentBufferQueue<Long> timestamps = new ConcurrentBufferQueue<>();
-        TimestampResponseListener timestampResponseListener = new TimestampResponseListener(
-                timestamps);
 
         mAllocations.add(new UnregisteredStreamProvider(captureStream,
                 timestamps, mBuilder));
 
-        mResponseListeners.add(timestampResponseListener);
+        mResponseListeners.add(ResponseListeners.forTimestamps(timestamps));
     }
 
     /**

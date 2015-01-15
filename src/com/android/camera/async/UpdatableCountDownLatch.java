@@ -23,13 +23,13 @@ import javax.annotation.Nonnull;
 /**
  * Counts down on each update.
  */
-public class UpdatableCountDownLatch extends CountDownLatch implements Updatable<Void> {
+public class UpdatableCountDownLatch<T> extends CountDownLatch implements Updatable<T> {
     public UpdatableCountDownLatch(int count) {
         super(count);
     }
 
     @Override
-    public void update(@Nonnull Void v) {
+    public void update(@Nonnull T v) {
         countDown();
     }
 }

@@ -37,8 +37,7 @@ public class LoggingCameraCommand implements CameraCommand {
         try {
             mCommand.run();
         } catch (Exception e) {
-            Log.e(TAG, String.format("Executing Command: %s: Exception: ", mName));
-            e.printStackTrace();
+            Log.e(TAG, String.format("Executing Command: %s: Exception: ", mName), e);
             throw e;
         }
         Log.v(TAG, String.format("Executing Command: %s: END", mName));

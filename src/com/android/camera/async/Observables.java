@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,13 @@ package com.android.camera.async;
 
 import com.android.camera.util.Callback;
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.concurrent.Executor;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Helper methods for {@link Observable}.
@@ -56,7 +61,8 @@ public class Observables {
     /**
      * @return An observable which has the given constant value.
      */
-    public static <T> Observable<T> of(final T constant) {
+    @Nonnull
+    public static <T> Observable<T> of(final @Nullable T constant) {
         return new Observable<T>() {
             @Override
             public T get() {
@@ -72,5 +78,18 @@ public class Observables {
                 };
             }
         };
+    }
+
+    @Nonnull
+    @CheckReturnValue
+    public static <T> SafeCloseable addThreadSafeCallback(
+            @Nonnull Observable<T> observable,
+            final @Nonnull Updatable<T> callback) {
+        return observable.addCallback(new Callback<T>() {
+            @Override
+            public void onCallback(T result) {
+                callback.update(result);
+            }
+        }, MoreExecutors.sameThreadExecutor());
     }
 }

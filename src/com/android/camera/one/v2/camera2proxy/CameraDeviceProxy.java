@@ -37,22 +37,27 @@ public class CameraDeviceProxy implements SafeCloseable {
             mStateCallback = stateCallback;
         }
 
+        @Override
         public void onConfigured(CameraCaptureSession session) {
             mStateCallback.onConfigured(new AndroidCameraCaptureSessionProxy(session));
         }
 
+        @Override
         public void onConfigureFailed(CameraCaptureSession session) {
             mStateCallback.onConfigureFailed(new AndroidCameraCaptureSessionProxy(session));
         }
 
+        @Override
         public void onReady(CameraCaptureSession session) {
             mStateCallback.onReady(new AndroidCameraCaptureSessionProxy(session));
         }
 
+        @Override
         public void onActive(CameraCaptureSession session) {
             mStateCallback.onActive(new AndroidCameraCaptureSessionProxy(session));
         }
 
+        @Override
         public void onClosed(CameraCaptureSession session) {
             mStateCallback.onClosed(new AndroidCameraCaptureSessionProxy(session));
         }

@@ -25,6 +25,7 @@ import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.async.Lifetime;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.CaptureStream;
+import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
@@ -90,6 +91,25 @@ public class ImageStreamFactory {
         mImageDistributor = imageDistributor;
     }
 
+    private AllocatingImageStream createUnallocatedStream(int capacity) {
+        ReservableTicketPool ticketPool = new ReservableTicketPool(mTicketPool);
+        mLifetime.add(ticketPool);
+
+        ConcurrentBufferQueue<ImageProxy> imageStream = new ConcurrentBufferQueue<>(new
+                ImageCloser());
+        mLifetime.add(imageStream);
+
+        BufferQueueController<ImageProxy> imageStreamController = new
+                TicketRequiredFilter(ticketPool, imageStream);
+        mLifetime.add(imageStreamController);
+
+        AllocatingImageStream stream = new AllocatingImageStream(capacity,
+                ticketPool, imageStream, imageStreamController, mImageDistributor, mSurface);
+        mLifetime.add(stream);
+
+        return stream;
+    }
+
     /**
      * Creates a logical bounded stream of images with the specified capacity.
      * Note that the required image space will be allocated/acquired the first
@@ -103,54 +123,36 @@ public class ImageStreamFactory {
      *            held from the resulting image queue before images are dropped.
      */
     public ImageStream createStream(int capacity) {
-        ReservableTicketPool ticketPool = new ReservableTicketPool(mTicketPool);
-        mLifetime.add(ticketPool);
-
-        ConcurrentBufferQueue<ImageProxy> imageStream = new ConcurrentBufferQueue<>(new
-                ImageCloser());
-        mLifetime.add(imageStream);
-
-        BufferQueueController<ImageProxy> imageStreamController = new
-                TicketRequiredFilter(ticketPool, imageStream);
-        mLifetime.add(imageStreamController);
-
-        ImageStream stream = new SingleAllocationImageStream(capacity,
-                ticketPool, imageStream, imageStreamController, mImageDistributor, mSurface);
-        mLifetime.add(stream);
-
-        return stream;
+        return createUnallocatedStream(capacity);
     }
 
     /**
      * Creates a logical bounded stream of images with the specified capacity,
      * blocking until the required capacity can be reserved.
+     * <p>
+     * Note: Unlike using {@link #createStream} with a {@link FrameServer}, this
+     * method cannot guarantee non-circular-wait to eliminate the possibility of
+     * deadlock. FrameServer's session lock has already been acquired. Thus,
+     * there is a possibility of deadlock if callers have not already acquired
+     * an exclusive session before calling this method.
+     * <p>
+     * TODO Use a CycleDetectingLockFactory to detect deadlock-prone misuse of
+     * this method, and document the required order of resource acquisition at a
+     * higher-level.
      *
      * @param capacity The maximum number of images which can be simultaneously
      *            held from the resulting image queue before images are dropped.
      */
     public ImageStream createPreallocatedStream(int capacity) throws InterruptedException,
             ResourceAcquisitionFailedException {
-        ReservableTicketPool ticketPool = new ReservableTicketPool(mTicketPool);
+        AllocatingImageStream stream = createUnallocatedStream(capacity);
         try {
-            ticketPool.acquire(capacity);
-        } catch (TicketPool.NoCapacityAvailableException e) {
-            throw new ResourceAcquisitionFailedException(e);
+            stream.allocate();
+            return stream;
+        } catch (Exception e) {
+            // If allocation failed, close the stream before returning.
+            stream.close();
+            throw e;
         }
-
-        mLifetime.add(ticketPool);
-
-        ConcurrentBufferQueue<ImageProxy> imageStream = new ConcurrentBufferQueue<>(new
-                ImageCloser());
-        mLifetime.add(imageStream);
-
-        BufferQueueController<ImageProxy> imageStreamController = new
-                TicketRequiredFilter(ticketPool, imageStream);
-        mLifetime.add(imageStreamController);
-
-        ImageStream stream = new ImageStreamImpl(imageStream, imageStreamController,
-                mImageDistributor, mSurface);
-        mLifetime.add(stream);
-
-        return stream;
     }
 }

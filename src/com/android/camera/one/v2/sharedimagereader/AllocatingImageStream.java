@@ -29,16 +29,16 @@ import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * An ImageQueueCaptureStream with a fixed-capacity which reserves space on
- * first bind().
+ * An ImageQueueCaptureStream with a fixed-capacity which can reserve space
+ * ahead of time via {@link #allocate}.
  */
-class SingleAllocationImageStream extends ImageStreamImpl {
+class AllocatingImageStream extends ImageStreamImpl {
     private final int mCapacity;
     private final ReservableTicketPool mTicketPool;
     /**
-     * True if the stream has been bound at least once.
+     * True if capacity for the stream has has been allocated.
      */
-    private AtomicBoolean mBound;
+    private AtomicBoolean mAllocated;
     private AtomicBoolean mClosed;
 
     /**
@@ -51,7 +51,7 @@ class SingleAllocationImageStream extends ImageStreamImpl {
      *            such that the image queue begins receiving images.
      * @param surface
      */
-    public SingleAllocationImageStream(
+    public AllocatingImageStream(
             int capacity, ReservableTicketPool ticketPool,
             BufferQueue<ImageProxy> imageStream,
             BufferQueueController<ImageProxy> imageStreamController,
@@ -59,21 +59,24 @@ class SingleAllocationImageStream extends ImageStreamImpl {
         super(imageStream, imageStreamController, imageDistributor, surface);
         mCapacity = capacity;
         mTicketPool = ticketPool;
-        mBound = new AtomicBoolean(false);
+        mAllocated = new AtomicBoolean(false);
         mClosed = new AtomicBoolean(false);
     }
 
-    @Override
-    public Surface bind(BufferQueue<Long> timestamps) throws InterruptedException,
-            ResourceAcquisitionFailedException {
-        if (!mBound.getAndSet(true)) {
+    public void allocate() throws InterruptedException, ResourceAcquisitionFailedException {
+        if (!mAllocated.getAndSet(true)) {
             try {
                 mTicketPool.reserveCapacity(mCapacity);
             } catch (TicketPool.NoCapacityAvailableException e) {
                 throw new ResourceAcquisitionFailedException(e);
             }
         }
+    }
 
+    @Override
+    public Surface bind(BufferQueue<Long> timestamps) throws InterruptedException,
+            ResourceAcquisitionFailedException {
+        allocate();
         return super.bind(timestamps);
     }
 
