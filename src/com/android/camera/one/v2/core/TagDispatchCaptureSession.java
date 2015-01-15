@@ -31,6 +31,7 @@ import android.os.Handler;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Like {@link android.hardware.camera2.CameraCaptureSession}, but takes
@@ -38,7 +39,8 @@ import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
  * on a per-request basis, instead of for every {@link CaptureRequest} submitted
  * at the same time.
  */
-class TagDispatchCaptureSession {
+@VisibleForTesting
+public class TagDispatchCaptureSession {
     private static class CaptureCallback implements CameraCaptureSessionProxy.CaptureCallback {
         private final Map<Object, ResponseListener> mListeners;
 
