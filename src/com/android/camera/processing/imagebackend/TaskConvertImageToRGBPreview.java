@@ -740,16 +740,20 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 new Size(inputImage.width, inputImage.height),
                 mTargetSize);
         final TaskImage resultImage = calculateResultImage(img, subsample);
+        final int[] convertedImage;
 
-        onStart(mId, inputImage, resultImage, TaskInfo.Destination.FAST_THUMBNAIL);
+        try {
+            onStart(mId, inputImage, resultImage, TaskInfo.Destination.FAST_THUMBNAIL);
 
-        logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.proxy.getWidth()
-                / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
-                + subsample);
+            logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.proxy.getWidth()
+                    / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
+                    + subsample);
 
-        final int[] convertedImage = runSelectedConversion(img.proxy, subsample);
-        // Signal backend that reference has been released
-        mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+            convertedImage = runSelectedConversion(img.proxy, subsample);
+        } finally {
+            // Signal backend that reference has been released
+            mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+        }
         onPreviewDone(resultImage, inputImage, convertedImage, TaskInfo.Destination.FAST_THUMBNAIL);
     }
 

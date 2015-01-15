@@ -97,6 +97,6 @@ public class ApiHelper {
 
     public static boolean isLOrHigher() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                || "L".equals(Build.VERSION.CODENAME);
+                || "L".equals(Build.VERSION.CODENAME) || "LOLLIPOP".equals(Build.VERSION.CODENAME);
     }
 }

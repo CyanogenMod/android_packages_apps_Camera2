@@ -17,11 +17,12 @@
 package com.android.camera.one.v2.imagesaver;
 
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
+import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
@@ -32,6 +33,7 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
+
 import com.google.common.base.Optional;
 
 import java.util.HashSet;
@@ -41,9 +43,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Wires up the ImageBackend task submission process to save Yuv images.
+ * Wires up the ImageBackend task submission process to save JPEG images. Camera
+ * delivers a JPEG-compressed full-size image. This class does very little work
+ * and just routes this image artifact as the thumbnail and to remote devices.
  */
-public class YuvImageBackendImageSaver implements ImageSaver.Builder {
+public class JpegImageBackendImageSaver implements ImageSaver.Builder {
+    private static Log.Tag TAG = new Log.Tag("JpegImgBESaver");
+
     @ParametersAreNonnullByDefault
     private static class ImageSaverImpl implements SingleImageSaver {
         private final MainThread mExecutor;
@@ -64,8 +70,8 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
 
         @Override
         public void saveAndCloseImage(ImageProxy image, Optional<ImageProxy> thumbnail) {
-            // TODO Use thumbnail to speedup RGB thumbnail creation whenever
-            // possible.
+            // TODO: Use thumbnail to speed up RGB thumbnail creation whenever
+            // possible. For now, just close it.
             if (thumbnail.isPresent()) {
                 thumbnail.get().close();
             }
@@ -74,8 +80,6 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
             listenerProxy.registerListener(mPreviewListener, image);
 
             Set<ImageConsumer.ImageTaskFlags> taskFlagsSet = new HashSet<>();
-            taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CREATE_EARLY_FILMSTRIP_PREVIEW);
-            taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CONVERT_TO_RGB_PREVIEW);
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.COMPRESS_TO_JPEG_AND_WRITE_TO_DISK);
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE);
 
@@ -109,57 +113,31 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
 
         @Override
         public void onStart(TaskImageContainer.TaskInfo task) {
-            switch (task.destination) {
-                case FAST_THUMBNAIL:
-                    // Start Animation
-                    if (task.result.format ==
-                            TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
-                        mPictureSaverCallback.onThumbnailProcessingBegun();
-                    }
-                    break;
-                case INTERMEDIATE_THUMBNAIL:
-                    // Do nothing
-                    break;
+            if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
+                mSession.startEmpty();
             }
         }
 
         @Override
         public void onResultCompressed(TaskImageContainer.TaskInfo task,
                 TaskImageContainer.CompressedPayload payload) {
-            if(task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
+            if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
+                // Just start the thumbnail now, since there's no earlier event.
+                mPictureSaverCallback.onThumbnailProcessingBegun();
+                final Bitmap bitmap = BitmapFactory.decodeByteArray(payload.data, 0,
+                        payload.data.length);
+                // Send image to disk saver.
+                mPictureSaverCallback.onThumbnailAvailable(bitmap, mImageRotation.getDegrees());
+                // Send image to remote devices
                 mPictureSaverCallback.onRemoteThumbnailAvailable(payload.data);
             }
+
         }
 
         @Override
         public void onResultUncompressed(TaskImageContainer.TaskInfo task,
                 TaskImageContainer.UncompressedPayload payload) {
-            // Load bitmap into CameraAppUI
-            switch (task.destination) {
-                case FAST_THUMBNAIL:
-                    final Bitmap bitmap = Bitmap.createBitmap(payload.data,
-                            task.result.width,
-                            task.result.height, Bitmap.Config.ARGB_8888);
-                    mPictureSaverCallback.onThumbnailAvailable(bitmap, mImageRotation.getDegrees());
-                    break;
-                case INTERMEDIATE_THUMBNAIL:
-                    final Bitmap bitmapIntermediate = Bitmap.createBitmap(payload.data,
-                            task.result.width,
-                            task.result.height, Bitmap.Config.ARGB_8888);
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(mImageRotation.getDegrees());
-                    final Bitmap bitmapIntermediateRotated = Bitmap.createBitmap(
-                            bitmapIntermediate, 0, 0, bitmapIntermediate.getWidth(),
-                            bitmapIntermediate.getHeight(), matrix, true);
-                    mExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            // TODO: Finalize and I18N string.
-                            mSession.startSession(bitmapIntermediateRotated, "Saving image ...");
-                        }
-                    });
-                    break;
-            }
+            // Do Nothing
         }
 
         @Override
@@ -181,7 +159,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
      * @param executor Executor to run listener events on the ImageBackend
      * @param imageRotationCalculator the image rotation calculator to determine
      */
-    public YuvImageBackendImageSaver(MainThread executor,
+    public JpegImageBackendImageSaver(MainThread executor,
             ImageRotationCalculator imageRotationCalculator,
             ImageBackend imageBackend) {
         mExecutor = executor;

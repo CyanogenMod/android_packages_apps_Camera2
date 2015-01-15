@@ -16,13 +16,10 @@
 
 package com.android.camera.processing.imagebackend;
 
-import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -92,7 +89,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * Approximate viewable size (in pixels) for the fast thumbnail in the
      * current UX definition of the product. Note that these values will be the
      * minimum size of FAST_THUMBNAIL target for the
-     * CONVERT_IMAGE_TO_RGB_PREVIEW task.
+     * CONVERT_TO_RGB_PREVIEW task.
      */
     private final static Size FAST_THUMBNAIL_TARGET_SIZE = new Size(160, 100);
 
@@ -100,7 +97,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * A standard viewable size (in pixels) for the filmstrip thumbnail in the
      * current UX definition of the product. Note that this size is the minimum
      * size for the Preview on the filmstrip associated with
-     * COMPRESS_IMAGE_TO_JPEG task.
+     * COMPRESS_TO_JPEG_AND_WRITE_TO_DISK task.
      */
     private final static Size FILMSTRIP_THUMBNAIL_TARGET_SIZE = new Size(512, 384);
 
@@ -369,31 +366,29 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
         // Now add the pre-mixed versions of the tasks.
 
-        if (processingFlags.contains(ImageTaskFlags.COMPRESS_IMAGE_TO_JPEG)
-                || processingFlags.contains(ImageTaskFlags.WRITE_IMAGE_TO_DISK)) {
-            // Add this type of task to the appropriate queue.
-            // tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
-            tasksToExecute.add(new TaskPreviewChainedJpeg(img, executor, this, session,
-                   FILMSTRIP_THUMBNAIL_TARGET_SIZE));
+        if (processingFlags.contains(ImageTaskFlags.COMPRESS_TO_JPEG_AND_WRITE_TO_DISK)) {
+            if (processingFlags.contains(ImageTaskFlags.CREATE_EARLY_FILMSTRIP_PREVIEW)) {
+                // Request job that creates both filmstrip thumbnail from YUV,
+                // JPEG compression of the YUV Image, and writes the result to disk
+                tasksToExecute.add(new TaskPreviewChainedJpeg(img, executor, this, session,
+                        FILMSTRIP_THUMBNAIL_TARGET_SIZE));
+            } else {
+                // Request job that only does JPEG compression and writes the result to disk
+                tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
+            }
         }
 
-        if (processingFlags.contains(ImageTaskFlags.CONVERT_IMAGE_TO_RGB_PREVIEW)) {
-            // Add this type of task to the appropriate queue.
+        if (processingFlags.contains(ImageTaskFlags.CONVERT_TO_RGB_PREVIEW)) {
+            // Add an additional type of task to the appropriate queue.
             tasksToExecute.add(new TaskConvertImageToRGBPreview(img, executor,
                     this, TaskImageContainer.ProcessingPriority.FAST, session,
                     FAST_THUMBNAIL_TARGET_SIZE,
                     TaskConvertImageToRGBPreview.ThumbnailShape.SQUARE_ASPECT_CIRCULAR_INSET));
         }
 
-        if (processingFlags.contains(ImageTaskFlags.WRITE_IMAGE_TO_DISK)) {
-            // Add this type of task to the appropriate queue.
-            // Has a dependency as well on the result JPEG_COMPRESSION
-            // TODO: Put disk writing implementation within the framework.
-        }
-
         receiveImage(img, tasksToExecute,
-                processingFlags.contains(ImageTaskFlags.BLOCK_UNTIL_IMAGE_RELEASE),
-                processingFlags.contains(ImageTaskFlags.CLOSE_IMAGE_ON_RELEASE));
+                processingFlags.contains(ImageTaskFlags.BLOCK_UNTIL_ALL_TASKS_RELEASE),
+                processingFlags.contains(ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE));
 
         return true;
     }

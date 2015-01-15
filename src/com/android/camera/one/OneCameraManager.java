@@ -16,17 +16,18 @@
 
 package com.android.camera.one;
 
-import com.google.common.base.Optional;
-
 import android.os.Handler;
 import android.util.DisplayMetrics;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
-import com.android.camera.one.v2.imagesaver.ImageSaver;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
+
+import com.google.common.base.Optional;
 
 /**
  * The camera manager is responsible for instantiating {@link OneCamera}
@@ -38,7 +39,7 @@ public abstract class OneCameraManager {
     /**
      * Attempts to open the camera facing the given direction with the given
      * capture size.
-     *
+     * <p>
      * Exactly one call will always be made to a single method in the provided
      * {@link OpenCallback}.
      *
@@ -47,13 +48,16 @@ public abstract class OneCameraManager {
      * @param enableHdr if an HDR feature exists, open a camera that supports it
      * @param captureSize the capture size. This must be one of the supported
      *            sizes.
-     * @param imageSaverBuilder the builder that will be used to create {@link ImageSaver}.
      * @param callback this listener is called when the camera was opened or
      *            when it failed to open.
      * @param handler the handler on which callback methods are invoked.
+     * @param mainThread Main thread executor
+     * @param imageRotationCalculator Image rotation calculator required for
+     *            Camera Factory initialization
      */
     public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
-            ImageSaver.Builder imageSaverBuilder, OpenCallback callback, Handler handler);
+            OpenCallback callback, Handler handler,
+            MainThread mainThread, final ImageRotationCalculator imageRotationCalculator);
 
     // TODO: Move this to OneCameraCharacteristics class.
     /**
@@ -62,13 +66,13 @@ public abstract class OneCameraManager {
     public abstract boolean hasCameraFacing(Facing facing);
 
     /**
-     * Retrieve the characteristics for the camera facing at the given direction. The first camera
-     * found in the given direction will be chosen.
+     * Retrieve the characteristics for the camera facing at the given
+     * direction. The first camera found in the given direction will be chosen.
      *
      * @param facing The facing direction of the camera.
-     * @return A #{link com.android.camera.one.OneCameraCharacteristics} object to provide camera
-     *         characteristics information. Returns null if there is no camera facing the given
-     *         direction.
+     * @return A #{link com.android.camera.one.OneCameraCharacteristics} object
+     *         to provide camera characteristics information. Returns null if
+     *         there is no camera facing the given direction.
      */
     public abstract OneCameraCharacteristics getCameraCharacteristics(Facing facing)
             throws OneCameraAccessException;

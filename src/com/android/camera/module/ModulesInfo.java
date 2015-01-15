@@ -81,6 +81,7 @@ public class ModulesInfo {
 
             @Override
             public ModuleController createModule(AppController app) {
+                Log.v(TAG, "EnableCaptureModule = " + ENABLE_CAPTURE_MODULE);
                 return ENABLE_CAPTURE_MODULE ? new CaptureModule(app) : new PhotoModule(app);
             }
         });

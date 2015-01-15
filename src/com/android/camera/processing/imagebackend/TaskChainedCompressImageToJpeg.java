@@ -52,23 +52,26 @@ class TaskChainedCompressImageToJpeg extends TaskJpegEncode {
                 img.proxy.getHeight(), img.proxy.getFormat());
         final TaskImage resultImage = new TaskImage(mImage.rotation, img.proxy.getWidth(),
                 img.proxy.getHeight(), ImageFormat.JPEG);
-
-        onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
-
+        byte[] dataCopy;
         int[] strides = new int[3];
-        // Do the byte copy
-        strides[0] = planeList.get(0).getRowStride()
-                / planeList.get(0).getPixelStride();
-        strides[1] = planeList.get(1).getRowStride()
-                / planeList.get(1).getPixelStride();
-        strides[2] = 2 * planeList.get(2).getRowStride()
-                / planeList.get(2).getPixelStride();
 
-        // TODO: For performance, use a cache subsystem for buffer reuse.
-        byte[] dataCopy = convertYUV420ImageToPackedNV21(img.proxy);
+        try {
+            onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
 
-        // Release the image now that you have a usable copy
-        mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+            // Do the byte copy
+            strides[0] = planeList.get(0).getRowStride()
+                    / planeList.get(0).getPixelStride();
+            strides[1] = planeList.get(1).getRowStride()
+                    / planeList.get(1).getPixelStride();
+            strides[2] = 2 * planeList.get(2).getRowStride()
+                    / planeList.get(2).getPixelStride();
+
+            // TODO: For performance, use a cache subsystem for buffer reuse.
+            dataCopy = convertYUV420ImageToPackedNV21(img.proxy);
+        } finally {
+            // Release the image now that you have a usable copy
+            mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+        }
 
         final byte[] chainedDataCopy = dataCopy;
         final int[] chainedStrides = strides;

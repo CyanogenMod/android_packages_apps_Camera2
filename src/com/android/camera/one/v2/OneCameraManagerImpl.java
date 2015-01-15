@@ -28,6 +28,7 @@ import android.util.DisplayMetrics;
 import com.android.camera.CameraActivity;
 import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
+import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera;
@@ -36,10 +37,11 @@ import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
-import com.android.camera.one.v2.imagesaver.ImageSaver;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+
 import com.google.common.base.Optional;
 
 /**
@@ -55,7 +57,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
     private final DisplayMetrics mDisplayMetrics;
     private final SoundPlayer mSoundPlayer;
 
-    public static Optional<OneCameraManager> create(CameraActivity activity, DisplayMetrics displayMetrics) {
+    public static Optional<OneCameraManager> create(CameraActivity activity,
+            DisplayMetrics displayMetrics) {
         if (!ApiHelper.HAS_CAMERA_2_API) {
             return Optional.absent();
         }
@@ -92,14 +95,16 @@ public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
     public void open(Facing facing, final boolean useHdr, final Size pictureSize,
-            final ImageSaver.Builder imageSaverBuilder, final OpenCallback openCallback, Handler handler) {
+            final OpenCallback openCallback,
+            Handler handler, final MainThread mainThread,
+            final ImageRotationCalculator imageRotationCalculator) {
         try {
             final String cameraId = getCameraId(facing);
             Log.i(TAG, "Opening Camera ID " + cameraId);
             mCameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
                 // We may get multiple calls to StateCallback, but only the
                 // first callback indicates the status of the camera-opening
-                // operation.  For example, we may receive onOpened() and later
+                // operation. For example, we may receive onOpened() and later
                 // onClosed(), but only the first should be relayed to
                 // openCallback.
                 private boolean isFirstCallback = true;
@@ -139,10 +144,12 @@ public class OneCameraManagerImpl extends OneCameraManager {
                         try {
                             CameraCharacteristics characteristics = mCameraManager
                                     .getCameraCharacteristics(device.getId());
-                            // TODO: Set boolean based on whether HDR+ is enabled.
+                            // TODO: Set boolean based on whether HDR+ is
+                            // enabled.
                             OneCamera oneCamera = OneCameraCreator.create(mAppController, useHdr,
-                                    device, characteristics, pictureSize, imageSaverBuilder,
-                                    mMaxMemoryMB, mDisplayMetrics, mSoundPlayer);
+                                    device, characteristics, pictureSize,
+                                    mMaxMemoryMB, mDisplayMetrics, mSoundPlayer,
+                                    mainThread, imageRotationCalculator);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {
                             Log.d(TAG, "Could not get camera characteristics");
@@ -181,7 +188,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
             throws OneCameraAccessException {
         String cameraId = getCameraId(facing);
         try {
-            CameraCharacteristics characteristics = mCameraManager.getCameraCharacteristics(cameraId);
+            CameraCharacteristics characteristics = mCameraManager
+                    .getCameraCharacteristics(cameraId);
             return new OneCameraCharacteristicsImpl(characteristics);
         } catch (CameraAccessException ex) {
             throw new OneCameraAccessException("Unable to get camera characteristics", ex);

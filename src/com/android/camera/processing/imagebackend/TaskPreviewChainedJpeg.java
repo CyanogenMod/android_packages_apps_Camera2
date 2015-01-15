@@ -27,8 +27,6 @@ import java.util.concurrent.Executor;
  * inscribed in a circle.
  */
 public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
-    protected final static Log.Tag TAG = new Log.Tag("TaskPreviewChainedJpeg");
-
     /**
      * Constructor
      *
@@ -46,7 +44,8 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
     }
 
     public void logWrapper(String message) {
-        Log.v(TAG, message);
+        // final Log.Tag TAG = new Log.Tag("TaskPreviewChainedJpeg");
+        // Log.v(TAG, message);
     }
 
     @Override
@@ -58,22 +57,26 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
                 new Size(inputImage.width, inputImage.height),
                 mTargetSize);
         final TaskImage resultImage = calculateResultImage(img, subsample);
+        final int[] convertedImage;
 
-        onStart(mId, inputImage, resultImage, TaskInfo.Destination.INTERMEDIATE_THUMBNAIL);
+        try {
+            onStart(mId, inputImage, resultImage, TaskInfo.Destination.INTERMEDIATE_THUMBNAIL);
 
-        logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.proxy.getWidth()
-                / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
-                + subsample);
+            logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.proxy.getWidth()
+                    / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
+                    + subsample);
 
-        final int[] convertedImage = runSelectedConversion(img.proxy,subsample);
+            convertedImage = runSelectedConversion(img.proxy, subsample);
 
-        // Chain JPEG task
-        TaskImageContainer jpegTask = new TaskCompressImageToJpeg(img, mExecutor,
-                mImageTaskManager, mSession);
-        mImageTaskManager.appendTasks(img, jpegTask);
+            // Chain JPEG task
+            TaskImageContainer jpegTask = new TaskCompressImageToJpeg(img, mExecutor,
+                    mImageTaskManager, mSession);
+            mImageTaskManager.appendTasks(img, jpegTask);
+        } finally {
+            // Signal backend that reference has been released
+            mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+        }
 
-        // Signal backend that reference has been released
-        mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
         onPreviewDone(resultImage, inputImage, convertedImage,
                 TaskInfo.Destination.INTERMEDIATE_THUMBNAIL);
     }

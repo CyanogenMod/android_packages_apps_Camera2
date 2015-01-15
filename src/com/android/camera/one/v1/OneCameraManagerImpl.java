@@ -22,6 +22,7 @@ import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
@@ -29,6 +30,7 @@ import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
 
 /**
@@ -93,7 +95,9 @@ public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
     public void open(Facing facing, boolean enableHdr, Size pictureSize,
-            ImageSaver.Builder imageSaverBuilder, OpenCallback callback, Handler handler) {
+            OpenCallback callback, Handler handler,
+            MainThread mainThread,
+            ImageRotationCalculator imageRotationCalculator) {
         throw new RuntimeException("Not implemented yet.");
     }
 
