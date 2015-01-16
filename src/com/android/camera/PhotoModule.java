@@ -545,7 +545,7 @@ public class PhotoModule
         mEnableThreadedCameraStartup = mActivity.getResources().getBoolean(
                 R.bool.enableThreadedCameraStartup);
 
-        if (mOpenCameraThread == null && !mActivity.mIsModuleSwitchInProgress) {
+        if (mOpenCameraThread == null) {
             startOpenCameraThread();
         }
         initializeControlByIntent();
