@@ -31,7 +31,6 @@ import com.android.camera.processing.imagebackend.ImageProcessorListener;
 import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
-import com.android.camera.remote.WearRemoteShutterListener;
 import com.android.camera.session.CaptureSession;
 import com.google.common.base.Optional;
 
