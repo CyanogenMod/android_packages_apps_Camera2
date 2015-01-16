@@ -15,7 +15,7 @@
  */
 
 
-package com.android.camera.util;
+package com.android.camera.stats;
 
 import android.content.Context;
 

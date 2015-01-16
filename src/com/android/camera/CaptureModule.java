@@ -79,7 +79,7 @@ import com.android.camera.ui.focus.FocusSound;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
-import com.android.camera.util.UsageStatistics;
+import com.android.camera.stats.UsageStatistics;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 

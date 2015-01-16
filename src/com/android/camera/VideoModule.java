@@ -16,7 +16,6 @@
 
 package com.android.camera;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -66,7 +65,7 @@ import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.UsageStatistics;
+import com.android.camera.stats.UsageStatistics;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;

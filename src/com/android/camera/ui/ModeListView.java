@@ -45,7 +45,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
-import com.android.camera.util.UsageStatistics;
+import com.android.camera.stats.UsageStatistics;
 import com.android.camera.widget.AnimationEffects;
 import com.android.camera.widget.SettingsCling;
 import com.android.camera2.R;

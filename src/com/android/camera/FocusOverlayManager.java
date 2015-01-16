@@ -35,7 +35,7 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.ui.focus.CameraCoordinateTransformer;
 import com.android.camera.ui.focus.FocusRing;
 import com.android.camera.util.CameraUtil;
-import com.android.camera.util.UsageStatistics;
+import com.android.camera.stats.UsageStatistics;
 import com.android.ex.camera2.portability.CameraCapabilities;
 
 import java.lang.ref.WeakReference;

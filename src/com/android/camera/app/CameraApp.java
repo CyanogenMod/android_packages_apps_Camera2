@@ -35,8 +35,8 @@ import com.android.camera.session.StackSaverFactory;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.RemoteShutterHelper;
-import com.android.camera.util.SessionStatsCollector;
-import com.android.camera.util.UsageStatistics;
+import com.android.camera.stats.SessionStatsCollector;
+import com.android.camera.stats.UsageStatistics;
 
 /**
  * The Camera application class containing important services and functionality
