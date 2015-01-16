@@ -71,6 +71,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
+import com.android.camera.app.FirstRunDialog;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryQuery;
@@ -111,6 +112,8 @@ import com.android.camera.session.CaptureSessionManager.SessionListener;
 import com.android.camera.settings.AppUpgrader;
 import com.android.camera.settings.CameraSettingsActivity;
 import com.android.camera.settings.Keys;
+import com.android.camera.settings.ResolutionSetting;
+import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
@@ -205,6 +208,7 @@ public class CameraActivity extends QuickActivity
 
     private OneCameraManager mCameraManager;
     private SettingsManager mSettingsManager;
+    private ResolutionSetting mResolutionSetting;
     private ModeListView mModeListView;
     private boolean mModeListVisible = false;
     private int mCurrentModeIndex;
@@ -268,6 +272,9 @@ public class CameraActivity extends QuickActivity
     };
     private MemoryManager mMemoryManager;
     private MotionManager mMotionManager;
+
+    /** First run dialog */
+    private FirstRunDialog mFirstRunDialog;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -1414,11 +1421,12 @@ public class CameraActivity extends QuickActivity
         mSoundPlayer = new SoundPlayer(mAppContext);
 
         try {
-            mCameraManager = OneCameraManager.get(this);
+            mCameraManager = OneCameraManager.get(this, ResolutionUtil.getDisplayMetrics(this));
         } catch (OneCameraException e) {
             // Log error and continue. Modules requiring OneCamera should check
             // and handle if null by showing error dialog or other treatment.
-            Log.w(TAG, "Creating camera manager failed.", e);
+            Log.e(TAG, "Creating camera manager failed.", e);
+            CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
         }
 
         // TODO: Try to move all the resources allocation to happen as soon as
@@ -1431,6 +1439,7 @@ public class CameraActivity extends QuickActivity
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
         Keys.setDefaults(mSettingsManager, mAppContext);
+        mResolutionSetting = new ResolutionSetting(mSettingsManager, mCameraManager);
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         // We suppress this flag via theme when drawing the system preview
@@ -1609,6 +1618,19 @@ public class CameraActivity extends QuickActivity
             }
         });
         mMotionManager = getServices().getMotionManager();
+
+        mFirstRunDialog = new FirstRunDialog(this, new FirstRunDialog.FirstRunDialogListener() {
+            @Override
+            public void onFirstRunStateReady() {
+                // Run normal resume tasks.
+                resume();
+            }
+
+            @Override
+            public void onCameraAccessException() {
+                CameraUtil.showErrorAndFinish(CameraActivity.this, R.string.cannot_connect_camera);
+            }
+        });
     }
 
     /**
@@ -1737,10 +1759,13 @@ public class CameraActivity extends QuickActivity
         }
 
         mPaused = true;
-        mPeekAnimationHandler = null;
-        mPeekAnimationThread.quitSafely();
-        mPeekAnimationThread = null;
+        if (mPeekAnimationHandler != null) {
+            mPeekAnimationHandler = null;
+            mPeekAnimationThread.quitSafely();
+            mPeekAnimationThread = null;
+        }
         mCameraAppUI.hideCaptureIndicator();
+        mFirstRunDialog.dismiss();
 
         // Delete photos that are pending deletion
         performDeletion();
@@ -1776,10 +1801,17 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void onResumeTasks() {
+        mPaused = false;
+
+        // Show the dialog if necessary. The rest resume logic will be invoked
+        // at the onFirstRunStateReady() callback.
+        mFirstRunDialog.showIfNecessary();
+    }
+
+    private void resume() {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
         Log.v(TAG, "Build info: " + Build.DISPLAY);
 
-        mPaused = false;
         updateStorageSpaceAndHint(null);
 
         mLastLayoutOrientation = getResources().getConfiguration().orientation;
@@ -1912,8 +1944,11 @@ public class CameraActivity extends QuickActivity
 
         mPanoramaViewHelper.onResume();
         ReleaseHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
-        // Record location if the setting is active
-        Keys.syncLocationManager(mSettingsManager, mLocationManager);
+
+        // Enable location recording if the setting is on.
+        final boolean locationRecordingEnabled =
+                mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL, Keys.KEY_RECORD_LOCATION);
+        mLocationManager.recordLocation(locationRecordingEnabled);
 
         final int previewVisibility = getPreviewVisibility();
         updatePreviewRendering(previewVisibility);
@@ -2303,6 +2338,11 @@ public class CameraActivity extends QuickActivity
     }
 
     @Override
+    public ResolutionSetting getResolutionSetting() {
+        return mResolutionSetting;
+    }
+
+    @Override
     public CameraServices getServices() {
         return (CameraServices) getApplication();
     }
@@ -2331,25 +2371,6 @@ public class CameraActivity extends QuickActivity
     @Override
     public SoundPlayer getSoundPlayer() {
         return mSoundPlayer;
-    }
-
-    /**
-     * Creates an AlertDialog appropriate for choosing whether to enable
-     * location on the first run of the app.
-     */
-    public AlertDialog getFirstTimeLocationAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder = SettingsUtil.getFirstTimeLocationAlertBuilder(builder, new Callback<Boolean>() {
-            @Override
-            public void onCallback(Boolean locationOn) {
-                Keys.setLocation(mSettingsManager, locationOn, mLocationManager);
-            }
-        });
-        if (builder != null) {
-            return builder.create();
-        } else {
-            return null;
-        }
     }
 
     /**

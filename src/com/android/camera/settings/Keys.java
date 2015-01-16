@@ -68,7 +68,12 @@ public class Keys {
             "pref_should_show_refocus_viewer_cling";
     public static final String KEY_EXPOSURE_COMPENSATION_ENABLED =
             "pref_camera_exposure_compensation_key";
+
+    /**
+     * Whether the user has chosen an aspect ratio on the first run dialog.
+     */
     public static final String KEY_USER_SELECTED_ASPECT_RATIO = "pref_user_selected_aspect_ratio";
+
     public static final String KEY_COUNTDOWN_DURATION = "pref_camera_countdown_duration_key";
     public static final String KEY_HDR_PLUS_FLASH_MODE = "pref_hdr_plus_flash_mode";
     public static final String KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING =
@@ -211,53 +216,5 @@ public class Keys {
         return settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
                                           KEY_CAMERA_GRID_LINES);
     }
-
-    /**
-     * Returns whether pano orientation is horizontal.
-     */
-    public static boolean isPanoOrientationHorizontal(SettingsManager settingsManager) {
-        return settingsManager.isDefault(SettingsManager.SCOPE_GLOBAL,
-                                         KEY_CAMERA_PANO_ORIENTATION);
-    }
-
-    /**
-     * Sets the settings for whether location recording should be enabled or
-     * not. Also makes sure to pass on the change to the location manager.
-     */
-    public static void setLocation(SettingsManager settingsManager, boolean on,
-                                   LocationManager locationManager) {
-        settingsManager.set(SettingsManager.SCOPE_GLOBAL, KEY_RECORD_LOCATION, on);
-        locationManager.recordLocation(on);
-    }
-
-    /**
-     * Sets the user selected aspect ratio setting to selected.
-     */
-    public static void setAspectRatioSelected(SettingsManager settingsManager) {
-        settingsManager.set(SettingsManager.SCOPE_GLOBAL,
-                            KEY_USER_SELECTED_ASPECT_RATIO, true);
-    }
-
-    /**
-     * Sets the manual exposure compensation enabled setting
-     * to on/off based on the given argument.
-     */
-    public static void setManualExposureCompensation(SettingsManager settingsManager,
-                                              boolean on) {
-        settingsManager.set(SettingsManager.SCOPE_GLOBAL,
-                            KEY_EXPOSURE_COMPENSATION_ENABLED, on);
-    }
-
-    /**
-     * Reads the current location recording settings and passes it on to the
-     * given location manager.
-     */
-    public static void syncLocationManager(SettingsManager settingsManager,
-                                    LocationManager locationManager) {
-        boolean value = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
-                                                   KEY_RECORD_LOCATION);
-        locationManager.recordLocation(value);
-    }
-
 }
 

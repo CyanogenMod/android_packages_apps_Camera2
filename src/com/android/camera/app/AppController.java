@@ -32,6 +32,7 @@ import com.android.camera.ButtonManager;
 import com.android.camera.SoundPlayer;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -363,6 +364,13 @@ public interface AppController {
      * @return {@code null} if not available yet.
      */
     public SettingsManager getSettingsManager();
+
+    /**
+     * Returns the {@link com.android.camera.settings.ResolutionSetting}.
+     *
+     * @return the current resolution setting.
+     */
+    public ResolutionSetting getResolutionSetting();
 
     /**
      * @return Common services and functionality to be shared.
