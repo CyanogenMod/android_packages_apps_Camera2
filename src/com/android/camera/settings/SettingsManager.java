@@ -27,6 +27,10 @@ import com.android.camera.util.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
+
 /**
  * SettingsManager class provides an api for getting and setting SharedPreferences
  * values.
@@ -69,6 +73,7 @@ import java.util.List;
  * methods, which rely on an index into the set of possible values.
  *
  */
+@ThreadSafe
 public class SettingsManager {
     private static final Log.Tag TAG = new Log.Tag("SettingsManager");
 
@@ -363,6 +368,7 @@ public class SettingsManager {
      * Retrieve a setting's value as a String, using the default value
      * stored in the DefaultsStore.
      */
+    @Nullable
     public String getString(String scope, String key) {
         synchronized (mLock) {
             return getString(scope, key, getStringDefault(key));
@@ -373,7 +379,7 @@ public class SettingsManager {
      * Retrieve a setting's value as an Integer, manually specifying
      * a default value.
      */
-    public Integer getInteger(String scope, String key, Integer defaultValue) {
+    public int getInteger(String scope, String key, Integer defaultValue) {
         synchronized (mLock) {
             String defaultValueString = Integer.toString(defaultValue);
             String value = getString(scope, key, defaultValueString);
@@ -385,7 +391,7 @@ public class SettingsManager {
      * Retrieve a setting's value as an Integer, converting the default value
      * stored in the DefaultsStore.
      */
-    public Integer getInteger(String scope, String key) {
+    public int getInteger(String scope, String key) {
         synchronized (mLock) {
             return getInteger(scope, key, getIntegerDefault(key));
         }

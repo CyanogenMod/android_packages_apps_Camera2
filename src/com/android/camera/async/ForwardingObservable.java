@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,24 @@
 
 package com.android.camera.async;
 
+import com.android.camera.util.Callback;
+
 import java.util.concurrent.Executor;
 
-import android.os.Handler;
+public class ForwardingObservable<T> implements Observable<T> {
+    private final Observable<T> mDelegate;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-/**
- * An {@link Executor} which posts to a {@link Handler}.
- */
-@ParametersAreNonnullByDefault
-public class HandlerExecutor implements Executor {
-    private final Handler mHandler;
-
-    public HandlerExecutor(Handler handler) {
-        mHandler = handler;
+    public ForwardingObservable(Observable<T> delegate) {
+        mDelegate = delegate;
     }
 
     @Override
-    public void execute(Runnable runnable) {
-        mHandler.post(runnable);
+    public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
+        return mDelegate.addCallback(callback, executor);
+    }
+
+    @Override
+    public T get() {
+        return mDelegate.get();
     }
 }

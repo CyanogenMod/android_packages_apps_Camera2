@@ -21,7 +21,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.MainThread;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
@@ -46,13 +46,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class YuvImageBackendImageSaver implements ImageSaver.Builder {
     @ParametersAreNonnullByDefault
     private static class ImageSaverImpl implements SingleImageSaver {
-        private final MainThreadExecutor mExecutor;
+        private final MainThread mExecutor;
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
         private final ImageBackend mImageBackend;
         private final ImageProcessorListener mPreviewListener;
 
-        public ImageSaverImpl(MainThreadExecutor executor,
+        public ImageSaverImpl(MainThread executor,
                 CaptureSession session, OrientationManager.DeviceOrientation imageRotation,
                 ImageBackend imageBackend, ImageProcessorListener previewListener) {
             mExecutor = executor;
@@ -89,13 +89,13 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
     }
 
     private static class PreviewListener implements ImageProcessorListener {
-        private final MainThreadExecutor mExecutor;
+        private final MainThread mExecutor;
         private final ImageProcessorProxyListener mListenerProxy;
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
         private final OneCamera.PictureSaverCallback mPictureSaverCallback;
 
-        private PreviewListener(MainThreadExecutor executor,
+        private PreviewListener(MainThread executor,
                 ImageProcessorProxyListener listenerProxy, CaptureSession session,
                 OrientationManager.DeviceOrientation imageRotation,
                 OneCamera.PictureSaverCallback pictureSaverCallback) {
@@ -167,7 +167,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         }
     }
 
-    private final MainThreadExecutor mExecutor;
+    private final MainThread mExecutor;
     private final ImageRotationCalculator mImageRotationCalculator;
     private final ImageBackend mImageBackend;
 
@@ -177,7 +177,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
      * @param executor Executor to run listener events on the ImageBackend
      * @param imageRotationCalculator the image rotation calculator to determine
      */
-    public YuvImageBackendImageSaver(MainThreadExecutor executor,
+    public YuvImageBackendImageSaver(MainThread executor,
             ImageRotationCalculator imageRotationCalculator,
             ImageBackend imageBackend) {
         mExecutor = executor;

@@ -25,9 +25,12 @@ import android.view.Surface;
 import com.android.camera.burst.BurstConfiguration;
 import com.android.camera.burst.ResultsAccessor;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
 
 import java.io.File;
+
+import javax.annotation.Nonnull;
 
 /**
  * OneCamera is a camera API tailored around our Google Camera application
@@ -180,8 +183,8 @@ public interface OneCamera {
     }
 
     /**
-     * A class implementing this interface can be passed to a picture saver
-     * in order to receive image processing events.
+     * A class implementing this interface can be passed to a picture saver in
+     * order to receive image processing events.
      */
     public static interface PictureSaverCallback {
         /**
@@ -298,10 +301,39 @@ public interface OneCamera {
         /**
          * Flash modes.
          * <p>
-         * Has to be in sync with R.arrays.pref_camera_flashmode_entryvalues.
          */
         public static enum Flash {
-            AUTO, OFF, ON
+            AUTO("auto"), OFF("off"), ON("on");
+
+            /**
+             * The machine-readable (via {@link #encodeSettingsString} and
+             * {@link #decodeSettingsString} string used to represent this flash
+             * mode in {@link SettingsManager}.
+             * <p>
+             * This must be in sync with R.arrays.pref_camera_flashmode_entryvalues.
+             */
+            private final String mSettingsString;
+
+            Flash(@Nonnull String settingsString) {
+                mSettingsString = settingsString;
+            }
+
+            @Nonnull
+            public String encodeSettingsString() {
+                return mSettingsString;
+            }
+
+            @Nonnull
+            public static Flash decodeSettingsString(@Nonnull String setting) {
+                if (AUTO.encodeSettingsString().equals(setting)) {
+                    return AUTO;
+                } else if (OFF.encodeSettingsString().equals(setting)) {
+                    return OFF;
+                } else if (ON.encodeSettingsString().equals(setting)) {
+                    return ON;
+                }
+                throw new IllegalArgumentException("Not a valid setting");
+            }
         }
 
         /** Called when the capture is completed or failed. */
@@ -309,8 +341,6 @@ public interface OneCamera {
         public final PictureSaverCallback saverCallback;
         /** The heading of the device at time of capture. In degrees. */
         public final int heading;
-        /** Flash mode for this capture. */
-        public final Flash flashMode;
         /** Zoom value. */
         public final float zoom;
         /** Timer duration in seconds or 0 for no timer. */
@@ -318,12 +348,11 @@ public interface OneCamera {
 
         public PhotoCaptureParameters(String title, int orientation, Location location, File
                 debugDataFolder, PictureCallback callback, PictureSaverCallback saverCallback,
-                int heading, Flash flashMode, float zoom, float timerSeconds) {
+                int heading, float zoom, float timerSeconds) {
             super(title, orientation, location, debugDataFolder);
             this.callback = callback;
             this.saverCallback = saverCallback;
             this.heading = heading;
-            this.flashMode = flashMode;
             this.zoom = zoom;
             this.timerSeconds = timerSeconds;
         }
@@ -356,8 +385,8 @@ public interface OneCamera {
     /**
      * Meters and triggers auto focus scan with ROI around tap point.
      * <p/>
-     * Normalized coordinates are referenced to portrait preview window with
-     * (0, 0) top left and (1, 1) bottom right. Rotation has no effect.
+     * Normalized coordinates are referenced to portrait preview window with (0,
+     * 0) top left and (1, 1) bottom right. Rotation has no effect.
      *
      * @param nx normalized x coordinate.
      * @param ny normalized y coordinate.
@@ -383,7 +412,6 @@ public interface OneCamera {
 
     /**
      * Call this to stop taking burst.
-     *
      */
     public void stopBurst();
 
@@ -407,8 +435,9 @@ public interface OneCamera {
 
     /**
      * Starts a preview stream and renders it to the given surface.
+     * 
      * @param Surface the surface on which to render preview frames
-     *                @param listener
+     * @param listener
      */
     public void startPreview(Surface surface, CaptureReadyCallback listener);
 

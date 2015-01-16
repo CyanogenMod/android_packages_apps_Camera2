@@ -22,6 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.SafeCloseable;
+import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
@@ -39,7 +40,9 @@ public class CameraCommandExecutor implements SafeCloseable {
         @Override
         public void run() {
             try {
+                Log.d(TAG, "Executing command: " + mCommand + " START");
                 mCommand.run();
+                Log.d(TAG, "Executing command: " + mCommand + " END");
             } catch (ResourceAcquisitionFailedException e) {
                 // This may indicate that the command would have otherwise
                 // deadlocked waiting for resources which can never be acquired,
@@ -49,14 +52,22 @@ public class CameraCommandExecutor implements SafeCloseable {
             } catch (InterruptedException e) {
                 // If interrupted, just return because the system is shutting
                 // down.
+                Log.d(TAG, "Interrupted while executing command: " + mCommand);
             } catch (CameraAccessException e) {
                 // If the camera was closed and the command failed, just return.
+                Log.d(TAG, "Unable to connect to camera while executing command: " + mCommand);
             } catch (CameraCaptureSessionClosedException e) {
                 // If the session was closed and the command failed, just
                 // return.
+                Log.d(TAG, "Unable to connect to capture session while executing command: " +
+                        mCommand);
+            } catch (Exception e) {
+                Log.e(TAG, "Exception when executing command: " + mCommand, e);
             }
         }
     }
+
+    private static final Log.Tag TAG = new Log.Tag("CameraCommandExecutor");
 
     private final ExecutorService mExecutor;
 
@@ -66,7 +77,7 @@ public class CameraCommandExecutor implements SafeCloseable {
 
     public void execute(CameraCommand command) {
         try {
-            mExecutor.submit(new CommandRunnable(command));
+            mExecutor.execute(new CommandRunnable(command));
         } catch (RejectedExecutionException e) {
             // If the executor is shut down, the command will not be executed.
             // So, we can ignore this exception.

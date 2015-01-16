@@ -17,7 +17,7 @@
 package com.android.camera.one.v2.photo;
 
 import com.android.camera.async.BufferQueue;
-import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.MainThread;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
@@ -30,7 +30,7 @@ import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.Metadata
 public class ZslPictureTakerFactory {
     private final PictureTakerImpl mPictureTaker;
 
-    public ZslPictureTakerFactory(MainThreadExecutor mainExecutor,
+    public ZslPictureTakerFactory(MainThread mainExecutor,
             CameraCommandExecutor commandExecutor,
             ImageSaver.Builder imageSaverBuilder,
             FrameServer frameServer,
@@ -38,15 +38,12 @@ public class ZslPictureTakerFactory {
             ImageStreamFactory sharedImageReader,
             BufferQueue<ImageProxy> ringBuffer,
             MetadataPool metadataPool) {
-        ImageCaptureCommand fallbackFlashOffCommand = new SimpleImageCaptureCommand(frameServer,
+        ImageCaptureCommand fallbackCommand = new SimpleImageCaptureCommand(frameServer,
                 rootRequestBuilder, sharedImageReader);
-        ImageCaptureCommand flashOffCommand = new ZslImageCaptureCommandFactory(ringBuffer,
-                metadataPool, fallbackFlashOffCommand).provideCaptureCommand();
-        // TODO FIXME Implement flash
-        ImageCaptureCommand flashOnCommand = flashOffCommand;
-        ImageCaptureCommand flashAutoCommand = flashOffCommand;
+        ImageCaptureCommand zslCommand = new ZslImageCaptureCommandFactory(ringBuffer,
+                metadataPool, fallbackCommand).provideCaptureCommand();
         mPictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor, imageSaverBuilder,
-                flashOffCommand, flashOnCommand, flashAutoCommand);
+                zslCommand);
     }
 
     public PictureTaker providePictureTaker() {

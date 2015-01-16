@@ -24,7 +24,7 @@ import android.view.Surface;
 
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
-import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
@@ -84,7 +84,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
     @Override
     public OneCamera createOneCamera(final CameraDeviceProxy device,
             final OneCameraCharacteristics characteristics,
-            final MainThreadExecutor mainThreadExecutor,
+            final MainThread mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
 
@@ -148,7 +148,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         miscThreadPool);
 
                 ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(
-                        mainThreadExecutor,
+                        mainThread,
                         cameraCommandExecutor,
                         imageSaverBuilder,
                         frameServer,
@@ -169,7 +169,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
         List<Size> supportedPreviewSizes = characteristics.getSupportedPreviewSizes();
         OneCamera.Facing direction = characteristics.getCameraDirection();
         return new InitializedOneCameraFactory(cameraStarter, device,
-                outputSurfaces, mainThreadExecutor, new HandlerFactory(), maxZoom,
+                outputSurfaces, mainThread, new HandlerFactory(), maxZoom,
                 supportedPreviewSizes, direction).provideOneCamera();
     }
 }

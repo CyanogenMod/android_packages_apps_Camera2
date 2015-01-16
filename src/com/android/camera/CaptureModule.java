@@ -40,7 +40,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.LocationManager;
-import com.android.camera.async.MainThreadExecutor;
+import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
@@ -446,7 +446,7 @@ public class CaptureModule extends CameraModule implements
         PhotoCaptureParameters params = new PhotoCaptureParameters(
                 session.getTitle(), orientation, session.getLocation(),
                 mContext.getExternalCacheDir(), this, mPictureSaverCallback,
-                mHeadingSensor.getCurrentHeading(), getFlashModeFromSettings(), mZoomValue, 0);
+                mHeadingSensor.getCurrentHeading(), mZoomValue, 0);
 
         mCamera.takePicture(params, session);
     }
@@ -1177,12 +1177,12 @@ public class CaptureModule extends CameraModule implements
         // Create the image saver.
         // Used to rotate images the right way based on the sensor used
         // for taking the image.
-        MainThreadExecutor mainThreadExecutor = MainThreadExecutor.create();
+        MainThread mainThread = MainThread.create();
         ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
                 .from(cameraCharacteristics);
         ImageBackend imageBackend = ProcessingServiceManager.getImageBackendInstance();
         ImageSaver.Builder imageSaverBuilder = new YuvImageBackendImageSaver(
-                mainThreadExecutor, imageRotationCalculator, imageBackend);
+                mainThread, imageRotationCalculator, imageBackend);
 
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
@@ -1342,20 +1342,5 @@ public class CaptureModule extends CameraModule implements
         // the SurfaceTexture cannot be transformed by matrix set on the
         // TextureView.
         updateFrameDistributorBufferSize();
-    }
-
-    /**
-     * @return The currently set Flash settings. Defaults to AUTO if the setting
-     *         could not be parsed.
-     */
-    private Flash getFlashModeFromSettings() {
-        String flashSetting = mSettingsManager.getString(mAppController.getCameraScope(),
-                Keys.KEY_FLASH_MODE);
-        try {
-            return Flash.valueOf(flashSetting.toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            Log.w(TAG, "Could not parse Flash Setting. Defaulting to AUTO.");
-            return Flash.AUTO;
-        }
     }
 }
