@@ -26,11 +26,12 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.CaptureStream;
 import com.android.camera.one.v2.core.RequestBuilder;
-import com.android.camera.one.v2.sharedimagereader.util.ImageCloser;
+import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.ReservableTicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
+import com.android.camera.one.v2.sharedimagereader.util.ImageCloser;
 
 /**
  * Builds {@link CaptureStream}s which can share the same underlying
@@ -115,6 +116,39 @@ public class ImageStreamFactory {
 
         ImageStream stream = new SingleAllocationImageStream(capacity,
                 ticketPool, imageStream, imageStreamController, mImageDistributor, mSurface);
+        mLifetime.add(stream);
+
+        return stream;
+    }
+
+    /**
+     * Creates a logical bounded stream of images with the specified capacity,
+     * blocking until the required capacity can be reserved.
+     *
+     * @param capacity The maximum number of images which can be simultaneously
+     *            held from the resulting image queue before images are dropped.
+     */
+    public ImageStream createPreallocatedStream(int capacity) throws InterruptedException,
+            ResourceAcquisitionFailedException {
+        ReservableTicketPool ticketPool = new ReservableTicketPool(mTicketPool);
+        try {
+            ticketPool.acquire(capacity);
+        } catch (TicketPool.NoCapacityAvailableException e) {
+            throw new ResourceAcquisitionFailedException(e);
+        }
+
+        mLifetime.add(ticketPool);
+
+        ConcurrentBufferQueue<ImageProxy> imageStream = new ConcurrentBufferQueue<>(new
+                ImageCloser());
+        mLifetime.add(imageStream);
+
+        BufferQueueController<ImageProxy> imageStreamController = new
+                TicketRequiredFilter(ticketPool, imageStream);
+        mLifetime.add(imageStreamController);
+
+        ImageStream stream = new ImageStreamImpl(imageStream, imageStreamController,
+                mImageDistributor, mSurface);
         mLifetime.add(stream);
 
         return stream;
