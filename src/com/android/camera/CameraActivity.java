@@ -1198,8 +1198,8 @@ public class CameraActivity extends QuickActivity
             return;
         }
 
-        if (data.getAttributes().isImage() ||
-              data.getAttributes().isVideo() ||
+        if (!data.getAttributes().isImage() &&
+              !data.getAttributes().isVideo() &&
               !data.getAttributes().isRendering()) {
             return;
         }
