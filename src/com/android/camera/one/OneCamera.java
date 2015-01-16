@@ -98,15 +98,6 @@ public interface OneCamera {
     }
 
     /**
-     * Classes implementing this interface will be called when the camera was
-     * closed.
-     */
-    public static interface CloseCallback {
-        /** Called when the camera was fully closed. */
-        public void onCameraClosed();
-    }
-
-    /**
      * Classes implementing this interface can be informed when we're ready to
      * take a picture of if setting up the capture pipeline failed.
      */
