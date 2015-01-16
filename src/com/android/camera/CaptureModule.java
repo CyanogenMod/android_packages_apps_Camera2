@@ -248,28 +248,39 @@ public class CaptureModule extends CameraModule implements
 
     private final OneCamera.PictureSaverCallback mPictureSaverCallback =
             new OneCamera.PictureSaverCallback() {
-        @Override
-        public void onThumbnailProcessingBegun() {
-            mMainHandler.post(new Runnable() {
                 @Override
-                public void run() {
-                    mAppController.getCameraAppUI().startCaptureIndicatorRevealAnimation(
-                            getPeekAccessibilityString());
+                public void onRemoteThumbnailAvailable(final byte[] jpegImage) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAppController.getServices().getRemoteShutterListener().onPictureTaken(jpegImage);
+                        }
+                    });
                 }
-            });
-        }
 
-        @Override
-        public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
-            mMainHandler.post(new Runnable() {
                 @Override
-                public void run() {
-                    mAppController.getCameraAppUI().updateCaptureIndicatorThumbnail(
-                            thumbnailBitmap, rotation);
+                public void onThumbnailProcessingBegun() {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAppController.getCameraAppUI().startCaptureIndicatorRevealAnimation(
+                                    getPeekAccessibilityString());
+                        }
+                    });
                 }
-            });
-        }
-    };
+
+                @Override
+                public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAppController.getCameraAppUI().updateCaptureIndicatorThumbnail(
+                                    thumbnailBitmap, rotation);
+                        }
+                    });
+                }
+
+            };
 
     /** State by the module state machine. */
     private static enum ModuleState {

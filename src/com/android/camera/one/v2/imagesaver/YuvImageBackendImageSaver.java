@@ -31,6 +31,7 @@ import com.android.camera.processing.imagebackend.ImageProcessorListener;
 import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
+import com.android.camera.remote.WearRemoteShutterListener;
 import com.android.camera.session.CaptureSession;
 import com.google.common.base.Optional;
 
@@ -125,6 +126,9 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         @Override
         public void onResultCompressed(TaskImageContainer.TaskInfo task,
                 TaskImageContainer.CompressedPayload payload) {
+            if(task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
+                mPictureSaverCallback.onRemoteThumbnailAvailable(payload.data);
+            }
         }
 
         @Override
