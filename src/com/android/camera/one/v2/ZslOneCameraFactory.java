@@ -25,8 +25,10 @@ import android.view.Surface;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
+import com.android.camera.async.MainThreadExecutor;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
+import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
@@ -54,6 +56,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class ZslOneCameraFactory implements OneCameraFactory {
+    static private final Log.Tag TAG = new Log.Tag("ZslOneCamFactory");
     private final int mImageFormat;
     private final int mMaxImageCount;
 
@@ -68,7 +71,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
      * 30 fps causes the video preview to deliver frames out of order, mostly
      * likely due to the overloading of the ISP, and/or image bandwith. The
      * short-term solution is to back off the frame rate to unadvertised, valid
-     * frame rate of 24 fps. The long-term solution is to advertise this [7,24]
+     * frame rate of 28 fps. The long-term solution is to advertise this [7,28]
      * frame rate range in the HAL and get buy-in from the manufacturer to
      * support and CTS this feature. Then framerate process can occur in more
      * integrated manner. The tracking bug for this issue is b/18950682.
@@ -77,14 +80,15 @@ public class ZslOneCameraFactory implements OneCameraFactory {
      *            current camera device
      */
     private void applyNexus5BackCameraFrameRateWorkaround(RequestTemplate requestTemplate) {
-        Range frameRateBackOff = new Range(7, 24);
+        Range frameRateBackOff = new Range(7, 28);
+        Log.v(TAG, "Applying Nexus 5 Camera Rate Back off of range"+frameRateBackOff);
         requestTemplate.setParam(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, frameRateBackOff);
     }
 
     @Override
     public OneCamera createOneCamera(final CameraDeviceProxy device,
             final OneCameraCharacteristics characteristics,
-            final MainThread mainThread,
+            final MainThreadExecutor mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
 
