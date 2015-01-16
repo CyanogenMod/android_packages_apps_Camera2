@@ -18,15 +18,15 @@ package com.android.camera.burst;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.view.Surface;
 import android.widget.Toast;
 
-import com.android.camera.one.OneCamera;
+import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.session.CaptureSession;
 
-import java.io.File;
-
 /**
- * A simle decorator for a {@link BurstFacade} that shows toasts for when a
+ * A simple decorator for a {@link BurstFacade} that shows toasts for when a
  * burst starts or stops.
  * <p>
  * This class can simply be removed once we have proper UI for this.
@@ -70,19 +70,11 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public void onCameraAttached(OneCamera camera) {
-        mBurstFacade.onCameraAttached(camera);
-    }
-
-    @Override
-    public void onCameraDetached() {
-        mBurstFacade.onCameraDetached();
-    }
-
-    @Override
-    public void startBurst(CaptureSession captureSession, File tempSessionDirectory) {
+    public void startBurst(CaptureSession captureSession,
+            DeviceOrientation deviceOrientation, Facing cameraFacing, int imageOrientationDegrees) {
         mToaster.showToastBurstStarted();
-        mBurstFacade.startBurst(captureSession, tempSessionDirectory);
+        mBurstFacade.startBurst(captureSession,
+                deviceOrientation, cameraFacing, imageOrientationDegrees);
     }
 
     @Override
@@ -102,43 +94,22 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height) {
-        mBurstFacade.setSurfaceTexture(surfaceTexture, width, height);
+    public void initialize(SurfaceTexture surfaceTexture) {
+        mBurstFacade.initialize(surfaceTexture);
     }
 
     @Override
-    public void initializeSurfaceTextureConsumer(int surfaceWidth, int surfaceHeight) {
-        mBurstFacade.initializeSurfaceTextureConsumer(surfaceWidth, surfaceHeight);
+    public void release() {
+        mBurstFacade.release();
     }
 
     @Override
-    public void initializeSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int surfaceWidth,
-            int surfaceHeight) {
-        mBurstFacade.initializeSurfaceTextureConsumer(surfaceTexture, surfaceWidth, surfaceHeight);
+    public Surface getInputSurface() {
+        return mBurstFacade.getInputSurface();
     }
 
     @Override
-    public void updatePreviewBufferSize(int width, int height) {
-        mBurstFacade.updatePreviewBufferSize(width, height);
-    }
-
-    @Override
-    public void initializeAndStartFrameDistributor() {
-        mBurstFacade.initializeAndStartFrameDistributor();
-    }
-
-    @Override
-    public void closeFrameDistributor() {
-        mBurstFacade.closeFrameDistributor();
-    }
-
-    @Override
-    public SurfaceTexture getInputSurfaceTexture() {
-        return mBurstFacade.getInputSurfaceTexture();
-    }
-
-    @Override
-    public void setPreviewConsumerSize(int width, int height) {
-        mBurstFacade.setPreviewConsumerSize(width, height);
+    public void setBurstTaker(BurstTaker burstTaker) {
+        mBurstFacade.setBurstTaker(burstTaker);
     }
 }

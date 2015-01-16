@@ -29,6 +29,7 @@ import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Observables;
 import com.android.camera.async.Updatable;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
@@ -91,7 +92,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
     public OneCamera createOneCamera(final CameraDeviceProxy device,
             final OneCameraCharacteristics characteristics, final MainThread mainExecutor,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
-            final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
+            final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
+            final BurstFacade burstFacade) {
         final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(new LoggingImageReader(

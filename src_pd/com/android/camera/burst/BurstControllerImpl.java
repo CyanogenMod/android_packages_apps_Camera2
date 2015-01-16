@@ -15,22 +15,21 @@
 package com.android.camera.burst;
 
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 
-import com.android.camera.gl.FrameDistributor.FrameConsumer;
+import com.android.camera.burst.BurstResultsListener;
+import com.android.camera.burst.EvictionHandler;
+import com.android.camera.burst.BurstController.ImageStreamProperties;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
+
+import java.util.List;
 
 /**
  * Stub implementation for burst controller.
  */
 class BurstControllerImpl implements BurstController {
-    /**
-     * Create a new BurstController.
-     *
-     * @param context the context of the application.
-     * @param resultsListener listener for listening to burst events.
-     */
-    public BurstControllerImpl(Context context, BurstResultsListener resultsListener) {
-    }
 
+    public BurstControllerImpl(Context context) {}
     /**
      * Returns true if burst mode is supported by camera.
      */
@@ -39,25 +38,14 @@ class BurstControllerImpl implements BurstController {
     }
 
     @Override
-    public BurstConfiguration startBurst() {
+    public EvictionHandler startBurst(SurfaceTexture surfaceTexture,
+            ImageStreamProperties imageStreamProperties,
+            BurstResultsListener resultsListener) {
         return null;
     }
 
     @Override
-    public void stopBurst(ResultsAccessor resultsAccessor) {
+    public void processBurstResults(List<ImageProxy> capturedImages) {
         // no op
-    }
-
-    @Override
-    public void onPreviewSizeChanged(int width, int height) {
-    }
-
-    @Override
-    public void onOrientationChanged(int orientation, boolean isMirrored) {
-    }
-
-    @Override
-    public FrameConsumer getPreviewFrameConsumer() {
-        throw new IllegalStateException("Not implemented.");
     }
 }

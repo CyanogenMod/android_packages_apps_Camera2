@@ -21,6 +21,7 @@ import android.os.Handler;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.async.MainThread;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
@@ -94,7 +95,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
     public void open(Facing facing, boolean enableHdr, Size pictureSize,
             OpenCallback callback, Handler handler,
             MainThread mainThread,
-            ImageRotationCalculator imageRotationCalculator) {
+            ImageRotationCalculator imageRotationCalculator, BurstFacade burstController) {
         throw new RuntimeException("Not implemented yet.");
     }
 

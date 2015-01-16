@@ -44,8 +44,6 @@ import android.view.Surface;
 
 import com.android.camera.CaptureModuleUtil;
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
-import com.android.camera.burst.BurstImage;
-import com.android.camera.burst.ResultsAccessor;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.ExifInterface;
@@ -59,6 +57,7 @@ import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.JpegUtilNative;
@@ -195,9 +194,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
     private MeteringRectangle[] mAERegions = ZERO_WEIGHT_3A_REGION;
 
     private MediaActionSound mMediaActionSound = new MediaActionSound();
-
-    private final AtomicReference<BurstParameters>
-            mBurstParams = new AtomicReference<BurstParameters>();
 
     /**
      * Ready state (typically displayed by the UI shutter-button) depends on two
@@ -1097,74 +1093,5 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
     private Rect cropRegionForZoom(float zoom) {
         return AutoFocusHelper.cropRegionForZoom(mCharacteristics, zoom);
-    }
-
-    @Override
-    public void startBurst(BurstParameters params, CaptureSession session) {
-        if (!mBurstParams.compareAndSet(null, params)) {
-            throw new IllegalStateException(
-                    "Attempting to start burst, when burst is already running.");
-        }
-        // Overwrite repeating capture request with one specific to capturing Bursts.
-        sendRepeatingBurstCaptureRequest();
-        mCaptureManager.setBurstEvictionHandler(params.
-                burstConfiguration.getEvictionHandler());
-    }
-
-    private class ImageExtractor implements ResultsAccessor {
-        private final int mOrientation;
-
-        public ImageExtractor(int orientation) {
-            mOrientation = orientation;
-        }
-
-        @Override
-        public Future<BurstImage> extractImage(final long timestampToExtract) {
-            final Pair<Image, TotalCaptureResult> pinnedImageData =
-                    mCaptureManager.tryCapturePinnedImage(timestampToExtract);
-            return mImageSaverThreadPool.submit(new Callable<BurstImage>() {
-
-                @Override
-                public BurstImage call() throws Exception {
-                    BurstImage burstImage = null;
-                    Image image = pinnedImageData.first;
-                    if (image != null) {
-                        burstImage = new BurstImage();
-                        int degrees = CameraUtil.getJpegRotation(mOrientation, mCharacteristics);
-                        Size size = getImageSizeForOrientation(image.getWidth(),
-                                image.getHeight(),
-                                degrees);
-                        burstImage.width = size.getWidth();
-                        burstImage.height = size.getHeight();
-                        burstImage.data = acquireJpegBytes(image,
-                                degrees);
-                        burstImage.captureResult = pinnedImageData.second;
-                        burstImage.timestamp = timestampToExtract;
-                    } else {
-                        Log.e(TAG, "Failed to extract burst image for timestamp: "
-                                + timestampToExtract);
-                    }
-                    return burstImage;
-                }
-            });
-        }
-
-        @Override
-        public void close() {
-            mCaptureManager.resetCaptureState();
-        }
-    }
-
-    @Override
-    public void stopBurst() {
-        if (mBurstParams.get() == null) {
-            throw new IllegalStateException("Burst parameters should not be null.");
-        }
-        mCaptureManager.resetEvictionHandler();
-        mBurstParams.get().callback.onBurstComplete(
-                new ImageExtractor(mBurstParams.get().orientation));
-        mBurstParams.set(null);
-        // Restore original repeating request associated with taking camera picture.
-        sendRepeatingCaptureRequest();
     }
 }

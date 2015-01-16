@@ -22,8 +22,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.view.Surface;
 
-import com.android.camera.burst.BurstConfiguration;
-import com.android.camera.burst.ResultsAccessor;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
@@ -350,29 +348,6 @@ public interface OneCamera {
         }
     }
 
-    /**
-     * The callback to be invoked when results are available.
-     */
-    public interface BurstResultsCallback {
-        void onBurstComplete(ResultsAccessor resultAccessor);
-    }
-
-    /**
-     * Parameters to be given to burst requests.
-     */
-    public static class BurstParameters extends CaptureParameters {
-        /** The title/filename (without suffix) for this capture. */
-        public final BurstConfiguration burstConfiguration;
-        public final BurstResultsCallback callback;
-
-        public BurstParameters(String title, int orientation, Location location,
-                File debugDataFolder, BurstConfiguration burstConfiguration,
-                BurstResultsCallback callback) {
-            super(title, orientation, location, debugDataFolder);
-            this.burstConfiguration = burstConfiguration;
-            this.callback = callback;
-        }
-    }
 
     /**
      * Meters and triggers auto focus scan with ROI around tap point.
@@ -394,20 +369,6 @@ public interface OneCamera {
     public void takePicture(PhotoCaptureParameters params, CaptureSession session);
 
     /**
-     * Call this to take a burst.
-     *
-     * @param params parameters for taking burst.
-     * @param session the capture session for this burst.
-     */
-
-    public void startBurst(BurstParameters params, CaptureSession session);
-
-    /**
-     * Call this to stop taking burst.
-     */
-    public void stopBurst();
-
-    /**
      * Sets or replaces a listener that is called whenever the focus state of
      * the camera changes.
      */
@@ -427,7 +388,7 @@ public interface OneCamera {
 
     /**
      * Starts a preview stream and renders it to the given surface.
-     * 
+     *
      * @param Surface the surface on which to render preview frames
      * @param listener
      */

@@ -18,6 +18,7 @@ package com.android.camera.one.v2;
 
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
@@ -30,5 +31,6 @@ public interface OneCameraFactory {
             MainThread mainThread,
             Size pictureSize,
             ImageSaver.Builder imageSaverBuilder,
-            Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting);
+            Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
+            BurstFacade burstController);
 }

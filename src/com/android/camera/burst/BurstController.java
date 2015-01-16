@@ -14,7 +14,11 @@
 
 package com.android.camera.burst;
 
-import com.android.camera.gl.FrameDistributor.FrameConsumer;
+import android.graphics.SurfaceTexture;
+
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
+
+import java.util.List;
 
 /**
  * Controls the interactions with burst.
@@ -27,19 +31,15 @@ import com.android.camera.gl.FrameDistributor.FrameConsumer;
  * module retrieves results from the internal camera buffer and can do post
  * processing on the results.
  * <p/>
- * Camera hooks up the frame consumer for the burst module returned by
- * {@link #getPreviewFrameConsumer()} and initializes the burst module by
- * calling {@link #startBurst()}. The returned configuration for initialized
- * burst module contains the eviction strategy for the internal camera buffer.
- * This {@link BurstConfiguration#getEvictionHandler()} is then used by camera
- * to decide which frames to keep and which to reject.
+ * Camera initializes the burst module by calling {@link #startBurst(SurfaceTexture,
+ * ImageStreamProperties, BurstResultsListener)}. The returned eviction strategy
+ * is used by the internal camera buffer to decide which frames to keep and
+ * which to reject.
  * <p/>
- * Once burst finishes, camera calls the {@link #stopBurst(ResultsAccessor)} to
- * let the burst module retrieve burst results from the internal buffer. Results
- * of burst can be extracted by calling the
- * {@link ResultsAccessor#extractImage(long)} method. Once extraction is
- * finished the burst module should call {@link ResultsAccessor#close()} method
- * to let camera free resources used by burst.
+ * Once burst finishes, camera calls the {@link #processBurstResults(List)} to
+ * let the burst module retrieve burst results from the internal buffer. Once
+ * {@link #processBurstResults(List)} completes all resources allocated for the
+ * burst are freed.
  * <p/>
  * Once post processing is complete, the burst module returns the final results
  * by calling {@link BurstResultsListener#onBurstCompleted(BurstResult)} method.
@@ -47,46 +47,68 @@ import com.android.camera.gl.FrameDistributor.FrameConsumer;
 interface BurstController {
 
     /**
+     * Properties of the image stream.
+     */
+    public static class ImageStreamProperties {
+        private final int width;
+        private final int height;
+        private final int imageRotation;
+        private final boolean isMirrored;
+
+        public ImageStreamProperties(int width, int height,
+                int imageRotation,
+                boolean isMirrored) {
+            this.width = width;
+            this.height = height;
+            this.imageRotation = imageRotation;
+            this.isMirrored = isMirrored;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getImageRotation() {
+            return imageRotation;
+        }
+
+        public boolean isMirrored() {
+            return isMirrored;
+        }
+    }
+
+    /**
      * Starts the burst.
+     * <p/>
+     * Takes a SurfaceTexture that is not attached to any context (call
+     * {@link android.graphics.SurfaceTexture#detachFromGLContext()} before
+     * passing it here. Can register as a frame available listener by calling
+     * {@link SurfaceTexture#setOnFrameAvailableListener(SurfaceTexture.OnFrameAvailableListener,
+     * android.os.Handler)}.
      *
+     * @param surfaceTexture the SurfaceTexture for the low-res image stream.
+     *            This surface should not be attached to any GL context.
+     * @param imageStreamProperties the properties of the low-res image stream.
+     * @param burstResultsListener the listener for burst results.
      * @return the configuration of burst that can be used to control the
      *         ongoing burst.
      */
-    public BurstConfiguration startBurst();
+    public EvictionHandler startBurst(SurfaceTexture surfaceTexture,
+            ImageStreamProperties imageStreamProperties,
+            BurstResultsListener burstResultsListener);
 
     /**
      * Stops the burst.
-     *
-     * @param resultsAccessor an instance of results accessor that can be used
-     *            to query the results of the burst.
-     */
-    public void stopBurst(ResultsAccessor resultsAccessor);
-
-    /**
-     * Called when size of the preview changes.
-     * <p>
-     * Preview size can change in case of rotation or switching cameras.
-     *
-     * @param width the width of the preview.
-     * @param height the height of the preview.
-     */
-    public void onPreviewSizeChanged(int width, int height);
-
-    /**
-     * Called when the orientation of the preview changes.
-     *
-     * @param orientation orientation of preview in degrees.
-     * @param isMirrored true if preview is mirrored.
-     */
-    public void onOrientationChanged(int orientation, boolean isMirrored);
-
-    /**
-     * Get the consumer for preview frames.
      * <p/>
-     * Burst module streams preview frames and selects "good" frames by
-     * analyzing preview frames. Preview frames should have exact timestamps as
-     * the high-res images held in the internal image buffer.
+     *
+     * @param capturedImages list of images captured from the burst. All images
+     *            are closed after this call completes. If implementations need
+     *            to access images after this call they need to make a copy of
+     *            images before returning.
      */
-    public FrameConsumer getPreviewFrameConsumer();
-
+    public void processBurstResults(List<ImageProxy> capturedImages);
 }

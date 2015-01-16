@@ -24,7 +24,6 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
-import com.android.camera.one.v2.core.CaptureStream;
 import com.android.camera.one.v2.core.ResponseListener;
 import com.android.camera.one.v2.core.ResponseListeners;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;

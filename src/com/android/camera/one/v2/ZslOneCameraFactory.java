@@ -30,6 +30,9 @@ import com.android.camera.async.Updatable;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
 import com.android.camera.debug.Loggers;
+import com.android.camera.burst.BurstFacade;
+import com.android.camera.burst.BurstTaker;
+import com.android.camera.burst.BurstTakerImpl;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
@@ -101,7 +104,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
             final OneCameraCharacteristics characteristics,
             final MainThread mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
-            final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
+            final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
+            final BurstFacade burstFacade) {
         final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
@@ -114,6 +118,9 @@ public class ZslOneCameraFactory implements OneCameraFactory {
 
         List<Surface> outputSurfaces = new ArrayList<>();
         outputSurfaces.add(imageReader.getSurface());
+        if (burstFacade.getInputSurface() != null) {
+            outputSurfaces.add(burstFacade.getInputSurface());
+        }
 
         /**
          * Finishes constructing the camera when prerequisites, e.g. the preview
@@ -183,6 +190,14 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         sharedImageReaderFactory.provideSharedImageReader(),
                         sharedImageReaderFactory.provideZSLStream(),
                         sharedImageReaderFactory.provideMetadataPool(), flashSetting);
+                BurstTaker burstTaker = new BurstTakerImpl(cameraCommandExecutor, frameServer,
+                        rootBuilder, sharedImageReaderFactory.provideSharedImageReader(),
+                        burstFacade.getInputSurface(),basicCameraFactory.providePreviewStarter(),
+                        // ImageReader#acquireLatestImage() requires two images as the margin so
+                        // specify that as the maximum number of images that can be used by burst.
+                        mMaxImageCount - 2);
+
+                burstFacade.setBurstTaker(burstTaker);
 
                 basicCameraFactory.providePreviewStarter().run();
 

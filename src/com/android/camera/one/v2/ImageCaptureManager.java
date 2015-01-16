@@ -29,7 +29,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Pair;
 
-import com.android.camera.burst.BurstConfiguration.EvictionHandler;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.util.ConcurrentSharedRingBuffer;
@@ -45,9 +44,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Implements {@link android.media.ImageReader.OnImageAvailableListener} and
@@ -233,35 +230,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
         }
     }
 
-    /**
-     * A stub implementation of eviction handler that returns -1 as timestamp of
-     * the frame to be dropped.
-     * <p/>
-     * This forces the ring buffer to use its default eviction strategy.
-     */
-    private static class DefaultEvictionHandler implements EvictionHandler {
-        @Override
-        public long selectFrameToDrop() {
-            return -1;
-        }
-
-        @Override
-        public void onFrameCaptureResultAvailable(long timestamp,
-                TotalCaptureResult captureResult) {
-        }
-
-        @Override
-        public void onFrameInserted(long timestamp) {
-        }
-
-        @Override
-        public void onFrameDropped(long timestamp) {
-        }
-    }
-
-    private static final EvictionHandler DEFAULT_EVICTION_HANDLER =
-            new DefaultEvictionHandler();
-
     private static final Tag TAG = new Tag("ZSLImageListener");
 
     /**
@@ -319,10 +287,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
      */
     private final Executor mImageCaptureListenerExecutor;
 
-    private final AtomicReference<EvictionHandler> mEvictionHandler =
-            new AtomicReference<EvictionHandler>(DEFAULT_EVICTION_HANDLER);
-    private final AtomicBoolean mIsCapturingBurst = new AtomicBoolean(false);
-
     /**
      * The set of constraints which must be satisfied for a newly acquired image
      * to be captured and sent to {@link #mPendingImageCaptureCallback}. null if
@@ -351,12 +315,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
      */
     private final Map<Key<?>, Set<MetadataChangeListener>>
             mMetadataChangeListeners = new ConcurrentHashMap<Key<?>, Set<MetadataChangeListener>>();
-
-    /**
-     * The lock for guarding installation and uninstallation of burst eviction
-     * handler.
-     */
-    private final Object mBurstLock = new Object();
 
     /**
      * @param maxImages the maximum number of images provided by the
@@ -440,7 +398,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
             final TotalCaptureResult result) {
         final long timestamp = result.get(TotalCaptureResult.SENSOR_TIMESTAMP);
 
-      updateMetadataChangeListeners(result);
+        updateMetadataChangeListeners(result);
 
         // Detect camera thread stall.
         long now = SystemClock.uptimeMillis();
@@ -474,7 +432,7 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
             final Object oldValue = (oldEntry != null) ? oldEntry.second : null;
 
             boolean newerValueAlreadyExists = oldEntry != null
-                  && frameNumber < oldEntry.first;
+                    && frameNumber < oldEntry.first;
             if (newerValueAlreadyExists) {
                 continue;
             }
@@ -489,12 +447,12 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
             }
 
             for (final MetadataChangeListener listener :
-                  mMetadataChangeListeners.get(key)) {
+                    mMetadataChangeListeners.get(key)) {
                 mListenerHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         listener.onImageMetadataChange(key, oldValue, newValue,
-                              result);
+                                result);
                     }
                 });
             }
@@ -502,18 +460,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
     }
 
     private boolean doMetaDataSwap(final TotalCaptureResult newMetadata, final long timestamp) {
-        mEvictionHandler.get().onFrameCaptureResultAvailable(timestamp, newMetadata);
-
-        if (mIsCapturingBurst.get()) {
-            // In case of burst we do not swap metadata in the ring buffer. This
-            // is to avoid the following scenario. If image for frame with
-            // timestamp A arrives first and the eviction handler decides to
-            // evict timestamp A. But when metadata for timestamp A arrives
-            // the eviction handler chooses to keep timestamp A. In this case
-            // the image for A will never be available.
-            return false;
-        }
-
         return mCapturedImageBuffer.swapLeast(timestamp,
                 new SwapTask<CapturedImage>() {
                 @Override
@@ -547,7 +493,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
                 new SwapTask<CapturedImage>() {
                 @Override
                     public CapturedImage create() {
-                        mEvictionHandler.get().onFrameInserted(newImage.getTimestamp());
                         CapturedImage image = new CapturedImage();
                         image.addImage(newImage);
                         return image;
@@ -555,9 +500,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
 
                 @Override
                     public CapturedImage swap(CapturedImage oldElement) {
-                        mEvictionHandler.get().onFrameInserted(newImage.getTimestamp());
-                        long timestamp = oldElement.tryGetTimestamp();
-                        mEvictionHandler.get().onFrameDropped(timestamp);
                         oldElement.reset();
                         CapturedImage image = new CapturedImage();
                         image.addImage(newImage);
@@ -566,17 +508,12 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
 
                 @Override
                     public void update(CapturedImage existingElement) {
-                        mEvictionHandler.get().onFrameInserted(newImage.getTimestamp());
                         existingElement.addImage(newImage);
                     }
 
                 @Override
                     public long getSwapKey() {
-                    final long toDropTimestamp = mEvictionHandler.get().selectFrameToDrop();
-                        if (toDropTimestamp > 0) {
-                            mCapturedImageBuffer.releaseIfPinned(toDropTimestamp);
-                        }
-                        return toDropTimestamp;
+                        return -1;
                     }
                 });
     }
@@ -604,11 +541,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
                 numOpenImages = mNumOpenImages.decrementAndGet();
                 if (DEBUG_PRINT_OPEN_IMAGE_COUNT) {
                     Log.v(TAG, "Closed an image. Number of open images = " + numOpenImages);
-                }
-            } else {
-                if (mIsCapturingBurst.get()) {
-                    // In case of burst we pin every image.
-                    mCapturedImageBuffer.tryPin(timestamp);
                 }
             }
 
@@ -805,57 +737,6 @@ public class ImageCaptureManager extends CameraCaptureSession.CaptureCallback im
             imageCaptureResult = toCapture.second.tryGetMetadata();
         }
         return Pair.create(pinnedImage, imageCaptureResult);
-    }
-
-    /**
-     * Sets a new burst eviction handler for the internal buffer.
-     * <p/>
-     * Also clears the buffer. If there was an old burst eviction handler
-     * already installed this method will throw an exception.
-     *
-     * @param evictionHandler the handler to install on the internal image
-     *            buffer.
-     */
-    public void setBurstEvictionHandler(EvictionHandler evictionHandler) {
-        if (evictionHandler == null) {
-            throw new IllegalArgumentException("setBurstEvictionHandler: evictionHandler is null.");
-        }
-        synchronized (mBurstLock) {
-            if (mIsCapturingBurst.compareAndSet(false, true)) {
-                if (!mEvictionHandler.compareAndSet(DEFAULT_EVICTION_HANDLER,
-                        evictionHandler)) {
-                    throw new IllegalStateException(
-                            "Trying to set eviction handler before restoring the original.");
-                } else {
-                    clearCapturedImageBuffer(0);
-                }
-            } else {
-                throw new IllegalStateException("Trying to start burst when it was already running.");
-            }
-        }
-    }
-
-    /**
-     * Removes the burst eviction handler from the buffer.
-     */
-    public void resetEvictionHandler() {
-        synchronized (mBurstLock) {
-            mEvictionHandler.set(DEFAULT_EVICTION_HANDLER);
-        }
-    }
-
-    /**
-     * Clears the underlying buffer and reset the eviction handler.
-     */
-    public void resetCaptureState() {
-        synchronized (mBurstLock) {
-            if (mIsCapturingBurst.compareAndSet(true, false)) {
-                // By default the image buffer has 1 slot that is reserved for
-                // unpinned elements.
-                clearCapturedImageBuffer(1);
-                mEvictionHandler.set(DEFAULT_EVICTION_HANDLER);
-            }
-        }
     }
 
     /**

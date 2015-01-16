@@ -29,6 +29,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
 import com.android.camera.async.MainThread;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera;
@@ -97,7 +98,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
     public void open(Facing facing, final boolean useHdr, final Size pictureSize,
             final OpenCallback openCallback,
             Handler handler, final MainThread mainThread,
-            final ImageRotationCalculator imageRotationCalculator) {
+            final ImageRotationCalculator imageRotationCalculator,
+            final BurstFacade burstController) {
         try {
             final String cameraId = getCameraId(facing);
             Log.i(TAG, "Opening Camera ID " + cameraId);
@@ -149,7 +151,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
                             OneCamera oneCamera = OneCameraCreator.create(mAppController, useHdr,
                                     device, characteristics, pictureSize,
                                     mMaxMemoryMB, mDisplayMetrics, mSoundPlayer,
-                                    mainThread, imageRotationCalculator);
+                                    mainThread, imageRotationCalculator, burstController);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {
                             Log.d(TAG, "Could not get camera characteristics");

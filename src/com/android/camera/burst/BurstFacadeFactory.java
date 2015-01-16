@@ -18,14 +18,11 @@ package com.android.camera.burst;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.view.Surface;
 
-import com.android.camera.app.OrientationManager;
-import com.android.camera.gl.FrameDistributorWrapper;
-import com.android.camera.gl.SurfaceTextureConsumer;
-import com.android.camera.one.OneCamera;
+import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.session.CaptureSession;
-
-import java.io.File;
 
 /**
  * Factory for creating burst manager objects.
@@ -42,18 +39,10 @@ public class BurstFacadeFactory {
      * burst is not enabled.
      */
     private static class BurstFacadeStub implements BurstFacade {
-        private SurfaceTexture mPreviewSurfaceTexture;
-
         @Override
-        public void onCameraAttached(OneCamera camera) {
-        }
-
-        @Override
-        public void onCameraDetached() {
-        }
-
-        @Override
-        public void startBurst(CaptureSession captureSession, File tempSessionDirectory) {
+        public void startBurst(CaptureSession captureSession,
+                DeviceOrientation deviceOrientation, Facing cameraFacing,
+                int imageOrientationDegrees) {
         }
 
         @Override
@@ -67,44 +56,18 @@ public class BurstFacadeFactory {
         }
 
         @Override
-        public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height) {
-            mPreviewSurfaceTexture = surfaceTexture;
+        public void initialize(SurfaceTexture surfaceTexture) {}
+
+        @Override
+        public void release() {}
+
+        @Override
+        public Surface getInputSurface() {
+            return null;
         }
 
         @Override
-        public void initializeSurfaceTextureConsumer(int surfaceWidth, int surfaceHeight) {
-        }
-
-        @Override
-        public void initializeSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int
-                surfaceWidth, int surfaceHeight) {
-            mPreviewSurfaceTexture = surfaceTexture;
-
-        }
-
-        @Override
-        public void updatePreviewBufferSize(int width, int height) {
-            if (mPreviewSurfaceTexture != null) {
-                mPreviewSurfaceTexture.setDefaultBufferSize(width, height);
-            }
-        }
-
-        @Override
-        public void initializeAndStartFrameDistributor() {
-        }
-
-        @Override
-        public void closeFrameDistributor() {
-        }
-
-        @Override
-        public SurfaceTexture getInputSurfaceTexture() {
-            return mPreviewSurfaceTexture;
-        }
-
-        @Override
-        public void setPreviewConsumerSize(int width, int height) {
-        }
+        public void setBurstTaker(BurstTaker burstTaker) {}
     }
 
     /**
@@ -112,16 +75,16 @@ public class BurstFacadeFactory {
      *
      * @param appContext the Android application context which is passes through
      *            to the burst controller.
-     * @param orientationManager for querying orientation of burst.
+     * @param orientationController for locking orientation when burst is running.
      * @param readyStateListener gets called when the ready state of Burst
      *            changes.
      */
-    public static BurstFacade create(Context appContext, OrientationManager orientationManager,
+    public static BurstFacade create(Context appContext,
+            OrientationLockController orientationController,
             BurstReadyStateChangeListener readyStateListener) {
         if (BurstControllerImpl.isBurstModeSupported(appContext)) {
-            BurstFacade burstController = new BurstFacadeImpl(appContext, orientationManager,
-                    readyStateListener,
-                    new FrameDistributorWrapper(), new SurfaceTextureConsumer());
+            BurstFacade burstController = new BurstFacadeImpl(appContext, orientationController,
+                    readyStateListener);
             ToastingBurstFacadeDecorator.BurstToaster toaster =
                     new ToastingBurstFacadeDecorator.BurstToaster(appContext);
             return new ToastingBurstFacadeDecorator(burstController, toaster);

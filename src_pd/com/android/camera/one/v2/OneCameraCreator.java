@@ -23,6 +23,7 @@ import android.util.DisplayMetrics;
 import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
 import com.android.camera.async.MainThread;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
@@ -32,7 +33,8 @@ public class OneCameraCreator {
             CameraCharacteristics characteristics, Size pictureSize,
             int maxMemoryMB,
             DisplayMetrics displayMetrics, SoundPlayer soundPlayer,
-            MainThread mainThread, ImageRotationCalculator imageRotationCalculator) {
+            MainThread mainThread, ImageRotationCalculator imageRotationCalculator,
+            BurstFacade burstController) {
         // TODO: Might want to switch current camera to vendor HDR.
         return new OneCameraImpl(device, characteristics, pictureSize);
     }

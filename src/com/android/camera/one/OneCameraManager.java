@@ -21,6 +21,7 @@ import android.util.DisplayMetrics;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.async.MainThread;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
@@ -53,10 +54,12 @@ public abstract class OneCameraManager {
      * @param mainThread Main thread executor
      * @param imageRotationCalculator Image rotation calculator required for
      *            Camera Factory initialization
+     * @param burstController the burst facade to configure
      */
     public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
             OpenCallback callback, Handler handler,
-            MainThread mainThread, final ImageRotationCalculator imageRotationCalculator);
+            MainThread mainThread, final ImageRotationCalculator imageRotationCalculator,
+            BurstFacade burstController);
 
     // TODO: Move this to OneCameraCharacteristics class.
     /**

@@ -95,16 +95,6 @@ class GenericOneCameraImpl implements OneCamera {
     }
 
     @Override
-    public void startBurst(BurstParameters params, CaptureSession session) {
-        // TODO delete from OneCamera interface
-    }
-
-    @Override
-    public void stopBurst() {
-        // TODO delete from OneCamera interface
-    }
-
-    @Override
     public void setFocusStateListener(final FocusStateListener listener) {
         mAFStateListenable.setCallback(new Callback<Integer>() {
             @Override

@@ -39,10 +39,12 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraAppUI.BottomBarUISpec;
 import com.android.camera.app.LocationManager;
+import com.android.camera.app.OrientationManager.DeviceOrientation;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
+import com.android.camera.burst.OrientationLockController;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
@@ -78,8 +80,6 @@ import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -139,6 +139,7 @@ public class CaptureModule extends CameraModule implements
     private Facing mCameraFacing;
     /** Whether HDR is currently enabled. */
     private boolean mHdrEnabled = false;
+    private final Object mSurfaceTextureLock = new Object();
 
     private FocusController mFocusController;
     private OneCameraCharacteristics mCameraCharacteristics;
@@ -172,7 +173,6 @@ public class CaptureModule extends CameraModule implements
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             int width = right - left;
             int height = bottom - top;
-            mBurstController.setPreviewConsumerSize(width, height);
             updatePreviewTransform(width, height, false);
         }
 
@@ -216,13 +216,18 @@ public class CaptureModule extends CameraModule implements
             // Force to re-apply transform matrix here as a workaround for
             // b/11168275
             updatePreviewTransform(width, height, true);
-            initSurfaceTextureConsumer(surface, width, height);
+            synchronized (mSurfaceTextureLock) {
+                mPreviewSurfaceTexture = surface;
+            }
+            reopenCamera();
         }
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             Log.d(TAG, "onSurfaceTextureDestroyed");
-            mBurstController.setSurfaceTexture(null, 0, 0);
+            synchronized (mSurfaceTextureLock) {
+                mPreviewSurfaceTexture = null;
+            }
             closeCamera();
             return true;
         }
@@ -230,7 +235,7 @@ public class CaptureModule extends CameraModule implements
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
             Log.d(TAG, "onSurfaceTextureSizeChanged");
-            updateFrameDistributorBufferSize();
+            updatePreviewBufferSize();
         }
 
         @Override
@@ -323,6 +328,8 @@ public class CaptureModule extends CameraModule implements
 
     /** The current preview transformation matrix. */
     private Matrix mPreviewTranformationMatrix = new Matrix();
+    /** The surface texture for the preview. */
+    private SurfaceTexture mPreviewSurfaceTexture;
 
     /** The burst manager for controlling the burst. */
     private final BurstFacade mBurstController;
@@ -343,15 +350,26 @@ public class CaptureModule extends CameraModule implements
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
 
-        mBurstController = BurstFacadeFactory.create(mContext, mAppController
-                .getOrientationManager(), new BurstReadyStateChangeListener() {
-            @Override
-            public void onBurstReadyStateChanged(boolean ready) {
-                // TODO: This needs to take into account the state of the whole
-                // system, not just burst.
-                mAppController.setShutterEnabled(ready);
-            }
-        });
+        mBurstController = BurstFacadeFactory.create(mContext,
+                new OrientationLockController() {
+                    @Override
+                    public void unlockOrientation() {
+                        mAppController.getOrientationManager().unlockOrientation();
+                    }
+
+                        @Override
+                    public void lockOrientation() {
+                        mAppController.getOrientationManager().lockOrientation();
+                    }
+                },
+                new BurstReadyStateChangeListener() {
+                   @Override
+                    public void onBurstReadyStateChanged(boolean ready) {
+                        // TODO: This needs to take into account the state of
+                        // the whole system, not just burst.
+                        mAppController.setShutterEnabled(ready);
+                    }
+                });
         mMediaActionSound = new MediaActionSound();
     }
 
@@ -383,12 +401,6 @@ public class CaptureModule extends CameraModule implements
         FocusSound focusSound = new FocusSound(mSoundPlayer, R.raw.material_camera_focus);
         mFocusController = new FocusController(mUI.getFocusRing(), focusSound, mMainThread);
 
-        // Set the preview texture from UI for the SurfaceTextureConsumer.
-        mBurstController.setSurfaceTexture(
-                mAppController.getCameraAppUI().getSurfaceTexture(),
-                mAppController.getCameraAppUI().getSurfaceWidth(),
-                mAppController.getCameraAppUI().getSurfaceHeight());
-
         mHeadingSensor = new HeadingSensor(AndroidServices.instance().provideSensorManager());
 
         View cancelButton = activity.findViewById(R.id.shutter_cancel_button);
@@ -404,13 +416,22 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void onShutterButtonLongPressed() {
-        File tempSessionDataDirectory;
         try {
-            tempSessionDataDirectory = getServices().getCaptureSessionManager()
-                    .getSessionDirectory(BURST_SESSIONS_DIR);
             CaptureSession session = createAndStartCaptureSession();
-            mBurstController.startBurst(session, tempSessionDataDirectory);
-        } catch (IOException e) {
+
+            OneCameraCharacteristics cameraCharacteristics;
+            cameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
+            DeviceOrientation deviceOrientation = mAppController.getOrientationManager()
+                    .getDeviceOrientation();
+            ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
+                    .from(mAppController.getOrientationManager(), cameraCharacteristics);
+
+            mBurstController.startBurst(session,
+                    deviceOrientation,
+                    mCamera.getDirection(),
+                    imageRotationCalculator.toImageRotation().getDegrees());
+
+        } catch (OneCameraAccessException e) {
             Log.e(TAG, "Cannot start burst", e);
             return;
         }
@@ -530,14 +551,13 @@ public class CaptureModule extends CameraModule implements
     }
 
     private void initSurfaceTextureConsumer() {
-        mBurstController.initializeSurfaceTextureConsumer(
-                mAppController.getCameraAppUI().getSurfaceWidth(),
-                mAppController.getCameraAppUI().getSurfaceHeight());
-        reopenCamera();
-    }
-
-    private void initSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int width, int height) {
-        mBurstController.initializeSurfaceTextureConsumer(surfaceTexture, width, height);
+        synchronized (mSurfaceTextureLock) {
+            if (mPreviewSurfaceTexture != null) {
+                mPreviewSurfaceTexture.setDefaultBufferSize(
+                        mAppController.getCameraAppUI().getSurfaceWidth(),
+                        mAppController.getCameraAppUI().getSurfaceHeight());
+            }
+        }
         reopenCamera();
     }
 
@@ -550,11 +570,18 @@ public class CaptureModule extends CameraModule implements
     }
 
     private SurfaceTexture getPreviewSurfaceTexture() {
-        return mBurstController.getInputSurfaceTexture();
+        synchronized (mSurfaceTextureLock) {
+            return mPreviewSurfaceTexture;
+        }
     }
 
-    private void updateFrameDistributorBufferSize() {
-        mBurstController.updatePreviewBufferSize(mPreviewBufferWidth, mPreviewBufferHeight);
+    private void updatePreviewBufferSize() {
+        synchronized (mSurfaceTextureLock) {
+            if (mPreviewSurfaceTexture != null) {
+                mPreviewSurfaceTexture.setDefaultBufferSize(mPreviewBufferWidth,
+                        mPreviewBufferHeight);
+            }
+        }
     }
 
     @Override
@@ -568,9 +595,8 @@ public class CaptureModule extends CameraModule implements
         mAppController.addPreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         mAppController.addPreviewAreaSizeChangedListener(mUI);
         mAppController.getCameraAppUI().onChangeCamera();
-        mBurstController.initializeAndStartFrameDistributor();
-        updateFrameDistributorBufferSize();
         getServices().getRemoteShutterListener().onModuleReady(this);
+        mBurstController.initialize(new SurfaceTexture(0));
         // TODO: Check if we can really take a photo right now (memory, camera
         // state, ... ).
         mAppController.getCameraAppUI().enableModeOptions();
@@ -607,11 +633,10 @@ public class CaptureModule extends CameraModule implements
         mAppController.removePreviewAreaSizeChangedListener(mUI);
         mAppController.removePreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         getServices().getRemoteShutterListener().onModuleExit();
-        mBurstController.stopBurst();
+        mBurstController.release();
         cancelCountDown();
         closeCamera();
         resetTextureBufferSize();
-        mBurstController.closeFrameDistributor();
         mSoundPlayer.unloadSound(R.raw.timer_final_second);
         mSoundPlayer.unloadSound(R.raw.timer_increment);
     }
@@ -626,7 +651,6 @@ public class CaptureModule extends CameraModule implements
     @Override
     public void onLayoutOrientationChanged(boolean isLandscape) {
         Log.d(TAG, "onLayoutOrientationChanged");
-        mBurstController.stopBurst();
     }
 
     @Override
@@ -1145,7 +1169,7 @@ public class CaptureModule extends CameraModule implements
         Size previewBufferSize = mCamera.pickPreviewSize(mPictureSize, mContext);
         mPreviewBufferWidth = previewBufferSize.getWidth();
         mPreviewBufferHeight = previewBufferSize.getHeight();
-        updateFrameDistributorBufferSize();
+        updatePreviewBufferSize();
     }
 
     /**
@@ -1209,7 +1233,6 @@ public class CaptureModule extends CameraModule implements
                     @Override
                     public void onCameraClosed() {
                         mCamera = null;
-                        mBurstController.onCameraDetached();
                         mCameraOpenCloseLock.release();
                     }
 
@@ -1217,13 +1240,12 @@ public class CaptureModule extends CameraModule implements
                     public void onCameraOpened(final OneCamera camera) {
                         Log.d(TAG, "onCameraOpened: " + camera);
                         mCamera = camera;
-                        mBurstController.onCameraAttached(mCamera);
                         updatePreviewBufferDimension();
 
                         // If the surface texture is not destroyed, it may have
                         // the last frame lingering. We need to hold off setting
                         // transform until preview is started.
-                        updateFrameDistributorBufferSize();
+                        updatePreviewBufferSize();
                         mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
                         Log.d(TAG, "starting preview ...");
 
@@ -1290,7 +1312,7 @@ public class CaptureModule extends CameraModule implements
                                     }
                                 });
                         }
-                    }, mCameraHandler, mainThread, imageRotationCalculator);
+                }, mCameraHandler, mainThread, imageRotationCalculator, mBurstController);
     }
 
     private void closeCamera() {
@@ -1347,6 +1369,6 @@ public class CaptureModule extends CameraModule implements
         // SurfaceTexture must have these buffer sizes reset manually. Otherwise
         // the SurfaceTexture cannot be transformed by matrix set on the
         // TextureView.
-        updateFrameDistributorBufferSize();
+        updatePreviewBufferSize();
     }
 }

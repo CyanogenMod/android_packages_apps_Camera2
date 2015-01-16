@@ -17,42 +17,38 @@
 package com.android.camera.burst;
 
 import android.graphics.SurfaceTexture;
+import android.view.Surface;
 
-import com.android.camera.one.OneCamera;
+import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.session.CaptureSession;
 
-import java.io.File;
-
 /**
- * Facade for {@link BurstController} provides a simpler interface.
+ * Facade for the entire burst acquisition pipeline. Provides a simplified
+ * interface over the {@link BurstController}.
+ * <p/>
+ * The expected usage of BurstFacade can be described by the regular expression
+ * "<code>initialize (startBurst stopBurst)* release</code>". That is there can
+ * be multiple calls to
+ * {@link #startBurst(CaptureSession, DeviceOrientation, Facing, int)} and
+ * {@link #stopBurst()} between {@link #initialize(SurfaceTexture)} and
+ * {@link #release()} calls.
  */
 public interface BurstFacade {
-    /**
-     * Called when camera is available.
-     *
-     * @param camera an instance of {@link OneCamera} that is used to start or
-     *            stop the burst.
-     */
-    public void onCameraAttached(OneCamera camera);
-
-    /**
-     * Called when camera becomes unavailable.
-     */
-    public void onCameraDetached();
 
     /**
      * Starts the burst.
      *
-     * @param captureSession the capture session to use for this burst.
-     * @param tempSessionDirectory a directory in which temporary data can be
-     *            put.
+     * @param captureSession the capture session to use for this burst
+     * @param deviceOrientation the orientation of the device
+     * @param cameraFacing the camera facing
+     * @param imageOrientationDegrees the orientation of captured image in
+     *            degrees
      */
-    public void startBurst(CaptureSession captureSession, File tempSessionDirectory);
-
-    /**
-     * @return Whether this burst controller is ready to start another burst.
-     */
-    public boolean isReady();
+    public void startBurst(CaptureSession captureSession,
+            DeviceOrientation deviceOrientation,
+            Facing cameraFacing,
+            int imageOrientationDegrees);
 
     /**
      * Stops the burst.
@@ -62,35 +58,40 @@ public interface BurstFacade {
      */
     public boolean stopBurst();
 
-    /** Sets the surface texture from which frames will be consumed. */
-    public void setSurfaceTexture(SurfaceTexture surfaceTexture, int width, int height);
+    /**
+     * @return Whether this burst controller is ready to start another burst.
+     */
+    public boolean isReady();
 
     /**
-     * Initializes the surface texture consumer with the current surface
-     * texture and its dimensions.
+     * Initialize resources and use the provided {@link SurfaceTexture} for
+     * streaming low-res preview frames for the burst.
+     *
+     * @param surfaceTexture to use for streaming
      */
-    public void initializeSurfaceTextureConsumer(int surfaceWidth, int surfaceHeight);
+    public void initialize(SurfaceTexture surfaceTexture);
 
     /**
-     * Initializes the surface texture consumer with the give surface
-     * texture and dimensions.
+     * Release any resources used by the burst.
+     * <p/>
+     * {@link #initialize(SurfaceTexture)} should be called in order to start
+     * capturing bursts again.
      */
-    public void initializeSurfaceTextureConsumer(SurfaceTexture surfaceTexture, int surfaceWidth,
-            int surfaceHeight);
+    public void release();
 
-    /** Updates the size of the preview buffer. */
-    public void updatePreviewBufferSize(int width, int height);
+    /**
+     * Returns the input surface for preview stream used by burst module.
+     * <p/>
+     * This is an instance of {@link Surface} that is created for the passed in
+     * surface texture {@link #initialize(SurfaceTexture)}.
+     */
+    public Surface getInputSurface();
 
-    /** Initializes and starts the frame distributor. */
-    public void initializeAndStartFrameDistributor();
-
-    /** Closed the frame distributor. */
-    public void closeFrameDistributor();
-
-    /** Returns the frame distributor's input surface texture. */
-    public SurfaceTexture getInputSurfaceTexture();
-
-    /** Sets the preview size (in pixels) of the preview consumer. */
-    public void setPreviewConsumerSize(int width, int height);
-
+    /**
+     * Sets an instance of {@link BurstTaker}.
+     * <p/>
+     * The instance of {@link BurstTaker} is available only when the capture
+     * session with Camera is complete.
+     */
+    public void setBurstTaker(BurstTaker burstTaker);
 }

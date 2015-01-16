@@ -122,14 +122,4 @@ public abstract class AbstractOneCamera implements OneCamera {
     public void setZoom(float zoom) {
         // If not implemented, no-op.
     }
-
-    @Override
-    public void startBurst(BurstParameters params, CaptureSession session) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
-
-    @Override
-    public void stopBurst() {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
 }
