@@ -28,6 +28,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
@@ -1090,9 +1091,9 @@ public class VideoModule extends CameraModule
         Log.i(TAG, "initializeRecorder: " + Thread.currentThread());
         // If the mCameraDevice is null, then this activity is going to finish
         if (mCameraDevice == null) {
+            Log.w(TAG, "null camera proxy, not recording");
             return;
         }
-
         Intent intent = mActivity.getIntent();
         Bundle myExtras = intent.getExtras();
 
@@ -1116,7 +1117,19 @@ public class VideoModule extends CameraModule
         mMediaRecorder = new MediaRecorder();
         // Unlock the camera object before passing it to media recorder.
         mCameraDevice.unlock();
-        mMediaRecorder.setCamera(mCameraDevice.getCamera());
+        // We rely here on the fact that the unlock call above is synchronous
+        // and blocks until it occurs in the handler thread. Thereby ensuring
+        // that we are up to date with handler requests, and if this proxy had
+        // ever been released by a prior command, it would be null.
+        Camera camera = mCameraDevice.getCamera();
+        // If the camera device is null, the camera proxy is stale and recording
+        // should be ignored.
+        if (camera == null) {
+            Log.w(TAG, "null camera within proxy, not recording");
+            return;
+        }
+
+        mMediaRecorder.setCamera(camera);
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mMediaRecorder.setProfile(mProfile);
