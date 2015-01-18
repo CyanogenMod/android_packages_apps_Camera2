@@ -408,7 +408,7 @@ public class VideoModule extends CameraModule
 
     private void takeASnapshot() {
         // Only take snapshots if video snapshot is supported by device
-        if(!mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_SNAPSHOT)) {
+        if(!mCameraCapabilities.supports(CameraCapabilities.Feature.VIDEO_SNAPSHOT) || isSamsung4k()) {
             Log.w(TAG, "Cannot take a video snapshot - not supported by hardware");
             return;
         }
