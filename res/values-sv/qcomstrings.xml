@@ -36,10 +36,12 @@
   <string name="pref_camera_selectablezoneaf_entry_spotmetering">Punktmätning</string>
   <string name="pref_camera_selectablezoneaf_entry_centerweighted">Mittvägd</string>
   <string name="pref_camera_selectablezoneaf_entry_frameaverage">Bildgenomsnitt</string>
+  <string name="hdr_enable_message">HDR är aktivt, endast automatisk scendetektion stöds</string>
   <string name="scene_enable_message">HDR stöds endast i automatisk scendetektion</string>
   <string name="pref_camera_video_hdr_title">Video HDR</string>
   <string name="pref_camera_facedetection_title">Ansiktsigenkänning</string>
   <string name="pref_camera_redeyereduction_title">Röda ögon-reduktion</string>
+  <string name="error_app_unsupported_hfr_selection">HFR stöds inte när videostabilisering, tidsintervall eller HDR-video är på</string>
   <string name="error_app_unsupported_hfr">HFR fungerar inte med vald upplösning</string>
   <string name="error_app_unsupported_hfr_codec">Endast H.264-kodning fungerar med HFR</string>
   <string name="error_app_unsupported">Videoupplösningen fungerar inte med denna kodek</string>
