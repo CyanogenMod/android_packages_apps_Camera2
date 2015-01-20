@@ -105,7 +105,16 @@ public class ShutterButton extends ImageView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
         if (mTouchEnabled) {
-            mGestureDetector.onTouchEvent(m);
+            // Don't send ACTION_MOVE messages to gesture detector unless event motion is out of
+            // shutter button view. A small motion resets the long tap status. A long tap should
+            // be interpreted as the duration the finger is held down on the shutter button,
+            // regardless of any small motions. If motion moves out of shutter button view, the
+            // gesture detector needs to be notified to reset the long tap status.
+            if (m.getActionMasked() != MotionEvent.ACTION_MOVE
+                || m.getX() < 0 || m.getY() < 0
+                || m.getX() >= getWidth() || m.getY() >= getHeight()) {
+                mGestureDetector.onTouchEvent(m);
+            }
             if (m.getActionMasked() == MotionEvent.ACTION_UP) {
                 mTouchCoordinate = new TouchCoordinate(m.getX(), m.getY(), this.getMeasuredWidth(),
                         this.getMeasuredHeight());
