@@ -460,7 +460,7 @@ public class CaptureModule extends CameraModule implements
     private CaptureSession createCaptureSession() {
         long sessionTime = getSessionTime();
         Location location = mLocationManager.getCurrentLocation();
-        String title = CameraUtil.createJpegName(sessionTime);
+        String title = CameraUtil.instance().createJpegName(sessionTime);
         return getServices().getCaptureSessionManager()
                 .createNewSession(title, sessionTime, location);
     }

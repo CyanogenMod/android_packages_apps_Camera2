@@ -1040,7 +1040,7 @@ public class PhotoModule
 
         public void nameNewImage(long date) {
             NamedEntity r = new NamedEntity();
-            r.title = CameraUtil.createJpegName(date);
+            r.title = CameraUtil.instance().createJpegName(date);
             r.date = date;
             mQueue.add(r);
         }

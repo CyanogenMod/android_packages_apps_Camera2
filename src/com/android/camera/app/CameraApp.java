@@ -21,29 +21,15 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Debug;
 
-import com.android.camera.MediaSaverImpl;
-import com.android.camera.Storage;
-import com.android.camera.processing.ProcessingServiceManager;
-import com.android.camera.remote.RemoteShutterListener;
-import com.android.camera.session.CaptureSessionManager;
-import com.android.camera.session.CaptureSessionManagerImpl;
-import com.android.camera.session.PlaceholderManager;
-import com.android.camera.session.SessionStorageManager;
-import com.android.camera.session.SessionStorageManagerImpl;
-import com.android.camera.session.StackSaverFactory;
-import com.android.camera.settings.SettingsManager;
-import com.android.camera.stats.SessionStatsCollector;
 import com.android.camera.stats.UsageStatistics;
 import com.android.camera.util.AndroidContext;
 import com.android.camera.util.AndroidServices;
-import com.android.camera.util.CameraUtil;
-import com.android.camera.util.RemoteShutterHelper;
 
 /**
  * The Camera application class containing important services and functionality
  * to be used across modules.
  */
-public class CameraApp extends Application implements CameraServices {
+public class CameraApp extends Application {
     /**
      * This is for debugging only: If set to true, application will not start
      * until a debugger is attached.
@@ -53,12 +39,6 @@ public class CameraApp extends Application implements CameraServices {
      */
     private static final boolean WAIT_FOR_DEBUGGER_ON_START = false;
 
-    private MediaSaver mMediaSaver;
-    private CaptureSessionManager mSessionManager;
-    private MemoryManagerImpl mMemoryManager;
-    private RemoteShutterListener mRemoteShutterListener;
-    private MotionManager mMotionManager;
-    private SettingsManager mSettingsManager;
 
     @Override
     public void onCreate() {
@@ -76,57 +56,8 @@ public class CameraApp extends Application implements CameraServices {
         FirstRunDetector.instance().initializeTimeOfFirstRun(context);
 
         UsageStatistics.instance().initialize(this);
-        SessionStatsCollector.instance().initialize(this);
-        CameraUtil.initialize(this);
-
-        ProcessingServiceManager.initSingleton(context);
-
-        mMediaSaver = new MediaSaverImpl();
-        PlaceholderManager mPlaceHolderManager = new PlaceholderManager(context);
-        SessionStorageManager mSessionStorageManager = SessionStorageManagerImpl.create(this);
-
-        StackSaverFactory mStackSaverFactory = new StackSaverFactory(Storage.DIRECTORY,
-              getContentResolver());
-        mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
-              mPlaceHolderManager, mSessionStorageManager, mStackSaverFactory);
-        mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
-        mRemoteShutterListener = RemoteShutterHelper.create(this);
-        mSettingsManager = new SettingsManager(this);
 
         clearNotifications();
-
-        mMotionManager = new MotionManager(context);
-    }
-
-    @Override
-    public CaptureSessionManager getCaptureSessionManager() {
-        return mSessionManager;
-    }
-
-    @Override
-    public MemoryManager getMemoryManager() {
-        return mMemoryManager;
-    }
-
-    @Override
-    public MotionManager getMotionManager() {
-        return mMotionManager;
-    }
-
-    @Override
-    @Deprecated
-    public MediaSaver getMediaSaver() {
-        return mMediaSaver;
-    }
-
-    @Override
-    public RemoteShutterListener getRemoteShutterListener() {
-        return mRemoteShutterListener;
-    }
-
-    @Override
-    public SettingsManager getSettingsManager() {
-        return mSettingsManager;
     }
 
     /**

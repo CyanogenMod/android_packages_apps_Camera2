@@ -1927,7 +1927,7 @@ public class VideoModule extends CameraModule
 
     private void storeImage(final byte[] data, Location loc) {
         long dateTaken = System.currentTimeMillis();
-        String title = CameraUtil.createJpegName(dateTaken);
+        String title = CameraUtil.instance().createJpegName(dateTaken);
         ExifInterface exif = Exif.getExif(data);
         int orientation = Exif.getOrientation(exif);
 

@@ -19,11 +19,11 @@ package com.android.camera.settings;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-
 import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 
 import com.android.camera.app.CameraApp;
+import com.android.camera.app.CameraServicesImpl;
 
 /**
  * This class allows Settings UIs to display and set boolean values controlled
@@ -53,7 +53,7 @@ public class ManagedSwitchPreference extends SwitchPreference {
             // preference from XML. In that case return the default value.
             return defaultReturnValue;
         }
-        SettingsManager settingsManager = cameraApp.getSettingsManager();
+        SettingsManager settingsManager = CameraServicesImpl.instance().getSettingsManager();
         if (settingsManager != null) {
             return settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL, getKey());
         } else {
@@ -72,7 +72,7 @@ public class ManagedSwitchPreference extends SwitchPreference {
             // be persisted.
             return false;
         }
-        SettingsManager settingsManager = cameraApp.getSettingsManager();
+        SettingsManager settingsManager = CameraServicesImpl.instance().getSettingsManager();
         if (settingsManager != null) {
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, getKey(), value);
             return true;

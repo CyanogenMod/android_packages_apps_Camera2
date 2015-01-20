@@ -70,6 +70,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
+import com.android.camera.app.CameraServicesImpl;
 import com.android.camera.app.FirstRunDialog;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MemoryManager;
@@ -1388,7 +1389,7 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onCreateTasks(Bundle state) {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
-        mAppContext = getApplication().getBaseContext();
+        mAppContext = getApplicationContext();
 
         if (!Glide.isSetup()) {
             Context context = getAndroidContext();
@@ -2343,7 +2344,7 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public CameraServices getServices() {
-        return (CameraServices) getApplication();
+        return CameraServicesImpl.instance();
     }
 
     public List<String> getSupportedModeNames() {

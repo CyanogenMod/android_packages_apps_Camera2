@@ -38,7 +38,6 @@ import android.hardware.camera2.CameraMetadata;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.OrientationEventListener;
@@ -58,7 +57,6 @@ import com.android.ex.camera2.portability.CameraSettings;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +66,19 @@ import java.util.Locale;
  * Collection of utility functions used in this package.
  */
 public class CameraUtil {
-    private static final Log.Tag TAG = new Log.Tag("Util");
+    private static final Log.Tag TAG = new Log.Tag("CameraUtil");
+
+    private static class Singleton {
+        private static final CameraUtil INSTANCE = new CameraUtil(
+              AndroidContext.instance().get());
+    }
+
+    /**
+     * Thread safe CameraUtil instance.
+     */
+    public static CameraUtil instance() {
+        return Singleton.INSTANCE;
+    }
 
     // For calculate the best fps range for still image capture.
     private final static int MAX_PREVIEW_FPS_TIMES_1000 = 400000;
@@ -116,23 +126,11 @@ public class CameraUtil {
     private static final String EXTRAS_CAMERA_FACING =
             "android.intent.extras.CAMERA_FACING";
 
-    private static float sPixelDensity = 1;
-    private static ImageFileNamer sImageFileNamer;
+    private final ImageFileNamer mImageFileNamer;
 
-    private CameraUtil() {
-    }
-
-    public static void initialize(Context context) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager wm = AndroidServices.instance().provideWindowManager();
-        wm.getDefaultDisplay().getMetrics(metrics);
-        sPixelDensity = metrics.density;
-        sImageFileNamer = new ImageFileNamer(
-                context.getString(R.string.image_file_name_format));
-    }
-
-    public static int dpToPixel(int dp) {
-        return Math.round(sPixelDensity * dp);
+    private CameraUtil(Context context) {
+        mImageFileNamer = new ImageFileNamer(
+              context.getString(R.string.image_file_name_format));
     }
 
     /**
@@ -725,9 +723,9 @@ public class CameraUtil {
         matrix.postTranslate(viewWidth / 2f, viewHeight / 2f);
     }
 
-    public static String createJpegName(long dateTaken) {
-        synchronized (sImageFileNamer) {
-            return sImageFileNamer.generateName(dateTaken);
+    public String createJpegName(long dateTaken) {
+        synchronized (mImageFileNamer) {
+            return mImageFileNamer.generateName(dateTaken);
         }
     }
 
