@@ -20,7 +20,6 @@ import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 
-import com.android.camera.app.OrientationManager;
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.ResettingDelayedExecutor;
@@ -76,6 +75,7 @@ public class ManualAutoFocusFactory {
         RequestTemplate afRequestBuilder = new RequestTemplate(rootBuilder);
         afRequestBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, mAEMeteringRegion);
         afRequestBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, mAFMeteringRegion);
+        afRequestBuilder.setParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
 
         CameraCommand afScanCommand = new FullAFScanCommand(frameServer, afRequestBuilder,
                 templateType);
