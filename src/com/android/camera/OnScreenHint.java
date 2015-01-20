@@ -16,8 +16,6 @@
 
 package com.android.camera;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -26,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.android.camera.debug.Log;
+import com.android.camera.util.AndroidServices;
 import com.android.camera2.R;
 
 /**
@@ -54,12 +53,9 @@ public class OnScreenHint {
     /**
      * Construct an empty OnScreenHint object.
      *
-     * @param context  The context to use.  Usually your
-     *                 {@link android.app.Application} or
-     *                 {@link android.app.Activity} object.
      */
-    private OnScreenHint(Activity activity) {
-        mWM = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+    private OnScreenHint() {
+        mWM = AndroidServices.instance().provideWindowManager();
 
         mParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -91,18 +87,13 @@ public class OnScreenHint {
     /**
      * Make a standard hint that just contains a text view.
      *
-     * @param context  The context to use.  Usually your
-     *                 {@link android.app.Application} or
-     *                 {@link android.app.Activity} object.
      * @param text     The text to show.  Can be formatted text.
      *
      */
-    public static OnScreenHint makeText(Activity activity, CharSequence text) {
-        OnScreenHint result = new OnScreenHint(activity);
+    public static OnScreenHint makeText(CharSequence text) {
+        OnScreenHint result = new OnScreenHint();
 
-        LayoutInflater inflate =
-                (LayoutInflater) activity.getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflate = AndroidServices.instance().provideLayoutInflater();
         View v = inflate.inflate(R.layout.on_screen_hint, null);
         TextView tv = (TextView) v.findViewById(R.id.message);
         tv.setText(text);

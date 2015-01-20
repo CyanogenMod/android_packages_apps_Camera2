@@ -19,12 +19,10 @@ package com.android.camera;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.CameraProfile;
 import android.net.Uri;
@@ -63,14 +61,15 @@ import com.android.camera.settings.CameraPictureSizesCacher;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.stats.SessionStatsCollector;
 import com.android.camera.stats.UsageStatistics;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.TouchCoordinate;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.GservicesHelper;
-import com.android.camera.stats.SessionStatsCollector;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
@@ -277,7 +276,7 @@ public class PhotoModule
         // down and camera app is opened. Rotation animation will
         // take some time and the rotation value we have got may be
         // wrong. Framework does not have a callback for this now.
-        if (CameraUtil.getDisplayRotation(mActivity) != mDisplayRotation) {
+        if (CameraUtil.getDisplayRotation() != mDisplayRotation) {
             setDisplayOrientation();
         }
         if (SystemClock.uptimeMillis() - mOnResumeTime < 5000) {
@@ -394,8 +393,7 @@ public class PhotoModule
         mIsImageCaptureIntent = isImageCaptureIntent();
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mHeadingSensor = new HeadingSensor(
-                (SensorManager) mActivity.getSystemService(Context.SENSOR_SERVICE));
+        mHeadingSensor = new HeadingSensor(AndroidServices.instance().provideSensorManager());
         mUI.setCountdownFinishedListener(this);
         mCountdownSoundPlayer = new SoundPlayer(mAppController.getAndroidContext());
 
@@ -1550,7 +1548,7 @@ public class PhotoModule
 
     @Override
     public void updateCameraOrientation() {
-        if (mDisplayRotation != CameraUtil.getDisplayRotation(mActivity)) {
+        if (mDisplayRotation != CameraUtil.getDisplayRotation()) {
             setDisplayOrientation();
         }
     }
@@ -1676,7 +1674,7 @@ public class PhotoModule
     }
 
     private void setDisplayOrientation() {
-        mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
+        mDisplayRotation = CameraUtil.getDisplayRotation();
         Characteristics info =
                 mActivity.getCameraProvider().getCharacteristics(mCameraId);
         mDisplayOrientation = info.getPreviewOrientation(mDisplayRotation);

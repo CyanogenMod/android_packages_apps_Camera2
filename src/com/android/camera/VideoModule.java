@@ -64,6 +64,7 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.settings.SettingsUtil;
 import com.android.camera.ui.TouchCoordinate;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.stats.UsageStatistics;
@@ -257,7 +258,7 @@ public class VideoModule extends CameraModule
                     // down and camera app is opened. Rotation animation will
                     // take some time and the rotation value we have got may be
                     // wrong. Framework does not have a callback for this now.
-                    if ((CameraUtil.getDisplayRotation(mActivity) != mDisplayRotation)
+                    if ((CameraUtil.getDisplayRotation() != mDisplayRotation)
                             && !mMediaRecorderRecording && !mSwitchingCamera) {
                         startPreview();
                     }
@@ -338,7 +339,7 @@ public class VideoModule extends CameraModule
         // TODO: Need to look at the controller interface to see if we can get
         // rid of passing in the activity directly.
         mAppController = mActivity;
-        mAudioManager = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = AndroidServices.instance().provideAudioManager();
 
         mActivity.updateStorageSpaceAndHint(null);
 
@@ -853,7 +854,7 @@ public class VideoModule extends CameraModule
     }
 
     private void setDisplayOrientation() {
-        mDisplayRotation = CameraUtil.getDisplayRotation(mActivity);
+        mDisplayRotation = CameraUtil.getDisplayRotation();
         Characteristics info =
                 mActivity.getCameraProvider().getCharacteristics(mCameraId);
         mCameraDisplayOrientation = info.getPreviewOrientation(mDisplayRotation);
@@ -871,7 +872,7 @@ public class VideoModule extends CameraModule
         if (mMediaRecorderRecording) {
             return;
         }
-        if (mDisplayRotation != CameraUtil.getDisplayRotation(mActivity)) {
+        if (mDisplayRotation != CameraUtil.getDisplayRotation()) {
             setDisplayOrientation();
         }
     }

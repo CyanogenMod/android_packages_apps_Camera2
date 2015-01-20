@@ -290,7 +290,7 @@ public class RoundedThumbnailView extends View {
         float modeSwitchThreeDotsBottomPadding = mThumbnailPadding;
 
         int orientation = getResources().getConfiguration().orientation;
-        int rotation = CameraUtil.getDisplayRotation(getContext());
+        int rotation = CameraUtil.getDisplayRotation();
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             // The view finder of 16:9 aspect ratio might have a black padding.
             float previewRightEdgeGap =

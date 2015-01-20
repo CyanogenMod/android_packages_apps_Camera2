@@ -121,11 +121,11 @@ public class Log {
 
     private static boolean isLoggable(Tag tag, int level) {
         try {
-            if (LogHelper.getOverrideLevel() != 0) {
+            if (LogHelper.instance().getOverrideLevel() != 0) {
                 // Override system log level and output. VERBOSE is smaller than
                 // ERROR, so the comparison checks that the override value is smaller
                 // than the desired output level. This applies to all tags.
-                return LogHelper.getOverrideLevel() <= level;
+                return LogHelper.instance().getOverrideLevel() <= level;
             } else {
                 return ReleaseHelper.shouldLogVerbose() ||
                         isDebugOsBuild() || shouldLog(tag, level);

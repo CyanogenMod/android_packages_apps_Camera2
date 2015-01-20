@@ -19,7 +19,6 @@ package com.android.camera;
 
 import android.animation.Animator;
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -115,7 +114,6 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsUtil;
 import com.android.camera.stats.UsageStatistics;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.AbstractTutorialOverlay;
@@ -2204,7 +2202,7 @@ public class CameraActivity extends QuickActivity
         if (message != null) {
             Log.w(TAG, "Storage warning: " + message);
             if (mStorageHint == null) {
-                mStorageHint = OnScreenHint.makeText(CameraActivity.this, message);
+                mStorageHint = OnScreenHint.makeText(message);
             } else {
                 mStorageHint.setText(message);
             }

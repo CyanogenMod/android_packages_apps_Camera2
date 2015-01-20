@@ -21,6 +21,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import com.android.camera.debug.Log;
+import com.android.camera.util.AndroidServices;
 
 /**
  * A class that handles legacy (network, gps) location providers, in the event
@@ -81,8 +82,7 @@ public class LegacyLocationProvider implements LocationProvider {
     private void startReceivingLocationUpdates() {
         Log.v(TAG, "starting location updates");
         if (mLocationManager == null) {
-            mLocationManager = (android.location.LocationManager)
-                    mContext.getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager = AndroidServices.instance().provideLocationManager();
         }
         if (mLocationManager != null) {
             try {

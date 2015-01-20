@@ -17,7 +17,6 @@
 package com.android.camera.app;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -59,6 +58,7 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.StickyBottomCaptureLayout;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.ui.focus.FocusRing;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
@@ -845,8 +845,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     .findViewById(R.id.camera_filmstrip_content_layout);
             if (filmstripContent != null) {
                 // Creates refocus cling.
-                LayoutInflater inflater = (LayoutInflater) mController.getAndroidContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = AndroidServices.instance().provideLayoutInflater();
                 Cling refocusCling = (Cling) inflater.inflate(R.layout.cling_widget, null, false);
                 // Sets instruction text in the cling.
                 refocusCling.setText(mController.getAndroidContext().getResources()
@@ -890,8 +889,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     public void onDestroy() {
-        ((DisplayManager) mController.getAndroidContext()
-                .getSystemService(Context.DISPLAY_SERVICE))
+        AndroidServices.instance().provideDisplayManager()
                 .unregisterDisplayListener(mDisplayListener);
     }
 
@@ -902,7 +900,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     private void initDisplayListener() {
         if (ApiHelper.HAS_DISPLAY_LISTENER) {
-            mLastRotation = CameraUtil.getDisplayRotation(mController.getAndroidContext());
+            mLastRotation = CameraUtil.getDisplayRotation();
 
             mDisplayListener = new DisplayManager.DisplayListener() {
                 @Override
@@ -913,7 +911,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 @Override
                 public void onDisplayChanged(int displayId) {
                     int rotation = CameraUtil.getDisplayRotation(
-                            mController.getAndroidContext());
+                    );
                     if ((rotation - mLastRotation + 360) % 360 == 180
                             && mPreviewStatusListener != null) {
                         mPreviewStatusListener.onPreviewFlipped();
@@ -930,9 +928,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 }
             };
 
-            ((DisplayManager) mController.getAndroidContext()
-                    .getSystemService(Context.DISPLAY_SERVICE))
-                    .registerDisplayListener(mDisplayListener, null);
+            AndroidServices.instance().provideDisplayManager()
+                  .registerDisplayListener(mDisplayListener, null);
         }
     }
 
@@ -1003,8 +1000,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      *         enabled.
      */
     private boolean isSpokenFeedbackAccessibilityEnabled() {
-        AccessibilityManager accessibilityManager = (AccessibilityManager) mController
-                .getAndroidContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+        AccessibilityManager accessibilityManager = AndroidServices.instance()
+              .provideAccessibilityManager();
         List<AccessibilityServiceInfo> infos = accessibilityManager
                 .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN);
         return infos != null && !infos.isEmpty();

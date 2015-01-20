@@ -304,7 +304,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             final int cameraId, Handler handler, final CameraAgent.CameraOpenCallback cb) {
         Log.v(TAG, "checkAndOpenCamera");
         try {
-            CameraUtil.throwIfCameraDisabled(context);
+            CameraUtil.throwIfCameraDisabled();
             cameraManager.openCamera(handler, cameraId, cb);
         } catch (CameraDisabledException ex) {
             handler.post(new Runnable() {

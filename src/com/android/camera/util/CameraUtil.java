@@ -51,7 +51,6 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
-import com.android.camera.data.FilmstripItem;
 import com.android.camera.debug.Log;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
@@ -125,8 +124,7 @@ public class CameraUtil {
 
     public static void initialize(Context context) {
         DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager)
-                context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = AndroidServices.instance().provideWindowManager();
         wm.getDefaultDisplay().getMetrics(metrics);
         sPixelDensity = metrics.density;
         sImageFileNamer = new ImageFileNamer(
@@ -432,9 +430,8 @@ public class CameraUtil {
         return new Size((int) width, (int) height);
     }
 
-    public static int getDisplayRotation(Context context) {
-        WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
+    public static int getDisplayRotation() {
+        WindowManager windowManager = AndroidServices.instance().provideWindowManager();
         int rotation = windowManager.getDefaultDisplay()
                 .getRotation();
         switch (rotation) {
@@ -450,9 +447,8 @@ public class CameraUtil {
         return 0;
     }
 
-    private static Size getDefaultDisplaySize(Context context) {
-        WindowManager windowManager = (WindowManager) context
-                .getSystemService(Context.WINDOW_SERVICE);
+    private static Size getDefaultDisplaySize() {
+        WindowManager windowManager = AndroidServices.instance().provideWindowManager();
         Point res = new Point();
         windowManager.getDefaultDisplay().getSize(res);
         return new Size(res);
@@ -529,7 +525,7 @@ public class CameraUtil {
         // wrong size of preview surface. When we change the preview size, the
         // new overlay will be created before the old one closed, which causes
         // an exception. For now, just get the screen size.
-        Size defaultDisplaySize = getDefaultDisplaySize(context);
+        Size defaultDisplaySize = getDefaultDisplaySize();
         int targetHeight = Math.min(defaultDisplaySize.getWidth(), defaultDisplaySize.getHeight());
         // Try to find an size match aspect ratio and size
         for (int i = 0; i < previewSizes.size(); i++) {
@@ -623,35 +619,6 @@ public class CameraUtil {
             }
         }
         return optimalSize;
-    }
-
-    /**
-     * Returns whether the device is voice-capable (meaning, it can do MMS).
-     */
-    public static boolean isMmsCapable(Context context) {
-        TelephonyManager telephonyManager = (TelephonyManager)
-                context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager == null) {
-            return false;
-        }
-
-        try {
-            Class<?> partypes[] = new Class[0];
-            Method sIsVoiceCapable = TelephonyManager.class.getMethod(
-                    "isVoiceCapable", partypes);
-
-            Object arglist[] = new Object[0];
-            Object retobj = sIsVoiceCapable.invoke(telephonyManager, arglist);
-            return (Boolean) retobj;
-        } catch (java.lang.reflect.InvocationTargetException ite) {
-            // Failure, must be another device.
-            // Assume that it is voice capable.
-        } catch (IllegalAccessException iae) {
-            // Failure, must be an other device.
-            // Assume that it is voice capable.
-        } catch (NoSuchMethodException nsme) {
-        }
-        return true;
     }
 
     // This is for test only. Allow the camera to launch the specific camera.
@@ -890,10 +857,9 @@ public class CameraUtil {
         return new int[0];
     }
 
-    public static void throwIfCameraDisabled(Context context) throws CameraDisabledException {
+    public static void throwIfCameraDisabled() throws CameraDisabledException {
         // Check if device policy has disabled the camera.
-        DevicePolicyManager dpm =
-                (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        DevicePolicyManager dpm = AndroidServices.instance().provideDevicePolicyManager();
         if (dpm.getCameraDisabled(null)) {
             throw new CameraDisabledException();
         }

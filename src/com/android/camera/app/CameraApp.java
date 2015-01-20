@@ -23,7 +23,6 @@ import android.os.Debug;
 
 import com.android.camera.MediaSaverImpl;
 import com.android.camera.Storage;
-import com.android.camera.debug.LogHelper;
 import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.remote.RemoteShutterListener;
 import com.android.camera.session.CaptureSessionManager;
@@ -33,10 +32,12 @@ import com.android.camera.session.SessionStorageManager;
 import com.android.camera.session.SessionStorageManagerImpl;
 import com.android.camera.session.StackSaverFactory;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.util.CameraUtil;
-import com.android.camera.util.RemoteShutterHelper;
 import com.android.camera.stats.SessionStatsCollector;
 import com.android.camera.stats.UsageStatistics;
+import com.android.camera.util.AndroidContext;
+import com.android.camera.util.AndroidServices;
+import com.android.camera.util.CameraUtil;
+import com.android.camera.util.RemoteShutterHelper;
 
 /**
  * The Camera application class containing important services and functionality
@@ -54,10 +55,7 @@ public class CameraApp extends Application implements CameraServices {
 
     private MediaSaver mMediaSaver;
     private CaptureSessionManager mSessionManager;
-    private StackSaverFactory mStackSaverFactory;
-    private SessionStorageManager mSessionStorageManager;
     private MemoryManagerImpl mMemoryManager;
-    private PlaceholderManager mPlaceHolderManager;
     private RemoteShutterListener mRemoteShutterListener;
     private MotionManager mMotionManager;
     private SettingsManager mSettingsManager;
@@ -71,7 +69,7 @@ public class CameraApp extends Application implements CameraServices {
         }
 
         Context context = getApplicationContext();
-        LogHelper.initialize(context);
+        AndroidContext.initialize(context);
 
         // It is important that this gets called early in execution before the
         // app has had the opportunity to create any shared preferences.
@@ -84,12 +82,13 @@ public class CameraApp extends Application implements CameraServices {
         ProcessingServiceManager.initSingleton(context);
 
         mMediaSaver = new MediaSaverImpl();
-        mPlaceHolderManager = new PlaceholderManager(context);
-        mSessionStorageManager = SessionStorageManagerImpl.create(this);
+        PlaceholderManager mPlaceHolderManager = new PlaceholderManager(context);
+        SessionStorageManager mSessionStorageManager = SessionStorageManagerImpl.create(this);
 
-        mStackSaverFactory = new StackSaverFactory(Storage.DIRECTORY, getContentResolver());
+        StackSaverFactory mStackSaverFactory = new StackSaverFactory(Storage.DIRECTORY,
+              getContentResolver());
         mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, getContentResolver(),
-                mPlaceHolderManager, mSessionStorageManager, mStackSaverFactory);
+              mPlaceHolderManager, mSessionStorageManager, mStackSaverFactory);
         mMemoryManager = MemoryManagerImpl.create(getApplicationContext(), mMediaSaver);
         mRemoteShutterListener = RemoteShutterHelper.create(this);
         mSettingsManager = new SettingsManager(this);
@@ -135,8 +134,7 @@ public class CameraApp extends Application implements CameraServices {
      * created earlier but remained after a crash.
      */
     private void clearNotifications() {
-        NotificationManager manager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = AndroidServices.instance().provideNotificationManager();
         if (manager != null) {
             manager.cancelAll();
         }

@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import com.android.camera.CaptureLayoutHelper;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.debug.Log;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Gusterpolator;
 import com.android.camera.stats.UsageStatistics;
@@ -1192,8 +1193,7 @@ public class ModeListView extends FrameLayout
     private void initializeModeSelectorItems() {
         mModeSelectorItems = new ModeSelectorItem[mTotalModes];
         // Inflate the mode selector items and add them to a linear layout
-        LayoutInflater inflater = (LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = AndroidServices.instance().provideLayoutInflater();
         mListView = (LinearLayout) findViewById(R.id.mode_list);
         for (int i = 0; i < mTotalModes; i++) {
             final ModeSelectorItem selectorItem =

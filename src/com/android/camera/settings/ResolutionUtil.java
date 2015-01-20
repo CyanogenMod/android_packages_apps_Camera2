@@ -16,13 +16,14 @@
 
 package com.android.camera.settings;
 
-import com.android.camera.exif.Rational;
-import com.android.camera.util.ApiHelper;
-import com.android.camera.util.Size;
-
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+
+import com.android.camera.exif.Rational;
+import com.android.camera.util.AndroidServices;
+import com.android.camera.util.ApiHelper;
+import com.android.camera.util.Size;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -377,8 +378,7 @@ public class ResolutionUtil {
 
     public static DisplayMetrics getDisplayMetrics(Context context) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager)
-                context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = AndroidServices.instance().provideWindowManager();
         if (wm != null) {
             wm.getDefaultDisplay().getMetrics(displayMetrics);
         }

@@ -17,7 +17,6 @@
 package com.android.camera.one.v2;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -38,9 +37,9 @@ import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
-
 import com.google.common.base.Optional;
 
 /**
@@ -62,7 +61,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
         }
         CameraManager cameraManager;
         try {
-            cameraManager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+            cameraManager = AndroidServices.instance().provideCameraManager();
         } catch (IllegalStateException ex) {
             Log.e(TAG, "camera2.CameraManager is not available.");
             return Optional.absent();

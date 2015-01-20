@@ -89,7 +89,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         Log.v(TAG, "onLayoutChange");
         int width = right - left;
         int height = bottom - top;
-        int rotation = CameraUtil.getDisplayRotation(mPreview.getContext());
+        int rotation = CameraUtil.getDisplayRotation();
         if (mWidth != width || mHeight != height || mOrientation != rotation) {
             mWidth = width;
             mHeight = height;

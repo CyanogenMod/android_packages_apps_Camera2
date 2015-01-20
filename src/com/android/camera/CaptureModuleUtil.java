@@ -35,7 +35,7 @@ public class CaptureModuleUtil {
 
     public static int getDeviceNaturalOrientation(Context context) {
         Configuration config = context.getResources().getConfiguration();
-        int rotation = CameraUtil.getDisplayRotation(context);
+        int rotation = CameraUtil.getDisplayRotation();
 
         if (((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
                 config.orientation == Configuration.ORIENTATION_LANDSCAPE) ||
@@ -109,7 +109,7 @@ public class CaptureModuleUtil {
             double bestPreviewAspectRatio,
             Context context) {
         // Swap dimensions if the device is not in its natural orientation.
-        boolean swapDimens = (CameraUtil.getDisplayRotation(context) % 180) == 90;
+        boolean swapDimens = (CameraUtil.getDisplayRotation() % 180) == 90;
         // Swap dimensions if the device's natural orientation doesn't match
         // the sensor orientation.
         if (CaptureModuleUtil.getDeviceNaturalOrientation(context)

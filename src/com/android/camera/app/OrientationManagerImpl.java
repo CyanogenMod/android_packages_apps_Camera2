@@ -30,6 +30,7 @@ import android.view.Surface;
 import android.view.WindowManager;
 
 import com.android.camera.debug.Log;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 
 import java.util.ArrayList;
@@ -262,7 +263,7 @@ public class OrientationManagerImpl implements OrientationManager {
      * @return whether the default orientation of the device is portrait
      */
     private static boolean isDefaultToPortrait(Context context) {
-        Display currentDisplay = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+        Display currentDisplay = AndroidServices.instance().provideWindowManager()
                 .getDefaultDisplay();
         Point displaySize = new Point();
         currentDisplay.getSize(displaySize);

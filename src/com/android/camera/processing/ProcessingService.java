@@ -35,6 +35,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSession.ProgressListener;
 import com.android.camera.session.CaptureSessionManager;
+import com.android.camera.util.AndroidServices;
 import com.android.camera2.R;
 
 import java.util.concurrent.locks.Lock;
@@ -104,8 +105,7 @@ public class ProcessingService extends Service implements ProgressListener {
         mSessionManager = getServices().getCaptureSessionManager();
 
         // Keep CPU awake while allowing screen and keyboard to switch off.
-        PowerManager powerManager = (PowerManager) getSystemService(
-                Context.POWER_SERVICE);
+        PowerManager powerManager = AndroidServices.instance().providePowerManager();
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG.toString());
         mWakeLock.acquire();
 
@@ -114,7 +114,7 @@ public class ProcessingService extends Service implements ProgressListener {
         intentFilter.addAction(ACTION_RESUME_PROCESSING_SERVICE);
         LocalBroadcastManager.getInstance(this).registerReceiver(mServiceController, intentFilter);
         mNotificationBuilder = createInProgressNotificationBuilder();
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = AndroidServices.instance().provideNotificationManager();
     }
 
     @Override
