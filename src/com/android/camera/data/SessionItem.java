@@ -77,7 +77,11 @@ public class SessionItem implements FilmstripItem {
         }
 
         Bitmap placeholder = Storage.getPlacerHolderForSession(mData.getUri());
-        imageView.setImageBitmap(placeholder);
+        if (placeholder != null) {
+            imageView.setImageBitmap(placeholder);
+        } else {
+            imageView.setImageResource(DEFAULT_PLACEHOLDER_RESOURCE);
+        }
         imageView.setContentDescription(mContext.getResources().getString(
                 R.string.media_processing_content_description));
         return imageView;

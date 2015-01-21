@@ -38,6 +38,7 @@ import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.util.AndroidServices;
 import com.android.camera2.R;
 
+import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -222,7 +223,12 @@ public class ProcessingService extends Service implements ProgressListener {
         CaptureSession session = task.getSession();
         if (session == null) {
             // TODO: Timestamp is not required right now, refactor this to make it clearer.
-            session = mSessionManager.createNewSession(task.getName(), 0, task.getLocation());
+            try {
+                session = mSessionManager.createNewSession(task.getName(), 0, task.getLocation());
+            } catch (IOException e) {
+                Log.e(TAG, "Cannot process this session.", e);
+                return;
+            }
         }
         resetNotification();
 

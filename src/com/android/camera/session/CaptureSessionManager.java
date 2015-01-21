@@ -68,13 +68,7 @@ public interface CaptureSessionManager {
      * @param sessionStartMillis the start time of the new session (millis since epoch).
      * @param location the location of the new session.
      */
-    CaptureSession createNewSession(String title, long sessionStartMillis, Location location);
-
-    /**
-     * Creates a session based on an existing URI in the filmstrip and media
-     * store. This can be used to re-process an image.
-     */
-    CaptureSession createSession();
+    CaptureSession createNewSession(String title, long sessionStartMillis, Location location) throws IOException;
 
     /**
      * Returns a session by session Uri or null if it is not found.

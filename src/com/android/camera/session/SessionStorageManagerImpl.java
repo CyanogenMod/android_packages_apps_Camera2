@@ -81,6 +81,37 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
         return sessionDirectory;
     }
 
+    @Override
+    public String createTemporaryOutputPath(String subDirectory, String title) throws IOException {
+        File tempDirectory = null;
+        try {
+            tempDirectory = new File(
+                    getSessionDirectory(subDirectory), title);
+        } catch (IOException e) {
+            Log.e(TAG, "Could not get temp session directory", e);
+            throw new IOException("Could not get temp session directory", e);
+        }
+        if (!tempDirectory.mkdirs()) {
+            throw new IOException("Could not create output data directory.");
+        }
+        File tempFile = new File(tempDirectory, title + ".jpg");
+        try {
+            if (!tempFile.exists()) {
+                if (!tempFile.createNewFile()) {
+                    throw new IOException("Could not create output data file.");
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Could not create temp session file", e);
+            throw new IOException("Could not create temp session file", e);
+        }
+
+        if (!tempFile.canWrite()) {
+            throw new IOException("Temporary output file is not writeable.");
+        }
+        return tempFile.getPath();
+    }
+
     /**
      * Goes through all temporary sessions and deletes the ones that are older
      * than a certain age.

@@ -401,12 +401,12 @@ public class CaptureModule extends CameraModule implements
         try {
             tempSessionDataDirectory = getServices().getCaptureSessionManager()
                     .getSessionDirectory(BURST_SESSIONS_DIR);
+            CaptureSession session = createAndStartCaptureSession();
+            mBurstController.startBurst(session, tempSessionDataDirectory);
         } catch (IOException e) {
             Log.e(TAG, "Cannot start burst", e);
             return;
         }
-        CaptureSession session = createCaptureSession();
-        mBurstController.startBurst(session, tempSessionDataDirectory);
     }
 
     @Override
@@ -443,7 +443,13 @@ public class CaptureModule extends CameraModule implements
     }
 
     private void takePictureNow() {
-        CaptureSession session = createCaptureSession();
+        CaptureSession session = null;
+        try {
+            session = createAndStartCaptureSession();
+        } catch (IOException e) {
+            Log.e(TAG, "Cannot take picture.", e);
+            return;
+        }
         int orientation = mAppController.getOrientationManager().getDeviceOrientation()
                 .getDegrees();
 
@@ -453,16 +459,21 @@ public class CaptureModule extends CameraModule implements
                 session.getTitle(), orientation, session.getLocation(),
                 mContext.getExternalCacheDir(), this, mPictureSaverCallback,
                 mHeadingSensor.getCurrentHeading(), mZoomValue, 0);
-
         mCamera.takePicture(params, session);
     }
 
-    private CaptureSession createCaptureSession() {
+    /**
+     * Creates, starts and returns a new capture session. The returned session
+     * will have been started with an empty placeholder image.
+     */
+    private CaptureSession createAndStartCaptureSession() throws IOException {
         long sessionTime = getSessionTime();
         Location location = mLocationManager.getCurrentLocation();
         String title = CameraUtil.instance().createJpegName(sessionTime);
-        return getServices().getCaptureSessionManager()
+        CaptureSession session = getServices().getCaptureSessionManager()
                 .createNewSession(title, sessionTime, location);
+        session.startEmpty(new Size((int) mPreviewArea.width(), (int) mPreviewArea.height()));
+        return session;
     }
 
     private long getSessionTime() {

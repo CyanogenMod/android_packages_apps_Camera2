@@ -113,9 +113,6 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
 
         @Override
         public void onStart(TaskImageContainer.TaskInfo task) {
-            if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
-                mSession.startEmpty();
-            }
         }
 
         @Override

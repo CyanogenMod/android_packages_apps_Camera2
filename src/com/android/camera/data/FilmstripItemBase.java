@@ -23,7 +23,6 @@ import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
-import com.android.camera2.R;
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Optional;
@@ -40,9 +39,6 @@ import java.text.DateFormat;
 public abstract class FilmstripItemBase<T extends FilmstripItemData> implements FilmstripItem {
     /** The minimum id to use to query for all media at a given media store uri */
     public static final int QUERY_ALL_MEDIA_ID = -1;
-
-    /** Default placeholder to display while images load */
-    protected static final int DEFAULT_PLACEHOLDER_RESOURCE = R.color.photo_placeholder;
 
     protected final Context mContext;
     protected final T mData;

@@ -29,6 +29,7 @@ import com.android.camera.Storage;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.Size;
 
 /**
  * Handles placeholders in filmstrip that show up temporarily while a final
@@ -53,6 +54,20 @@ public class PlaceholderManager {
 
     public PlaceholderManager(Context context) {
         mContext = context;
+    }
+
+    /**
+     * Adds an empty placeholder.
+     *
+     * @param title the title of the item
+     * @param size the size of the placeholder in pixels.
+     * @param timestamp the timestamp of the placeholder (used for ordering
+     *            within the filmstrip). Millis since epoch.
+     * @return A session instance representing the new placeholder.
+     */
+    public Session insertEmptyPlaceholder(String title, Size size, long timestamp) {
+        Uri uri =  Storage.addEmptyPlaceholder(size);
+        return new Session(title, uri, timestamp);
     }
 
     /**

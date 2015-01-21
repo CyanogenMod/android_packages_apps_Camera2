@@ -755,7 +755,6 @@ public class OneCameraImpl extends AbstractOneCamera {
         } else {
             // Since this is not an HDR+ session, we will just save the
             // result.
-            capture.session.startEmpty();
             byte[] imageBytes = acquireJpegBytesAndClose(capture.image);
             saveJpegPicture(imageBytes, capture.parameters, capture.session);
         }

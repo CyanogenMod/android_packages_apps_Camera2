@@ -22,6 +22,7 @@ import android.net.Uri;
 
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.util.Size;
 
 /**
  * A session is an item that is in progress of being created and saved, such as
@@ -74,6 +75,27 @@ public interface CaptureSession {
     public CharSequence getProgressMessage();
 
     /**
+     * Changes the progress status message of this session.
+     *
+     * @param message the new message
+     */
+    public void setProgressMessage(CharSequence message);
+
+    /**
+     * For an ongoing session, this updates the currently displayed thumbnail.
+     *
+     * @param bitmap the thumbnail to be shown while the session is in progress.
+     */
+    public void updateThumbnail(Bitmap bitmap);
+
+    /**
+     * Starts an empty session with the given placeholder size.
+     *
+     * @param mPictureSize the size, in pixels of the empty placeholder.
+     */
+    public void startEmpty(Size mPictureSize);
+
+    /**
      * Starts the session by adding a placeholder to the filmstrip and adding
      * notifications.
      *
@@ -107,23 +129,10 @@ public interface CaptureSession {
     public void startSession(Uri uri, CharSequence progressMessage);
 
     /**
-     * Start a session like this if it's not processing for a long time and
-     * therefore doesn't need a temporary placeholder or a progress message.
-     */
-    public void startEmpty();
-
-    /**
      * Cancel the session without a final result. The session will be removed
      * from the film strip, progress notifications will be cancelled.
      */
     public void cancel();
-
-    /**
-     * Changes the progress status message of this session.
-     *
-     * @param message the new message
-     */
-    public void setProgressMessage(CharSequence message);
 
     /**
      * Finish the session by saving the image to disk. Will add the final item
@@ -163,31 +172,12 @@ public interface CaptureSession {
     public Uri getUri();
 
     /**
-     * Returns the Content URI to the final output of this session. This is only
-     * available if the session has been finished. Returns null if it has not
-     * been finished.
-     */
-    public Uri getContentUri();
-
-    /**
-     * Whether this session has been started. Once it has been started it will
-     * have a valid path and can be processed. False is returned, if the session
-     * has not been started yet and no path is available.
-     */
-    public boolean isStarted();
-
-    /**
      * Updates the preview from a file. {@link #onPreviewAvailable()} will be
      * invoked upon completion.
      *
      * @param previewPath The path to the file.
      */
     public void updatePreview(String previewPath);
-
-    /**
-     * Called when the preview is already available.
-     */
-    public void onPreviewAvailable();
 
     /**
      * Adds a progress listener to this session.

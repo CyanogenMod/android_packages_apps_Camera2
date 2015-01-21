@@ -274,7 +274,6 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
             mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, true);
 
-            mSession.startEmpty();
             savePicture(image, mParams, mSession);
             mParams.callback.onPictureTaken(mSession);
             Log.v(TAG, "Image saved.  Frame number = " + captureResult.getFrameNumber());

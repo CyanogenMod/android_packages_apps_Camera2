@@ -155,7 +155,8 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                         @Override
                         public void run() {
                             // TODO: Finalize and I18N string.
-                            mSession.startSession(bitmapIntermediateRotated, "Saving image ...");
+                            mSession.updateThumbnail(bitmapIntermediateRotated);
+                            mSession.setProgressMessage("Saving image ...");
                         }
                     });
                     break;

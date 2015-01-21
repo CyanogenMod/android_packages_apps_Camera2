@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.view.View;
 
 import com.android.camera.debug.Log;
+import com.android.camera2.R;
 import com.google.common.base.Optional;
 
 /**
@@ -35,6 +36,10 @@ public interface FilmstripItem {
     // GL max texture size: keep bitmaps below this value.
     public static final int MAXIMUM_TEXTURE_SIZE = 2048;
     public static final int MAXIMUM_SMOOTH_TEXTURE_SIZE = 1024;
+
+    /** Default placeholder to display while images load */
+    static final int DEFAULT_PLACEHOLDER_RESOURCE = R.color.photo_placeholder;
+
 
     /**
      * An action callback to be used for actions on the filmstrip items.

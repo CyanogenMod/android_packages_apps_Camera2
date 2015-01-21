@@ -32,12 +32,15 @@ import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.Size;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
 
 public class Storage {
     public static final String DCIM =
@@ -192,12 +195,7 @@ public class Storage {
      * @return A new URI used to reference this placeholder
      */
     public static Uri addPlaceholder(Bitmap placeholder) {
-        Uri uri;
-        Uri.Builder builder = new Uri.Builder();
-        String uuid = UUID.randomUUID().toString();
-        builder.scheme(CAMERA_SESSION_SCHEME).authority(GOOGLE_COM).appendPath(uuid);
-        uri = builder.build();
-
+        Uri uri = generateUniquePlaceholderUri();
         replacePlaceholder(uri, placeholder);
         return uri;
     }
@@ -216,6 +214,22 @@ public class Storage {
         sSessionsToPlaceholderBitmap.put(uri, placeholder);
         Integer currentVersion = sSessionsToPlaceholderVersions.get(uri);
         sSessionsToPlaceholderVersions.put(uri, currentVersion == null ? 0 : currentVersion + 1);
+    }
+
+    /**
+     * Creates an empty placeholder.
+     *
+     * @param size the size of the placeholder in pixels.
+     * @return A new URI used to reference this placeholder
+     */
+    @Nonnull
+    public static Uri addEmptyPlaceholder(@Nonnull Size size) {
+        Uri uri = generateUniquePlaceholderUri();
+        sSessionsToSizes.put(uri, new Point(size.getWidth(), size.getHeight()));
+        sSessionsToPlaceholderBitmap.put(uri, null /* Bitmap */);
+        Integer currentVersion = sSessionsToPlaceholderVersions.get(uri);
+        sSessionsToPlaceholderVersions.put(uri, currentVersion == null ? 0 : currentVersion + 1);
+        return uri;
     }
 
     /**
@@ -241,6 +255,13 @@ public class Storage {
         writeFile(path, jpeg, exif);
         return updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
                 width, height, mimeType);
+    }
+
+    private static Uri generateUniquePlaceholderUri() {
+        Uri.Builder builder = new Uri.Builder();
+        String uuid = UUID.randomUUID().toString();
+        builder.scheme(CAMERA_SESSION_SCHEME).authority(GOOGLE_COM).appendPath(uuid);
+        return builder.build();
     }
 
     private static void setImageSize(ContentValues values, int width, int height) {
