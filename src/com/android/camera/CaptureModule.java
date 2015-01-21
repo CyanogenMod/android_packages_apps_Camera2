@@ -67,6 +67,9 @@ import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.stats.UsageStatistics;
+import com.android.camera.stats.profiler.Profile;
+import com.android.camera.stats.profiler.Profiler;
+import com.android.camera.stats.profiler.Profilers;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
@@ -78,6 +81,7 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
+import com.google.android.gms.internal.id;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -318,6 +322,8 @@ public class CaptureModule extends CameraModule implements
     private final BurstFacade mBurstController;
     private static final String BURST_SESSIONS_DIR = "burst_sessions";
 
+    private final Profiler mProfiler = Profilers.instance().guard();
+
     public CaptureModule(AppController appController) {
         this(appController, false);
     }
@@ -325,6 +331,7 @@ public class CaptureModule extends CameraModule implements
     /** Constructs a new capture module. */
     public CaptureModule(AppController appController, boolean stickyHdr) {
         super(appController);
+        Profile guard = mProfiler.create("new CaptureModule").start();
         mPaused = true;
         mMainThread = MainThread.create();
         mAppController = appController;
@@ -354,6 +361,7 @@ public class CaptureModule extends CameraModule implements
                     }
                 });
         mMediaActionSound = new MediaActionSound();
+        guard.stop();
     }
 
     private void updateCameraCharacteristics() {
@@ -367,6 +375,7 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
+        Profile guard = mProfiler.create("CaptureModule.init").start();
         Log.d(TAG, "init");
         HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
         thread.start();
@@ -397,6 +406,7 @@ public class CaptureModule extends CameraModule implements
         });
 
         mMediaActionSound.load(MediaActionSound.SHUTTER_CLICK);
+        guard.stop();
     }
 
     @Override
@@ -576,14 +586,21 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void resume() {
+        Profile guard = mProfiler.create("CaptureModule.resume").start();
+
         // We'll transition into 'ready' once the preview is started.
         onReadyStateChanged(false);
         mPaused = false;
         mAppController.addPreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         mAppController.addPreviewAreaSizeChangedListener(mUI);
+
         mAppController.getCameraAppUI().onChangeCamera();
+
+        guard.mark();
         getServices().getRemoteShutterListener().onModuleReady(this);
+        guard.mark("getRemoteShutterListener.onModuleReady");
         mBurstController.initialize(new SurfaceTexture(0));
+
         // TODO: Check if we can really take a photo right now (memory, camera
         // state, ... ).
         mAppController.getCameraAppUI().enableModeOptions();
@@ -602,14 +619,20 @@ public class CaptureModule extends CameraModule implements
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
         // have to open the camera and start the preview here.
-        if (getPreviewSurfaceTexture() != null) {
+        SurfaceTexture texture = getPreviewSurfaceTexture();
+
+        guard.mark();
+        if (texture != null) {
             initSurfaceTextureConsumer();
+            guard.mark("initSurfaceTextureConsumer");
         }
 
         mSoundPlayer.loadSound(R.raw.timer_final_second);
         mSoundPlayer.loadSound(R.raw.timer_increment);
 
+        guard.mark();
         mHeadingSensor.activate();
+        guard.stop("mHeadingSensor.activate()");
     }
 
     @Override
@@ -1181,6 +1204,7 @@ public class CaptureModule extends CameraModule implements
      * Open camera and start the preview.
      */
     private void openCameraAndStartPreview() {
+        Profile guard = mProfiler.create("CaptureModule.openCameraAndStartPreview()").start();
         try {
             // TODO Given the current design, we cannot guarantee that one of
             // CaptureReadyCallback.onSetupFailed or onReadyForCapture will
@@ -1196,16 +1220,20 @@ public class CaptureModule extends CameraModule implements
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
         }
 
+        guard.mark("Acquired mCameraOpenCloseLock");
+
         if (mCameraManager == null) {
             Log.e(TAG, "no available OneCameraManager, showing error dialog");
             mCameraOpenCloseLock.release();
             mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            guard.stop("No OneCameraManager");
             return;
         }
         if (mCamera != null) {
             // If the camera is already open, do nothing.
             Log.d(TAG, "Camera already open, not re-opening.");
             mCameraOpenCloseLock.release();
+            guard.stop("Camera is already open");
             return;
         }
 
@@ -1318,23 +1346,28 @@ public class CaptureModule extends CameraModule implements
                                 });
                         }
                 }, mCameraHandler, mainThread, imageRotationCalculator, mBurstController);
+        guard.stop("mCameraManager.open()");
     }
 
     private void closeCamera() {
+        Profile profile = mProfiler.create("CaptureModule.closeCamera()").start();
         try {
             mCameraOpenCloseLock.acquire();
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
         }
+        profile.mark("mCameraOpenCloseLock.acquire()");
         try {
             if (mCamera != null) {
                 mCamera.close();
+                profile.mark("mCamera.close()");
                 mCamera.setFocusStateListener(null);
                 mCamera = null;
             }
         } finally {
             mCameraOpenCloseLock.release();
         }
+        profile.stop();
     }
 
     /**

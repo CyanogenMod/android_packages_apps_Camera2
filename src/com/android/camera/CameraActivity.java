@@ -42,6 +42,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -115,6 +116,9 @@ import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.stats.UsageStatistics;
+import com.android.camera.stats.profiler.Profile;
+import com.android.camera.stats.profiler.Profiler;
+import com.android.camera.stats.profiler.Profilers;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.AbstractTutorialOverlay;
 import com.android.camera.ui.DetailsDialog;
@@ -267,6 +271,7 @@ public class CameraActivity extends QuickActivity
     };
     private MemoryManager mMemoryManager;
     private MotionManager mMotionManager;
+    private final Profiler mProfiler = Profilers.instance().guard();
 
     /** First run dialog */
     private FirstRunDialog mFirstRunDialog;
@@ -1378,9 +1383,12 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void onCreateTasks(Bundle state) {
+        Profile profile = mProfiler.create("CameraActivity.onCreateTasks").start();
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
+        mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
 
+        profile.mark();
         if (!Glide.isSetup()) {
             Context context = getAndroidContext();
             Glide.setup(new GlideBuilder(context)
@@ -1405,10 +1413,11 @@ public class CameraActivity extends QuickActivity
                       GlideFilmstripManager.MEDIASTORE_THUMB_WIDTH,
                       GlideFilmstripManager.MEDIASTORE_THUMB_HEIGHT));
         }
+        profile.mark("Glide.setup");
 
-        mOnCreateTime = System.currentTimeMillis();
         mSoundPlayer = new SoundPlayer(mAppContext);
 
+        profile.mark();
         try {
             mCameraManager = OneCameraManager.get(this, ResolutionUtil.getDisplayMetrics(this));
         } catch (OneCameraException e) {
@@ -1417,17 +1426,21 @@ public class CameraActivity extends QuickActivity
             Log.e(TAG, "Creating camera manager failed.", e);
             CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
         }
+        profile.mark("OneCameraManager.get");
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
         mModuleManager = new ModuleManagerImpl();
+
         GcamHelper.init(getContentResolver());
         ModulesInfo.setupModules(mAppContext, mModuleManager);
 
         mSettingsManager = getServices().getSettingsManager();
+
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
         Keys.setDefaults(mSettingsManager, mAppContext);
+
         mResolutionSetting = new ResolutionSetting(mSettingsManager, mCameraManager);
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
@@ -1438,7 +1451,10 @@ public class CameraActivity extends QuickActivity
         if (ApiHelper.isLOrHigher()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
+
+        profile.mark();
         setContentView(R.layout.activity_main);
+        profile.mark("setContentView()");
         // A window background is set in styles.xml for the system to show a
         // drawable background with gray color and camera icon before the
         // activity is created. We set the background to null here to prevent
@@ -1524,6 +1540,8 @@ public class CameraActivity extends QuickActivity
         mFilmstripController = ((FilmstripView) findViewById(R.id.filmstrip_view)).getController();
         mFilmstripController.setImageGap(
                 getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
+        profile.mark("Configure Camera UI");
+
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
 
@@ -1550,8 +1568,12 @@ public class CameraActivity extends QuickActivity
         mOrientationManager = new OrientationManagerImpl(this, mMainHandler);
 
         setModuleFromModeIndex(getModeIndex());
+
+        profile.mark();
         mCameraAppUI.prepareModuleUI();
+        profile.mark("Init Current Module UI");
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
+        profile.mark("Init CurrentModule");
 
         if (!mSecureCamera) {
             mFilmstripController.setDataAdapter(mDataAdapter);
@@ -1601,8 +1623,9 @@ public class CameraActivity extends QuickActivity
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true,
                 mLocalImagesObserver);
         getContentResolver().registerContentObserver(
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
-                mLocalVideosObserver);
+              MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true,
+              mLocalVideosObserver);
+
         mMemoryManager = getServices().getMemoryManager();
 
         AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
@@ -1610,9 +1633,10 @@ public class CameraActivity extends QuickActivity
             public void run() {
                 HashMap memoryData = mMemoryManager.queryMemory();
                 UsageStatistics.instance().reportMemoryConsumed(memoryData,
-                        MemoryQuery.REPORT_LABEL_LAUNCH);
+                      MemoryQuery.REPORT_LABEL_LAUNCH);
             }
         });
+
         mMotionManager = getServices().getMotionManager();
 
         mFirstRunDialog = new FirstRunDialog(this, new FirstRunDialog.FirstRunDialogListener() {
@@ -1627,6 +1651,7 @@ public class CameraActivity extends QuickActivity
                 CameraUtil.showErrorAndFinish(CameraActivity.this, R.string.cannot_connect_camera);
             }
         });
+        profile.stop();
     }
 
     /**
@@ -1740,6 +1765,7 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onPauseTasks() {
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_PAUSE);
+        Profile profile = mProfiler.create("CameraActivity.onPause").start();
 
         /*
          * Save the last module index after all secure camera and icon launches,
@@ -1788,6 +1814,8 @@ public class CameraActivity extends QuickActivity
             Log.v(TAG, "onPause closing camera");
             mCameraController.closeCamera(true);
         }
+
+        profile.stop();
     }
 
     @Override
@@ -1800,6 +1828,7 @@ public class CameraActivity extends QuickActivity
     }
 
     private void resume() {
+        Profile profile = mProfiler.create("CameraActivity.resume").start();
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
         Log.v(TAG, "Build info: " + Build.DISPLAY);
 
@@ -1867,10 +1896,13 @@ public class CameraActivity extends QuickActivity
         mOrientationManager.resume();
 
         mCurrentModule.hardResetSettings(mSettingsManager);
+
+        profile.mark();
         mCurrentModule.resume();
         UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),
                 NavigationChange.InteractionCause.BUTTON);
         setSwipingEnabled(true);
+        profile.mark("mCurrentModule.resume");
 
         if (!mResetToPreviewOnResume) {
             FilmstripItem item = mDataAdapter.getItemAt(
@@ -1879,6 +1911,7 @@ public class CameraActivity extends QuickActivity
                 mDataAdapter.refresh(item.getData().getUri());
             }
         }
+
         // The share button might be disabled to avoid double tapping.
         mCameraAppUI.getFilmstripBottomControls().setShareEnabled(true);
         // Default is showing the preview, unless disabled by explicitly
@@ -1921,17 +1954,19 @@ public class CameraActivity extends QuickActivity
         final View rootView = findViewById(R.id.activity_root_view);
         mLightsOutRunnable.run();
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(
-                new OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        mMainHandler.removeCallbacks(mLightsOutRunnable);
-                        mMainHandler.postDelayed(mLightsOutRunnable, LIGHTS_OUT_DELAY_MS);
-                    }
-                });
+              new OnSystemUiVisibilityChangeListener() {
+                  @Override
+                  public void onSystemUiVisibilityChange(int visibility) {
+                      mMainHandler.removeCallbacks(mLightsOutRunnable);
+                      mMainHandler.postDelayed(mLightsOutRunnable, LIGHTS_OUT_DELAY_MS);
+                  }
+              });
 
+        profile.mark();
         mPanoramaViewHelper.onResume();
-        ReleaseHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
+        profile.mark("mPanoramaViewHelper.onResume()");
 
+        ReleaseHelper.showReleaseInfoDialogOnStart(this, mSettingsManager);
         // Enable location recording if the setting is on.
         final boolean locationRecordingEnabled =
                 mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL, Keys.KEY_RECORD_LOCATION);
@@ -1941,6 +1976,7 @@ public class CameraActivity extends QuickActivity
         updatePreviewRendering(previewVisibility);
 
         mMotionManager.start();
+        profile.stop();
     }
 
     private void fillTemporarySessions() {
