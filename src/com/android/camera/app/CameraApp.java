@@ -75,6 +75,8 @@ public class CameraApp extends Application implements CameraServices {
 
         // It is important that this gets called early in execution before the
         // app has had the opportunity to create any shared preferences.
+        FirstRunDetector.instance().initializeTimeOfFirstRun(context);
+
         UsageStatistics.instance().initialize(this);
         SessionStatsCollector.instance().initialize(this);
         CameraUtil.initialize(this);
