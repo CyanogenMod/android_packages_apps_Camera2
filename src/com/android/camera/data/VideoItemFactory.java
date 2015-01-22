@@ -27,7 +27,7 @@ import com.android.camera.debug.Log;
 
 import java.util.List;
 
-public class VideoItemFactory implements CursorToFilmstripItemFactory {
+public class VideoItemFactory implements CursorToFilmstripItemFactory<VideoItem> {
     private static final Log.Tag TAG = new Log.Tag("VideoItemFact");
     private static final String QUERY_ORDER = MediaStore.Video.VideoColumns.DATE_TAKEN
           + " DESC, " + MediaStore.Video.VideoColumns._ID + " DESC";
@@ -65,22 +65,22 @@ public class VideoItemFactory implements CursorToFilmstripItemFactory {
     }
 
     /** Query for all the video data items */
-    public List<FilmstripItem> queryAll() {
+    public List<VideoItem> queryAll() {
         return queryAll(VideoDataQuery.CONTENT_URI,
               FilmstripItemBase.QUERY_ALL_MEDIA_ID);
     }
 
     /** Query for all the video data items */
-    public List<FilmstripItem> queryAll(Uri uri, long lastId) {
+    public List<VideoItem> queryAll(Uri uri, long lastId) {
         return FilmstripContentQueries
               .forCameraPath(mContentResolver, uri, VideoDataQuery.QUERY_PROJECTION, lastId,
                     QUERY_ORDER, this);
     }
 
     /** Query for a single data item */
-    public FilmstripItem queryContentUri(Uri uri) {
+    public VideoItem queryContentUri(Uri uri) {
         // TODO: Consider refactoring this, this approach may be slow.
-        List<FilmstripItem> videos = queryAll(uri,
+        List<VideoItem> videos = queryAll(uri,
               FilmstripItemBase.QUERY_ALL_MEDIA_ID);
         if (videos.isEmpty()) {
             return null;

@@ -19,7 +19,6 @@ package com.android.camera;
 
 import android.animation.Animator;
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -92,6 +91,7 @@ import com.android.camera.data.LocalFilmstripDataAdapter.FilmstripItemListener;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.MetadataLoader;
 import com.android.camera.data.PhotoDataFactory;
+import com.android.camera.data.PhotoItem;
 import com.android.camera.data.PhotoItemFactory;
 import com.android.camera.data.PlaceholderItem;
 import com.android.camera.data.SessionItem;
@@ -115,7 +115,6 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.settings.SettingsUtil;
 import com.android.camera.stats.UsageStatistics;
 import com.android.camera.tinyplanet.TinyPlanetFragment;
 import com.android.camera.ui.AbstractTutorialOverlay;
@@ -908,7 +907,7 @@ public class CameraActivity extends QuickActivity
                         mDataAdapter.refresh(sessionUri);
                         return;
                     }
-                    FilmstripItem newData = mPhotoItemFactory.queryContentUri(contentUri);
+                    PhotoItem newData = mPhotoItemFactory.queryContentUri(contentUri);
 
                     // This can be null if e.g. a session is canceled (e.g.
                     // through discard panorama). It might be worth adding

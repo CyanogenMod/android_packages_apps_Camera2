@@ -35,7 +35,7 @@ public class FilmstripContentQueries {
     private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
     private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
 
-    public interface CursorToFilmstripItemFactory {
+    public interface CursorToFilmstripItemFactory<I extends FilmstripItem> {
 
         /**
          * Convert a cursor at a given location to a Local Data object.
@@ -43,7 +43,7 @@ public class FilmstripContentQueries {
          * @param cursor the current cursor state.
          * @return a LocalData object that represents the current cursor state.
          */
-        public FilmstripItem get(Cursor cursor);
+        public I get(Cursor cursor);
     }
 
     /**
@@ -58,18 +58,18 @@ public class FilmstripContentQueries {
      * @param factory an object that can turn a given cursor into a LocalData object.
      * @return A list of LocalData objects that satisfy the query.
      */
-    public static List<FilmstripItem> forCameraPath(ContentResolver contentResolver,
+    public static <I extends FilmstripItem> List<I> forCameraPath(ContentResolver contentResolver,
           Uri contentUri, String[] projection, long minimumId, String orderBy,
-          CursorToFilmstripItemFactory factory) {
+          CursorToFilmstripItemFactory<I> factory) {
         String selection = SELECT_BY_PATH + " AND " + MediaStore.MediaColumns._ID + " > ?";
         String[] selectionArgs = new String[] { CAMERA_PATH, Long.toString(minimumId) };
 
         Cursor cursor = contentResolver.query(contentUri, projection,
               selection, selectionArgs, orderBy);
-        List<FilmstripItem> result = new ArrayList<>();
+        List<I> result = new ArrayList<>();
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                FilmstripItem data = factory.get(cursor);
+                I data = factory.get(cursor);
                 if (data != null) {
                     result.add(data);
                 } else {
