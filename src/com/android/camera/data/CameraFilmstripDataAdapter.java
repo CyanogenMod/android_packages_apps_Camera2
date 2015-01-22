@@ -328,7 +328,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
         return getTotalNumber();
     }
 
-    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<FilmstripItem>> {
+    private class LoadNewPhotosTask extends AsyncTask<ContentResolver, Void, List<PhotoItem>> {
 
         private final long mMinPhotoId;
         private final Context mContext;
@@ -344,7 +344,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
          * @return An {@link java.util.ArrayList} containing any new data.
          */
         @Override
-        protected List<FilmstripItem> doInBackground(ContentResolver... contentResolvers) {
+        protected List<PhotoItem> doInBackground(ContentResolver... contentResolvers) {
             if (mMinPhotoId != FilmstripItemBase.QUERY_ALL_MEDIA_ID) {
                 Log.v(TAG, "updating media metadata with photos newer than id: " + mMinPhotoId);
                 final ContentResolver cr = contentResolvers[0];
@@ -354,7 +354,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
         }
 
         @Override
-        protected void onPostExecute(List<FilmstripItem> newPhotoData) {
+        protected void onPostExecute(List<PhotoItem> newPhotoData) {
             if (newPhotoData == null) {
                 Log.w(TAG, "null data returned from new photos query");
                 return;
@@ -414,8 +414,8 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
             final Context context = contexts[0];
             FilmstripItemList l = new FilmstripItemList();
             // Photos and videos
-            List<FilmstripItem> photoData = mPhotoItemFactory.queryAll();
-            List<FilmstripItem> videoData = mVideoItemFactory.queryAll();
+            List<PhotoItem> photoData = mPhotoItemFactory.queryAll();
+            List<VideoItem> videoData = mVideoItemFactory.queryAll();
 
             long lastPhotoId = FilmstripItemBase.QUERY_ALL_MEDIA_ID;
             if (photoData != null && !photoData.isEmpty()) {

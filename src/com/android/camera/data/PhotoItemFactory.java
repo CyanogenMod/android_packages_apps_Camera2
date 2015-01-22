@@ -25,7 +25,7 @@ import com.android.camera.data.FilmstripContentQueries.CursorToFilmstripItemFact
 
 import java.util.List;
 
-public class PhotoItemFactory implements CursorToFilmstripItemFactory {
+public class PhotoItemFactory implements CursorToFilmstripItemFactory<PhotoItem> {
     private final Context mContext;
     private final ContentResolver mContentResolver;
     private final PhotoDataFactory mPhotoDataFactory;
@@ -37,6 +37,7 @@ public class PhotoItemFactory implements CursorToFilmstripItemFactory {
         mPhotoDataFactory = photoDataFactory;
     }
 
+    @Override
     public PhotoItem get(Cursor c) {
         FilmstripItemData data = mPhotoDataFactory.fromCursor(c);
         return new PhotoItem(mContext, data, this);
@@ -57,21 +58,21 @@ public class PhotoItemFactory implements CursorToFilmstripItemFactory {
     }
 
     /** Query for all the photo data items */
-    public List<FilmstripItem> queryAll() {
+    public List<PhotoItem> queryAll() {
         return queryAll(PhotoDataQuery.CONTENT_URI, FilmstripItemBase.QUERY_ALL_MEDIA_ID);
     }
 
     /** Query for all the photo data items */
-    public List<FilmstripItem> queryAll(Uri uri, long lastId) {
+    public List<PhotoItem> queryAll(Uri uri, long lastId) {
         return FilmstripContentQueries
               .forCameraPath(mContentResolver, uri, PhotoDataQuery.QUERY_PROJECTION, lastId,
                     PhotoDataQuery.QUERY_ORDER, this);
     }
 
     /** Query for a single data item */
-    public FilmstripItem queryContentUri(Uri uri) {
+    public PhotoItem queryContentUri(Uri uri) {
         // TODO: Consider refactoring this, this approach may be slow.
-        List<FilmstripItem> newPhotos = queryAll(uri, FilmstripItemBase.QUERY_ALL_MEDIA_ID);
+        List<PhotoItem> newPhotos = queryAll(uri, FilmstripItemBase.QUERY_ALL_MEDIA_ID);
         if (newPhotos.isEmpty()) {
             return null;
         }

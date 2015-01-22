@@ -91,6 +91,7 @@ import com.android.camera.data.LocalFilmstripDataAdapter.FilmstripItemListener;
 import com.android.camera.data.MediaDetails;
 import com.android.camera.data.MetadataLoader;
 import com.android.camera.data.PhotoDataFactory;
+import com.android.camera.data.PhotoItem;
 import com.android.camera.data.PhotoItemFactory;
 import com.android.camera.data.PlaceholderItem;
 import com.android.camera.data.SessionItem;
@@ -906,7 +907,7 @@ public class CameraActivity extends QuickActivity
                         mDataAdapter.refresh(sessionUri);
                         return;
                     }
-                    FilmstripItem newData = mPhotoItemFactory.queryContentUri(contentUri);
+                    PhotoItem newData = mPhotoItemFactory.queryContentUri(contentUri);
 
                     // This can be null if e.g. a session is canceled (e.g.
                     // through discard panorama). It might be worth adding

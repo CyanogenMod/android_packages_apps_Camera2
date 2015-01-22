@@ -96,7 +96,7 @@ public class FilmstripItemList {
         mUriMap.put(data.getData().getUri(), data);
     }
 
-    public void addAll(List<FilmstripItem> filmstripItemList) {
+    public void addAll(List<? extends FilmstripItem> filmstripItemList) {
         for (FilmstripItem filmstripItem : filmstripItemList) {
             add(filmstripItem);
         }
