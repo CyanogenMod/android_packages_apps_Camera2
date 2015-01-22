@@ -65,6 +65,18 @@ public class Log {
         }
     }
 
+    public static void d(Tag tag, Object instance, String msg) {
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.d(tag.toString(), LogUtil.addTags(instance, msg));
+        }
+    }
+
+    public static void d(Tag tag, Object instance, String msg, String tags) {
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.d(tag.toString(), LogUtil.addTags(instance, msg, tags));
+        }
+    }
+
     public static void d(Tag tag, String msg, Throwable tr) {
         if (isLoggable(tag, android.util.Log.DEBUG)) {
             android.util.Log.d(tag.toString(), msg, tr);
@@ -74,6 +86,18 @@ public class Log {
     public static void e(Tag tag, String msg) {
         if (isLoggable(tag, android.util.Log.ERROR)) {
             android.util.Log.e(tag.toString(), msg);
+        }
+    }
+
+    public static void e(Tag tag, Object instance, String msg) {
+        if (isLoggable(tag, android.util.Log.ERROR)) {
+            android.util.Log.e(tag.toString(), LogUtil.addTags(instance, msg));
+        }
+    }
+
+    public static void e(Tag tag, Object instance, String msg, String tags) {
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.e(tag.toString(), LogUtil.addTags(instance, msg, tags));
         }
     }
 
@@ -89,6 +113,18 @@ public class Log {
         }
     }
 
+    public static void i(Tag tag, Object instance, String msg) {
+        if (isLoggable(tag, android.util.Log.INFO)) {
+            android.util.Log.i(tag.toString(), LogUtil.addTags(instance, msg));
+        }
+    }
+
+    public static void i(Tag tag, Object instance, String msg, String tags) {
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.i(tag.toString(), LogUtil.addTags(instance, msg, tags));
+        }
+    }
+
     public static void i(Tag tag, String msg, Throwable tr) {
         if (isLoggable(tag, android.util.Log.INFO)) {
             android.util.Log.i(tag.toString(), msg, tr);
@@ -101,6 +137,18 @@ public class Log {
         }
     }
 
+    public static void v(Tag tag, Object instance, String msg) {
+        if (isLoggable(tag, android.util.Log.VERBOSE)) {
+            android.util.Log.v(tag.toString(), LogUtil.addTags(instance, msg));
+        }
+    }
+
+    public static void v(Tag tag, Object instance, String msg, String tags) {
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.v(tag.toString(), LogUtil.addTags(instance, msg, tags));
+        }
+    }
+
     public static void v(Tag tag, String msg, Throwable tr) {
         if (isLoggable(tag, android.util.Log.VERBOSE)) {
             android.util.Log.v(tag.toString(), msg, tr);
@@ -110,6 +158,18 @@ public class Log {
     public static void w(Tag tag, String msg) {
         if (isLoggable(tag, android.util.Log.WARN)) {
             android.util.Log.w(tag.toString(), msg);
+        }
+    }
+
+    public static void w(Tag tag, Object instance, String msg) {
+        if (isLoggable(tag, android.util.Log.WARN)) {
+            android.util.Log.w(tag.toString(), LogUtil.addTags(instance, msg));
+        }
+    }
+
+    public static void w(Tag tag, Object instance, String msg, String tags) {
+        if (isLoggable(tag, android.util.Log.DEBUG)) {
+            android.util.Log.w(tag.toString(), LogUtil.addTags(instance, msg, tags));
         }
     }
 

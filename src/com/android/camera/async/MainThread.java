@@ -16,14 +16,14 @@
 
 package com.android.camera.async;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import android.os.Handler;
 import android.os.Looper;
 
 import com.google.common.annotations.VisibleForTesting;
 
 import javax.annotation.Nonnull;
-
-import static com.google.common.base.Preconditions.checkState;
 
 public class MainThread extends HandlerExecutor {
     private MainThread(Handler handler) {
@@ -49,6 +49,13 @@ public class MainThread extends HandlerExecutor {
      */
     public static void checkMainThread() {
         checkState(sIsMainThread.get(), "Not main thread.");
+    }
+
+    /**
+     * Returns true if the method is run on the main android thread.
+     */
+    public static boolean isMainThread() {
+        return sIsMainThread.get();
     }
 
     /**
