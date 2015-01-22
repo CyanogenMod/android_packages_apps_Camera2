@@ -17,17 +17,13 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
-import android.media.Image;
 
-import com.android.camera.async.SafeCloseable;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Forwards all {@link ImageProxy} methods.
  */
-public class ForwardingImageProxy implements ImageProxy {
+public abstract class ForwardingImageProxy implements ImageProxy {
     private final ImageProxy mImpl;
 
     public ForwardingImageProxy(ImageProxy proxy) {
@@ -37,6 +33,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getCropRect}
      */
+    @Override
     public Rect getCropRect() {
         return mImpl.getCropRect();
     }
@@ -44,6 +41,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#setCropRect}
      */
+    @Override
     public void setCropRect(Rect cropRect) {
         mImpl.setCropRect(cropRect);
     }
@@ -51,6 +49,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getFormat}
      */
+    @Override
     public int getFormat() {
         return mImpl.getFormat();
     }
@@ -58,6 +57,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getHeight}
      */
+    @Override
     public int getHeight() {
         return mImpl.getHeight();
     }
@@ -65,6 +65,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getPlanes}
      */
+    @Override
     public List<Plane> getPlanes() {
         return mImpl.getPlanes();
     }
@@ -72,6 +73,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getTimestamp}
      */
+    @Override
     public long getTimestamp() {
         return mImpl.getTimestamp();
     }
@@ -79,6 +81,7 @@ public class ForwardingImageProxy implements ImageProxy {
     /**
      * @see {@link android.media.Image#getWidth}
      */
+    @Override
     public int getWidth() {
         return mImpl.getWidth();
     }
@@ -89,5 +92,10 @@ public class ForwardingImageProxy implements ImageProxy {
     @Override
     public void close() {
         mImpl.close();
+    }
+
+    @Override
+    public String toString() {
+        return mImpl.toString();
     }
 }

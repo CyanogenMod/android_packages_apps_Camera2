@@ -16,70 +16,37 @@
 
 package com.android.camera.one.v2.sharedimagereader.imagedistributor;
 
-import android.media.Image;
-import android.media.ImageReader;
-
 import com.android.camera.debug.Log;
-import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
- * Connects an {@link ImageReader} to an {@link ImageDistributor} with a new
+ * Connects an {@link ImageReaderProxy} to an {@link ImageDistributor} with a new
  * thread to handle image availability callbacks.
  */
+@ParametersAreNonnullByDefault
 class ImageDistributorOnImageAvailableListener implements
-        ImageReader.OnImageAvailableListener {
-    private class LoggingImageProxy extends ForwardingImageProxy {
-        public LoggingImageProxy(ImageProxy proxy) {
-            super(proxy);
-        }
-
-        @Override
-        public void close() {
-            super.close();
-            decrementOpenImageCount();
-        }
-    }
-
-    private static final Log.Tag TAG = new Log.Tag("ImageDistributor");
+        ImageReaderProxy.OnImageAvailableListener {
     private final ImageDistributorImpl mImageDistributor;
-    private final AtomicInteger mNumOpenImages;
-    private final int mImageReaderSize;
 
     /**
      * @param imageDistributor The image distributor to send images to.
-     * @param imageReaderSize The maximum number of images which can be open
-     *            simultaneously
      */
-    public ImageDistributorOnImageAvailableListener(ImageDistributorImpl imageDistributor,
-            int imageReaderSize) {
+    public ImageDistributorOnImageAvailableListener(ImageDistributorImpl imageDistributor) {
         mImageDistributor = imageDistributor;
-        mImageReaderSize = imageReaderSize;
-        mNumOpenImages = new AtomicInteger(0);
     }
 
     @Override
-    public void onImageAvailable(ImageReader imageReader) {
-        incrementOpenImageCount();
-        Image androidImage = imageReader.acquireNextImage();
-        mImageDistributor.distributeImage(
-                new SingleCloseImageProxy(
-                        new LoggingImageProxy(
-                                new AndroidImageProxy(androidImage))));
-    }
-
-    private void incrementOpenImageCount() {
-        int numOpenImages = mNumOpenImages.incrementAndGet();
-        if (numOpenImages >= mImageReaderSize) {
-            Log.e(TAG, "Open Image Count exceeds maximum! Open Image Count = " + numOpenImages);
+    public void onImageAvailable(@Nonnull ImageReaderProxy imageReader) {
+        ImageProxy nextImage = imageReader.acquireNextImage();
+        if (nextImage != null) {
+            mImageDistributor.distributeImage(new SingleCloseImageProxy(nextImage));
         }
-    }
-
-    private void decrementOpenImageCount() {
-        int numOpenImages = mNumOpenImages.decrementAndGet();
-        // Log.d(TAG, "Open Image Count = " + numOpenImages);
     }
 }

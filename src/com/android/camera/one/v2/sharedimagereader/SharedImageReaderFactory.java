@@ -16,10 +16,9 @@
 
 package com.android.camera.one.v2.sharedimagereader;
 
-import android.media.ImageReader;
-
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
+import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributorFactory;
@@ -49,7 +48,7 @@ public class SharedImageReaderFactory {
      * @param imageReader The ImageReader to wrap. Note that this can outlive
      *            the resulting SharedImageReader instance.
      */
-    public SharedImageReaderFactory(Lifetime lifetime, ImageReader imageReader) {
+    public SharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(new
                 Lifetime(lifetime), imageReader);
         ImageDistributor imageDistributor = imageDistributorFactory.provideImageDistributor();

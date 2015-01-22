@@ -19,6 +19,8 @@ package com.android.camera.one.v2.camera2proxy;
 import android.graphics.Rect;
 import android.media.Image;
 
+import com.google.common.base.Objects;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,5 +153,12 @@ public class AndroidImageProxy implements ImageProxy {
     @Override
     public void close() {
         mImage.close();
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(mImage)
+                .add("timestamp", getTimestamp())
+                .toString();
     }
 }

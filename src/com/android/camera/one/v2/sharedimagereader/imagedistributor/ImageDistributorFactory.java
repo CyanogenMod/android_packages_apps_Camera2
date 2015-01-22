@@ -16,12 +16,11 @@
 
 package com.android.camera.one.v2.sharedimagereader.imagedistributor;
 
-import android.media.ImageReader;
-
 import com.android.camera.async.CloseableHandlerThread;
 import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
+import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 
 public class ImageDistributorFactory {
     private final ImageDistributorImpl mImageDistributor;
@@ -30,7 +29,7 @@ public class ImageDistributorFactory {
     /**
      * Creates an ImageDistributor from the given ImageReader.
      */
-    public ImageDistributorFactory(Lifetime lifetime, ImageReader imageReader) {
+    public ImageDistributorFactory(Lifetime lifetime, ImageReaderProxy imageReader) {
         ConcurrentBufferQueue<Long> globalTimestampStream = new ConcurrentBufferQueue<>();
         mTimestampStream = globalTimestampStream;
         mImageDistributor = new ImageDistributorImpl(globalTimestampStream);
@@ -39,8 +38,7 @@ public class ImageDistributorFactory {
         lifetime.add(imageReaderHandler);
 
         imageReader.setOnImageAvailableListener(
-                new ImageDistributorOnImageAvailableListener(mImageDistributor, imageReader
-                        .getMaxImages()),
+                new ImageDistributorOnImageAvailableListener(mImageDistributor),
                 imageReaderHandler.get());
     }
 

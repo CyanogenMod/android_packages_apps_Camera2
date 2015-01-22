@@ -20,7 +20,7 @@ import com.android.camera.util.Callback;
 
 import java.util.concurrent.Executor;
 
-public class ForwardingObservable<T> implements Observable<T> {
+public abstract class ForwardingObservable<T> implements Observable<T> {
     private final Observable<T> mDelegate;
 
     public ForwardingObservable(Observable<T> delegate) {

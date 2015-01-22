@@ -18,7 +18,6 @@ package com.android.camera.one.v2;
 
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
-import android.media.ImageReader;
 import android.util.Range;
 import android.view.Surface;
 
@@ -28,11 +27,14 @@ import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.debug.Log;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
+import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
@@ -41,9 +43,9 @@ import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
-import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.util.ApiHelper;
@@ -55,13 +57,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class ZslOneCameraFactory implements OneCameraFactory {
-    static private final Log.Tag TAG = new Log.Tag("ZslOneCamFactory");
+    private final Logger mLogger;
     private final int mImageFormat;
     private final int mMaxImageCount;
 
     public ZslOneCameraFactory(int imageFormat, int maxImageCount) {
         mImageFormat = imageFormat;
         mMaxImageCount = maxImageCount;
+        mLogger = Logger.create("ZslOneCamFactory");
     }
 
     /**
@@ -79,8 +82,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
      *            current camera device
      */
     private void applyNexus5BackCameraFrameRateWorkaround(RequestTemplate requestTemplate) {
-        Range frameRateBackOff = new Range(7, 28);
-        Log.v(TAG, "Applying Nexus5 specific framerate backoff of "+frameRateBackOff);
+        Range<Integer> frameRateBackOff = new Range<>(7, 28);
+        mLogger.v("Applying Nexus5 specific framerate backoff of "+frameRateBackOff);
         requestTemplate.setParam(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, frameRateBackOff);
     }
 
@@ -90,10 +93,15 @@ public class ZslOneCameraFactory implements OneCameraFactory {
             final MainThread mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
+        Lifetime lifetime = new Lifetime();
 
-        final ImageReader imageReader = ImageReader.newInstance(pictureSize.getWidth(),
-                pictureSize.getHeight(), mImageFormat, mMaxImageCount);
-        // FIXME TODO Close the ImageReader when all images have been freed!
+        final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
+                LoggingImageReader.create(AndroidImageReaderProxy.newInstance(
+                        pictureSize.getWidth(), pictureSize.getHeight(),
+                        mImageFormat, mMaxImageCount)));
+
+        lifetime.add(imageReader);
+        lifetime.add(device);
 
         List<Surface> outputSurfaces = new ArrayList<>();
         outputSurfaces.add(imageReader.getSurface());
@@ -171,7 +179,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
         float maxZoom = characteristics.getAvailableMaxDigitalZoom();
         List<Size> supportedPreviewSizes = characteristics.getSupportedPreviewSizes();
         OneCamera.Facing direction = characteristics.getCameraDirection();
-        return new InitializedOneCameraFactory(cameraStarter, device,
+        return new InitializedOneCameraFactory(lifetime, cameraStarter, device,
                 outputSurfaces, mainThread, new HandlerFactory(), maxZoom,
                 supportedPreviewSizes, direction).provideOneCamera();
     }
