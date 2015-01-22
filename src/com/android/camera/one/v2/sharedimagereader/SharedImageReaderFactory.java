@@ -18,6 +18,7 @@ package com.android.camera.one.v2.sharedimagereader;
 
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
+import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.core.RequestBuilder;
@@ -35,12 +36,13 @@ import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
  * <p>
  * Add the OnImageAvailableListener to the image reader in a separate thread.
  * <p>
- * Use the ImageQueueCaptureStreamFactory to create image streams to add to
+ * Use the {@link ImageStreamFactory} to create image streams to add to
  * {@link RequestBuilder}s to interact with the camera and ImageReader.
  */
 public class SharedImageReaderFactory {
     private final Updatable<Long> mGlobalTimestampQueue;
     private final ImageStreamFactory mSharedImageReader;
+    private final Observable<Integer> mAvailableImageCount;
 
     /**
      * @param lifetime The lifetime of the SharedImageReader, and other
@@ -58,6 +60,7 @@ public class SharedImageReaderFactory {
         mGlobalTimestampQueue = imageDistributorFactory.provideGlobalTimestampCallback();
 
         TicketPool ticketPool = new FiniteTicketPool(imageReader.getMaxImages() - 2);
+        mAvailableImageCount = ticketPool.getAvailableTicketCount();
         mSharedImageReader = new ImageStreamFactory(
                 new Lifetime(lifetime), ticketPool, imageReader.getSurface(), imageDistributor);
     }
@@ -68,5 +71,9 @@ public class SharedImageReaderFactory {
 
     public ImageStreamFactory provideSharedImageReader() {
         return mSharedImageReader;
+    }
+
+    public Observable<Integer> provideAvailableImageCount() {
+        return mAvailableImageCount;
     }
 }

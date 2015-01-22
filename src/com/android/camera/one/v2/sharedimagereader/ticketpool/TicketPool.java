@@ -16,7 +16,13 @@
 
 package com.android.camera.one.v2.sharedimagereader.ticketpool;
 
+import com.android.camera.async.Observable;
+
 import java.util.Collection;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Stores a collection of {@link Ticket}s. Tickets may be acquired from the
@@ -32,31 +38,32 @@ public interface TicketPool extends TicketProvider {
     }
 
     /**
-     * Acquires and returns the specified number of tickets.
+     * Acquires and returns the specified number of tickets. The caller owns all
+     * returned tickets and is responsible for eventually closing them.
      * <p>
-     * Note: Implementations MUST be fair!
-     * </p>
+     * Implementations must be fair w.r.t. other calls to acquire.
      */
+    @Nonnull
     public Collection<Ticket> acquire(int tickets) throws InterruptedException,
             NoCapacityAvailableException;
 
     /**
-     * Provides a hint as to whether or not the specified number of tickets can
-     * be acquired immediately, or will probably block.
-     *
-     * @return True if a subsequent call to {@link #acquire} will probably not
-     *         block.
+     * @return The number of tickets readily-available for immediate
+     *         acquisition, as an observable object.
      */
-    public boolean canAcquire(int tickets);
+    @Nonnull
+    public Observable<Integer> getAvailableTicketCount();
 
     /**
-     * Attempts to acquire and return a ticket.
+     * Attempts to acquire and return a ticket. The caller owns the resulting
+     * ticket (if not null) and is responsible for eventually closing it.
      * <p>
-     * Note: Implementations MUST be fair w.r.t. {@link #acquire}.
-     * </p>
+     * Implementations must be fair w.r.t. {@link #acquire}.
      *
      * @return The acquired ticket, or null if no ticket is readily available.
      */
     @Override
+    @Nullable
+    @CheckReturnValue
     public Ticket tryAcquire();
 }

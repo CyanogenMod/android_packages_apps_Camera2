@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.sharedimagereader.ticketpool;
+package com.android.camera.async;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
-public interface TicketProvider {
-    /**
-     * Attempts to acquire and return a ticket.
-     *
-     * @return The acquired ticket, or null if no ticket is readily available.
-     */
-    @Nullable
-    @CheckReturnValue
-    public Ticket tryAcquire();
+/**
+ * This provides empty, NoOp implementation of generic updateable objects.
+ */
+public final class Updatables {
+    private static final Updatable NOOP = new Updatable() {
+        @Override
+        public void update(@Nonnull Object o) {
+            // Do nothing.
+        }
+    };
+
+    private Updatables() {
+    }
+
+    public static <T> Updatable<T> getNoOp() {
+        return NOOP;
+    }
 }

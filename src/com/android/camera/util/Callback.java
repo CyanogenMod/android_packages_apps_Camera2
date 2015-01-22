@@ -16,10 +16,12 @@
 
 package com.android.camera.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * Simple callback.
  * TODO: Move to async.
  */
 public interface Callback<T> {
-    public void onCallback(T result);
+    public void onCallback(@Nonnull T result);
 }
