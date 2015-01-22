@@ -39,14 +39,12 @@ public class MetadataLoader {
     public static boolean loadMetadata(final Context context, final FilmstripItem data) {
         boolean metadataAdded = false;
         if (data.getAttributes().isImage()) {
-            PanoramaMetadataLoader.loadPanoramaMetadata(context, data.getData().getUri(),
-                    data.getMetadata());
-            RgbzMetadataLoader.loadRgbzMetadata(context, data.getData().getUri(),
-                  data.getMetadata());
-            metadataAdded = true;
+            metadataAdded |= PanoramaMetadataLoader.loadPanoramaMetadata(
+                    context, data.getData().getUri(), data.getMetadata());
+            metadataAdded |=  RgbzMetadataLoader.loadRgbzMetadata(
+                    context, data.getData().getUri(), data.getMetadata());
         } else if (data.getAttributes().isVideo()) {
-            VideoRotationMetadataLoader.loadRotationMetadata(data);
-            metadataAdded = true;
+            metadataAdded = VideoRotationMetadataLoader.loadRotationMetadata(data);
         }
         data.getMetadata().setLoaded(true);
         return metadataAdded;

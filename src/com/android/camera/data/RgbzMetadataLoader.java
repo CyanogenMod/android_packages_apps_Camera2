@@ -31,9 +31,12 @@ public class RgbzMetadataLoader {
      *
      * @param context  The app context.
      */
-    public static void loadRgbzMetadata(final Context context, Uri contentUri, Metadata metadata) {
+    public static boolean loadRgbzMetadata(
+            final Context context, Uri contentUri, Metadata metadata) {
         if (RefocusHelper.isRGBZ(context, contentUri)) {
             metadata.setHasRgbzData(true);
+            return true;
         }
+        return false;
     }
 }
