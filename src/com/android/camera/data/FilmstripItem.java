@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.view.View;
 
 import com.android.camera.debug.Log;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.google.common.base.Optional;
 
@@ -121,4 +122,17 @@ public interface FilmstripItem {
      * @return a bitmap thumbnail for this item.
      */
     public Optional<Bitmap> generateThumbnail(int boundingWidthPx, int boundingHeightPx);
+
+    /**
+     * Dimensions of this item.
+     *
+     * @return physical width and height in pixels.
+     */
+    public Size getDimensions();
+
+    /**
+     * Returns the rotation of the image in degrees clockwise. The valid values
+     * are 0, 90, 180, and 270.
+     */
+    public int getOrientation();
 }

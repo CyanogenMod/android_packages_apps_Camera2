@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
+import com.android.camera.util.Size;
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Optional;
@@ -79,8 +80,8 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
     public Optional<MediaDetails> getMediaDetails() {
         MediaDetails mediaDetails = new MediaDetails();
         mediaDetails.addDetail(MediaDetails.INDEX_TITLE, mData.getTitle());
-        mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, mData.getDimensions().getWidth());
-        mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, mData.getDimensions().getHeight());
+        mediaDetails.addDetail(MediaDetails.INDEX_WIDTH, getDimensions().getWidth());
+        mediaDetails.addDetail(MediaDetails.INDEX_HEIGHT, getDimensions().getHeight());
         mediaDetails.addDetail(MediaDetails.INDEX_PATH, mData.getFilePath());
         mediaDetails.addDetail(MediaDetails.INDEX_DATETIME,
               mDateFormatter.format(mData.getLastModifiedDate()));
@@ -104,6 +105,16 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
     @Override
     public Metadata getMetadata() {
         return mMetaData;
+    }
+
+    @Override
+    public Size getDimensions() {
+        return mData.getDimensions();
+    }
+
+    @Override
+    public int getOrientation() {
+        return mData.getOrientation();
     }
 
     // TODO: Move the glide classes to a specific rendering class.

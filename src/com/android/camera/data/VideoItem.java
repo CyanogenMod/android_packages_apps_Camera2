@@ -27,6 +27,7 @@ import android.widget.ImageView;
 
 import com.android.camera.data.FilmstripItemAttributes.Attributes;
 import com.android.camera.debug.Log;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Optional;
@@ -59,6 +60,8 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
                 .build();
 
     private final VideoItemFactory mVideoItemFactory;
+
+    private Size mCachedSize;
 
     public VideoItem(Context context, VideoItemData data, VideoItemFactory videoItemFactory) {
         super(context, data, VIDEO_ITEM_ATTRIBUTES);
@@ -99,6 +102,17 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
 
     public int getHeight() {
         return mMetaData.isVideoRotated() ?  getBestWidth() : getBestHeight();
+    }
+
+    @Override
+    public Size getDimensions() {
+        int width = getWidth();
+        int height = getHeight();
+        if (mCachedSize == null ||
+                width != mCachedSize.getWidth() || height != mCachedSize.getHeight()) {
+            mCachedSize = new Size(width, height);
+        }
+        return mCachedSize;
     }
 
     @Override

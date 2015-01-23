@@ -142,4 +142,13 @@ public class SessionItem implements FilmstripItem {
         Glide.clear(view);
     }
 
+    @Override
+    public Size getDimensions() {
+        return mData.getDimensions();
+    }
+
+    @Override
+    public int getOrientation() {
+        return mData.getOrientation();
+    }
 }

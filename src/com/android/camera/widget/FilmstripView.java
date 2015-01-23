@@ -773,9 +773,9 @@ public class FilmstripView extends ViewGroup {
         }
 
         Point dim = CameraUtil.resizeToFill(
-              imageData.getData().getDimensions().getWidth(),
-              imageData.getData().getDimensions().getHeight(),
-              imageData.getData().getOrientation(),
+              imageData.getDimensions().getWidth(),
+              imageData.getDimensions().getHeight(),
+              imageData.getOrientation(),
               boundWidth,
               boundHeight);
 
@@ -874,8 +874,8 @@ public class FilmstripView extends ViewGroup {
         item.setMaximumBitmapRequested();
         // Request full size bitmap, or max that DataAdapter will create.
         int index = item.getAdapterIndex();
-        int h = mDataAdapter.getFilmstripItemAt(index).getData().getDimensions().getHeight();
-        int w = mDataAdapter.getFilmstripItemAt(index).getData().getDimensions().getWidth();
+        int h = mDataAdapter.getFilmstripItemAt(index).getDimensions().getHeight();
+        int w = mDataAdapter.getFilmstripItemAt(index).getDimensions().getWidth();
         item.resizeView(w, h);
     }
 
@@ -1549,9 +1549,9 @@ public class FilmstripView extends ViewGroup {
         final FilmstripItem data = mDataAdapter.getFilmstripItemAt(index);
         Point dim = CameraUtil
                 .resizeToFill(
-                      data.getData().getDimensions().getWidth(),
-                      data.getData().getDimensions().getHeight(),
-                      data.getData().getOrientation(),
+                      data.getDimensions().getWidth(),
+                      data.getDimensions().getHeight(),
+                      data.getOrientation(),
                       getMeasuredWidth(),
                       getMeasuredHeight());
         final int offsetX = dim.x + mViewGapInPixel;
@@ -1794,9 +1794,9 @@ public class FilmstripView extends ViewGroup {
                 // If there is no scrolling at all, adjust mCenterX to place
                 // the current item at the center.
                 Point dim = CameraUtil.resizeToFill(
-                      data.getData().getDimensions().getWidth(),
-                      data.getData().getDimensions().getHeight(),
-                      data.getData().getOrientation(),
+                      data.getDimensions().getWidth(),
+                      data.getDimensions().getHeight(),
+                      data.getOrientation(),
                       getMeasuredWidth(),
                       getMeasuredHeight());
                 mCenterX = curr.getLeftPosition() + dim.x / 2;
@@ -2484,10 +2484,10 @@ public class FilmstripView extends ViewGroup {
             if (imageData == null || !imageData.getAttributes().canZoomInPlace()) {
                 return FULL_SCREEN_SCALE;
             }
-            float imageWidth = imageData.getData().getDimensions().getWidth();
-            if (imageData.getData().getOrientation() == 90
-                    || imageData.getData().getOrientation() == 270) {
-                imageWidth = imageData.getData().getDimensions().getHeight();
+            float imageWidth = imageData.getDimensions().getWidth();
+            if (imageData.getOrientation() == 90
+                    || imageData.getOrientation() == 270) {
+                imageWidth = imageData.getDimensions().getHeight();
             }
             float scale = imageWidth / curr.getWidth();
             if (allowOverScale) {
@@ -2516,7 +2516,7 @@ public class FilmstripView extends ViewGroup {
             if (uri == null || uri == Uri.EMPTY) {
                 return;
             }
-            int orientation = imageData.getData().getOrientation();
+            int orientation = imageData.getOrientation();
             mZoomView.loadBitmap(uri, orientation, viewRect);
         }
 

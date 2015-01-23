@@ -124,7 +124,7 @@ public class FilmstripItemData {
      *
      * @return physical width and height in pixels.
      */
-    public Size getDimensions() {
+    /* package */ Size getDimensions() {
         return mDimensions;
     }
 
@@ -139,7 +139,7 @@ public class FilmstripItemData {
      * Returns the rotation of the image in degrees clockwise. The valid values
      * are 0, 90, 180, and 270.
      */
-    public int getOrientation() {
+    /* package */ int getOrientation() {
         return mOrientation;
     }
 

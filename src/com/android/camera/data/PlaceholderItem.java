@@ -132,4 +132,14 @@ public class PlaceholderItem implements FilmstripItem {
     public Optional<Bitmap> generateThumbnail(int boundingWidthPx, int boundingHeightPx) {
         return Optional.absent();
     }
+
+    @Override
+    public Size getDimensions() {
+        return mItemData.getDimensions();
+    }
+
+    @Override
+    public int getOrientation() {
+        return mItemData.getOrientation();
+    }
 }
