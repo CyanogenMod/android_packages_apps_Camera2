@@ -627,7 +627,7 @@ public class CaptureModule extends CameraModule implements
     @Override
     public void hardResetSettings(SettingsManager settingsManager) {
         if (mStickyGcamCamera) {
-            // Sitcky HDR+ mode should hard reset HDR+ to on, and camera back
+            // Sticky HDR+ mode should hard reset HDR+ to on, and camera back
             // facing.
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, true);
             settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,

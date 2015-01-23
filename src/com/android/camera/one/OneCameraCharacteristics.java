@@ -61,4 +61,9 @@ public interface OneCameraCharacteristics {
      * @See {@link CameraCharacteristics#SCALER_AVAILABLE_MAX_DIGITAL_ZOOM}
      */
     public float getAvailableMaxDigitalZoom();
+
+    /**
+     * @return If flash is supported for this camera.
+     */
+    public boolean isFlashSupported();
 }

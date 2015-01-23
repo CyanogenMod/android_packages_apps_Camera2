@@ -26,7 +26,6 @@ import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
-
 import com.google.common.base.Optional;
 
 /**

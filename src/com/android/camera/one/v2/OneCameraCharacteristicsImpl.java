@@ -86,4 +86,9 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     public float getAvailableMaxDigitalZoom() {
         return mCameraCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
     }
+
+    @Override
+    public boolean isFlashSupported() {
+        return mCameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+    }
 }
