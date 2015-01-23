@@ -154,7 +154,7 @@ public class FilmstripView extends ViewGroup {
         /** The position of the left of the view in the whole filmstrip. */
         private int mLeftPosition;
         private final View mView;
-        private final FilmstripItem mData;
+        private FilmstripItem mData;
         private final RectF mViewArea;
         private boolean mMaximumBitmapRequested;
 
@@ -180,6 +180,11 @@ public class FilmstripView extends ViewGroup {
             mLeftPosition = -1;
             mViewArea = new RectF();
             mFilmstrip = filmstrip;
+        }
+
+        public void setData(FilmstripItem item) {
+            mData = item;
+            mMaximumBitmapRequested = false;
         }
 
         public boolean isMaximumBitmapRequested() {
@@ -1721,17 +1726,27 @@ public class FilmstripView extends ViewGroup {
             Log.w(TAG, "updateViewItem() - Trying to update an null item!");
             return;
         }
-        item.removeViewFromHierarchy(true);
 
-        ViewItem newItem = buildViewItemAt(item.getAdapterIndex());
-        if (newItem == null) {
-            Log.w(TAG, "updateViewItem() - New item is null!");
-            // keep using the old data.
-            item.addViewToHierarchy();
+        int adapterIndex = item.getAdapterIndex();
+        FilmstripItem filmstripItem = mDataAdapter.getFilmstripItemAt(adapterIndex);
+        if (filmstripItem == null) {
+            Log.w(TAG, "updateViewItem() - Trying to update item with null FilmstripItem!");
             return;
         }
-        newItem.copyAttributes(item);
-        mViewItems[bufferIndex] = newItem;
+
+        // In case the underlying data item is changed (commonly from
+        // SessionItem to PhotoItem for an image requiring processing), set the
+        // new FilmstripItem on the ViewItem
+        item.setData(filmstripItem);
+
+        // In case state changed from a new FilmStripItem or the existing one,
+        // redraw the View contents. We call getView here as it will refill the
+        // view contents, but it is not clear as we are not using the documented
+        // method intent to get a View, we know that this always uses the view
+        // passed in to populate it.
+        // TODO: refactor 'getView' to more explicitly just update view contents
+        mDataAdapter.getView(item.getView(), adapterIndex, mVideoClickedCallback);
+
         mZoomView.resetDecoder();
 
         boolean stopScroll = clampCenterX();
@@ -1753,7 +1768,7 @@ public class FilmstripView extends ViewGroup {
         adjustChildZOrder();
         invalidate();
         if (mListener != null) {
-            mListener.onDataUpdated(newItem.getAdapterIndex());
+            mListener.onDataUpdated(adapterIndex);
         }
     }
 

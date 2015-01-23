@@ -31,7 +31,7 @@ public class VideoRotationMetadataLoader {
         return ROTATE_90.equals(rotation) || ROTATE_270.equals(rotation);
     }
 
-    static void loadRotationMetadata(final FilmstripItem data) {
+    static boolean loadRotationMetadata(final FilmstripItem data) {
         final String path = data.getData().getFilePath();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -53,5 +53,6 @@ public class VideoRotationMetadataLoader {
             // IllegalArgumentException. e.g: data contain *.avi file.
             Log.e(TAG, "MediaMetdataRetriever.setDataSource() fail", ex);
         }
+        return true;
     }
 }
