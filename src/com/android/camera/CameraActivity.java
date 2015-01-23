@@ -101,8 +101,6 @@ import com.android.camera.data.VideoItemFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
-import com.android.camera.hardware.HardwareSpec;
-import com.android.camera.hardware.HardwareSpecImpl;
 import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.one.OneCameraException;
@@ -494,26 +492,6 @@ public class CameraActivity extends QuickActivity
             Log.v(TAG, "received onCameraOpened but activity is paused, closing Camera");
             mCameraController.closeCamera(false);
             return;
-        }
-        /**
-         * The current UI requires that the flash option visibility in front-facing
-         * camera be
-         *   * disabled if back facing camera supports flash
-         *   * hidden if back facing camera does not support flash
-         * We save whether back facing camera supports flash because we cannot get
-         * this in front facing camera without a camera switch.
-         *
-         * If this preference is cleared, we also need to clear the camera facing
-         * setting so we default to opening the camera in back facing camera, and
-         * can save this flash support value again.
-         */
-        if (!mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL,
-                                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
-            HardwareSpec hardware =
-                    new HardwareSpecImpl(getCameraProvider(), camera.getCapabilities());
-            mSettingsManager.set(SettingsManager.SCOPE_GLOBAL,
-                                 Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
-                                 hardware.isFlashSupported());
         }
 
         if (!mModuleManager.getModuleAgent(mCurrentModeIndex).requestAppForCamera()) {

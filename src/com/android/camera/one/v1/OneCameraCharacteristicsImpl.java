@@ -31,16 +31,18 @@ import java.util.List;
  */
 public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     private final Camera.CameraInfo mCameraInfo;
+    private final Camera.Parameters mCameraParameters;
 
     /** The supported picture sizes. */
-    private final ArrayList<Size> mSupportedPictureSizes = new ArrayList<>();
+    private final ArrayList<Size> mSupportedPictureSizes = new ArrayList<Size>();
 
     /** The supported preview sizes. */
-    private final ArrayList<Size> mSupportedPreviewSizes = new ArrayList<>();
+    private final ArrayList<Size> mSupportedPreviewSizes = new ArrayList<Size>();
 
     public OneCameraCharacteristicsImpl(
             Camera.CameraInfo cameraInfo, Camera.Parameters cameraParameters) {
         mCameraInfo = cameraInfo;
+        mCameraParameters = cameraParameters;
 
         List<Camera.Size> supportedPictureSizes = cameraParameters.getSupportedPictureSizes();
         if (supportedPictureSizes != null) {
@@ -90,5 +92,10 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     @Override
     public float getAvailableMaxDigitalZoom() {
         throw new RuntimeException("Not implemented yet.");
+    }
+
+    @Override
+    public boolean isFlashSupported() {
+        return (mCameraParameters.getFlashMode() != null);
     }
 }

@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v1;
 
-import com.google.common.base.Optional;
-
 import android.hardware.Camera;
 import android.os.Handler;
 
@@ -29,10 +27,9 @@ import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
-import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
-
+import com.google.common.base.Optional;
 /**
  * The {@link OneCameraManager} implementation on top of the Camera API 1.
  */
@@ -45,8 +42,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
     private final int mFirstFrontCameraId;
     private final Camera.CameraInfo[] mCameraInfos;
 
-    OneCameraCharacteristics mBackCameraCharacteristics;
-    OneCameraCharacteristics mFrontCameraCharacteristics;
+    private OneCameraCharacteristics mBackCameraCharacteristics;
+    private OneCameraCharacteristics mFrontCameraCharacteristics;
 
     public static Optional<OneCameraManager> create(CameraActivity activity) {
         int numberOfCameras;
@@ -144,7 +141,15 @@ public class OneCameraManagerImpl extends OneCameraManager {
             characteristics = new OneCameraCharacteristicsImpl(
                     mCameraInfos[cameraId], cameraParameters);
         } finally {
-            camera.release();
+            if (camera != null) {
+                camera.release();
+            }
+        }
+
+        if (facing == Facing.BACK) {
+            mBackCameraCharacteristics = characteristics;
+        } else if (facing == Facing.FRONT) {
+            mFrontCameraCharacteristics = characteristics;
         }
         return characteristics;
     }
