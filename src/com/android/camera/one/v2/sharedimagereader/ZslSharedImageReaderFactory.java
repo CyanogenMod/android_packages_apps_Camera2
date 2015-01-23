@@ -16,13 +16,15 @@
 
 package com.android.camera.one.v2.sharedimagereader;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forFinalMetadata;
+import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
+
 import com.android.camera.async.BufferQueue;
+import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
-import com.android.camera.one.v2.common.TimestampResponseListener;
-import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
@@ -51,11 +53,13 @@ public class ZslSharedImageReaderFactory {
      *            lifetime of the provided ImageReader.
      * @param imageReader The ImageReader to wrap. Note that this can outlive
      *            the resulting SharedImageReader instance.
+     * @param handlerFactory Used for create handler threads on which to receive
+     *            callbacks from the platform.
      */
-    public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader, RequestBuilder
-            .Factory rootRequestTemplate) {
+    public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader,
+            RequestBuilder.Factory rootRequestTemplate, HandlerFactory handlerFactory) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(lifetime,
-                imageReader);
+                imageReader, handlerFactory);
         ImageDistributor imageDistributor = imageDistributorFactory.provideImageDistributor();
         Updatable<Long> globalTimestampQueue = imageDistributorFactory
                 .provideGlobalTimestampCallback();
@@ -82,8 +86,8 @@ public class ZslSharedImageReaderFactory {
 
         mRequestTemplate = new RequestTemplate(rootRequestTemplate);
         mRequestTemplate.addStream(mZslCaptureStream);
-        mRequestTemplate.addResponseListener(new TimestampResponseListener(globalTimestampQueue));
-        mRequestTemplate.addResponseListener(new TotalCaptureResultResponseListener(
+        mRequestTemplate.addResponseListener(forTimestamps(globalTimestampQueue));
+        mRequestTemplate.addResponseListener(forFinalMetadata(
                 metadataPoolFactory.provideMetadataCallback()));
     }
 

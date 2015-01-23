@@ -16,6 +16,7 @@
 
 package com.android.camera.one.v2.sharedimagereader;
 
+import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
@@ -46,11 +47,13 @@ public class SharedImageReaderFactory {
      *            components, to produce. Note that this may be shorter than the
      *            lifetime of the provided ImageReader.
      * @param imageReader The ImageReader to wrap. Note that this can outlive
-     *            the resulting SharedImageReader instance.
+     * @param handlerFactory Used for create handler threads on which to receive
+     *            callbacks from the platform.
      */
-    public SharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader) {
+    public SharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader,
+            HandlerFactory handlerFactory) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(new
-                Lifetime(lifetime), imageReader);
+                Lifetime(lifetime), imageReader, handlerFactory);
         ImageDistributor imageDistributor = imageDistributorFactory.provideImageDistributor();
         mGlobalTimestampQueue = imageDistributorFactory.provideGlobalTimestampCallback();
 

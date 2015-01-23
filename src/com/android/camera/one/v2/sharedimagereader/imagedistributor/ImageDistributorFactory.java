@@ -16,8 +16,10 @@
 
 package com.android.camera.one.v2.sharedimagereader.imagedistributor;
 
-import com.android.camera.async.CloseableHandlerThread;
+import android.os.Handler;
+
 import com.android.camera.async.ConcurrentBufferQueue;
+import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
@@ -28,18 +30,24 @@ public class ImageDistributorFactory {
 
     /**
      * Creates an ImageDistributor from the given ImageReader.
+     * 
+     * @param lifetime The lifetime of the image distributor. Images will stop
+     *            being distributed when the lifetime closes.
+     * @param imageReader The ImageReader from which to distribute images.
+     * @param handlerFactory Used for creating handler threads for callbacks
+     *            registered with the platform.
      */
-    public ImageDistributorFactory(Lifetime lifetime, ImageReaderProxy imageReader) {
+    public ImageDistributorFactory(Lifetime lifetime, ImageReaderProxy imageReader,
+            HandlerFactory handlerFactory) {
         ConcurrentBufferQueue<Long> globalTimestampStream = new ConcurrentBufferQueue<>();
         mTimestampStream = globalTimestampStream;
         mImageDistributor = new ImageDistributorImpl(globalTimestampStream);
 
-        CloseableHandlerThread imageReaderHandler = new CloseableHandlerThread("ImageDistributor");
-        lifetime.add(imageReaderHandler);
+        Handler imageReaderHandler = handlerFactory.create(lifetime, "ImageDistributor");
 
         imageReader.setOnImageAvailableListener(
                 new ImageDistributorOnImageAvailableListener(mImageDistributor),
-                imageReaderHandler.get());
+                imageReaderHandler);
     }
 
     public ImageDistributor provideImageDistributor() {

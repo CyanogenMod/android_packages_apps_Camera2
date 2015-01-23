@@ -138,7 +138,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // Create the shared image reader.
                 ZslSharedImageReaderFactory sharedImageReaderFactory =
                         new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime),
-                                imageReader, rootBuilder);
+                                imageReader, rootBuilder, new HandlerFactory());
 
                 boolean isBackCamera = characteristics.getCameraDirection() ==
                         OneCamera.Facing.BACK;

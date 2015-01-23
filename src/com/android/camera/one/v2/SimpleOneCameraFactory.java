@@ -115,7 +115,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
 
                 // Create the shared image reader.
                 SharedImageReaderFactory sharedImageReaderFactory =
-                        new SharedImageReaderFactory(new Lifetime(cameraLifetime), imageReader);
+                        new SharedImageReaderFactory(new Lifetime(cameraLifetime), imageReader,
+                                new HandlerFactory());
                 Updatable<Long> globalTimestampCallback =
                         sharedImageReaderFactory.provideGlobalTimestampQueue();
                 ImageStreamFactory imageStreamFactory =
