@@ -18,7 +18,6 @@ package com.android.camera.one.v2.core;
 
 import android.os.Handler;
 
-import com.android.camera.async.CloseableHandlerThread;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
