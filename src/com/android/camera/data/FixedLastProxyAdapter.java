@@ -118,7 +118,7 @@ public class FixedLastProxyAdapter extends FilmstripDataAdapterProxy {
             return mAdapter.getView(recycled, index, videoClickedCallback);
         } else if (index == totalNumber) {
             return mLastData.getView(Optional.fromNullable(recycled), mSuggestedWidth,
-                  mSuggestedHeight, 0, null, false, videoClickedCallback);
+                  mSuggestedHeight, null, false, videoClickedCallback);
         }
         return null;
     }

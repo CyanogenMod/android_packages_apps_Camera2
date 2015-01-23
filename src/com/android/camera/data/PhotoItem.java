@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
+import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Optional;
 
@@ -59,11 +61,22 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
     private final PhotoItemFactory mPhotoItemFactory;
 
-    private int mPlaceholderResourceId = 0;
+    private Bitmap mSessionPlaceholderBitmap;
 
     public PhotoItem(Context context, FilmstripItemData data, PhotoItemFactory photoItemFactory) {
         super(context, data, PHOTO_ITEM_ATTRIBUTES);
         mPhotoItemFactory = photoItemFactory;
+    }
+
+    /**
+     * A bitmap that if present, is a high resolution bitmap from a temporary
+     * session, that should be used as a placeholder in place of placeholder/
+     * thumbnail loading.
+     *
+     * @param sessionPlaceholderBitmap a Bitmap to set as a placeholder
+     */
+    public void setSessionPlaceholderBitmap(Bitmap sessionPlaceholderBitmap) {
+        mSessionPlaceholderBitmap = sessionPlaceholderBitmap;
     }
 
     @Override
@@ -98,7 +111,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
     @Override
     public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
-          int placeHolderResourceId, LocalFilmstripDataAdapter adapter, boolean isInProgress,
+          LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback) {
         ImageView imageView;
 
@@ -110,17 +123,16 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
             imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 
-        fillImageView(imageView, placeHolderResourceId);
+        fillImageView(imageView);
 
         return imageView;
     }
 
-    protected void fillImageView(final ImageView imageView, int placeHolderResourceId) {
-        mPlaceholderResourceId = placeHolderResourceId;
+    protected void fillImageView(final ImageView imageView) {
         Uri uri = mData.getUri();
 
         glideTinyThumb(uri)
-            .placeholder(mPlaceholderResourceId)
+            .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
             .dontAnimate()
             .into(imageView);
 
@@ -145,6 +157,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
     @Override
     public void recycle(View view) {
         Glide.clear(view);
+        mSessionPlaceholderBitmap = null;
     }
 
     @Override
@@ -157,9 +170,19 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
         Uri uri = mData.getUri();
         Size size = mData.getDimensions();
 
-        glideFullResBitmap(uri, size.getWidth(), size.getHeight())
+        BitmapRequestBuilder<Uri, Bitmap> builder =
+                glideFullResBitmap(uri, size.getWidth(), size.getHeight());
+
+        if (mSessionPlaceholderBitmap != null) {
+            builder.placeholder(new BitmapDrawable(mContext.getResources(),
+                    mSessionPlaceholderBitmap));
+        } else {
+            builder
                     .thumbnail(glideTinyThumb(uri))
-              .placeholder(mPlaceholderResourceId)
+                    .placeholder(DEFAULT_PLACEHOLDER_RESOURCE);
+        }
+
+        builder
               .dontAnimate()
               .into((ImageView) v);
     }

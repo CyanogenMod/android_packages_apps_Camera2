@@ -918,6 +918,11 @@ public class CameraActivity extends QuickActivity
                         return;
                     }
 
+                    // Make the PhotoItem aware of the session placeholder, to
+                    // allow it to make a smooth transition to its content.
+                    newData.setSessionPlaceholderBitmap(
+                            Storage.getPlacerHolderForSession(sessionUri));
+
                     final int pos = mDataAdapter.findByContentUri(sessionUri);
                     if (pos == -1) {
                         // We do not have a placeholder for this image, perhaps
@@ -1537,7 +1542,7 @@ public class CameraActivity extends QuickActivity
               new PhotoDataFactory());
         mVideoItemFactory = new VideoItemFactory(mAppContext, appContentResolver,
               new VideoDataFactory());
-        mDataAdapter = new CameraFilmstripDataAdapter(mAppContext, R.color.photo_placeholder,
+        mDataAdapter = new CameraFilmstripDataAdapter(mAppContext,
               mPhotoItemFactory, mVideoItemFactory);
         mDataAdapter.setLocalDataListener(mFilmstripItemListener);
 

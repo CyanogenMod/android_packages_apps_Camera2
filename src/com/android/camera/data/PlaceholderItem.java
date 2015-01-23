@@ -103,7 +103,7 @@ public class PlaceholderItem implements FilmstripItem {
 
     @Override
     public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
-          int placeHolderResourceId, LocalFilmstripDataAdapter adapter, boolean isInProgress,
+          LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback) {
         return mView;
     }

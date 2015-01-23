@@ -41,7 +41,6 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
     private static final int DEFAULT_DECODE_SIZE = 1600;
 
     private final Context mContext;
-    private final int mPlaceHolderResourceId;
     private final PhotoItemFactory mPhotoItemFactory;
     private final VideoItemFactory mVideoItemFactory;
 
@@ -57,11 +56,10 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
 
     private FilmstripItem mFilmstripItemToDelete;
 
-    public CameraFilmstripDataAdapter(Context context, int placeholderResource,
-          PhotoItemFactory photoItemFactory, VideoItemFactory videoItemFactory) {
+    public CameraFilmstripDataAdapter(Context context,
+            PhotoItemFactory photoItemFactory, VideoItemFactory videoItemFactory) {
         mContext = context;
         mFilmstripItems = new FilmstripItemList();
-        mPlaceHolderResourceId = placeholderResource;
         mPhotoItemFactory = photoItemFactory;
         mVideoItemFactory = videoItemFactory;
     }
@@ -139,8 +137,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
         }
 
         return mFilmstripItems.get(index).getView(Optional.fromNullable(recycled), mSuggestedWidth,
-              mSuggestedHeight, mPlaceHolderResourceId, this, /* inProgress */ false,
-              videoClickedCallback);
+              mSuggestedHeight, this, /* inProgress */ false, videoClickedCallback);
     }
 
     @Override
