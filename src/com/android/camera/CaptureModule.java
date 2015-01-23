@@ -141,6 +141,7 @@ public class CaptureModule extends CameraModule implements
     private boolean mHdrEnabled = false;
 
     private FocusController mFocusController;
+    private OneCameraCharacteristics mCameraCharacteristics;
 
     /** The listener to listen events from the CaptureModuleUI. */
     private final CaptureModuleUI.CaptureModuleUIListener mUIListener =
@@ -358,6 +359,15 @@ public class CaptureModule extends CameraModule implements
         mMediaActionSound = new MediaActionSound();
     }
 
+    private void updateCameraCharacteristics() {
+        try {
+            mCameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
+        } catch (OneCameraAccessException ocae) {
+            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            return;
+        }
+    }
+
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         Log.d(TAG, "init");
@@ -369,6 +379,7 @@ public class CaptureModule extends CameraModule implements
         mDisplayRotation = CameraUtil.getDisplayRotation();
         mCameraFacing = getFacingFromCameraId(
                 mSettingsManager.getInteger(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID));
+        updateCameraCharacteristics();
         mUI = new CaptureModuleUI(activity, mAppController.getModuleLayoutRoot(), mUIListener);
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
 
@@ -667,7 +678,7 @@ public class CaptureModule extends CameraModule implements
 
             @Override
             public boolean isFlashSupported() {
-                return true;
+                return mCameraCharacteristics.isFlashSupported();
             }
         };
     }
@@ -991,6 +1002,7 @@ public class CaptureModule extends CameraModule implements
 
                     Log.d(TAG, "Start to switch camera. cameraId=" + cameraId);
                     mCameraFacing = getFacingFromCameraId(cameraId);
+                    updateCameraCharacteristics();
                     switchCamera();
                 }
             };
@@ -1170,13 +1182,7 @@ public class CaptureModule extends CameraModule implements
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
         }
-        OneCameraCharacteristics cameraCharacteristics;
-        try {
-            cameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
-        } catch (OneCameraAccessException ocae) {
-            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
-            return;
-        }
+
         if (mCameraManager == null) {
             Log.e(TAG, "no available OneCameraManager, showing error dialog");
             mCameraOpenCloseLock.release();
@@ -1193,7 +1199,7 @@ public class CaptureModule extends CameraModule implements
         // Derive objects necessary for camera creation.
         MainThread mainThread = MainThread.create();
         ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
-                .from(cameraCharacteristics);
+                .from(mCameraCharacteristics);
 
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
