@@ -21,11 +21,15 @@ import android.hardware.camera2.TotalCaptureResult;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.core.ResponseListener;
+import com.android.camera.one.v2.core.ResponseListeners;
 
 /**
  * A {@link ResponseListener} which provides a stream of
  * {@link TotalCaptureResult}s.
+ *
+ * @deprecated Use {@link ResponseListeners#forFinalMetadata}
  */
+@Deprecated
 public class TotalCaptureResultResponseListener extends ResponseListener {
     private final Updatable<TotalCaptureResultProxy> mResults;
 

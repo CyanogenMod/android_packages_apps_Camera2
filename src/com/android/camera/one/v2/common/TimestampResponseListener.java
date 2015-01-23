@@ -24,10 +24,13 @@ import com.android.camera.async.ConcurrentBufferQueue;
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.core.ResponseListener;
+import com.android.camera.one.v2.core.ResponseListeners;
 
 /**
  * A {@link ResponseListener} which provides a stream of timestamps.
+ * @deprecated Use {@link ResponseListeners} instead.
  */
+@Deprecated
 public class TimestampResponseListener extends ResponseListener {
     private final Updatable<Long> mTimestamps;
 

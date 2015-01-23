@@ -28,6 +28,8 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 import java.util.Arrays;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
+
 /**
  * Performs a full auto focus scan.
  */
@@ -53,6 +55,7 @@ class FullAFScanCommand implements CameraCommand {
      * Performs an auto-focus scan, blocking until the scan starts, runs, and
      * completes.
      */
+    @Override
     public void run() throws InterruptedException, CameraAccessException,
             CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
         FrameServer.Session session = mFrameServer.tryCreateExclusiveSession();
@@ -63,13 +66,13 @@ class FullAFScanCommand implements CameraCommand {
             return;
         }
         try {
-            UpdatableCountDownLatch scanDoneLatch = new UpdatableCountDownLatch(1);
-            TriggeredAFScanStateResponseListener afScanStateListener =
-                    new TriggeredAFScanStateResponseListener(scanDoneLatch);
+            UpdatableCountDownLatch<Void> scanDoneLatch = new UpdatableCountDownLatch<>(1);
+            AFTriggerStateMachine afScanStateListener =
+                    new AFTriggerStateMachine(scanDoneLatch);
 
             // Build a request to send a repeating AF_IDLE
             RequestBuilder idleBuilder = mBuilderFactory.create(mTemplateType);
-            idleBuilder.addResponseListener(afScanStateListener);
+            idleBuilder.addResponseListener(forPartialMetadata(afScanStateListener));
             idleBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
                     .CONTROL_MODE_AUTO);
             idleBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
@@ -79,7 +82,7 @@ class FullAFScanCommand implements CameraCommand {
 
             // Build a request to send a single AF_TRIGGER
             RequestBuilder triggerBuilder = mBuilderFactory.create(mTemplateType);
-            triggerBuilder.addResponseListener(afScanStateListener);
+            triggerBuilder.addResponseListener(forPartialMetadata(afScanStateListener));
             triggerBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
                     .CONTROL_MODE_AUTO);
             triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest

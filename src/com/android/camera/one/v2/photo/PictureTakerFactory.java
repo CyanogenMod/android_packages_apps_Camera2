@@ -16,6 +16,8 @@
 
 package com.android.camera.one.v2.photo;
 
+import android.hardware.camera2.CameraDevice;
+
 import com.android.camera.async.MainThread;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
@@ -23,19 +25,22 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 
-public class PictureTakerFactory {
+import java.util.Arrays;
+
+public final class PictureTakerFactory {
     private final PictureTakerImpl mPictureTaker;
 
     public PictureTakerFactory(MainThread mainExecutor,
-                               CameraCommandExecutor commandExecutor,
-                               ImageSaver.Builder imageSaverBuilder,
-                               FrameServer frameServer,
-                               RequestBuilder.Factory rootRequestBuilder,
-                               ImageStreamFactory sharedImageReader) {
-        ImageCaptureCommand flashOffCommand = new SimpleImageCaptureCommand(frameServer,
-                rootRequestBuilder, sharedImageReader);
+            CameraCommandExecutor commandExecutor,
+            ImageSaver.Builder imageSaverBuilder,
+            FrameServer frameServer,
+            RequestBuilder.Factory rootRequestBuilder,
+            ImageStreamFactory sharedImageReader) {
+        ImageCaptureCommand captureCommand = new ConvergedImageCaptureCommand(sharedImageReader,
+                frameServer, rootRequestBuilder, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder));
         mPictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor, imageSaverBuilder,
-                flashOffCommand);
+                captureCommand);
     }
 
     public PictureTaker providePictureTaker() {

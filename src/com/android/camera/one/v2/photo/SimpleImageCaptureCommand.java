@@ -34,6 +34,9 @@ import java.util.Arrays;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
+import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
+
 /**
  * Captures single images.
  */
@@ -53,16 +56,16 @@ class SimpleImageCaptureCommand implements ImageCaptureCommand {
     /**
      * Sends a request to take a picture and blocks until it completes.
      */
+    @Override
     public void run(Updatable<Void> imageExposureUpdatable, ImageSaver imageSaver) throws
             InterruptedException, CameraAccessException, CameraCaptureSessionClosedException,
             ResourceAcquisitionFailedException {
-        try (FrameServer.Session session = mFrameServer.createSession();
+        try (FrameServer.Session session = mFrameServer.createExclusiveSession();
                 ImageStream imageStream = mImageReader.createStream(1)) {
             RequestBuilder photoRequest = mBuilderFactory.create(CameraDevice
                     .TEMPLATE_STILL_CAPTURE);
             photoRequest.addStream(imageStream);
-            photoRequest.addResponseListener(new FrameExposureResponseListener(
-                    imageExposureUpdatable));
+            photoRequest.addResponseListener(forFrameExposure(imageExposureUpdatable));
             session.submitRequest(Arrays.asList(photoRequest.build()),
                     FrameServer.RequestType.NON_REPEATING);
 

@@ -23,6 +23,8 @@ import android.hardware.camera2.TotalCaptureResult;
 /**
  * Like {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback},
  * but for events related to single requests.
+ * <p>
+ * See {@link ResponseListeners} for helper functions.
  */
 public abstract class ResponseListener {
     /**
