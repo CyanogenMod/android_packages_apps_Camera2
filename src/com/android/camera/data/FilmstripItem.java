@@ -88,7 +88,7 @@ public interface FilmstripItem {
      * @param adapter Data adapter for this data item.
      */
     public View getView(Optional<View> view, int viewWidthPx, int viewHeightPx,
-          int placeHolderResourceId, LocalFilmstripDataAdapter adapter, boolean isInProgress,
+          LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback);
 
     /**

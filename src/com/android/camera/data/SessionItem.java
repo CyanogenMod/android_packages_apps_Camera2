@@ -65,7 +65,7 @@ public class SessionItem implements FilmstripItem {
 
     @Override
     public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
-          int placeHolderResourceId, LocalFilmstripDataAdapter adapter, boolean isInProgress,
+          LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback) {
         ImageView imageView;
 

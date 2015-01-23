@@ -127,7 +127,7 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
 
     @Override
     public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
-          int placeHolderResourceId, LocalFilmstripDataAdapter adapter, boolean isInProgress,
+          LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback) {
         View view;
         VideoViewHolder viewHolder;
@@ -145,14 +145,13 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
             view.setTag(R.id.mediadata_tag_target, viewHolder);
         }
 
-        fillVideoView(view, viewHolder, viewWidthPx, viewHeightPx,
-              placeHolderResourceId, videoClickedCallback);
+        fillVideoView(view, viewHolder, viewWidthPx, viewHeightPx, videoClickedCallback);
 
         return view;
     }
 
     private void fillVideoView(View view, VideoViewHolder viewHolder, final int viewWidthPx,
-          final int viewHeightPx, int placeHolderResourceId, final VideoClickedCallback videoClickedCallback) {
+          final int viewHeightPx, final VideoClickedCallback videoClickedCallback) {
 
         //TODO: Figure out why these can be <= 0.
         if (viewWidthPx <= 0 || viewHeightPx <=0) {
@@ -163,7 +162,7 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
 
         glideFilmstripThumb(uri, viewWidthPx, viewHeightPx)
               .thumbnail(glideMediaStoreThumb(uri))
-              .placeholder(placeHolderResourceId)
+              .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
               .dontAnimate()
               .into(viewHolder.mVideoView);
 
