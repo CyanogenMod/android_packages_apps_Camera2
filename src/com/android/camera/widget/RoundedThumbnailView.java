@@ -39,10 +39,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
+import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
+
+import com.google.common.base.Optional;
 
 /**
  * A view that shows a pop-out effect for a thumbnail image as the new capture indicator design for
@@ -148,10 +151,10 @@ public class RoundedThumbnailView extends View {
     private LinkedList<RevealRequest> mRevealRequestWaitQueue = new LinkedList<>();
 
     // The currently running reveal request.
-    private RevealRequest mActiveRevealRequest;
+    private Optional<RevealRequest> mActiveRevealRequest;
 
     // The latest finished reveal request. Its thumbnail will be shown until a newer one replace it.
-    private RevealRequest mFinishedRevealRequest;
+    private Optional<RevealRequest> mFinishedRevealRequest;
 
     /**
      * Constructs a RoundedThumbnailView.
@@ -187,6 +190,9 @@ public class RoundedThumbnailView extends View {
                 getResources().getDimension(R.dimen.rounded_thumbnail_ripple_ring_thick_max);
         mRippleRingThicknessEnd =
                 getResources().getDimension(R.dimen.rounded_thumbnail_ripple_ring_thick_min);
+
+        mActiveRevealRequest = Optional.absent();
+        mFinishedRevealRequest = Optional.absent();
     }
 
     @Override
@@ -206,8 +212,8 @@ public class RoundedThumbnailView extends View {
                 new RectF(0, 0, mRippleRingDiameterEnd, mRippleRingDiameterEnd);
 
         // Draw the thumbnail of latest finished reveal request.
-        if (mFinishedRevealRequest != null) {
-            Paint thumbnailPaint = mFinishedRevealRequest.getThumbnailPaint();
+        if (mFinishedRevealRequest.isPresent()) {
+            Paint thumbnailPaint = mFinishedRevealRequest.get().getThumbnailPaint();
             if (thumbnailPaint != null) {
                 // Draw the old thumbnail with the final diameter.
                 float scaleRatio = mThumbnailShrinkDiameterEnd / mRippleRingDiameterEnd;
@@ -224,7 +230,7 @@ public class RoundedThumbnailView extends View {
         }
 
         // Draw animated parts (thumbnail and ripple) if there exists a reveal request.
-        if (mActiveRevealRequest != null) {
+        if (mActiveRevealRequest.isPresent()) {
             // Draw ripple ring first or the ring will cover thumbnail.
             if (mCurrentRippleRingThickness > 0) {
                 // Draw the ripple ring.
@@ -247,7 +253,7 @@ public class RoundedThumbnailView extends View {
             canvas.scale(scaleRatio, scaleRatio, centerX, centerY);
 
             // Draw the new popping up thumbnail.
-            Paint thumbnailPaint = mActiveRevealRequest.getThumbnailPaint();
+            Paint thumbnailPaint = mActiveRevealRequest.get().getThumbnailPaint();
             if (thumbnailPaint != null) {
                 canvas.drawRoundRect(
                         viewBound,
@@ -318,6 +324,7 @@ public class RoundedThumbnailView extends View {
      *                            animation.
      */
     public void startRevealThumbnailAnimation(String accessibilityString) {
+        MainThread.checkMainThread();
         // Create a new request.
         RevealRequest latestRevealRequest =
                 new RevealRequest(getMeasuredWidth(), accessibilityString);
@@ -332,9 +339,10 @@ public class RoundedThumbnailView extends View {
      * @param thumbnailBitmap The thumbnail image to be shown.
      */
     public void setThumbnail(final Bitmap thumbnailBitmap) {
+        MainThread.checkMainThread();
         if (mRevealRequestWaitQueue.isEmpty()) {
-            if (mActiveRevealRequest != null) {
-                mActiveRevealRequest.setThumbnailBitmap(thumbnailBitmap);
+            if (mActiveRevealRequest.isPresent()) {
+                mActiveRevealRequest.get().setThumbnailBitmap(thumbnailBitmap);
             }
         } else {
             // Update the thumbnail in the latest reveal request.
@@ -347,6 +355,7 @@ public class RoundedThumbnailView extends View {
      * Hide the thumbnail.
      */
     public void hideThumbnail() {
+        MainThread.checkMainThread();
         // Make this view invisible.
         setVisibility(GONE);
 
@@ -361,8 +370,8 @@ public class RoundedThumbnailView extends View {
         }
         // Remove all pending reveal requests.
         mRevealRequestWaitQueue.clear();
-        mActiveRevealRequest = null;
-        mFinishedRevealRequest = null;
+        mActiveRevealRequest = Optional.absent();
+        mFinishedRevealRequest = Optional.absent();
     }
 
     /**
@@ -375,12 +384,12 @@ public class RoundedThumbnailView extends View {
             return;
         }
         // Do nothing if the active request is still running.
-        if (mActiveRevealRequest != null) {
+        if (mActiveRevealRequest.isPresent()) {
             return;
         }
 
         // Pick the first request in the queue and make it active.
-        mActiveRevealRequest = mRevealRequestWaitQueue.peekFirst();
+        mActiveRevealRequest = Optional.of(mRevealRequestWaitQueue.peekFirst());
         mRevealRequestWaitQueue.removeFirst();
 
         // Make this view visible.
@@ -435,14 +444,17 @@ public class RoundedThumbnailView extends View {
             mThumbnailAnimatorSet.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    // Mark the thumbnail animation as finished.
-                    mActiveRevealRequest.finishThumbnailAnimation();
-                    // Process the next reveal request if both thumbnail animation and ripple
-                    // animation are both finished.
-                    if (mActiveRevealRequest.isFinished()) {
-                        mFinishedRevealRequest = mActiveRevealRequest;
-                        mActiveRevealRequest = null;
-                        processNextRevealRequest();
+                    if (mActiveRevealRequest.isPresent()) {
+                        final RevealRequest activeRevealRequest = mActiveRevealRequest.get();
+                        // Mark the thumbnail animation as finished.
+                        activeRevealRequest.finishThumbnailAnimation();
+                        // Process the next reveal request if both thumbnail animation and ripple
+                        // animation are both finished.
+                        if (activeRevealRequest.isFinished()) {
+                            mFinishedRevealRequest = Optional.of(activeRevealRequest);
+                            mActiveRevealRequest = Optional.absent();
+                            processNextRevealRequest();
+                        }
                     }
                 }
             });
@@ -471,14 +483,17 @@ public class RoundedThumbnailView extends View {
             mRippleAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    // Mark the ripple animation as finished.
-                    mActiveRevealRequest.finishRippleAnimation();
-                    // Process the next reveal request if both thumbnail animation and ripple
-                    // animation are both finished.
-                    if (mActiveRevealRequest.isFinished()) {
-                        mFinishedRevealRequest = mActiveRevealRequest;
-                        mActiveRevealRequest = null;
-                        processNextRevealRequest();
+                    if (mActiveRevealRequest.isPresent()) {
+                        final RevealRequest activeRevealRequest = mActiveRevealRequest.get();
+                        // Mark the ripple animation as finished.
+                        activeRevealRequest.finishRippleAnimation();
+                        // Process the next reveal request if both thumbnail animation and ripple
+                        // animation are both finished.
+                        if (activeRevealRequest.isFinished()) {
+                            mFinishedRevealRequest = Optional.of(activeRevealRequest);
+                            mActiveRevealRequest = Optional.absent();
+                            processNextRevealRequest();
+                        }
                     }
                 }
             });
@@ -500,7 +515,7 @@ public class RoundedThumbnailView extends View {
         mRippleAnimator.start();
 
         // Announce the accessibility string.
-        announceForAccessibility(mActiveRevealRequest.getAccessibilityString());
+        announceForAccessibility(mActiveRevealRequest.get().getAccessibilityString());
     }
 
     /**
