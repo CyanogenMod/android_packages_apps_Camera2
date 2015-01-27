@@ -89,7 +89,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
      */
     private void applyNexus5BackCameraFrameRateWorkaround(RequestTemplate requestTemplate) {
         Range<Integer> frameRateBackOff = new Range<>(7, 28);
-        mLogger.v("Applying Nexus5 specific framerate backoff of "+frameRateBackOff);
+        mLogger.v("Applying Nexus5 specific framerate backoff of " + frameRateBackOff);
         requestTemplate.setParam(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, frameRateBackOff);
     }
 

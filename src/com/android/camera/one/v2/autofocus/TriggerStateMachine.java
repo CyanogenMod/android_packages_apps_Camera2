@@ -20,7 +20,6 @@ import android.hardware.camera2.CaptureResult;
 import android.support.annotation.Nullable;
 
 import com.android.camera.async.Updatable;
-import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Set;
 
@@ -55,24 +54,25 @@ final class TriggerStateMachine {
 
     private final int mTriggerStart;
     private final Set<Integer> mDoneStates;
-    private final Updatable<Void> mCompleteCallback;
     private State mCurrentState;
     @Nullable
     private Long mLastTriggerFrameNumber;
     @Nullable
     private Long mLastFinishFrameNumber;
 
-    public TriggerStateMachine(int triggerStart, Set<Integer> doneStates,
-            Updatable<Void> completeCallback) {
+    public TriggerStateMachine(int triggerStart, Set<Integer> doneStates) {
         mTriggerStart = triggerStart;
         mDoneStates = doneStates;
-        mCompleteCallback = completeCallback;
         mCurrentState = State.WAITING_FOR_TRIGGER;
         mLastTriggerFrameNumber = null;
         mLastFinishFrameNumber = null;
     }
 
-    public void update(long frameNumber, @Nullable Integer triggerState, @Nullable Integer state) {
+    /**
+     * @return True upon completion of a cycle of the state machine.
+     */
+    public boolean update(long frameNumber, @Nullable Integer triggerState, @Nullable Integer
+            state) {
         boolean triggeredNow = triggerState != null && triggerState == mTriggerStart;
         boolean doneNow = mDoneStates.contains(state);
 
@@ -89,10 +89,12 @@ final class TriggerStateMachine {
             if (mLastFinishFrameNumber == null || frameNumber > mLastFinishFrameNumber) {
                 if (doneNow) {
                     mCurrentState = State.WAITING_FOR_TRIGGER;
-                    mCompleteCallback.update(null);
                     mLastFinishFrameNumber = frameNumber;
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 }

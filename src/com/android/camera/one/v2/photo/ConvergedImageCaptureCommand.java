@@ -16,22 +16,24 @@
 
 package com.android.camera.one.v2.photo;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
+import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
+
 import android.annotation.TargetApi;
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Updatable;
-import com.android.camera.async.UpdatableCountDownLatch;
-import com.android.camera.one.v2.autofocus.AETriggerStateMachine;
-import com.android.camera.one.v2.autofocus.AFTriggerStateMachine;
+import com.android.camera.one.v2.autofocus.AETriggerResult;
+import com.android.camera.one.v2.autofocus.AFTriggerResult;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.Request;
 import com.android.camera.one.v2.core.RequestBuilder;
+import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
@@ -43,9 +45,6 @@ import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
-import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
-
 /**
  * Captures a burst after waiting for AF and AE convergence.
  */
@@ -54,10 +53,26 @@ import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadat
 class ConvergedImageCaptureCommand implements ImageCaptureCommand {
     private final ImageStreamFactory mImageReader;
     private final FrameServer mFrameServer;
+    private final RequestBuilder.Factory mScanRequestTemplate;
     private final RequestBuilder.Factory mRepeatingRequestBuilder;
     private final int mRepeatingRequestTemplate;
     private final int mStillCaptureRequestTemplate;
     private final List<RequestBuilder.Factory> mBurst;
+
+    /**
+     * Transforms a request template by resetting focus and exposure modes.
+     */
+    private static RequestBuilder.Factory resetFocusExposureModes(RequestBuilder.Factory template) {
+        RequestTemplate result = new RequestTemplate(template);
+        result.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+        result.setParam(CaptureRequest.CONTROL_AF_MODE,
+                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+        result.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
+                CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+        result.setParam(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+        return result;
+    }
 
     /**
      * @param imageReader Creates the {@link ImageStream} used for capturing
@@ -83,6 +98,8 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         mRepeatingRequestTemplate = repeatingRequestTemplate;
         mStillCaptureRequestTemplate = stillCaptureRequestTemplate;
         mBurst = burst;
+
+        mScanRequestTemplate = resetFocusExposureModes(repeatingRequestBuilder);
     }
 
     /**
@@ -104,46 +121,17 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         }
     }
 
-    private RequestBuilder createAFTriggerRequest() throws CameraAccessException {
-        RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(CameraDevice.TEMPLATE_PREVIEW);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
-                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest
-                .CONTROL_AF_TRIGGER_START);
-        return triggerBuilder;
-    }
-
-    private RequestBuilder createAFTriggerCancelRequest() throws CameraAccessException {
-        RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(CameraDevice.TEMPLATE_PREVIEW);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
-                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest
-                .CONTROL_AF_TRIGGER_CANCEL);
-        return triggerBuilder;
-    }
-
-    private RequestBuilder createAFIdleRequest() throws CameraAccessException {
-        RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(CameraDevice.TEMPLATE_PREVIEW);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
-                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest
-                .CONTROL_AF_TRIGGER_IDLE);
-        return triggerBuilder;
-    }
-
     private void waitForAFConvergence(FrameServer.Session session) throws CameraAccessException,
             InterruptedException, ResourceAcquisitionFailedException,
             CameraCaptureSessionClosedException {
-        UpdatableCountDownLatch<Void> afConvergenceLatch = new UpdatableCountDownLatch<>(1);
-        AFTriggerStateMachine afStateMachine = new AFTriggerStateMachine(afConvergenceLatch);
+        AFTriggerResult afStateMachine = new AFTriggerResult();
 
-        RequestBuilder triggerBuilder = createAFTriggerRequest();
+        RequestBuilder triggerBuilder = mScanRequestTemplate.create(mRepeatingRequestTemplate);
+        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest
+                .CONTROL_AF_TRIGGER_START);
         triggerBuilder.addResponseListener(forPartialMetadata(afStateMachine));
 
-        RequestBuilder idleBuilder = createAFIdleRequest();
+        RequestBuilder idleBuilder = mScanRequestTemplate.create(mRepeatingRequestTemplate);
         idleBuilder.addResponseListener(forPartialMetadata(afStateMachine));
 
         session.submitRequest(Arrays.asList(idleBuilder.build()),
@@ -152,40 +140,22 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         session.submitRequest(Arrays.asList(triggerBuilder.build()),
                 FrameServer.RequestType.NON_REPEATING);
 
-        afConvergenceLatch.await();
-    }
-
-    private RequestBuilder createAETriggerRequest() throws CameraAccessException {
-        RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(mRepeatingRequestTemplate);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
-                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest
-                .CONTROL_AE_PRECAPTURE_TRIGGER_START);
-        return triggerBuilder;
-    }
-
-    private RequestBuilder createAEIdleRequest() throws CameraAccessException {
-        RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(mRepeatingRequestTemplate);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
-                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-        triggerBuilder.setParam(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest
-                .CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-        return triggerBuilder;
+        // Block until the AF trigger is complete
+        afStateMachine.get();
     }
 
     private void waitForAEConvergence(FrameServer.Session session) throws CameraAccessException,
             InterruptedException, ResourceAcquisitionFailedException,
             CameraCaptureSessionClosedException {
-        UpdatableCountDownLatch<Void> aeConvergenceLatch = new UpdatableCountDownLatch<>(1);
-        AETriggerStateMachine afStateMachine = new AETriggerStateMachine(aeConvergenceLatch);
+        AETriggerResult aeStateMachine = new AETriggerResult();
 
-        RequestBuilder triggerBuilder = createAETriggerRequest();
-        triggerBuilder.addResponseListener(forPartialMetadata(afStateMachine));
+        RequestBuilder triggerBuilder = mScanRequestTemplate.create(mRepeatingRequestTemplate);
+        triggerBuilder.setParam(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+        triggerBuilder.addResponseListener(forPartialMetadata(aeStateMachine));
 
-        RequestBuilder idleBuilder = createAEIdleRequest();
-        idleBuilder.addResponseListener(forPartialMetadata(afStateMachine));
+        RequestBuilder idleBuilder = mScanRequestTemplate.create(mRepeatingRequestTemplate);
+        idleBuilder.addResponseListener(forPartialMetadata(aeStateMachine));
 
         session.submitRequest(Arrays.asList(idleBuilder.build()),
                 FrameServer.RequestType.REPEATING);
@@ -193,7 +163,8 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         session.submitRequest(Arrays.asList(triggerBuilder.build()),
                 FrameServer.RequestType.NON_REPEATING);
 
-        aeConvergenceLatch.await();
+        // Wait until the ae state converges to a result.
+        aeStateMachine.get();
     }
 
     private void captureBurst(FrameServer.Session session, ImageStream imageStream, Updatable<Void>
@@ -204,6 +175,8 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         boolean first = true;
         for (RequestBuilder.Factory builderTemplate : mBurst) {
             RequestBuilder builder = builderTemplate.create(mStillCaptureRequestTemplate);
+            builder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
+                    .CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             if (first) {
                 first = false;
                 builder.addResponseListener(forFrameExposure(imageExposureUpdatable));
@@ -228,13 +201,16 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
     private void resetRepeating(FrameServer.Session session) throws InterruptedException,
             CameraCaptureSessionClosedException, CameraAccessException,
             ResourceAcquisitionFailedException {
-        RequestBuilder triggerCancelBuilder = createAFTriggerCancelRequest();
-        session.submitRequest(Arrays.asList(triggerCancelBuilder.build()),
-                FrameServer.RequestType.NON_REPEATING);
-
         RequestBuilder repeatingBuilder = mRepeatingRequestBuilder.create
                 (mRepeatingRequestTemplate);
         session.submitRequest(Arrays.asList(repeatingBuilder.build()),
                 FrameServer.RequestType.REPEATING);
+
+        RequestBuilder triggerCancelBuilder = mRepeatingRequestBuilder
+                .create(mRepeatingRequestTemplate);
+        triggerCancelBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
+                CaptureRequest.CONTROL_AF_TRIGGER_CANCEL);
+        session.submitRequest(Arrays.asList(triggerCancelBuilder.build()),
+                FrameServer.RequestType.NON_REPEATING);
     }
 }

@@ -27,6 +27,7 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
 
@@ -66,13 +67,11 @@ class FullAFScanCommand implements CameraCommand {
             return;
         }
         try {
-            UpdatableCountDownLatch<Void> scanDoneLatch = new UpdatableCountDownLatch<>(1);
-            AFTriggerStateMachine afScanStateListener =
-                    new AFTriggerStateMachine(scanDoneLatch);
+            AFTriggerResult afScanResult = new AFTriggerResult();
 
             // Build a request to send a repeating AF_IDLE
             RequestBuilder idleBuilder = mBuilderFactory.create(mTemplateType);
-            idleBuilder.addResponseListener(forPartialMetadata(afScanStateListener));
+            idleBuilder.addResponseListener(forPartialMetadata(afScanResult));
             idleBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
                     .CONTROL_MODE_AUTO);
             idleBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
@@ -82,7 +81,7 @@ class FullAFScanCommand implements CameraCommand {
 
             // Build a request to send a single AF_TRIGGER
             RequestBuilder triggerBuilder = mBuilderFactory.create(mTemplateType);
-            triggerBuilder.addResponseListener(forPartialMetadata(afScanStateListener));
+            triggerBuilder.addResponseListener(forPartialMetadata(afScanResult));
             triggerBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
                     .CONTROL_MODE_AUTO);
             triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
@@ -99,7 +98,7 @@ class FullAFScanCommand implements CameraCommand {
             // TODO If the HAL never transitions out of scanning mode, this will
             // block forever (or until interrupted because the app is paused).
             // So, maybe use a generous timeout and log as HAL errors.
-            scanDoneLatch.await();
+            afScanResult.get();
         } finally {
             session.close();
         }
