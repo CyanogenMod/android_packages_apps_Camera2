@@ -25,7 +25,6 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
-import com.android.camera.one.v2.commands.LoggingCameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.session.CaptureSession;
@@ -64,7 +63,7 @@ class PictureTakerImpl implements PictureTaker {
                 OrientationManager.DeviceOrientation.from(params.orientation),
                 session);
 
-        mCameraCommandExecutor.execute(new LoggingCameraCommand(new CameraCommand() {
+        mCameraCommandExecutor.execute(new CameraCommand() {
             @Override
             public void run() throws InterruptedException, CameraAccessException,
                     CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
@@ -77,6 +76,6 @@ class PictureTakerImpl implements PictureTaker {
                     throw e;
                 }
             }
-        }, "Picture Command"));
+        });
     }
 }
