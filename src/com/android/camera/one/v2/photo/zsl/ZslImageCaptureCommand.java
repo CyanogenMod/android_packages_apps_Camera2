@@ -46,7 +46,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * ImageCaptureCommand is used instead.
  */
 @ParametersAreNonnullByDefault
-class ZslImageCaptureCommand implements ImageCaptureCommand {
+public class ZslImageCaptureCommand implements ImageCaptureCommand {
     private final BufferQueue<ImageProxy> mZslRingBuffer;
     private final MetadataPool mZslMetadataPool;
     private final ImageCaptureCommand mFallbackCommand;

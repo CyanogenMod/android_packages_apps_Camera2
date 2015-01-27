@@ -25,12 +25,30 @@ import com.google.common.base.Predicate;
  * {@link #apply} returns true for TotalCaptureResults of zsl images which may
  * be saved.
  */
-class AcceptableZslImageFilter implements Predicate<TotalCaptureResultProxy> {
+public class AcceptableZslImageFilter implements Predicate<TotalCaptureResultProxy> {
+    private final boolean requireAFConvergence;
+    private final boolean requireAEConvergence;
+
+    /**
+     * @param requireAFConvergence Whether the filter should require AF convergence.
+     * @param requireAEConvergence Whether the filter should require AE convergence.
+     */
+    public AcceptableZslImageFilter(boolean requireAFConvergence, boolean requireAEConvergence) {
+        this.requireAFConvergence = requireAFConvergence;
+        this.requireAEConvergence = requireAEConvergence;
+    }
+
     @Override
     public boolean apply(TotalCaptureResultProxy metadata) {
-        return isLensStationary(metadata) &&
-                isAEAcceptable(metadata) &&
-                isAFAcceptable(metadata);
+        boolean result = true;
+        result &= isLensStationary(metadata);
+        if (requireAFConvergence) {
+            result &= isAFAcceptable(metadata);
+        }
+        if (requireAEConvergence) {
+            result &= isAEAcceptable(metadata);
+        }
+        return result;
     }
 
     private boolean isLensStationary(TotalCaptureResultProxy metadata) {

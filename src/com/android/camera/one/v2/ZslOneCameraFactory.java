@@ -26,7 +26,6 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
-import com.android.camera.debug.Log;
 import com.android.camera.debug.Logger;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
@@ -39,10 +38,10 @@ import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
-import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.core.ResponseListeners;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
@@ -56,6 +55,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class ZslOneCameraFactory implements OneCameraFactory {
     private final Logger mLogger;
     private final int mImageFormat;
@@ -133,7 +135,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         new CameraDeviceRequestBuilderFactory(device));
                 rootBuilder.addStream(new SimpleCaptureStream(previewSurface));
                 rootBuilder.addResponseListener(
-                        new TotalCaptureResultResponseListener(metadataCallback));
+                        ResponseListeners.forFinalMetadata(metadataCallback));
 
                 // Create the shared image reader.
                 ZslSharedImageReaderFactory sharedImageReaderFactory =
@@ -166,7 +168,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         basicCameraFactory.provideMeteredZoomedRequestBuilder(),
                         sharedImageReaderFactory.provideSharedImageReader(),
                         sharedImageReaderFactory.provideZSLCaptureStream(),
-                        sharedImageReaderFactory.provideMetadataPool());
+                        sharedImageReaderFactory.provideMetadataPool(), flashSetting);
 
                 basicCameraFactory.providePreviewStarter().run();
 
