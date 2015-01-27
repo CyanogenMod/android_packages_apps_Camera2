@@ -32,6 +32,7 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
+
 import com.google.common.base.Optional;
 
 import java.util.HashSet;
@@ -111,11 +112,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         public void onStart(TaskImageContainer.TaskInfo task) {
             switch (task.destination) {
                 case FAST_THUMBNAIL:
-                    // Start Animation
-                    if (task.result.format ==
-                            TaskImageContainer.TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888) {
-                        mPictureSaverCallback.onThumbnailProcessingBegun();
-                    }
+                    // Signal start of processing
                     break;
                 case INTERMEDIATE_THUMBNAIL:
                     // Do nothing
@@ -126,7 +123,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         @Override
         public void onResultCompressed(TaskImageContainer.TaskInfo task,
                 TaskImageContainer.CompressedPayload payload) {
-            if(task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
+            if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
                 mPictureSaverCallback.onRemoteThumbnailAvailable(payload.data);
             }
         }

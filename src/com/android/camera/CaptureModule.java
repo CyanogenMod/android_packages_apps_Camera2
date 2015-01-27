@@ -255,21 +255,14 @@ public class CaptureModule extends CameraModule implements
                 }
 
                 @Override
-                public void onThumbnailProcessingBegun() {
+                public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
+                    // Call ripple effect when you know that you have the bitmap
+                    // then update bitmap.
                     mMainHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             mAppController.getCameraAppUI().startCaptureIndicatorRevealAnimation(
                                     getPeekAccessibilityString());
-                        }
-                    });
-                }
-
-                @Override
-                public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
-                    mMainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
                             mAppController.getCameraAppUI().updateCaptureIndicatorThumbnail(
                                     thumbnailBitmap, rotation);
                         }

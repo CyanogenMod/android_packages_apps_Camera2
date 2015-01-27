@@ -179,11 +179,6 @@ public interface OneCamera {
      */
     public static interface PictureSaverCallback {
         /**
-         * Called when start generating a thumbnail image.
-         */
-        public void onThumbnailProcessingBegun();
-
-        /**
          * Called when a thumbnail image is available.
          */
         public void onThumbnailAvailable(Bitmap thumbnailBitmap, int rotation);

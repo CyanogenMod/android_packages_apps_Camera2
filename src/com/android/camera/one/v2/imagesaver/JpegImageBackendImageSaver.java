@@ -120,7 +120,6 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
                 TaskImageContainer.CompressedPayload payload) {
             if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
                 // Just start the thumbnail now, since there's no earlier event.
-                mPictureSaverCallback.onThumbnailProcessingBegun();
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(payload.data, 0,
                         payload.data.length);
                 // Send image to disk saver.
