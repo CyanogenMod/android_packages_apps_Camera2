@@ -16,91 +16,68 @@
 
 package com.android.camera.debug;
 
+import com.android.camera.debug.Log.Tag;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Like {@link android.util.Log}.
  */
 @ParametersAreNonnullByDefault
-public class Logger {
-    private final Log.Tag mTag;
-
-    public Logger(Log.Tag tag) {
-        mTag = tag;
-    }
-
-    public static Logger create(String tag) {
-        return new Logger(new Log.Tag(tag));
-    }
-
+public interface Logger {
     /**
      * See {@link Log#d}.
-     * @param msg
      */
-    public void d(String msg) {
-        Log.d(mTag, msg);
-    }
+    public void d(String msg);
 
     /**
      * See {@link Log#d}.
      */
-    public void d(String msg, Throwable tr) {
-        Log.d(mTag, msg, tr);
-    }
+    public void d(String msg, Throwable tr);
+    /**
+     * See {@link Log#e}.
+     */
+    public void e(String msg);
 
     /**
      * See {@link Log#e}.
      */
-    public void e(String msg) {
-        Log.e(mTag, msg);
-    }
-
-    /**
-     * See {@link Log#e}.
-     */
-    public void e(String msg, Throwable tr) {
-        Log.e(mTag, msg, tr);
-    }
+    public void e(String msg, Throwable tr);
 
     /**
      * See {@link Log#i}.
      */
-    public void i(String msg) {
-        Log.e(mTag, msg);
-    }
+    public void i(String msg);
 
     /**
      * See {@link Log#i}.
      */
-    public void i(String msg, Throwable tr) {
-        Log.e(mTag, msg, tr);
-    }
+    public void i(String msg, Throwable tr);
 
     /**
      * See {@link Log#v}.
      */
-    public void v(String msg) {
-        Log.e(mTag, msg);
-    }
+    public void v(String msg);
 
     /**
      * See {@link Log#v}.
      */
-    public void v(String msg, Throwable tr) {
-        Log.e(mTag, msg, tr);
-    }
+    public void v(String msg, Throwable tr);
 
     /**
      * See {@link Log#w}.
      */
-    public void w(String msg) {
-        Log.e(mTag, msg);
-    }
+    public void w(String msg);
 
     /**
      * See {@link Log#w}.
      */
-    public void w(String msg, Throwable tr) {
-        Log.e(mTag, msg, tr);
+    public void w(String msg, Throwable tr);
+
+    /**
+     * Provides a Logger instance from a given Log tag.
+     */
+    public interface Factory {
+        public Logger create(Tag tag);
     }
 }

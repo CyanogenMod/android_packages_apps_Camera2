@@ -16,8 +16,9 @@
 
 package com.android.camera.one.v2;
 
-import com.android.camera.debug.Log;
+import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
+import com.android.camera.debug.Loggers;
 import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ForwardingImageReader;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
@@ -28,6 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nullable;
 
 final class LoggingImageReader extends ForwardingImageReader {
+    private static Tag TAG = new Tag("LoggingImageReader");
+
     private class LoggingImageProxy extends ForwardingImageProxy {
         public LoggingImageProxy(ImageProxy proxy) {
             super(proxy);
@@ -42,14 +45,14 @@ final class LoggingImageReader extends ForwardingImageReader {
     private final Logger mLogger;
     private final AtomicInteger mNumOpenImages;
 
-    LoggingImageReader(ImageReaderProxy delegate, Logger logger) {
+    LoggingImageReader(ImageReaderProxy delegate, Logger.Factory logFactory) {
         super(delegate);
-        mLogger = logger;
+        mLogger = logFactory.create(TAG);
         mNumOpenImages = new AtomicInteger(0);
     }
 
     public static LoggingImageReader create(ImageReaderProxy imageReader) {
-        return new LoggingImageReader(imageReader, Logger.create("LoggingImageReader"));
+        return new LoggingImageReader(imageReader, Loggers.tagFactory());
     }
 
     @Override
