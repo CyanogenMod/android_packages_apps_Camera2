@@ -1153,7 +1153,7 @@ public class PhotoModule
             CameraCapabilities.FocusMode focusMode) {
         CameraCapabilities.Stringifier stringifier = mCameraCapabilities.getStringifier();
         SettingsManager settingsManager = mActivity.getSettingsManager();
-        if (!CameraCapabilities.FlashMode.NO_FLASH.equals(flashMode)) {
+        if ((flashMode != null) && (!CameraCapabilities.FlashMode.NO_FLASH.equals(flashMode))) {
             String flashModeString = stringifier.stringify(flashMode);
             Log.v(TAG, "override flash setting to: " + flashModeString);
             settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FLASH_MODE,
@@ -1161,10 +1161,12 @@ public class PhotoModule
         } else {
             Log.v(TAG, "skip setting flash mode on override due to NO_FLASH");
         }
-        String focusModeString = stringifier.stringify(focusMode);
-        Log.v(TAG, "override focus setting to: " + focusModeString);
-        settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FOCUS_MODE,
-                focusModeString);
+        if (focusMode != null) {
+            String focusModeString = stringifier.stringify(focusMode);
+            Log.v(TAG, "override focus setting to: " + focusModeString);
+            settingsManager.set(mAppController.getCameraScope(), Keys.KEY_FOCUS_MODE,
+                    focusModeString);
+        }
     }
 
     @Override
@@ -1186,6 +1188,13 @@ public class PhotoModule
 
         // Do camera parameter dependent initialization.
         mCameraSettings = mCameraDevice.getSettings();
+        // Set a default flash mode and focus mode
+        if (mCameraSettings.getCurrentFlashMode() == null) {
+            mCameraSettings.setFlashMode(CameraCapabilities.FlashMode.NO_FLASH);
+        }
+        if (mCameraSettings.getCurrentFocusMode() == null) {
+            mCameraSettings.setFocusMode(CameraCapabilities.FocusMode.AUTO);
+        }
 
         setCameraParameters(UPDATE_PARAM_ALL);
         // Set a listener which updates camera parameters based
