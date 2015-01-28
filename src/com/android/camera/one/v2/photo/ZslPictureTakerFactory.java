@@ -54,7 +54,8 @@ public class ZslPictureTakerFactory {
         // This command will perform a full AF & AE sequence.
         ImageCaptureCommand fallbackCommand = new ConvergedImageCaptureCommand(
                 sharedImageReader, frameServer, rootRequestBuilder,
-                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, Arrays.asList(rootRequestBuilder));
+                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder));
 
         // When flash is ON, always use the ConvergedImageCaptureCommand which
         // performs the AF & AE precapture sequence.

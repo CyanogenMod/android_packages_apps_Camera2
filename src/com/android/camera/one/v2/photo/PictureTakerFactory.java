@@ -37,8 +37,8 @@ public final class PictureTakerFactory {
             RequestBuilder.Factory rootRequestBuilder,
             ImageStreamFactory sharedImageReader) {
         ImageCaptureCommand captureCommand = new ConvergedImageCaptureCommand(sharedImageReader,
-                frameServer, rootRequestBuilder, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
-                Arrays.asList(rootRequestBuilder));
+                frameServer, rootRequestBuilder, CameraDevice.TEMPLATE_PREVIEW,
+                CameraDevice.TEMPLATE_STILL_CAPTURE, Arrays.asList(rootRequestBuilder));
         mPictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor, imageSaverBuilder,
                 captureCommand);
     }

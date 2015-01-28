@@ -16,12 +16,11 @@
 
 package com.android.camera.one.v2.photo;
 
-import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
-import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
-
+import android.annotation.TargetApi;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
+import android.os.Build;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Updatable;
@@ -44,15 +43,20 @@ import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
+import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
+
 /**
  * Captures a burst after waiting for AF and AE convergence.
  */
 @ParametersAreNonnullByDefault
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class ConvergedImageCaptureCommand implements ImageCaptureCommand {
     private final ImageStreamFactory mImageReader;
     private final FrameServer mFrameServer;
     private final RequestBuilder.Factory mRepeatingRequestBuilder;
     private final int mRepeatingRequestTemplate;
+    private final int mStillCaptureRequestTemplate;
     private final List<RequestBuilder.Factory> mBurst;
 
     /**
@@ -64,17 +68,20 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
      *            capture is complete.
      * @param repeatingRequestTemplate The template type to use for repeating
      *            requests.
+     * @param repeatingRequestTemplate The template type to use for capture
+     *            requests.
      * @param burst Creates request builders to use for each image captured from
      *            the burst.
      */
     public ConvergedImageCaptureCommand(ImageStreamFactory imageReader, FrameServer frameServer,
             RequestBuilder.Factory repeatingRequestBuilder,
-            int repeatingRequestTemplate,
+            int repeatingRequestTemplate, int stillCaptureRequestTemplate,
             List<RequestBuilder.Factory> burst) {
         mImageReader = imageReader;
         mFrameServer = frameServer;
         mRepeatingRequestBuilder = repeatingRequestBuilder;
         mRepeatingRequestTemplate = repeatingRequestTemplate;
+        mStillCaptureRequestTemplate = stillCaptureRequestTemplate;
         mBurst = burst;
     }
 
@@ -150,7 +157,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
 
     private RequestBuilder createAETriggerRequest() throws CameraAccessException {
         RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                .create(mRepeatingRequestTemplate);
         triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
                 CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
         triggerBuilder.setParam(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest
@@ -160,7 +167,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
 
     private RequestBuilder createAEIdleRequest() throws CameraAccessException {
         RequestBuilder triggerBuilder = mRepeatingRequestBuilder
-                .create(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                .create(mRepeatingRequestTemplate);
         triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE,
                 CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
         triggerBuilder.setParam(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest
@@ -196,7 +203,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         List<Request> burstRequest = new ArrayList<>(mBurst.size());
         boolean first = true;
         for (RequestBuilder.Factory builderTemplate : mBurst) {
-            RequestBuilder builder = builderTemplate.create(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            RequestBuilder builder = builderTemplate.create(mStillCaptureRequestTemplate);
             if (first) {
                 first = false;
                 builder.addResponseListener(forFrameExposure(imageExposureUpdatable));
