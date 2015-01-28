@@ -128,7 +128,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * convert raw images into the lowest resolution raw images in visually
      * lossless manner without changing the aspect ratio or creating subsample
      * artifacts.
-     * 
+     *
      * @param imageSize Dimensions of the original image
      * @param targetSize Target dimensions of the resultant image
      * @return inscribed image as ARGB_8888
@@ -151,6 +151,35 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         }
 
         return 1; // If all fails, don't do the subsample.
+    }
+
+    /**
+     * Calculates the memory offset of a YUV 420 plane, given the parameters of
+     * the separate YUV color planes and the fact that UV components may be
+     * subsampled by a factor of 2.
+     *
+     * @param inscribedXMin X location that you want to start sampling on the
+     *            input image in terms of input pixels
+     * @param inscribedYMin Y location that you want to start sampling on the
+     *            input image in terms of input pixels
+     * @param subsample Subsample factor applied to the input image
+     * @param colorSubsample Color subsample due to the YUV color space (In YUV,
+     *            it's 1 for Y, 2 for UV)
+     * @param rowStride Row Stride of the color plane in terms of bytes
+     * @param pixelStride Pixel Stride of the color plane in terms of bytes
+     * @param inputHorizontalOffset Horizontal Input Offset for sampling that
+     *            you wish to add in terms of input pixels
+     * @param inputVerticalOffset Vertical Input Offset for sampling that you
+     *            wish to add in terms of input pixels
+     * @return value of the corresponding memory offset.
+     */
+    protected static int calculateMemoryOffsetFromPixelOffsets(int inscribedXMin,
+            int inscribedYMin, int subsample, int colorSubsample,
+            int rowStride, int pixelStride, int inputHorizontalOffset, int inputVerticalOffset) {
+        return inputVerticalOffset * (rowStride / subsample)
+                + inputHorizontalOffset * (pixelStride / subsample)
+                + (inscribedYMin / colorSubsample) * rowStride
+                + (inscribedXMin / colorSubsample) * pixelStride;
     }
 
     /**
@@ -197,14 +226,14 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
             inscribedYMin = 0;
             inscribedYMax = h;
             inputVerticalOffset = 0;
-            inputHorizontalOffset = quantizeBy2( (inputWidth - inputHeight) / 2);
+            inputHorizontalOffset = subsample / 2;
         } else {
             inscribedXMin = 0;
             inscribedXMax = w;
             // since we're 2x2 blocks we need to quantize these values by 2
             inscribedYMin = quantizeBy2(h / 2 - r);
             inscribedYMax = quantizeBy2(h / 2 + r);
-            inputVerticalOffset = quantizeBy2( (inputHeight - inputWidth) / 2);
+            inputVerticalOffset = subsample / 2;
             inputHorizontalOffset = 0;
         }
 
@@ -234,10 +263,17 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         // Take in vertical lines by factor of two because of the u/v component
         // subsample
         for (int j = inscribedYMin; j < inscribedYMax; j += 2) {
-            int offsetY = (j + inputVerticalOffset) * yByteStride + (inscribedXMin + inputHorizontalOffset) * yPixelStride;
             int offsetColor = (j - inscribedYMin) * (outputPixelStride);
-            int offsetU = ((j + inputVerticalOffset) / 2) * (uByteStride) + (inscribedXMin + inputHorizontalOffset/2) * uPixelStride;
-            int offsetV = ((j + inputVerticalOffset) / 2) * (vByteStride) + (inscribedXMin + inputHorizontalOffset/2) * vPixelStride;
+            int offsetY = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
+                    1 /* YComponent */, yByteStride, yPixelStride, inputHorizontalOffset,
+                    inputVerticalOffset);
+            int offsetU = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
+                    2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
+                    inputHorizontalOffset, inputVerticalOffset);
+            int offsetV = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
+                    2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
+                    inputHorizontalOffset, inputVerticalOffset);
+
             // Parametrize the circle boundaries w.r.t. the y component.
             // Find the subsequence of pixels we need for each horizontal raster
             // line.
@@ -253,7 +289,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
             // Take in horizontal lines by factor of two because of the u/v
             // component subsample
             // and everything as 2x2 blocks.
-            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride, offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
+            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride,
+                    offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
                 // Note i and j are in terms of pixels of the subsampled image
                 // offsetY, offsetU, and offsetV are in terms of bytes of the
                 // image
@@ -479,14 +516,14 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 inscribedYMin = 0;
                 inscribedYMax = outputHeight;
                 inputVerticalOffset = 0;
-                inputHorizontalOffset = quantizeBy2( (inputWidth - inputHeight) / 2);
+                inputHorizontalOffset = subsample / 2;
             } else {
                 inscribedXMin = 0;
                 inscribedXMax = outputWidth;
                 // since we're 2x2 blocks we need to quantize these values by 2
                 inscribedYMin = quantizeBy2(outputHeight / 2 - r);
                 inscribedYMax = quantizeBy2(outputHeight / 2 + r);
-                inputVerticalOffset = quantizeBy2( (inputHeight - inputWidth) / 2);
+                inputVerticalOffset = subsample / 2;
                 inputHorizontalOffset = 0;
             }
 
@@ -506,15 +543,22 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         // Take in vertical lines by factor of two because of the u/v component
         // subsample
         for (int j = inscribedYMin; j < inscribedYMax; j += 2) {
-            int offsetY = (j + inputVerticalOffset) * yByteStride + (inscribedXMin + inputHorizontalOffset) * yPixelStride;
             int offsetColor = (j - inscribedYMin) * (outputPixelStride);
-            int offsetU = ((j + inputVerticalOffset) / 2) * (uByteStride) + (inscribedXMin + inputHorizontalOffset/2) * uPixelStride;
-            int offsetV = ((j + inputVerticalOffset) / 2) * (vByteStride) + (inscribedXMin + inputHorizontalOffset/2) * vPixelStride;
+            int offsetY = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
+                    1 /* YComponent */, yByteStride, yPixelStride, inputHorizontalOffset,
+                    inputVerticalOffset);
+            int offsetU = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
+                    2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
+                    inputHorizontalOffset, inputVerticalOffset);
+            int offsetV = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
+                    2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
+                    inputHorizontalOffset, inputVerticalOffset);
 
             // Take in horizontal lines by factor of two because of the u/v
             // component subsample
             // and everything as 2x2 blocks.
-            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride, offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
+            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride,
+                    offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
                 // Note i and j are in terms of pixels of the subsampled image
                 // offsetY, offsetU, and offsetV are in terms of bytes of the
                 // image
