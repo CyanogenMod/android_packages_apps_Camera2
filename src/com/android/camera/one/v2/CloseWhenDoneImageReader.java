@@ -21,6 +21,8 @@ import com.android.camera.one.v2.camera2proxy.ForwardingImageReader;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
@@ -35,14 +37,19 @@ import javax.annotation.concurrent.ThreadSafe;
 public final class CloseWhenDoneImageReader extends ForwardingImageReader implements
         ImageReaderProxy {
     private class ImageDecorator extends ForwardingImageProxy {
+        private final AtomicBoolean mClosed;
+
         public ImageDecorator(ImageProxy proxy) {
             super(proxy);
+            mClosed = new AtomicBoolean(false);
         }
 
         @Override
         public void close() {
-            super.close();
-            decrementImageCount();
+            if (!mClosed.getAndSet(true)) {
+                super.close();
+                decrementImageCount();
+            }
         }
     }
 
