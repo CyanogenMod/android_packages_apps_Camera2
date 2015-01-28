@@ -94,6 +94,23 @@ public class RoundedThumbnailView extends View {
     private static final long RIPPLE_DURATION_MS = 200;
     private static final float RIPPLE_OPACITY_BEGIN = 0.4f;
     private static final float RIPPLE_OPACITY_END = 0.0f;
+    /**
+     * Configurations for the hit-state effect.
+     */
+    private static final float HIT_STATE_CIRCLE_OPACITY_HIDDEN = -1.0f;
+    private static final float HIT_STATE_CIRCLE_OPACITY_BEGIN = 0.7f;
+    private static final float HIT_STATE_CIRCLE_OPACITY_END = 0.0f;
+    private static final long HIT_STATE_DURATION_MS = 150;
+
+    /**
+     * Defines call events.
+     */
+    public interface Callback {
+        public void onHitStateFinished();
+    }
+
+    /** The registered callback. */
+    private Optional<Callback> mCallback;
 
     /**
      * Fields for view layout.
@@ -103,6 +120,12 @@ public class RoundedThumbnailView extends View {
     /**
      * Fields for the thumbnail pop-out effect.
      */
+    // The animators to move the thumbnail.
+    private AnimatorSet mThumbnailAnimatorSet;
+    // The current diameter for the thumbnail image.
+    private float mCurrentThumbnailDiameter;
+    // The current reveal circle opacity.
+    private float mCurrentRevealCircleOpacity;
     // The duration of the stretch phase in thumbnail pop-out effect.
     private long mThumbnailStretchDurationMs;
     // The duration of the shrink phase in thumbnail pop-out effect.
@@ -115,10 +138,6 @@ public class RoundedThumbnailView extends View {
     private float mThumbnailShrinkDiameterBegin;
     // The ending diameter of the thumbnail for the shrink phase in thumbnail pop-out effect.
     private float mThumbnailShrinkDiameterEnd;
-
-    private AnimatorSet mThumbnailAnimatorSet;
-    private float mCurrentThumbnailDiameter;
-    private float mCurrentRevealCircleOpacity;
 
     /**
      * Fields for the ripple effect.
@@ -143,8 +162,17 @@ public class RoundedThumbnailView extends View {
     // The current ripple ring thickness which is updated by the ripple animator and used by
     // onDraw().
     private float mCurrentRippleRingThickness;
-    // The current ripple ring opacity which is updated by the ripple animator and used byonDraw().
+    // The current ripple ring opacity which is updated by the ripple animator and used by onDraw().
     private float mCurrentRippleRingOpacity;
+
+    /**
+     * Fields for the hit state effect.
+     */
+    // The paint to draw hit state circle.
+    private final Paint mHitStateCirclePaint;
+    // The current hit state circle opacity (0.0 - 1.0) which is updated by the
+    // hit state animator. If -1, the hit state circle won't be drawn.
+    private float mCurrentHitStateCircleOpacity;
 
     // The waiting queue for all pending reveal requests. The latest request should be in the end of
     // the queue.
@@ -156,14 +184,47 @@ public class RoundedThumbnailView extends View {
     // The latest finished reveal request. Its thumbnail will be shown until a newer one replace it.
     private Optional<RevealRequest> mFinishedRevealRequest;
 
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Trigger the hit state animation. Fade out the hit state white
+            // circle by changing the alpha.
+            final ValueAnimator hitStateAnimator = ValueAnimator.ofFloat(
+                    HIT_STATE_CIRCLE_OPACITY_BEGIN, HIT_STATE_CIRCLE_OPACITY_END);
+            hitStateAnimator.setDuration(HIT_STATE_DURATION_MS);
+            hitStateAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            hitStateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    mCurrentHitStateCircleOpacity = (Float) valueAnimator.getAnimatedValue();
+                    invalidate();
+                }
+            });
+            hitStateAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mCurrentHitStateCircleOpacity = HIT_STATE_CIRCLE_OPACITY_HIDDEN;
+                    if (mCallback.isPresent()) {
+                        mCallback.get().onHitStateFinished();
+                    }
+                }
+            });
+            hitStateAnimator.start();
+        }
+    };
+
     /**
      * Constructs a RoundedThumbnailView.
      */
     public RoundedThumbnailView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        mCallback = Optional.absent();
+
         // Make the view clickable.
         setClickable(true);
+        setOnClickListener(mOnClickListener);
 
         // TODO: Adjust layout when mode option overlay is visible.
         mThumbnailPadding = getResources().getDimension(R.dimen.rounded_thumbnail_padding);
@@ -191,6 +252,13 @@ public class RoundedThumbnailView extends View {
         mRippleRingThicknessEnd =
                 getResources().getDimension(R.dimen.rounded_thumbnail_ripple_ring_thick_min);
 
+        mCurrentHitStateCircleOpacity = HIT_STATE_CIRCLE_OPACITY_HIDDEN;
+        // Draw the reveal while circle.
+        mHitStateCirclePaint = new Paint();
+        mHitStateCirclePaint.setAntiAlias(true);
+        mHitStateCirclePaint.setColor(Color.WHITE);
+        mHitStateCirclePaint.setStyle(Paint.Style.FILL);
+
         mActiveRevealRequest = Optional.absent();
         mFinishedRevealRequest = Optional.absent();
     }
@@ -206,17 +274,20 @@ public class RoundedThumbnailView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        float centerX = canvas.getWidth() / 2;
-        float centerY = canvas.getHeight() / 2;
-        RectF viewBound =
-                new RectF(0, 0, mRippleRingDiameterEnd, mRippleRingDiameterEnd);
+        final float centerX = canvas.getWidth() / 2;
+        final float centerY = canvas.getHeight() / 2;
+
+        final float viewDiameter = mRippleRingDiameterEnd;
+        final float finalDiameter = mThumbnailShrinkDiameterEnd;
+        final RectF viewBound =
+                new RectF(0, 0, viewDiameter, viewDiameter);
 
         // Draw the thumbnail of latest finished reveal request.
         if (mFinishedRevealRequest.isPresent()) {
             Paint thumbnailPaint = mFinishedRevealRequest.get().getThumbnailPaint();
             if (thumbnailPaint != null) {
                 // Draw the old thumbnail with the final diameter.
-                float scaleRatio = mThumbnailShrinkDiameterEnd / mRippleRingDiameterEnd;
+                float scaleRatio = finalDiameter / viewDiameter;
 
                 canvas.save();
                 canvas.scale(scaleRatio, scaleRatio, centerX, centerY);
@@ -274,6 +345,28 @@ public class RoundedThumbnailView extends View {
 
             canvas.restore();
         }
+
+        // Draw hit state circle if necessary.
+        if (mCurrentHitStateCircleOpacity != HIT_STATE_CIRCLE_OPACITY_HIDDEN) {
+            canvas.save();
+            final float scaleRatio = finalDiameter / viewDiameter;
+            canvas.scale(scaleRatio, scaleRatio, centerX, centerY);
+
+            // Draw the hit state while circle.
+            mHitStateCirclePaint.setAlpha((int) (mCurrentHitStateCircleOpacity * 255));
+            canvas.drawCircle(centerX, centerY,
+                    mRippleRingDiameterEnd / 2, mHitStateCirclePaint);
+            canvas.restore();
+        }
+    }
+
+    /**
+     * Sets the callback.
+     *
+     * @param callback The callback to be set.
+     */
+    public void setCallback(Callback callback) {
+        mCallback = Optional.of(callback);
     }
 
     /**

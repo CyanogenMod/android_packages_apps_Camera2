@@ -788,9 +788,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
         mAnimationManager = new AnimationManager();
         mRoundedThumbnailView = (RoundedThumbnailView) appRootView.findViewById(R.id.rounded_thumbnail_view);
-        mRoundedThumbnailView.setOnClickListener(new View.OnClickListener() {
+        mRoundedThumbnailView.setCallback(new RoundedThumbnailView.Callback() {
             @Override
-            public void onClick(View v) {
+            public void onHitStateFinished() {
                 mFilmstripLayout.showFilmstrip();
             }
         });
