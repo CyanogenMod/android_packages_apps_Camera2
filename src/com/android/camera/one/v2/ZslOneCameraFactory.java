@@ -26,7 +26,9 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
+import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
+import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
@@ -59,6 +61,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class ZslOneCameraFactory implements OneCameraFactory {
+    private static Tag TAG = new Tag("ZslOneCamFactory");
+
     private final Logger mLogger;
     private final int mImageFormat;
     private final int mMaxImageCount;
@@ -66,7 +70,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
     public ZslOneCameraFactory(int imageFormat, int maxImageCount) {
         mImageFormat = imageFormat;
         mMaxImageCount = maxImageCount;
-        mLogger = Logger.create("ZslOneCamFactory");
+        mLogger = Loggers.tagFactory().create(TAG);
     }
 
     /**
