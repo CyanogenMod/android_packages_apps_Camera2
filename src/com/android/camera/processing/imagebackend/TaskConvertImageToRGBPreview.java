@@ -128,12 +128,13 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * convert raw images into the lowest resolution raw images in visually
      * lossless manner without changing the aspect ratio or creating subsample
      * artifacts.
+     * 
      * @param imageSize Dimensions of the original image
      * @param targetSize Target dimensions of the resultant image
      * @return inscribed image as ARGB_8888
      */
     protected int calculateBestSubsampleFactor(Size imageSize, Size targetSize) {
-        int maxSubsample = Math.min( imageSize.getWidth()/ targetSize.getWidth(),
+        int maxSubsample = Math.min(imageSize.getWidth() / targetSize.getWidth(),
                 imageSize.getHeight() / targetSize.getHeight());
         if (maxSubsample < 1) {
             return 1;
@@ -173,14 +174,20 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     + ") in YUV Image Object");
         }
 
-        int w = img.getWidth() / subsample;
-        int h = img.getHeight() / subsample;
+        int inputWidth = img.getWidth();
+        int inputHeight = img.getHeight();
+        int outputWidth = inputWidth / subsample;
+        int outputHeight = inputHeight / subsample;
+        int w = outputWidth;
+        int h = outputHeight;
         int r = inscribedCircleRadius(w, h);
 
         int inscribedXMin;
         int inscribedXMax;
         int inscribedYMin;
         int inscribedYMax;
+        int inputVerticalOffset = 0;
+        int inputHorizontalOffset = 0;
 
         // Set up input read boundaries.
         if (w > h) {
@@ -189,12 +196,16 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
             inscribedXMax = quantizeBy2(w / 2 + r);
             inscribedYMin = 0;
             inscribedYMax = h;
+            inputVerticalOffset = 0;
+            inputHorizontalOffset = quantizeBy2( (inputWidth - inputHeight) / 2);
         } else {
             inscribedXMin = 0;
             inscribedXMax = w;
             // since we're 2x2 blocks we need to quantize these values by 2
             inscribedYMin = quantizeBy2(h / 2 - r);
             inscribedYMax = quantizeBy2(h / 2 + r);
+            inputVerticalOffset = quantizeBy2( (inputHeight - inputWidth) / 2);
+            inputHorizontalOffset = 0;
         }
 
         ByteBuffer buf0 = planeList.get(0).getBuffer();
@@ -223,10 +234,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         // Take in vertical lines by factor of two because of the u/v component
         // subsample
         for (int j = inscribedYMin; j < inscribedYMax; j += 2) {
-            int offsetY = j * yByteStride + inscribedXMin;
+            int offsetY = (j + inputVerticalOffset) * yByteStride + (inscribedXMin + inputHorizontalOffset) * yPixelStride;
             int offsetColor = (j - inscribedYMin) * (outputPixelStride);
-            int offsetU = (j / 2) * (uByteStride) + (inscribedXMin);
-            int offsetV = (j / 2) * (vByteStride) + (inscribedXMin);
+            int offsetU = ((j + inputVerticalOffset) / 2) * (uByteStride) + (inscribedXMin + inputHorizontalOffset/2) * uPixelStride;
+            int offsetV = ((j + inputVerticalOffset) / 2) * (vByteStride) + (inscribedXMin + inputHorizontalOffset/2) * vPixelStride;
             // Parametrize the circle boundaries w.r.t. the y component.
             // Find the subsequence of pixels we need for each horizontal raster
             // line.
@@ -242,8 +253,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
             // Take in horizontal lines by factor of two because of the u/v
             // component subsample
             // and everything as 2x2 blocks.
-            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride,
-                    offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
+            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride, offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
                 // Note i and j are in terms of pixels of the subsampled image
                 // offsetY, offsetU, and offsetV are in terms of bytes of the
                 // image
@@ -431,8 +441,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     + ") in YUV Image Object");
         }
 
-        int outputWidth = img.getWidth() / subsample;
-        int outputHeight = img.getHeight() / subsample;
+        int inputWidth = img.getWidth();
+        int inputHeight = img.getHeight();
+        int outputWidth = inputWidth / subsample;
+        int outputHeight = inputHeight / subsample;
 
         // Set up input read boundaries.
 
@@ -454,6 +466,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         int inscribedXMax = quantizeBy2(outputWidth);
         int inscribedYMin = 0;
         int inscribedYMax = quantizeBy2(outputHeight);
+        int inputVerticalOffset = 0;
+        int inputHorizontalOffset = 0;
 
         if (enableSquareInscribe) {
             int r = inscribedCircleRadius(outputWidth, outputHeight);
@@ -464,12 +478,16 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 inscribedXMax = quantizeBy2(outputWidth / 2 + r);
                 inscribedYMin = 0;
                 inscribedYMax = outputHeight;
+                inputVerticalOffset = 0;
+                inputHorizontalOffset = quantizeBy2( (inputWidth - inputHeight) / 2);
             } else {
                 inscribedXMin = 0;
                 inscribedXMax = outputWidth;
                 // since we're 2x2 blocks we need to quantize these values by 2
                 inscribedYMin = quantizeBy2(outputHeight / 2 - r);
                 inscribedYMax = quantizeBy2(outputHeight / 2 + r);
+                inputVerticalOffset = quantizeBy2( (inputHeight - inputWidth) / 2);
+                inputHorizontalOffset = 0;
             }
 
             len = r * r * 4;
@@ -488,16 +506,15 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         // Take in vertical lines by factor of two because of the u/v component
         // subsample
         for (int j = inscribedYMin; j < inscribedYMax; j += 2) {
-            int offsetY = j * yByteStride + inscribedXMin;
+            int offsetY = (j + inputVerticalOffset) * yByteStride + (inscribedXMin + inputHorizontalOffset) * yPixelStride;
             int offsetColor = (j - inscribedYMin) * (outputPixelStride);
-            int offsetU = (j / 2) * (uByteStride) + (inscribedXMin);
-            int offsetV = (j / 2) * (vByteStride) + (inscribedXMin);
+            int offsetU = ((j + inputVerticalOffset) / 2) * (uByteStride) + (inscribedXMin + inputHorizontalOffset/2) * uPixelStride;
+            int offsetV = ((j + inputVerticalOffset) / 2) * (vByteStride) + (inscribedXMin + inputHorizontalOffset/2) * vPixelStride;
 
             // Take in horizontal lines by factor of two because of the u/v
             // component subsample
             // and everything as 2x2 blocks.
-            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride,
-                    offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
+            for (int i = inscribedXMin; i < inscribedXMax; i += 2, offsetY += 2 * yPixelStride, offsetColor += 2, offsetU += uPixelStride, offsetV += vPixelStride) {
                 // Note i and j are in terms of pixels of the subsampled image
                 // offsetY, offsetU, and offsetV are in terms of bytes of the
                 // image
@@ -706,8 +723,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     }
 
     /**
-     * Runs the correct image conversion routine, based upon the selected thumbnail
-     * shape.
+     * Runs the correct image conversion routine, based upon the selected
+     * thumbnail shape.
      *
      * @param img Image to be converted
      * @param subsample Amount of image subsampling
@@ -745,7 +762,8 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         try {
             onStart(mId, inputImage, resultImage, TaskInfo.Destination.FAST_THUMBNAIL);
 
-            logWrapper("TIMER_END Rendering preview YUV buffer available, w=" + img.proxy.getWidth()
+            logWrapper("TIMER_END Rendering preview YUV buffer available, w="
+                    + img.proxy.getWidth()
                     / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
                     + subsample);
 
