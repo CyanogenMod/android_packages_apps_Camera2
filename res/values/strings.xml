@@ -489,8 +489,7 @@
     <string name="accessibility_review_cancel">Review cancel</string>
     <!-- The button in review mode indicating that the taken photo/video is OK to be attached/uploaded [CHAR LIMIT=NONE] -->
     <string name="accessibility_review_ok">Review done</string>
-    <!-- button in review mode indicate the user want to retake another photo/video for attachment [
-CHAR LIMIT=NONE] -->
+    <!-- button in review mode indicate the user want to retake another photo/video for attachment [CHAR LIMIT=NONE] -->
     <string name="accessibility_review_retake">Review retake</string>
     <!-- The button that opens up mode options, shown as '...' on screen [CHAR LIMIT=NONE] -->
     <string name="accessibility_mode_options">Options</string>
@@ -757,6 +756,8 @@ CHAR LIMIT=NONE] -->
     <string name="done_button_description">Done</string>
     <!-- Accessibility text for retake button [CHAR_LIMIT=NONE] -->
     <string name="retake_button_description">Retake</string>
+    <!-- Accessibility text for video review button [CHAR_LIMIT=NONE] -->
+    <string name="review_button_description">Review</string>
 
     <!-- Accessibility text for filmstrip share button [CHAR_LIMIT=NONE] -->
     <string name="share_button_description">Share</string>

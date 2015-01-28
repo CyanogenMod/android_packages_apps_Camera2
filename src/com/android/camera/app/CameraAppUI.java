@@ -2015,12 +2015,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
         if (bottomBarSpec.showRetake) {
             buttonManager.initializePushButton(ButtonManager.BUTTON_RETAKE,
-                    bottomBarSpec.retakeCallback);
+                    bottomBarSpec.retakeCallback,
+                    R.drawable.ic_back,
+                    R.string.retake_button_description);
         }
         if (bottomBarSpec.showReview) {
             buttonManager.initializePushButton(ButtonManager.BUTTON_REVIEW,
                     bottomBarSpec.reviewCallback,
-                    R.drawable.ic_play);
+                    R.drawable.ic_play,
+                    R.string.review_button_description);
         }
     }
 

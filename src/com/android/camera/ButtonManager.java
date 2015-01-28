@@ -37,7 +37,6 @@ import com.android.camera2.R;
  * {@link #android.widget.ImageButton}s.
  */
 public class ButtonManager implements SettingsManager.OnSettingChangedListener {
-
     public static final int BUTTON_FLASH = 0;
     public static final int BUTTON_TORCH = 1;
     public static final int BUTTON_HDR_PLUS_FLASH = 2;
@@ -56,6 +55,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     public static final int OFF = 0;
     /** For two state MultiToggleImageButtons, the on index. */
     public static final int ON = 1;
+
+    private static final int NO_RESOURCE = -1;
 
     /** A reference to the application's settings manager. */
     private final SettingsManager mSettingsManager;
@@ -363,14 +364,21 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Initialize a known button with a click listener and a resource id.
+     * Initialize a known button with a click listener and a drawable resource id,
+     * and a content description resource id.
      * Sets the button visible.
      */
     public void initializePushButton(int buttonId, View.OnClickListener cb,
-            int imageId) {
+            int imageId, int contentDescriptionId) {
         ImageButton button = getImageButtonOrError(buttonId);
         button.setOnClickListener(cb);
-        button.setImageResource(imageId);
+        if (imageId != NO_RESOURCE) {
+            button.setImageResource(imageId);
+        }
+        if (contentDescriptionId != NO_RESOURCE) {
+            button.setContentDescription(mAppController
+                    .getAndroidContext().getResources().getString(contentDescriptionId));
+        }
 
         if (!button.isEnabled()) {
             button.setEnabled(true);
@@ -389,28 +397,19 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
+     * Initialize a known button with a click listener and a resource id.
+     * Sets the button visible.
+     */
+    public void initializePushButton(int buttonId, View.OnClickListener cb,
+            int imageId) {
+        initializePushButton(buttonId, cb, imageId, NO_RESOURCE);
+    }
+
+    /**
      * Initialize a known button with a click listener. Sets the button visible.
      */
     public void initializePushButton(int buttonId, View.OnClickListener cb) {
-        ImageButton button = getImageButtonOrError(buttonId);
-        if (cb != null) {
-            button.setOnClickListener(cb);
-        }
-
-        if (!button.isEnabled()) {
-            button.setEnabled(true);
-            if (mListener != null) {
-                mListener.onButtonEnabledChanged(this, buttonId);
-            }
-        }
-        button.setTag(R.string.tag_enabled_id, buttonId);
-
-        if (button.getVisibility() != View.VISIBLE) {
-            button.setVisibility(View.VISIBLE);
-            if (mListener != null) {
-                mListener.onButtonVisibilityChanged(this, buttonId);
-            }
-        }
+        initializePushButton(buttonId, cb, NO_RESOURCE, NO_RESOURCE);
     }
 
     /**
