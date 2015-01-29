@@ -69,9 +69,9 @@ public class FilmstripContentQueries {
         List<I> result = new ArrayList<>();
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                I data = factory.get(cursor);
-                if (data != null) {
-                    result.add(data);
+                I item = factory.get(cursor);
+                if (item != null) {
+                    result.add(item);
                 } else {
                     final int dataIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
                     Log.e(TAG, "Error loading data:" + cursor.getString(dataIndex));
