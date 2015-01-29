@@ -46,7 +46,12 @@ public class VideoItemFactory implements CursorToFilmstripItemFactory<VideoItem>
     @Override
     public VideoItem get(Cursor c) {
         VideoItemData data = mVideoDataFactory.fromCursor(c);
-        return new VideoItem(mContext, data, this);
+        if (data != null) {
+            return new VideoItem(mContext, data, this);
+        } else {
+            Log.w(TAG, "skipping item with null data, returning null for item");
+            return null;
+        }
     }
 
     /** Query for a single video data item */

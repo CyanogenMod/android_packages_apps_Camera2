@@ -22,10 +22,13 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.android.camera.data.FilmstripContentQueries.CursorToFilmstripItemFactory;
+import com.android.camera.debug.Log;
 
 import java.util.List;
 
 public class PhotoItemFactory implements CursorToFilmstripItemFactory<PhotoItem> {
+    private static final Log.Tag TAG = new Log.Tag("PhotoItemFact");
+
     private final Context mContext;
     private final ContentResolver mContentResolver;
     private final PhotoDataFactory mPhotoDataFactory;
@@ -40,7 +43,12 @@ public class PhotoItemFactory implements CursorToFilmstripItemFactory<PhotoItem>
     @Override
     public PhotoItem get(Cursor c) {
         FilmstripItemData data = mPhotoDataFactory.fromCursor(c);
-        return new PhotoItem(mContext, data, this);
+        if (data != null) {
+            return new PhotoItem(mContext, data, this);
+        } else {
+            Log.w(TAG, "skipping item with null data, returning null for item");
+            return null;
+        }
     }
 
     public PhotoItem get(Uri uri) {

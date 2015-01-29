@@ -105,7 +105,7 @@ public class PhotoDataFactory {
             Bitmap b = BitmapFactory.decodeFile(filePath);
             if (b == null) {
                 Log.w(TAG, "PhotoData skipped."
-                      + " Decoding " + filePath + "failed.");
+                      + " Decoding " + filePath + " failed.");
                 return null;
             }
             width = b.getWidth();
