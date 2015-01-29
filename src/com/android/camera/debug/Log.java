@@ -33,6 +33,8 @@ public class Log {
     public static final String CAMERA_LOGTAG_PREFIX = "CAM_";
     private static final Log.Tag TAG = new Log.Tag("Log");
 
+    private static boolean sSuppressForTesting = false;
+
     /**
      * This class restricts the length of the log tag to be less than the
      * framework limit and also prepends the common tag prefix defined by
@@ -179,7 +181,20 @@ public class Log {
         }
     }
 
+    /**
+     * If suppressed, logs will not output and won't execute Android framework
+     * classes.
+     *
+     * @param suppress if true, suppress log output
+     */
+    public static void suppressLogsForTesting(boolean suppress) {
+        sSuppressForTesting = suppress;
+    }
+
     private static boolean isLoggable(Tag tag, int level) {
+        if (sSuppressForTesting) {
+            return false;
+        }
         try {
             if (LogHelper.instance().getOverrideLevel() != 0) {
                 // Override system log level and output. VERBOSE is smaller than
