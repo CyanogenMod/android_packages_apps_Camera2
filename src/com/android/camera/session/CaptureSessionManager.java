@@ -68,7 +68,7 @@ public interface CaptureSessionManager {
      * @param sessionStartMillis the start time of the new session (millis since epoch).
      * @param location the location of the new session.
      */
-    CaptureSession createNewSession(String title, long sessionStartMillis, Location location) throws IOException;
+    CaptureSession createNewSession(String title, long sessionStartMillis, Location location);
 
     /**
      * Returns a session by session Uri or null if it is not found.

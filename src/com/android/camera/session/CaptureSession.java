@@ -159,11 +159,11 @@ public interface CaptureSession {
     public void finishWithFailure(CharSequence reason);
 
     /**
-     * Returns the path to where the final output of this session should be
+     * Returns the file to where the final output of this session should be
      * stored. This is only available after startSession has been called and
      * will become unavailable after finish() was called.
      */
-    public String getTempOutputPath();
+    public TemporarySessionFile getTempOutputFile();
 
     /**
      * Returns the URI to the final output of this session. This is only
@@ -172,12 +172,10 @@ public interface CaptureSession {
     public Uri getUri();
 
     /**
-     * Updates the preview from a file. {@link #onPreviewAvailable()} will be
-     * invoked upon completion.
-     *
-     * @param previewPath The path to the file.
+     * Updates the preview from the file created from
+     * {@link #getTempOutputFile()}.
      */
-    public void updatePreview(String previewPath);
+    public void updatePreview();
 
     /**
      * Adds a progress listener to this session.

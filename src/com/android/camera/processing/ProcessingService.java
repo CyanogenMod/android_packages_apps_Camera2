@@ -38,7 +38,6 @@ import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.util.AndroidServices;
 import com.android.camera2.R;
 
-import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -221,14 +220,12 @@ public class ProcessingService extends Service implements ProgressListener {
             return;
         }
         CaptureSession session = task.getSession();
+
+        // TODO: Get rid of this null check. There should not be a task without
+        // a session.
         if (session == null) {
             // TODO: Timestamp is not required right now, refactor this to make it clearer.
-            try {
-                session = mSessionManager.createNewSession(task.getName(), 0, task.getLocation());
-            } catch (IOException e) {
-                Log.e(TAG, "Cannot process this session.", e);
-                return;
-            }
+            session = mSessionManager.createNewSession(task.getName(), 0, task.getLocation());
         }
         resetNotification();
 

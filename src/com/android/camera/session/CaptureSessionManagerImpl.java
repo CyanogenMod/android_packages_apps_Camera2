@@ -77,10 +77,10 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         private final HashSet<ProgressListener> mProgressListeners = new HashSet<>();
         private final long mSessionStartMillis;
         /**
-         * The path that can be used to write the final JPEG output temporarily,
+         * The file that can be used to write the final JPEG output temporarily,
          * before it is copied to the final location.
          */
-        private final String mTempOutputPath;
+        private final TemporarySessionFile mTempOutputFile;
         /** Saver that is used to store a stack of images. */
         private final StackSaver mStackSaver;
         /** A URI of the item being processed. */
@@ -104,16 +104,16 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
          * @param sessionStartMillis the timestamp of this capture session
          *            (since epoch).
          * @param location the location of this session, used for media store.
+         * @param stackSaver used to save stacks of images that belong to this session.
          * @throws IOException in case the storage required to store session
          *             data is not available.
          */
         private CaptureSessionImpl(String title, long sessionStartMillis, Location location,
-                StackSaver stackSaver) throws IOException {
+                StackSaver stackSaver) {
             mTitle = title;
             mSessionStartMillis = sessionStartMillis;
             mLocation = location;
-            mTempOutputPath = mSessionStorageManager.createTemporaryOutputPath(TEMP_SESSIONS,
-                    mTitle);
+            mTempOutputFile = new TemporarySessionFile(mSessionStorageManager, TEMP_SESSIONS, mTitle);
             mStackSaver = stackSaver;
             mIsFinished = false;
         }
@@ -265,9 +265,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 @Override
                 public void run() {
                     byte[] jpegDataTemp;
-                    try {
-                        jpegDataTemp = FileUtil.readFileToByteArray(new File(mTempOutputPath));
-                    } catch (IOException e) {
+                    if (mTempOutputFile.isUsable()) {
+                        try {
+                            jpegDataTemp = FileUtil.readFileToByteArray(mTempOutputFile.getFile());
+                        } catch (IOException e) {
+                            return;
+                        }
+                    } else {
                         return;
                     }
                     final byte[] jpegData = jpegDataTemp;
@@ -294,11 +298,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public String getTempOutputPath() {
-            if (!isStarted()) {
-                throw new IllegalStateException("Cannot retrieve URI of not started session.");
-            }
-            return mTempOutputPath;
+        public TemporarySessionFile getTempOutputFile() {
+            return mTempOutputFile;
         }
 
         @Override
@@ -307,14 +308,20 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         }
 
         @Override
-        public void updatePreview(String previewPath) {
-            final String path = this.getTempOutputPath();
+        public void updatePreview() {
+            final File path;
+            if (mTempOutputFile.isUsable()) {
+                path = mTempOutputFile.getFile();
+            } else {
+                Log.e(TAG, "Cannot update preview");
+                return;
+            }
             AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                 @Override
                 public void run() {
                     byte[] jpegDataTemp;
                     try {
-                        jpegDataTemp = FileUtil.readFileToByteArray(new File(path));
+                        jpegDataTemp = FileUtil.readFileToByteArray(path);
                     } catch (IOException e) {
                         return;
                     }
@@ -362,18 +369,16 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             return mUri != null;
         }
     }
-    public static final String TEMP_SESSIONS = "TEMP_SESSIONS";
+    private static final String TEMP_SESSIONS = "TEMP_SESSIONS";
     private static final Log.Tag TAG = new Log.Tag("CaptureSessMgrImpl");
     private final MediaSaver mMediaSaver;
     private final ContentResolver mContentResolver;
     private final PlaceholderManager mPlaceholderManager;
     private final SessionStorageManager mSessionStorageManager;
     private final StackSaverFactory mStackSaverFactory;
-    private static final Bitmap NO_PREVIEW_BITMAP = null;
 
     /** Failed session messages. Uri -> message. */
-    private final HashMap<Uri, CharSequence> mFailedSessionMessages =
-            new HashMap<Uri, CharSequence>();
+    private final HashMap<Uri, CharSequence> mFailedSessionMessages = new HashMap<>();
 
     /**
      * We use this to fire events to the session listeners from the main thread.
@@ -409,7 +414,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
-    public CaptureSession createNewSession(String title, long sessionStartTime, Location location) throws IOException {
+    public CaptureSession createNewSession(String title, long sessionStartTime, Location location) {
         return new CaptureSessionImpl(title, sessionStartTime, location, mStackSaverFactory.create(
                 title, location));
     }

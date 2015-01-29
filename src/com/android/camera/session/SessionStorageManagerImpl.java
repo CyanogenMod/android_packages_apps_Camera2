@@ -82,7 +82,7 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
     }
 
     @Override
-    public String createTemporaryOutputPath(String subDirectory, String title) throws IOException {
+    public File createTemporaryOutputPath(String subDirectory, String title) throws IOException {
         File tempDirectory = null;
         try {
             tempDirectory = new File(
@@ -109,7 +109,7 @@ public class SessionStorageManagerImpl implements SessionStorageManager {
         if (!tempFile.canWrite()) {
             throw new IOException("Temporary output file is not writeable.");
         }
-        return tempFile.getPath();
+        return tempFile;
     }
 
     /**

@@ -447,13 +447,7 @@ public class CaptureModule extends CameraModule implements
     }
 
     private void takePictureNow() {
-        CaptureSession session = null;
-        try {
-            session = createAndStartCaptureSession();
-        } catch (IOException e) {
-            Log.e(TAG, "Cannot take picture.", e);
-            return;
-        }
+        CaptureSession session = createAndStartCaptureSession();
         int orientation = mAppController.getOrientationManager().getDeviceOrientation()
                 .getDegrees();
 
@@ -470,7 +464,7 @@ public class CaptureModule extends CameraModule implements
      * Creates, starts and returns a new capture session. The returned session
      * will have been started with an empty placeholder image.
      */
-    private CaptureSession createAndStartCaptureSession() throws IOException {
+    private CaptureSession createAndStartCaptureSession() {
         long sessionTime = getSessionTime();
         Location location = mLocationManager.getCurrentLocation();
         String title = CameraUtil.instance().createJpegName(sessionTime);

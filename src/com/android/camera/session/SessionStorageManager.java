@@ -19,6 +19,8 @@ package com.android.camera.session;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Interface for the session storage manager which handles management of storage
  * space that can be used for temporary session files.
@@ -53,5 +55,6 @@ public interface SessionStorageManager {
      *         output to.
      * @throws IOException If the directory could not be created.
      */
-    public String createTemporaryOutputPath(String subDirectory, String title) throws IOException;
+    @Nonnull
+    public File createTemporaryOutputPath(String subDirectory, String title) throws IOException;
 }
