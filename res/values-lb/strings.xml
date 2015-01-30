@@ -79,9 +79,9 @@
   <string name="flash_on">Blëtz ausgeléist</string>
   <string name="flash_off">Kee Blëtz</string>
   <string name="unknown">Onbekannt</string>
-  <string name="try_to_set_local_album_available_offline">Dëst Element ass lokal gespäichert an och offiline disponibel.</string>
-  <string name="please_wait">W.e.g. waarden</string>
-  <string name="rendering_photo_sphere">Photosphär gëtt gerendert</string>
+  <string name="try_to_set_local_album_available_offline">Dëst Element ass lokal gespäichert an och offline disponibel.</string>
+  <string name="please_wait">Waart w.e.g.</string>
+  <string name="rendering_photo_sphere">Fotosphär gëtt gerendert</string>
   <string name="camera_error_title">Kamerafeeler</string>
   <string name="cannot_connect_camera">Keng Connectioun zur Kamera méiglech.</string>
   <string name="camera_disabled">D\'Kamera gouf wéinst Sécherheetsriichtlinnen desaktivéiert.</string>
@@ -95,7 +95,7 @@
   <string name="pref_camera_id_entry_back">Hannen</string>
   <string name="pref_camera_id_entry_front">Vir</string>
   <string name="pref_camera_recordlocation_title">Plaz späicheren</string>
-  <string name="pref_camera_location_label">PLAZ</string>
+  <string name="pref_camera_location_label">STANDUERT</string>
   <string name="pref_camera_timer_title">Countdown-Timer</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one">1 Sekonn</item>
@@ -183,7 +183,7 @@
   <string name="pref_camera_id_label_front">HËNNESCHT KAMERA</string>
   <string name="dialog_ok">OK</string>
   <string name="spaceIsLow_content" product="default">Deng SD-Kaart huet geschwë keng Plaz méi. Änner d\'Qualitéitsastellungen oder läsch e puer Fotoen oder Fichieren.</string>
-  <string name="video_reach_size_limit">Limittgréisst ass erreecht.</string>
+  <string name="video_reach_size_limit">Gréisstelimitt ass erreecht.</string>
   <string name="pano_too_fast_prompt">Ze séier</string>
   <string name="pano_dialog_prepare_preview">Panorama gëtt preparéiert</string>
   <string name="pano_dialog_panorama_failed">De Panorama konnt net gespäichert ginn.</string>
@@ -214,10 +214,10 @@
   <string name="accessibility_menu_button">Menü-Knäppchen</string>
   <string name="accessibility_mode_picker">Auswiel fir Fotoapparat, Video oder Panorama</string>
   <string name="accessibility_check_box">%1$s Ukräizfeld</string>
-  <string name="accessibility_switch_to_camera">Op de Foto-Modus wiesselen</string>
+  <string name="accessibility_switch_to_camera">Op de Fotomodus wiesselen</string>
   <string name="accessibility_switch_to_video">Op de Video-Modus wiesselen</string>
-  <string name="accessibility_switch_to_panorama">Op de Panorama-Modus wiesselen</string>
-  <string name="accessibility_switch_to_photo_sphere">Op de Fotosphär-Modus wiesselen</string>
+  <string name="accessibility_switch_to_panorama">Op de Panoramamodus wiesselen</string>
+  <string name="accessibility_switch_to_photo_sphere">Op de Fotosphärmodus wiesselen</string>
   <string name="accessibility_switch_to_gcam">Op héich Qualitéit wiesselen</string>
   <string name="accessibility_review_cancel">Iwwerpréiwung ofbriechen</string>
   <string name="accessibility_review_ok">Iwwerpréiwung ofgeschloss</string>

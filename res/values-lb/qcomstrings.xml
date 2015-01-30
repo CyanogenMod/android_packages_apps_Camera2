@@ -79,7 +79,7 @@
   <string name="pref_camera_antibanding_entry_0">Aus</string>
   <string name="pref_camera_antibanding_entry_1">50 Hz</string>
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>
-  <string name="pref_camera_antibanding_entry_3">Auto</string>
+  <string name="pref_camera_antibanding_entry_3">Automatesch</string>
   <string name="pref_camera_coloreffect_title">Faarfeffekt</string>
   <string name="pref_camera_coloreffect_entry_none">Keen</string>
   <string name="pref_camera_coloreffect_entry_mono">Mono</string>
