@@ -36,9 +36,4 @@ public class CameraCaptureSessionClosedException extends Exception {
     public CameraCaptureSessionClosedException(Throwable cause) {
         super(cause);
     }
-
-    public CameraCaptureSessionClosedException(String message, Throwable cause,
-            boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
