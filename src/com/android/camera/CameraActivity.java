@@ -1302,7 +1302,7 @@ public class CameraActivity extends QuickActivity
                 return true;
             case R.id.action_help_and_feedback:
                 mResetToPreviewOnResume = false;
-                GoogleHelpHelper.launchGoogleHelp(this);
+                new GoogleHelpHelper(this).launchGoogleHelp();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

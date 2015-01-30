@@ -155,7 +155,7 @@ public class CameraSettingsActivity extends FragmentActivity {
                 new OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        GoogleHelpHelper.launchGoogleHelp(activity);
+                        new GoogleHelpHelper(activity).launchGoogleHelp();
                         return true;
                     }
                 });
