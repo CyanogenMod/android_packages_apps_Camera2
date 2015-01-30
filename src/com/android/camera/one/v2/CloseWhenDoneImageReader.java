@@ -55,6 +55,8 @@ public final class CloseWhenDoneImageReader extends ForwardingImageReader implem
 
     private final Object mLock;
     @GuardedBy("mLock")
+    private boolean mClosePending;
+    @GuardedBy("mLock")
     private boolean mClosed;
     @GuardedBy("mLock")
     private int mOpenImages;
@@ -69,7 +71,8 @@ public final class CloseWhenDoneImageReader extends ForwardingImageReader implem
     private void decrementImageCount() {
         synchronized (mLock) {
             mOpenImages--;
-            if (mClosed && mOpenImages == 0) {
+            if (mClosePending && !mClosed && mOpenImages == 0) {
+                mClosed = true;
                 super.close();
             }
         }
@@ -79,7 +82,7 @@ public final class CloseWhenDoneImageReader extends ForwardingImageReader implem
     @Nullable
     public ImageProxy acquireNextImage() {
         synchronized (mLock) {
-            if (!mClosed) {
+            if (!mClosePending && !mClosed) {
                 ImageProxy image = super.acquireNextImage();
                 if (image != null) {
                     mOpenImages++;
@@ -94,7 +97,7 @@ public final class CloseWhenDoneImageReader extends ForwardingImageReader implem
     @Nullable
     public ImageProxy acquireLatestImage() {
         synchronized (mLock) {
-            if (!mClosed) {
+            if (!mClosePending && !mClosed) {
                 ImageProxy image = super.acquireLatestImage();
                 if (image != null) {
                     mOpenImages++;
@@ -108,8 +111,12 @@ public final class CloseWhenDoneImageReader extends ForwardingImageReader implem
     @Override
     public void close() {
         synchronized (mLock) {
-            mClosed = true;
+            if (mClosed || mClosePending) {
+                return;
+            }
+            mClosePending = true;
             if (mOpenImages == 0) {
+                mClosed = true;
                 super.close();
             }
         }

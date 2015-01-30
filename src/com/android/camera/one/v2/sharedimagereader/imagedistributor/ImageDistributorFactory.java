@@ -46,7 +46,7 @@ public class ImageDistributorFactory {
         Handler imageReaderHandler = handlerFactory.create(lifetime, "ImageDistributor");
 
         imageReader.setOnImageAvailableListener(
-                new ImageDistributorOnImageAvailableListener(mImageDistributor),
+                new ImageDistributorOnImageAvailableListener(imageReader, mImageDistributor),
                 imageReaderHandler);
     }
 

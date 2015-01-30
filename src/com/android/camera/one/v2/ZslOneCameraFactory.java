@@ -102,9 +102,9 @@ public class ZslOneCameraFactory implements OneCameraFactory {
         Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
-                LoggingImageReader.create(AndroidImageReaderProxy.newInstance(
+                new LoggingImageReader(AndroidImageReaderProxy.newInstance(
                         pictureSize.getWidth(), pictureSize.getHeight(),
-                        mImageFormat, mMaxImageCount)));
+                        mImageFormat, mMaxImageCount), Loggers.tagFactory()));
 
         lifetime.add(imageReader);
         lifetime.add(device);

@@ -22,9 +22,12 @@ import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Combines an {@link ImageProxy} with a {@link Ticket}.
  */
+@ThreadSafe
 public class TicketImageProxy extends ForwardingImageProxy {
     private final Ticket mTicket;
     private final AtomicBoolean mClosed;

@@ -38,7 +38,7 @@ public interface ImageReaderProxy extends SafeCloseable {
         /**
          * See {@link ImageReader.OnImageAvailableListener#onImageAvailable}
          */
-        public void onImageAvailable(@Nonnull ImageReaderProxy imageReader);
+        public void onImageAvailable();
     }
 
     /**

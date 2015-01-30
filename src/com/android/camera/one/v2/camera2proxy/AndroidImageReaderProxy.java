@@ -17,6 +17,7 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.ImageFormat;
+import android.media.Image;
 import android.os.Handler;
 import android.view.Surface;
 
@@ -24,14 +25,18 @@ import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * A replacement for {@link android.media.ImageReader}.
  */
 public final class AndroidImageReaderProxy implements ImageReaderProxy {
+    private final Object mLock;
+    @GuardedBy("mLock")
     private final android.media.ImageReader mDelegate;
 
     public AndroidImageReaderProxy(android.media.ImageReader delegate) {
+        mLock = new Object();
         mDelegate = delegate;
     }
 
@@ -71,64 +76,95 @@ public final class AndroidImageReaderProxy implements ImageReaderProxy {
 
     @Override
     public int getWidth() {
-        return mDelegate.getWidth();
+        synchronized (mLock) {
+            return mDelegate.getWidth();
+        }
     }
 
     @Override
     public int getHeight() {
-        return mDelegate.getHeight();
+        synchronized (mLock) {
+            return mDelegate.getHeight();
+        }
     }
 
     @Override
     public int getImageFormat() {
-        return mDelegate.getImageFormat();
+        synchronized (mLock) {
+            return mDelegate.getImageFormat();
+        }
     }
 
     @Override
     public int getMaxImages() {
-        return mDelegate.getMaxImages();
+        synchronized (mLock) {
+            return mDelegate.getMaxImages();
+        }
     }
 
     @Override
     @Nonnull
     public Surface getSurface() {
-        return mDelegate.getSurface();
+        synchronized (mLock) {
+            return mDelegate.getSurface();
+        }
     }
 
     @Override
     @Nullable
     public ImageProxy acquireLatestImage() {
-        return new AndroidImageProxy(mDelegate.acquireLatestImage());
+        synchronized (mLock) {
+            Image image = mDelegate.acquireLatestImage();
+            if (image == null) {
+                return null;
+            } else {
+                return new AndroidImageProxy(image);
+            }
+        }
     }
 
     @Override
     @Nullable
     public ImageProxy acquireNextImage() {
-        return new AndroidImageProxy(mDelegate.acquireNextImage());
+        synchronized (mLock) {
+            Image image = mDelegate.acquireNextImage();
+            if (image == null) {
+                return null;
+            } else {
+                return new AndroidImageProxy(image);
+            }
+        }
     }
 
     @Override
     public void setOnImageAvailableListener(@Nonnull
     final ImageReaderProxy.OnImageAvailableListener listener,
             Handler handler) {
-        mDelegate.setOnImageAvailableListener(
-                new android.media.ImageReader.OnImageAvailableListener() {
-                    @Override
-                    public void onImageAvailable(android.media.ImageReader imageReader) {
-                        listener.onImageAvailable(AndroidImageReaderProxy.this);
-                    }
-                }, handler);
+        synchronized (mLock) {
+            mDelegate.setOnImageAvailableListener(
+                    new android.media.ImageReader.OnImageAvailableListener() {
+                        @Override
+                        public void onImageAvailable(android.media.ImageReader imageReader) {
+                            listener.onImageAvailable();
+                        }
+                    }, handler);
+        }
     }
 
     @Override
     public void close() {
-        mDelegate.close();
+        synchronized (mLock) {
+            mDelegate.close();
+        }
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(mDelegate)
-                .add("width", getWidth())
+        Objects.ToStringHelper tsh;
+        synchronized (mLock) {
+            tsh = Objects.toStringHelper(mDelegate);
+        }
+        return tsh.add("width", getWidth())
                 .add("height", getHeight())
                 .add("format", imageFormatToString(getImageFormat()))
                 .toString();

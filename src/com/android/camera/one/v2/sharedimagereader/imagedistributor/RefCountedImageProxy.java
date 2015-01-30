@@ -20,10 +20,13 @@ import com.android.camera.async.RefCountBase;
 import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Wraps ImageProxy with reference counting, starting with a fixed number of
  * references.
  */
+@ThreadSafe
 class RefCountedImageProxy extends ForwardingImageProxy {
     private final RefCountBase<ImageProxy> mRefCount;
 

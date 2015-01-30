@@ -17,20 +17,25 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
-import android.media.Image;
 
 import com.android.camera.async.SafeCloseable;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Wraps {@link android.media.Image} with a mockable interface.
+ * <p>
+ * Implementations must be thread-safe.
  */
+@ThreadSafe
 public interface ImageProxy extends SafeCloseable {
 
     /**
-     * Wraps the inner class {@link android.media.Image} with a mockable interface.
+     * Wraps the inner class {@link android.media.Image} with a mockable
+     * interface.
      */
     public interface Plane {
 

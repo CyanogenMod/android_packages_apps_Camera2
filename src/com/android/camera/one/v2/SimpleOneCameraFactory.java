@@ -27,6 +27,7 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
+import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
@@ -84,10 +85,12 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
         Lifetime lifetime = new Lifetime();
 
-        final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
-                LoggingImageReader.create(
-                        AndroidImageReaderProxy.newInstance(pictureSize.getWidth(),
-                                pictureSize.getHeight(), mImageFormat, mMaxImageCount)));
+        final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(new LoggingImageReader(
+                AndroidImageReaderProxy.newInstance(
+                        pictureSize.getWidth(), pictureSize.getHeight(),
+                        mImageFormat, mMaxImageCount),
+                Loggers.tagFactory()));
+
         lifetime.add(imageReader);
 
         List<Surface> outputSurfaces = new ArrayList<>();
