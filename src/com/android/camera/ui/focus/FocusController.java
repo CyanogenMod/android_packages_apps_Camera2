@@ -69,7 +69,9 @@ public class FocusController implements FocusDistanceListener {
             public void run() {
                 mFocusRing.startActiveFocus();
                 mFocusRing.setFocusLocation(viewX, viewY);
-                mFocusSound.play();
+
+                // TODO: Enable focus sound when better audio controls exist.
+                // mFocusSound.play();
             }
         });
     }
