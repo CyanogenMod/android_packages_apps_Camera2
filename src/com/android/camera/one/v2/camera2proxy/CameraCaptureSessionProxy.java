@@ -67,7 +67,7 @@ public interface CameraCaptureSessionProxy extends SafeCloseable {
         public void onReady(CameraCaptureSessionProxy session);
     }
 
-    public void abortCaptures() throws CameraAccessException;
+    public void abortCaptures() throws CameraAccessException, CameraCaptureSessionClosedException;
 
     public int capture(CaptureRequest request, CaptureCallback listener, Handler handler)
             throws CameraAccessException, CameraCaptureSessionClosedException;

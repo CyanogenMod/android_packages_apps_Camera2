@@ -22,4 +22,23 @@ package com.android.camera.one.v2.camera2proxy;
  * {@link android.hardware.camera2.CameraCaptureSession} is closed.
  */
 public class CameraCaptureSessionClosedException extends Exception {
+    public CameraCaptureSessionClosedException() {
+    }
+
+    public CameraCaptureSessionClosedException(String message) {
+        super(message);
+    }
+
+    public CameraCaptureSessionClosedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CameraCaptureSessionClosedException(Throwable cause) {
+        super(cause);
+    }
+
+    public CameraCaptureSessionClosedException(String message, Throwable cause,
+            boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

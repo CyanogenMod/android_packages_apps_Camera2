@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2.camera2proxy;
 
-import java.util.List;
-
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureFailure;
@@ -25,6 +23,8 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.os.Handler;
+
+import java.util.List;
 
 public class AndroidCameraCaptureSessionProxy implements CameraCaptureSessionProxy {
     private class AndroidCaptureCallback extends CameraCaptureSession.CaptureCallback {
@@ -80,20 +80,32 @@ public class AndroidCameraCaptureSessionProxy implements CameraCaptureSessionPro
     }
 
     @Override
-    public void abortCaptures() throws CameraAccessException {
-        mSession.abortCaptures();
+    public void abortCaptures() throws CameraAccessException, CameraCaptureSessionClosedException {
+        try {
+            mSession.abortCaptures();
+        } catch (IllegalStateException e) {
+            throw new CameraCaptureSessionClosedException(e);
+        }
     }
 
     @Override
     public int capture(CaptureRequest request, CaptureCallback listener, Handler handler)
-            throws CameraAccessException {
-        return mSession.capture(request, new AndroidCaptureCallback(listener), handler);
+            throws CameraAccessException, CameraCaptureSessionClosedException {
+        try {
+            return mSession.capture(request, new AndroidCaptureCallback(listener), handler);
+        } catch (IllegalStateException e) {
+            throw new CameraCaptureSessionClosedException(e);
+        }
     }
 
     @Override
     public int captureBurst(List<CaptureRequest> requests, CaptureCallback listener, Handler handler)
-            throws CameraAccessException {
-        return mSession.captureBurst(requests, new AndroidCaptureCallback(listener), handler);
+            throws CameraAccessException, CameraCaptureSessionClosedException {
+        try {
+            return mSession.captureBurst(requests, new AndroidCaptureCallback(listener), handler);
+        } catch (IllegalStateException e) {
+            throw new CameraCaptureSessionClosedException(e);
+        }
     }
 
     @Override
@@ -114,13 +126,21 @@ public class AndroidCameraCaptureSessionProxy implements CameraCaptureSessionPro
 
     @Override
     public int setRepeatingRequest(CaptureRequest request, CaptureCallback listener, Handler handler)
-            throws CameraAccessException {
-        return mSession.setRepeatingRequest(request, new AndroidCaptureCallback(listener),
-                handler);
+            throws CameraAccessException, CameraCaptureSessionClosedException {
+        try {
+            return mSession.setRepeatingRequest(request, new AndroidCaptureCallback(listener),
+                    handler);
+        } catch (IllegalStateException e) {
+            throw new CameraCaptureSessionClosedException(e);
+        }
     }
 
     @Override
-    public void stopRepeating() throws CameraAccessException {
-        mSession.stopRepeating();
+    public void stopRepeating() throws CameraAccessException, CameraCaptureSessionClosedException {
+        try {
+            mSession.stopRepeating();
+        } catch (IllegalStateException e) {
+            throw new CameraCaptureSessionClosedException(e);
+        }
     }
 }
