@@ -16,7 +16,7 @@
 
 package com.android.camera.one.v2.stats;
 
-import com.android.camera.async.NoOp;
+import com.android.camera.async.Updatables;
 import com.android.camera.async.Updatable;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
@@ -38,7 +38,7 @@ public class PreviewFpsListener extends ResponseListener {
     private double mFpsValue = 30.0f;
 
     public PreviewFpsListener() {
-        this(NoOp.<Float>ofUpdateable());
+        this(Updatables.<Float>getNoOp());
     }
 
     public PreviewFpsListener(Updatable<Float> fpsListener) {

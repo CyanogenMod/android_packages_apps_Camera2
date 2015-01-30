@@ -16,18 +16,25 @@
 
 package com.android.camera.one.v2.sharedimagereader.ticketpool;
 
+import com.android.camera.async.ConcurrentState;
+import com.android.camera.async.Observable;
+import com.android.camera.async.SafeCloseable;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
-import com.android.camera.async.SafeCloseable;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * A ticket pool with a finite number of tickets.
  */
-public class FiniteTicketPool implements TicketPool, SafeCloseable {
+public final class FiniteTicketPool implements TicketPool, SafeCloseable {
     private class TicketImpl implements Ticket {
         private final AtomicBoolean mClosed;
 
@@ -39,91 +46,159 @@ public class FiniteTicketPool implements TicketPool, SafeCloseable {
         public void close() {
             boolean alreadyClosed = mClosed.getAndSet(true);
             if (!alreadyClosed) {
-                mTickets.release();
+                synchronized (mLock) {
+                    releaseTicket();
+                    updateAvailableTicketCount();
+                }
             }
+        }
+    }
+
+    private class Waiter {
+        private final int mTicketsRequested;
+        private final Condition mCondition;
+
+        private Waiter(int ticketsRequested, Condition condition) {
+            mTicketsRequested = ticketsRequested;
+            mCondition = condition;
+        }
+
+        public Condition getCondition() {
+            return mCondition;
+        }
+
+        public int getTicketsRequested() {
+            return mTicketsRequested;
         }
     }
 
     private final int mMaxCapacity;
-    private final Semaphore mTickets;
-    private final AtomicBoolean mClosed;
+    private final ReentrantLock mLock;
+    @GuardedBy("mLock")
+    private final LinkedList<Waiter> mWaiters;
+    private final ConcurrentState<Integer> mAvailableTicketCount;
+    @GuardedBy("mLock")
+    private int mTickets;
+    @GuardedBy("mLock")
+    private boolean mClosed;
 
     public FiniteTicketPool(int capacity) {
         mMaxCapacity = capacity;
-        mTickets = new Semaphore(capacity);
-        mClosed = new AtomicBoolean(false);
+        mLock = new ReentrantLock(true);
+        mTickets = capacity;
+        mWaiters = new LinkedList<>();
+        mClosed = false;
+        mAvailableTicketCount = new ConcurrentState<>(capacity);
     }
 
+    @GuardedBy("mLock")
+    private void releaseTicket() {
+        mLock.lock();
+        try {
+            mTickets++;
+
+            // Wake up waiters in order, so long as their requested number of
+            // tickets can be satisfied.
+            int ticketsRemaining = mTickets;
+            Waiter nextWaiter = mWaiters.peekFirst();
+            while (nextWaiter != null && nextWaiter.getTicketsRequested() <= ticketsRemaining) {
+                ticketsRemaining -= nextWaiter.getTicketsRequested();
+                nextWaiter.getCondition().signal();
+
+                mWaiters.removeFirst();
+                nextWaiter = mWaiters.peekFirst();
+            }
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    @Nonnull
     @Override
     public Collection<Ticket> acquire(int tickets) throws InterruptedException,
             NoCapacityAvailableException {
-        if (tickets > mMaxCapacity || tickets < 0) {
-            throw new NoCapacityAvailableException();
+        mLock.lock();
+        try {
+            if (tickets > mMaxCapacity || tickets < 0) {
+                throw new NoCapacityAvailableException();
+            }
+            Waiter thisWaiter = new Waiter(tickets, mLock.newCondition());
+            mWaiters.addLast(thisWaiter);
+            updateAvailableTicketCount();
+            try {
+                while (mTickets < tickets && !mClosed) {
+                    thisWaiter.getCondition().await();
+                }
+                if (mClosed) {
+                    throw new NoCapacityAvailableException();
+                }
+
+                mTickets -= tickets;
+
+                updateAvailableTicketCount();
+
+                List<Ticket> ticketList = new ArrayList<>();
+                for (int i = 0; i < tickets; i++) {
+                    ticketList.add(new TicketImpl());
+                }
+                return ticketList;
+            } finally {
+                mWaiters.remove(thisWaiter);
+                updateAvailableTicketCount();
+            }
+        } finally {
+            mLock.unlock();
         }
-        mTickets.acquire(tickets);
-        if (mClosed.get()) {
-            // If the pool was closed while we were waiting to acquire the
-            // tickets, release them (they may be fake) and throw because no
-            // capacity is available.
-            mTickets.release(tickets);
-            throw new NoCapacityAvailableException();
-        }
-        List<Ticket> ticketList = new ArrayList<Ticket>();
-        for (int i = 0; i < tickets; i++) {
-            ticketList.add(new TicketImpl());
-        }
-        return ticketList;
     }
 
+    @GuardedBy("mLock")
+    private void updateAvailableTicketCount() {
+        if (mClosed || !mWaiters.isEmpty()) {
+            mAvailableTicketCount.update(0);
+        } else {
+            mAvailableTicketCount.update(mTickets);
+        }
+    }
+
+    @Nonnull
     @Override
-    public boolean canAcquire(int tickets) {
-        if (tickets < 0) {
-            return false;
-        }
-        if (tickets == 0) {
-            return true;
-        }
-        return !mClosed.get() &&
-                !mTickets.hasQueuedThreads() &&
-                mTickets.availablePermits() >= tickets;
+    public Observable<Integer> getAvailableTicketCount() {
+        return mAvailableTicketCount;
     }
 
     @Override
     public Ticket tryAcquire() {
-        if (mTickets.tryAcquire()) {
-            // Release the ticket immediately if...
-            // 1. The pool is closed, and tryAcquire may have received a fake,
-            // "poisson pill" ticket, which must be released in order to enable
-            // other calls to acquire() to not block.
-            // 2. Or, mTickets has threads queued on it because of blocked calls
-            // to {@link #acquire}. It would not be fair to acquire this ticket
-            // if there are pending requests for it already.
-            boolean releaseTicketImmediately = mClosed.get() || mTickets.hasQueuedThreads();
-            if (releaseTicketImmediately) {
-                mTickets.release();
-                return null;
-            } else {
+        mLock.lock();
+        try {
+            if (!mClosed && mWaiters.isEmpty() && mTickets >= 1) {
+                mTickets--;
+                updateAvailableTicketCount();
                 return new TicketImpl();
+            } else {
+                return null;
             }
-        } else {
-            return null;
+        } finally {
+            mLock.unlock();
         }
     }
 
     @Override
     public void close() {
-        if (mClosed.getAndSet(true)) {
-            // If already closed, just return.
-            return;
-        }
+        mLock.lock();
+        try {
+            if (mClosed) {
+                return;
+            }
 
-        // Threads may be waiting in acquire() for tickets to be available, so
-        // wake them up by adding fake, "poisson pill" tickets.
-        // Adding mMaxCapacity permits to the semaphore is sufficient to
-        // guarantee that any/all
-        // waiting threads wake up and detect that the pool is closed (so long
-        // as all waiting
-        // threads release the fake tickets they acquired while waking up).
-        mTickets.release(mMaxCapacity);
+            mClosed = true;
+
+            for (Waiter waiter : mWaiters) {
+                waiter.getCondition().signal();
+            }
+
+            updateAvailableTicketCount();
+        } finally {
+            mLock.unlock();
+        }
     }
 }

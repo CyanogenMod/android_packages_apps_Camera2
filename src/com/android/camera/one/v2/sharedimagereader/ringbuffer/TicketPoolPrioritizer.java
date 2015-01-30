@@ -16,13 +16,21 @@
 
 package com.android.camera.one.v2.sharedimagereader.ringbuffer;
 
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.android.camera.async.Observable;
+import com.android.camera.async.Observables;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketProvider;
-import com.google.common.base.Supplier;
+import com.google.common.base.Function;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Splits a {@link TicketPool} into a high-priority lane and a low-priority,
@@ -45,6 +53,9 @@ class TicketPoolPrioritizer {
         private LowPriorityTicketPool() {
         }
 
+        @Nullable
+        @CheckReturnValue
+        @Override
         public Ticket tryAcquire() {
             if (mHighPriorityWaiters.get() > 0) {
                 return null;
@@ -55,6 +66,7 @@ class TicketPoolPrioritizer {
     }
 
     private class HighPriorityTicketPool implements TicketPool {
+        @Nonnull
         @Override
         public Collection<Ticket> acquire(int tickets) throws InterruptedException,
                 NoCapacityAvailableException {
@@ -74,21 +86,14 @@ class TicketPoolPrioritizer {
             return result;
         }
 
+        @Nonnull
         @Override
-        public boolean canAcquire(int numTickets) {
-            if (numTickets < 0) {
-                return false;
-            }
-            // The number of additional tickets which must be requested from the
-            // parent pool to fulfill the hypothetical request for numTickets
-            // tickets, after flushing low-priority tickets.
-            int numAdditionalTickets = numTickets - mReleasableLowPriorityTicketCount.get();
-            if (numAdditionalTickets <= 0) {
-                return true;
-            }
-            return mRootTicketPool.canAcquire(numAdditionalTickets);
+        public Observable<Integer> getAvailableTicketCount() {
+            return mAvailableHighPriorityTicketCount;
         }
 
+        @Nullable
+        @CheckReturnValue
         @Override
         public Ticket tryAcquire() {
             // This over-aggressively flushes all low-priority tickets every
@@ -102,20 +107,38 @@ class TicketPoolPrioritizer {
     }
 
     private final LowPriorityTicketReleaser mLowPriorityTicketReleaser;
-    private final Supplier<Integer> mReleasableLowPriorityTicketCount;
     private final TicketPool mRootTicketPool;
     private final AtomicInteger mHighPriorityWaiters;
     private final HighPriorityTicketPool mHighPriority;
     private final LowPriorityTicketPool mLowPriority;
 
+    private final Observable<Integer> mAvailableHighPriorityTicketCount;
+
     public TicketPoolPrioritizer(LowPriorityTicketReleaser lowPriorityTicketReleaser,
-            Supplier<Integer> releasableLowPriorityTicketCount, TicketPool rootTicketPool) {
+            Observable<Integer> releasableLowPriorityTicketCount, TicketPool rootTicketPool) {
         mLowPriorityTicketReleaser = lowPriorityTicketReleaser;
-        mReleasableLowPriorityTicketCount = releasableLowPriorityTicketCount;
         mRootTicketPool = rootTicketPool;
         mHighPriorityWaiters = new AtomicInteger(0);
         mHighPriority = new HighPriorityTicketPool();
         mLowPriority = new LowPriorityTicketPool();
+
+        final Observable<Integer> parentPoolTicketCount = rootTicketPool.getAvailableTicketCount();
+        Function<List<Integer>, Integer> sum = new Function<List<Integer>, Integer>() {
+            @Override
+            public Integer apply(@Nullable List<Integer> integers) {
+                int total = 0;
+                for (Integer i : integers) {
+                    total += i;
+                }
+                return total;
+            }
+        };
+
+        // The number of high-priority tickets available at any time is the sum
+        // of parentPoolTicketCount and releaseableLowPriorityTicketCount.
+        mAvailableHighPriorityTicketCount = Observables.transform(
+                Arrays.asList(parentPoolTicketCount, releasableLowPriorityTicketCount),
+                sum);
     }
 
     public TicketProvider getLowPriorityTicketProvider() {

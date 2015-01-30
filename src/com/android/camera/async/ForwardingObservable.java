@@ -20,6 +20,11 @@ import com.android.camera.util.Callback;
 
 import java.util.concurrent.Executor;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public abstract class ForwardingObservable<T> implements Observable<T> {
     private final Observable<T> mDelegate;
 
@@ -27,11 +32,14 @@ public abstract class ForwardingObservable<T> implements Observable<T> {
         mDelegate = delegate;
     }
 
+    @Nonnull
     @Override
+    @CheckReturnValue
     public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
         return mDelegate.addCallback(callback, executor);
     }
 
+    @Nonnull
     @Override
     public T get() {
         return mDelegate.get();

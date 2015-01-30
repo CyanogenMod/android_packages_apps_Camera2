@@ -22,6 +22,7 @@ import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
+import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
@@ -36,6 +37,9 @@ import com.android.camera.one.v2.sharedimagereader.ringbuffer.DynamicRingBufferF
 import com.android.camera.one.v2.sharedimagereader.ticketpool.FiniteTicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forFinalMetadata;
+import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
+
 /**
  * Like {@link SharedImageReaderFactory}, but provides a single
  * {@link ImageStream} with a dynamic capacity which changes depending on demand
@@ -46,6 +50,7 @@ public class ZslSharedImageReaderFactory {
     private final ImageStream mZslCaptureStream;
     private final MetadataPool mMetadataPool;
     private final RequestTemplate mRequestTemplate;
+    private final Observable<Integer> mAvailableImageCount;
 
     /**
      * @param lifetime The lifetime of the SharedImageReader, and other
@@ -84,6 +89,8 @@ public class ZslSharedImageReaderFactory {
                 new Lifetime(lifetime), ringBufferFactory.provideTicketPool(),
                 imageReader.getSurface(), imageDistributor);
 
+        mAvailableImageCount = ringBufferFactory.provideTicketPool().getAvailableTicketCount();
+
         mRequestTemplate = new RequestTemplate(rootRequestTemplate);
         mRequestTemplate.addStream(mZslCaptureStream);
         mRequestTemplate.addResponseListener(forTimestamps(globalTimestampQueue));
@@ -105,5 +112,9 @@ public class ZslSharedImageReaderFactory {
 
     public RequestBuilder.Factory provideRequestTemplate() {
         return mRequestTemplate;
+    }
+
+    public Observable<Integer> provideAvailableImageCount() {
+        return mAvailableImageCount;
     }
 }

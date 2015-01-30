@@ -16,25 +16,21 @@
 
 package com.android.camera.async;
 
-import java.util.ArrayList;
+import com.android.camera.util.Callback;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import com.android.camera.util.Callback;
-
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Generic asynchronous state wrapper which supports two methods of interaction:
  * polling for the latest value and listening for updates.
- * <p>
- * Note that this class only supports polling and using listeners. If
- * synchronous consumption of state changes is required, see
- * {@link FutureResult} or {@link BufferQueue} and its implementations.
- * </p>
  */
+@ParametersAreNonnullByDefault
 public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
 
     private static class ExecutorListenerPair<T> {
@@ -51,6 +47,7 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
          */
         public void run(final T t) {
             mExecutor.execute(new Runnable() {
+                @Override
                 public void run() {
                     mListener.onCallback(t);
                 }
@@ -59,7 +56,7 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
     }
 
     private final Object mLock;
-    private final Set<ExecutorListenerPair<T>> mListeners;
+    private final Set<ExecutorListenerPair<? super T>> mListeners;
     private T mValue;
 
     public ConcurrentState(T initialValue) {
@@ -72,23 +69,25 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
      * Updates the state to the latest value, notifying all listeners.
      */
     @Override
-    public void update(@Nonnull T newValue) {
-        List<ExecutorListenerPair<T>> listeners = new ArrayList<>();
+    public void update(T newValue) {
         synchronized (mLock) {
             mValue = newValue;
-            // Copy listeners out here so we can iterate over the list outside
-            // the critical section.
-            listeners.addAll(mListeners);
-        }
-        for (ExecutorListenerPair<T> pair : listeners) {
-            pair.run(newValue);
+            // Invoke executors.execute within mLock to guarantee that
+            // callbacks are serialized into their respective executor in
+            // the proper order.
+            for (ExecutorListenerPair<? super T> pair : mListeners) {
+                pair.run(newValue);
+            }
         }
     }
 
+    @CheckReturnValue
+    @Nonnull
     @Override
-    public SafeCloseable addCallback(Callback callback, Executor executor) {
+    public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
         synchronized (mLock) {
-            final ExecutorListenerPair<T> pair = new ExecutorListenerPair<>(executor, callback);
+            final ExecutorListenerPair<? super T> pair =
+                    new ExecutorListenerPair<>(executor, callback);
             mListeners.add(pair);
 
             return new SafeCloseable() {
@@ -107,6 +106,7 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
      *
      * @return The latest state.
      */
+    @Nonnull
     @Override
     public T get() {
         synchronized (mLock) {

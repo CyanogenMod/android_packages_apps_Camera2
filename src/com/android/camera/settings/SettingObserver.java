@@ -16,16 +16,17 @@
 
 package com.android.camera.settings;
 
+import com.android.camera.async.ExecutorCallback;
 import com.android.camera.async.FilteredUpdatable;
 import com.android.camera.async.Observable;
-import com.android.camera.async.ExecutorCallback;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.async.Updatable;
 import com.android.camera.util.Callback;
 
 import java.util.concurrent.Executor;
 
-import javax.annotation.Nullable;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -35,9 +36,9 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class SettingObserver<T> implements Observable<T> {
     private class Listener implements SettingsManager.OnSettingChangedListener, SafeCloseable {
-        private final Updatable<T> mCallback;
+        private final Updatable<? super T> mCallback;
 
-        private Listener(Updatable<T> callback) {
+        private Listener(Updatable<? super T> callback) {
             mCallback = callback;
         }
 
@@ -85,15 +86,17 @@ public final class SettingObserver<T> implements Observable<T> {
                 Boolean.class);
     }
 
+    @CheckReturnValue
+    @Nonnull
     @Override
-    public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
+    public SafeCloseable addCallback(@Nonnull Callback<T> callback, @Nonnull Executor executor) {
         final Listener listener =
                 new Listener(new FilteredUpdatable<>(new ExecutorCallback<>(callback, executor)));
         mSettingsManager.addListener(listener);
         return listener;
     }
 
-    @Nullable
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public T get() {

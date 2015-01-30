@@ -21,9 +21,16 @@ import com.google.common.base.Supplier;
 
 import java.util.concurrent.Executor;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * An interface for thread-safe observable objects.
  */
+@ThreadSafe
+@ParametersAreNonnullByDefault
 public interface Observable<T> extends Supplier<T> {
     /**
      * Adds the given callback, returning a handle to be closed when the
@@ -31,8 +38,16 @@ public interface Observable<T> extends Supplier<T> {
      *
      * @param callback The callback to add.
      * @param executor The executor on which the callback will be invoked.
-     * @return A {@link SafeCloseable} handle to be closed when the callback
-     *         must be removed.
+     * @return A handle to be closed when the callback must be removed.
      */
+    @Nonnull
+    @CheckReturnValue
     public SafeCloseable addCallback(Callback<T> callback, Executor executor);
+
+    /**
+     * @return The current/latest value.
+     */
+    @Nonnull
+    @Override
+    public T get();
 }
