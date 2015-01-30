@@ -20,9 +20,12 @@ import android.graphics.Rect;
 
 import java.util.List;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Forwards all {@link ImageProxy} methods.
  */
+@ThreadSafe
 public abstract class ForwardingImageProxy implements ImageProxy {
     private final ImageProxy mImpl;
 

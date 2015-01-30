@@ -22,12 +22,14 @@ import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Wraps an output queue of images by wrapping each image to track when they are
  * closed. When images are closed, their associated metadata entry is freed to
  * not leak memory.
  */
+@ThreadSafe
 @ParametersAreNonnullByDefault
 public class MetadataReleasingImageQueue implements BufferQueueController<ImageProxy> {
     private class MetadataReleasingImageProxy extends ForwardingImageProxy {

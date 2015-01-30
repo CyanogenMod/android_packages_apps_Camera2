@@ -18,41 +18,41 @@ package com.android.camera.one.v2;
 
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
-import com.android.camera.debug.Loggers;
 import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ForwardingImageReader;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 
 final class LoggingImageReader extends ForwardingImageReader {
-    private static Tag TAG = new Tag("LoggingImageReader");
-
     private class LoggingImageProxy extends ForwardingImageProxy {
+        private final AtomicBoolean mClosed;
+
         public LoggingImageProxy(ImageProxy proxy) {
             super(proxy);
+            mClosed = new AtomicBoolean(false);
         }
 
         @Override
         public void close() {
-            super.close();
-            decrementOpenImageCount();
+            if (!mClosed.getAndSet(true)) {
+                super.close();
+                decrementOpenImageCount();
+            }
         }
     }
-    private final Logger mLogger;
+
+    private final Logger mLog;
     private final AtomicInteger mNumOpenImages;
 
-    LoggingImageReader(ImageReaderProxy delegate, Logger.Factory logFactory) {
+    public LoggingImageReader(ImageReaderProxy delegate, Logger.Factory logFactory) {
         super(delegate);
-        mLogger = logFactory.create(TAG);
+        mLog = logFactory.create(new Tag("LoggingImageReader"));
         mNumOpenImages = new AtomicInteger(0);
-    }
-
-    public static LoggingImageReader create(ImageReaderProxy imageReader) {
-        return new LoggingImageReader(imageReader, Loggers.tagFactory());
     }
 
     @Override
@@ -78,20 +78,19 @@ final class LoggingImageReader extends ForwardingImageReader {
 
     @Override
     public void close() {
-        mLogger.d("Closing: " + toString());
+        mLog.d("Closing: " + toString());
         super.close();
     }
 
     private void incrementOpenImageCount() {
         int numOpenImages = mNumOpenImages.incrementAndGet();
         if (numOpenImages >= getMaxImages()) {
-            mLogger.e(String.format("Open Image Count (%d) exceeds maximum (%d)!",
+            mLog.e(String.format("Open Image Count (%d) exceeds maximum (%d)!",
                     numOpenImages, getMaxImages()));
         }
     }
 
     private void decrementOpenImageCount() {
         int numOpenImages = mNumOpenImages.decrementAndGet();
-        mLogger.v("Open Image Count = " + numOpenImages);
     }
 }

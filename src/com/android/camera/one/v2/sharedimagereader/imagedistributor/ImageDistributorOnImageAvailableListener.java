@@ -16,35 +16,34 @@
 
 package com.android.camera.one.v2.sharedimagereader.imagedistributor;
 
-import com.android.camera.debug.Log;
-import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Connects an {@link ImageReaderProxy} to an {@link ImageDistributor} with a new
- * thread to handle image availability callbacks.
+ * Connects an {@link ImageReaderProxy} to an {@link ImageDistributor} with a
+ * new thread to handle image availability callbacks.
  */
 @ParametersAreNonnullByDefault
 class ImageDistributorOnImageAvailableListener implements
         ImageReaderProxy.OnImageAvailableListener {
     private final ImageDistributorImpl mImageDistributor;
+    private final ImageReaderProxy mImageReader;
 
     /**
+     * @param imageReader The image reader to retrieve images from.
      * @param imageDistributor The image distributor to send images to.
      */
-    public ImageDistributorOnImageAvailableListener(ImageDistributorImpl imageDistributor) {
+    public ImageDistributorOnImageAvailableListener(ImageReaderProxy imageReader,
+            ImageDistributorImpl imageDistributor) {
         mImageDistributor = imageDistributor;
+        mImageReader = imageReader;
     }
 
     @Override
-    public void onImageAvailable(@Nonnull ImageReaderProxy imageReader) {
-        ImageProxy nextImage = imageReader.acquireNextImage();
+    public void onImageAvailable() {
+        ImageProxy nextImage = mImageReader.acquireNextImage();
         if (nextImage != null) {
             mImageDistributor.distributeImage(new SingleCloseImageProxy(nextImage));
         }
