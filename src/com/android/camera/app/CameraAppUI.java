@@ -548,6 +548,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final View mAccessibilityAffordances;
 
     private boolean mDisableAllUserInteractions;
+    /** Whether to prevent capture indicator from being triggered. */
+    private boolean mSuppressCaptureIndicator;
+
     /**
      * Provides current preview frame and the controls/overlay from the module that
      * are shown on top of the preview.
@@ -813,6 +816,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 showFilmstrip();
             }
         });
+
+        mSuppressCaptureIndicator = false;
     }
 
 
@@ -1481,12 +1486,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
        so that modules can have more knowledge of the status of the animation. */
 
     /**
+     * Turns on or off the capture indicator suppression.
+     */
+    public void setShouldSuppressCaptureIndicator(boolean suppress) {
+        mSuppressCaptureIndicator = suppress;
+    }
+
+    /**
      * Starts the capture indicator pop-out animation.
      *
      * @param accessibilityString An accessibility String to be announced during the peek animation.
      */
     public void startCaptureIndicatorRevealAnimation(String accessibilityString) {
-        if (mFilmstripLayout.getVisibility() == View.VISIBLE) {
+        if (mSuppressCaptureIndicator || mFilmstripLayout.getVisibility() == View.VISIBLE) {
             return;
         }
         mRoundedThumbnailView.startRevealThumbnailAnimation(accessibilityString);
@@ -1498,6 +1510,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      * @param thumbnailBitmap The thumbnail image to be shown.
      */
     public void updateCaptureIndicatorThumbnail(Bitmap thumbnailBitmap, int rotation) {
+        if (mSuppressCaptureIndicator || mFilmstripLayout.getVisibility() == View.VISIBLE) {
+            return;
+        }
         mRoundedThumbnailView.setThumbnail(thumbnailBitmap);
         mRoundedThumbnailView.setRotation(rotation);
     }
