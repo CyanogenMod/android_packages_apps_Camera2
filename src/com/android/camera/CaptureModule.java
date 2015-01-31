@@ -161,6 +161,7 @@ public class CaptureModule extends CameraModule implements
                 @Override
                 public void onPreviewAreaChanged(RectF previewArea) {
                     mPreviewArea = previewArea;
+                    mFocusController.configurePreviewDimensions(previewArea);
                 }
             };
 
@@ -372,12 +373,13 @@ public class CaptureModule extends CameraModule implements
         mCameraManager = mAppController.getCameraManager();
         mDisplayRotation = CameraUtil.getDisplayRotation();
         mCameraFacing = getFacingFromCameraId(
-                mSettingsManager.getInteger(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID));
+              mSettingsManager.getInteger(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID));
         updateCameraCharacteristics();
         mUI = new CaptureModuleUI(activity, mAppController.getModuleLayoutRoot(), mUIListener);
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
 
         mSoundPlayer = new SoundPlayer(mContext);
+
         FocusSound focusSound = new FocusSound(mSoundPlayer, R.raw.material_camera_focus);
         mFocusController = new FocusController(mUI.getFocusRing(), focusSound, mMainThread);
 
@@ -775,9 +777,7 @@ public class CaptureModule extends CameraModule implements
 
         // TODO: Some passive focus scans may trigger on a location
         // instead of the center of the screen.
-        mFocusController.showPassiveFocusAt(
-                (int) (mPreviewArea.width() / 2.0f),
-                (int) (mPreviewArea.height() / 2.0f));
+        mFocusController.showPassiveFocusAtCenter();
     }
 
     /**
@@ -1289,8 +1289,8 @@ public class CaptureModule extends CameraModule implements
                                         });
                                     }
                                 });
-                    }
-                }, mCameraHandler, mainThread, imageRotationCalculator);
+                        }
+                    }, mCameraHandler, mainThread, imageRotationCalculator);
     }
 
     private void closeCamera() {

@@ -26,7 +26,7 @@ import com.android.camera.ui.motion.Invalidator;
 /**
  * Passive focus ring animation renderer.
  */
-public class AutoFocusRing extends FocusRingRenderer {
+class AutoFocusRing extends FocusRingRenderer {
     private static final Tag TAG = new Tag("AutoFocusRing");
 
     /**
@@ -38,7 +38,7 @@ public class AutoFocusRing extends FocusRingRenderer {
      * @param enterDurationMillis the fade in time in milliseconds.
      * @param exitDurationMillis the fade out time in milliseconds.
      */
-    AutoFocusRing(Invalidator invalidator, Paint ringPaint, float enterDurationMillis,
+    public AutoFocusRing(Invalidator invalidator, Paint ringPaint, float enterDurationMillis,
           float exitDurationMillis) {
         super(invalidator, ringPaint, enterDurationMillis, exitDurationMillis);
     }

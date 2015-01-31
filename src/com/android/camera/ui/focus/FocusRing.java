@@ -16,6 +16,8 @@
 
 package com.android.camera.ui.focus;
 
+import android.graphics.RectF;
+
 /**
  * Primary interface for interacting with the focus ring UI.
  */
@@ -48,8 +50,23 @@ public interface FocusRing {
      * Set the location of the focus ring animation center.
      */
     public void setFocusLocation(float viewX, float viewY);
+
     /**
-     * Set the lens diopter of the focus ring.
+     * Set the location of the focus ring animation center.
      */
-    public void setFocusDiopter(float diopter);
+    public void centerFocusLocation();
+
+    /**
+     * Set the target radius as a ratio of min to max visible radius
+     * which will internally convert and clamp the value to the
+     * correct pixel radius.
+     */
+    public void setRadiusRatio(float ratio);
+
+    /**
+     * The physical size of preview can vary and does not map directly
+     * to the size of the view. This allows for conversions between view
+     * and preview space for values that are provided in preview space.
+     */
+    void configurePreviewDimensions(RectF previewArea);
 }

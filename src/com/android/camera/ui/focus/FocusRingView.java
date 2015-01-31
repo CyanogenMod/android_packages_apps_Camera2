@@ -20,131 +20,147 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.ui.motion.AnimationClock.SystemTimeClock;
 import com.android.camera.ui.motion.DynamicAnimator;
-import com.android.camera.ui.motion.InterpolateUtils;
 import com.android.camera.ui.motion.Invalidator;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera2.R;
+
+import javax.annotation.Nullable;
 
 /**
  * Custom view for running the focus ring animations.
  */
 public class FocusRingView extends View implements Invalidator, FocusRing {
     private static final Tag TAG = new Tag("FocusRingView");
-
-    // A Diopter of 0.0f ish is infinity.
-    // A Diopter of about 15f or so is focused "as close as possible"
-    // Diopter max is computed from device testing, TODO: Replace with LENS_FOCUS_RANGE
-    // https://developer.android.com/reference/android/hardware/camera2/CaptureResult.html
-    // TODO: Refactor diopter to radius computation outside this class.
-    private static final float DIOPTER_MIN = 0.0f;
-    private static final float DIOPTER_MAX = 15.0f;
-    private static final float DIOPTER_MEDIAN = (DIOPTER_MAX - DIOPTER_MIN) / 2.0f;
-
     private static final float FADE_IN_DURATION_MILLIS = 1000f;
     private static final float FADE_OUT_DURATION_MILLIS = 250f;
 
-    private final AutoFocusRing autoFocusRing;
-    private final ManualFocusRing manualFocusRing;
-    private final DynamicAnimator animator;
-
-    private final int mFocusCircleMinSize;
-    private final int mFocusCircleMaxSize;
+    private final AutoFocusRing mAutoFocusRing;
+    private final ManualFocusRing mManualFocusRing;
+    private final DynamicAnimator mAnimator;
+    private final LinearScale mRatioScale;
+    private final float mDefaultRadiusPx;
 
     private FocusRingRenderer currentFocusAnimation;
-    private boolean isFirstDraw = true;
-    private float mLastDiopter = DIOPTER_MEDIAN;
+    private boolean isFirstDraw;
+    private float mLastRadiusPx;
+
+    @Nullable
+    private RectF mPreviewSize;
 
     public FocusRingView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         Resources res = getResources();
-        Paint mPaint = makePaint(res, R.color.focus_color);
+        Paint paint = makePaint(res, R.color.focus_color);
 
-        mFocusCircleMinSize = res.getDimensionPixelSize(R.dimen.focus_circle_min_size);
-        mFocusCircleMaxSize = res.getDimensionPixelSize(R.dimen.focus_circle_max_size);
+        float focusCircleMinSize = res.getDimensionPixelSize(R.dimen.focus_circle_min_size);
+        float focusCircleMaxSize = res.getDimensionPixelSize(R.dimen.focus_circle_max_size);
+        mDefaultRadiusPx = res.getDimensionPixelSize(R.dimen.focus_circle_initial_size);
 
-        animator = new DynamicAnimator(this, new SystemTimeClock());
+        mRatioScale = new LinearScale(0, 1, focusCircleMinSize, focusCircleMaxSize);
+        mAnimator = new DynamicAnimator(this, new SystemTimeClock());
 
-        autoFocusRing = new AutoFocusRing(animator, mPaint,
+        mAutoFocusRing = new AutoFocusRing(mAnimator, paint,
               FADE_IN_DURATION_MILLIS,
               FADE_OUT_DURATION_MILLIS);
-        manualFocusRing = new ManualFocusRing(animator, mPaint,
+        mManualFocusRing = new ManualFocusRing(mAnimator, paint,
               FADE_OUT_DURATION_MILLIS);
 
-        animator.animations.add(autoFocusRing);
-        animator.animations.add(manualFocusRing);
+        mAnimator.animations.add(mAutoFocusRing);
+        mAnimator.animations.add(mManualFocusRing);
+
+        isFirstDraw = true;
+        mLastRadiusPx = mDefaultRadiusPx;
     }
 
     @Override
     public boolean isPassiveFocusRunning() {
-        return autoFocusRing.isActive();
+        return mAutoFocusRing.isActive();
     }
 
     @Override
     public boolean isActiveFocusRunning() {
-        return manualFocusRing.isActive();
+        return mManualFocusRing.isActive();
     }
 
     @Override
     public void startPassiveFocus() {
-        animator.invalidate();
-        long tMs = animator.getTimeMillis();
+        mAnimator.invalidate();
+        long tMs = mAnimator.getTimeMillis();
 
-        if (manualFocusRing.isActive() && !manualFocusRing.isExiting()) {
-            manualFocusRing.stop(tMs);
+        if (mManualFocusRing.isActive() && !mManualFocusRing.isExiting()) {
+            mManualFocusRing.stop(tMs);
         }
 
-        float lastRadius = radiusForDiopter(mLastDiopter);
-        autoFocusRing.start(tMs, lastRadius, lastRadius);
-        currentFocusAnimation = autoFocusRing;
+        mAutoFocusRing.start(tMs, mLastRadiusPx, mLastRadiusPx);
+        currentFocusAnimation = mAutoFocusRing;
     }
 
     @Override
     public void startActiveFocus() {
-        animator.invalidate();
-        long tMs = animator.getTimeMillis();
+        mAnimator.invalidate();
+        long tMs = mAnimator.getTimeMillis();
 
-        if (autoFocusRing.isActive() && !autoFocusRing.isExiting()) {
-            autoFocusRing.stop(tMs);
+        if (mAutoFocusRing.isActive() && !mAutoFocusRing.isExiting()) {
+            mAutoFocusRing.stop(tMs);
         }
 
-        manualFocusRing.start(tMs, 0.0f, radiusForDiopter(mLastDiopter));
-        currentFocusAnimation = manualFocusRing;
+        mManualFocusRing.start(tMs, 0.0f, mLastRadiusPx);
+        currentFocusAnimation = mManualFocusRing;
     }
 
     @Override
     public void stopFocusAnimations() {
-        long tMs = animator.getTimeMillis();
-        if (manualFocusRing.isActive() && !manualFocusRing.isExiting()
-              && !manualFocusRing.isEntering()) {
-            manualFocusRing.exit(tMs);
+        long tMs = mAnimator.getTimeMillis();
+        if (mManualFocusRing.isActive() && !mManualFocusRing.isExiting()
+              && !mManualFocusRing.isEntering()) {
+            mManualFocusRing.exit(tMs);
         }
 
-        if (autoFocusRing.isActive() && !autoFocusRing.isExiting()) {
-            autoFocusRing.exit(tMs);
+        if (mAutoFocusRing.isActive() && !mAutoFocusRing.isExiting()) {
+            mAutoFocusRing.exit(tMs);
         }
     }
 
     @Override
     public void setFocusLocation(float viewX, float viewY) {
-        autoFocusRing.setCenterX((int) viewX);
-        autoFocusRing.setCenterY((int) viewY);
-        manualFocusRing.setCenterX((int) viewX);
-        manualFocusRing.setCenterY((int) viewY);
+        mAutoFocusRing.setCenterX((int) viewX);
+        mAutoFocusRing.setCenterY((int) viewY);
+        mManualFocusRing.setCenterX((int) viewX);
+        mManualFocusRing.setCenterY((int) viewY);
     }
 
     @Override
-    public void setFocusDiopter(float diopter) {
-        long tMs = animator.getTimeMillis();
-        // Some devices return zero for invalid or "unknown" diopter values.
-        if (currentFocusAnimation != null && diopter > 0.1f) {
-            currentFocusAnimation.setRadius(tMs, radiusForDiopter(diopter));
-            mLastDiopter = diopter;
+    public void centerFocusLocation() {
+        Point center = computeCenter();
+        mAutoFocusRing.setCenterX(center.x);
+        mAutoFocusRing.setCenterY(center.y);
+        mManualFocusRing.setCenterX(center.x);
+        mManualFocusRing.setCenterY(center.y);
+    }
+
+    @Override
+    public void setRadiusRatio(float ratio) {
+        setRadius(mRatioScale.scale(mRatioScale.clamp(ratio)));
+    }
+
+    @Override
+    public void configurePreviewDimensions(RectF previewArea) {
+        mPreviewSize = previewArea;
+        mLastRadiusPx = mDefaultRadiusPx;
+
+        if (!isFirstDraw) {
+            centerAutofocusRing();
         }
     }
 
@@ -155,20 +171,35 @@ public class FocusRingView extends View implements Invalidator, FocusRing {
             centerAutofocusRing();
         }
 
-        animator.draw(canvas);
+        if (mPreviewSize != null) {
+            canvas.clipRect(mPreviewSize, Region.Op.REPLACE);
+        }
+
+        mAnimator.draw(canvas);
+    }
+
+    private void setRadius(float radiusPx) {
+        long tMs = mAnimator.getTimeMillis();
+        // Some devices return zero for invalid or "unknown" diopter values.
+        if (currentFocusAnimation != null && radiusPx > 0.1f) {
+            currentFocusAnimation.setRadius(tMs, radiusPx);
+            mLastRadiusPx = radiusPx;
+        }
     }
 
     private void centerAutofocusRing() {
-        float screenW = this.getWidth();
-        float screenH = this.getHeight();
-
-        autoFocusRing.setCenterX((int) (screenW / 2f));
-        autoFocusRing.setCenterY((int) (screenH / 2f));
+        Point center = computeCenter();
+        mAutoFocusRing.setCenterX(center.x);
+        mAutoFocusRing.setCenterY(center.y);
     }
 
-    private float radiusForDiopter(float diopter) {
-        return InterpolateUtils.scale(diopter, DIOPTER_MIN, DIOPTER_MAX, mFocusCircleMinSize,
-              mFocusCircleMaxSize);
+    private Point computeCenter() {
+        if (mPreviewSize != null && (mPreviewSize.width() * mPreviewSize.height() > 0.01f)) {
+            Log.i(TAG, "Computing center via preview size.");
+            return new Point((int) mPreviewSize.centerX(), (int) mPreviewSize.centerY());
+        }
+        Log.i(TAG, "Computing center via view bounds.");
+        return new Point(getWidth() / 2, getHeight() / 2);
     }
 
     private Paint makePaint(Resources res, int color) {

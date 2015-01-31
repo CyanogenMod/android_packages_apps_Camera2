@@ -25,7 +25,7 @@ import com.android.camera.ui.motion.Invalidator;
 /**
  * Manual focus ring animation renderer.
  */
-public class ManualFocusRing extends FocusRingRenderer {
+class ManualFocusRing extends FocusRingRenderer {
     /**
      * The manual focus ring encapsulates the animation logic for visualizing
      * a focus event when triggered by a physical screen touch.

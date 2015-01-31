@@ -16,24 +16,49 @@
 
 package com.android.camera.ui.focus;
 
+import android.graphics.RectF;
+
 import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.FocusDistanceListener;
+import com.android.camera.ui.motion.LinearScale;
 
 /**
  * The focus controller interacts with the focus ring UI element.
  */
 public class FocusController implements FocusDistanceListener {
     private static final Tag TAG = new Tag("FocusController");
+    // A Diopter of 0.0f ish is infinity.
+    // A Diopter of about 15f or so is focused "as close as possible"
+    // Diopter max is computed from device testing
+    private static final float DIOPTER_MIN = 0.0f;
+    private static final float DIOPTER_MAX = 15.0f;
 
     private final FocusRing mFocusRing;
     private final FocusSound mFocusSound;
     private final MainThread mMainThread;
+    private final LinearScale mDiopterToRatio;
 
     public FocusController(FocusRing focusRing, FocusSound focusSound, MainThread mainThread) {
         mFocusRing = focusRing;
         mFocusSound = focusSound;
         mMainThread = mainThread;
+        mDiopterToRatio = new LinearScale(DIOPTER_MIN, DIOPTER_MAX, 0, 1);
+    }
+
+    /**
+     * Show a passive focus animation at the center of the active area.
+     * This will likely be different than the view bounds due to varying image
+     * ratios and dimensions.
+     */
+    public void showPassiveFocusAtCenter() {
+        mMainThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                mFocusRing.startPassiveFocus();
+                mFocusRing.centerFocusLocation();
+            }
+        });
     }
 
     /**
@@ -87,14 +112,43 @@ public class FocusController implements FocusDistanceListener {
         });
     }
 
+    /**
+     * Computing the correct location for the focus ring requires knowing
+     * the screen position and size of the preview area so the drawing
+     * operations can be clipped correctly.
+     */
+    public void configurePreviewDimensions(final RectF previewArea) {
+        mMainThread.execute(new Runnable() {
+            @Override
+            public void run() {
+               mFocusRing.configurePreviewDimensions(previewArea);
+            }
+        });
+    }
+
+    /**
+     * Set the physical radius of the focus ring in pixels.
+     */
+    public void setFocusRatio(final float ratio) {
+        mMainThread.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (mFocusRing.isPassiveFocusRunning() ||
+                      mFocusRing.isActiveFocusRunning()) {
+                    mFocusRing.setRadiusRatio(ratio);
+                }
+            }
+        });
+    }
+
     @Override
     public void onFocusDistance(final float diopter, final boolean isActive) {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
                 if (isActive || mFocusRing.isPassiveFocusRunning() ||
-                        mFocusRing.isActiveFocusRunning()) {
-                    mFocusRing.setFocusDiopter(diopter);
+                    mFocusRing.isActiveFocusRunning()) {
+                    mFocusRing.setRadiusRatio(mDiopterToRatio.scale(diopter));
                 }
             }
         });

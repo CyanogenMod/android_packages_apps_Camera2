@@ -229,8 +229,7 @@ public class VideoModule extends CameraModule
                     ? new CameraAgent.CameraAFMoveCallback() {
                 @Override
                 public void onAutoFocusMoving(boolean moving, CameraProxy camera) {
-                    // mFocusManager.onAutoFocusMoving(moving) not called because UI
-                    // not compatible with vertical video hint UI.
+                     mFocusManager.onAutoFocusMoving(moving);
                 }
             } : null;
 
