@@ -25,7 +25,6 @@ import java.util.concurrent.Executor;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -80,7 +79,7 @@ public class Observables {
      * @return An observable which has the given constant value.
      */
     @Nonnull
-    public static <T> Observable<T> of(final T constant) {
+    public static <T> Observable<T> of(final @Nonnull T constant) {
         return new Observable<T>() {
             @Nonnull
             @Override

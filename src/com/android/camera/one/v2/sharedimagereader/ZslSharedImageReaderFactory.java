@@ -19,15 +19,14 @@ package com.android.camera.one.v2.sharedimagereader;
 import static com.android.camera.one.v2.core.ResponseListeners.forFinalMetadata;
 import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
 
-import com.android.camera.async.BufferQueue;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Updatable;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
-import com.android.camera.one.v2.core.RequestBuilder;
-import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.core.CaptureStream;
+import com.android.camera.one.v2.core.ResponseListener;
+import com.android.camera.one.v2.core.ResponseListeners;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributor;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageDistributorFactory;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
@@ -36,9 +35,6 @@ import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.Metadata
 import com.android.camera.one.v2.sharedimagereader.ringbuffer.DynamicRingBufferFactory;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.FiniteTicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
-
-import static com.android.camera.one.v2.core.ResponseListeners.forFinalMetadata;
-import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
 
 /**
  * Like {@link SharedImageReaderFactory}, but provides a single
@@ -49,8 +45,8 @@ public class ZslSharedImageReaderFactory {
     private final ImageStreamFactory mSharedImageReader;
     private final ImageStream mZslCaptureStream;
     private final MetadataPool mMetadataPool;
-    private final RequestTemplate mRequestTemplate;
     private final Observable<Integer> mAvailableImageCount;
+    private final ResponseListener mResponseListener;
 
     /**
      * @param lifetime The lifetime of the SharedImageReader, and other
@@ -62,7 +58,7 @@ public class ZslSharedImageReaderFactory {
      *            callbacks from the platform.
      */
     public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader,
-            RequestBuilder.Factory rootRequestTemplate, HandlerFactory handlerFactory) {
+            HandlerFactory handlerFactory) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(lifetime,
                 imageReader, handlerFactory);
         ImageDistributor imageDistributor = imageDistributorFactory.provideImageDistributor();
@@ -91,27 +87,27 @@ public class ZslSharedImageReaderFactory {
 
         mAvailableImageCount = ringBufferFactory.provideTicketPool().getAvailableTicketCount();
 
-        mRequestTemplate = new RequestTemplate(rootRequestTemplate);
-        mRequestTemplate.addStream(mZslCaptureStream);
-        mRequestTemplate.addResponseListener(forTimestamps(globalTimestampQueue));
-        mRequestTemplate.addResponseListener(forFinalMetadata(
-                metadataPoolFactory.provideMetadataCallback()));
+        // Create a ResponseListener which updates the global timestamp queue
+        // and the metadata callback.
+        mResponseListener = ResponseListeners.forListeners(
+                forTimestamps(globalTimestampQueue),
+                forFinalMetadata(metadataPoolFactory.provideMetadataCallback()));
     }
 
     public ImageStreamFactory provideSharedImageReader() {
         return mSharedImageReader;
     }
 
-    public BufferQueue<ImageProxy> provideZSLCaptureStream() {
+    public ResponseListener provideGlobalResponseListener() {
+        return mResponseListener;
+    }
+
+    public ImageStream provideZSLStream() {
         return mZslCaptureStream;
     }
 
     public MetadataPool provideMetadataPool() {
         return mMetadataPool;
-    }
-
-    public RequestBuilder.Factory provideRequestTemplate() {
-        return mRequestTemplate;
     }
 
     public Observable<Integer> provideAvailableImageCount() {

@@ -18,11 +18,8 @@ package com.android.camera.one.v2.sharedimagereader.ringbuffer;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.BufferQueueController;
-import com.android.camera.async.ConcurrentState;
-import com.android.camera.async.CountableBufferQueue;
 import com.android.camera.async.Lifetime;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
-import com.android.camera.one.v2.sharedimagereader.util.ImageCloser;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 
 /*
@@ -44,23 +41,10 @@ public class DynamicRingBufferFactory {
     private final BufferQueue<ImageProxy> mRingBufferOutput;
 
     public DynamicRingBufferFactory(Lifetime lifetime, TicketPool rootTicketPool) {
-        ConcurrentState<Integer> ringBufferSize = new ConcurrentState<>(0);
-
-        CountableBufferQueue<ImageProxy> ringBuffer = new CountableBufferQueue<>(ringBufferSize,
-                new ImageCloser());
-
-        QueueFlusher<ImageProxy> queueFlusher = new QueueFlusher<>(ringBuffer);
-
-        TicketPoolPrioritizer pPool = new TicketPoolPrioritizer(queueFlusher, ringBufferSize,
-                rootTicketPool);
-
-        mOutputTicketPool = pPool.getHighPriorityTicketPool();
-
-        mRingBufferInput = new DynamicRingBuffer(pPool.getLowPriorityTicketProvider(),
-                ringBuffer, ringBuffer);
-
-        lifetime.add(mRingBufferInput);
-
+        DynamicRingBuffer ringBuffer = new DynamicRingBuffer(rootTicketPool);
+        lifetime.add(ringBuffer);
+        mOutputTicketPool = ringBuffer;
+        mRingBufferInput = ringBuffer;
         mRingBufferOutput = ringBuffer;
     }
 

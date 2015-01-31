@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2.sharedimagereader.metadatasynchronizer;
 
-import android.hardware.camera2.TotalCaptureResult;
-
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.google.common.util.concurrent.ListenableFuture;
 

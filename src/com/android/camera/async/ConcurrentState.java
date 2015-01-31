@@ -23,6 +23,7 @@ import java.util.concurrent.Executor;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * Generic asynchronous state wrapper which supports two methods of interaction:
