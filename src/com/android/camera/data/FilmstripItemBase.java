@@ -26,6 +26,8 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Key;
+import com.bumptech.glide.signature.MediaStoreSignature;
 import com.google.common.base.Optional;
 
 import java.io.File;
@@ -126,10 +128,11 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
               MAXIMUM_TEXTURE_SIZE);
 
         return Glide.with(mContext)
-              .load(uri)
+              .loadFromMediaStore(uri)
               .asBitmap()
                   .atMost()
                   .fitCenter()
+              .signature(getGlideKey())
               .override(
                     Math.round(width * downscaleRatio),
                     Math.round(height * downscaleRatio));
@@ -143,10 +146,11 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
               MAXIMUM_SMOOTH_TEXTURE_SIZE);
 
         return Glide.with(mContext)
-              .load(uri)
+              .loadFromMediaStore(uri)
               .asBitmap()
                   .atMost()
                   .fitCenter()
+              .signature(getGlideKey())
               .override(
                     Math.round(viewWidth * downscaleRatio),
                     Math.round(viewHeight * downscaleRatio));
@@ -158,6 +162,7 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
               .asBitmap()
                   .atMost()
                   .fitCenter()
+              .signature(getGlideKey())
               // This attempts to ensure we load the cached media store version.
               .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
     }
@@ -168,7 +173,16 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
               .asBitmap()
                   .atMost()
                   .fitCenter()
+              .signature(getGlideKey())
               .override(256, 265);
+    }
+
+    protected Key getGlideKey() {
+        // Per Glide docs, make default mime type be the empty String
+        String mimeType = (mData.getMimeType() == null) ? "" : mData.getMimeType();
+        long modTimeSeconds = (mData.getLastModifiedDate() == null) ? 0 :
+            mData.getLastModifiedDate().getTime() / 1000;
+        return new MediaStoreSignature(mimeType, modTimeSeconds, mData.getOrientation());
     }
 
     private float downscaleRatioToFit(int width, int height, int fitWithinSize) {
