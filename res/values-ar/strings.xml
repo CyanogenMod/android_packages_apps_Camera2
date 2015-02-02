@@ -188,7 +188,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"تبديل إلى وضع الصور"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"تبديل إلى وضع الفيديو"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"تبديل إلى بانوراما"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"تبديل إلى بانوراما 360 درجة"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"‏تبديل إلى بانوراما Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"تبديل إلى جودة عالية"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"تبديل إلى إعادة التركيز"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"الإلغاء بعد المراجعة"</string>
@@ -205,7 +205,7 @@
     <string name="photo_date_content_description" msgid="5705865897898465619">"‏صورة تمّ التقاطها في %s"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"‏مقطع فيديو تمّ التقاطه في %s"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"‏بانوراما تم التقاطها في %s"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏بانوراما 360 درجة تمّ التقاطها في %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏بانوراما Photo Sphere تمّ التقاطها في %s"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"‏صورة بتركيز العدسة تمّ التقاطها في %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"جارٍ معالجة الوسائط"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"تبديل قائمة الأوضاع"</string>
@@ -281,14 +281,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"الإعدادات"</string>
     <string name="mode_camera" msgid="279763925715250603">"الكاميرا"</string>
     <string name="mode_video" msgid="8633929034048169139">"فيديو"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"بانوراما 360 درجة"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"‏بانوراما Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"لقطات متتابعة"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاوية واسعة"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"بانوراما"</string>
     <string name="mode_refocus" msgid="172192967119469061">"تركيز العدسة"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"التبديل إلى وضع الكاميرا"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"التبديل إلى كاميرا الفيديو"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"التبديل إلى وضع بانوراما 360 درجة"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"‏التبديل إلى وضع بانوراما Photo Sphere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"التبديل إلى الوضع بانوراما"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"التبديل إلى وضع تركيز العدسة"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"فتح الإعدادات"</string>
