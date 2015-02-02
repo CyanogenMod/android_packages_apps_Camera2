@@ -318,6 +318,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"Cancelar"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Concluído"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Repetir"</string>
+    <string name="review_button_description" msgid="7932122063748430080">"Comentar"</string>
     <string name="share_button_description" msgid="5108508790540832053">"Partilhar"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Ver"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Editar"</string>
@@ -357,7 +358,7 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avançadas"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposição manual"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Em Definições, altere a resolução e a qualidade ou experimente as funcionalidades avançadas."</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolher tamanho da fotografia"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolha o tamanho da fotografia"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Pode alterar esta opção mais tarde em Definições."</string>
     <string name="share_to" msgid="5144911209144798122">"Partilhar com"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar com"</string>

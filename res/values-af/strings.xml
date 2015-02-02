@@ -316,6 +316,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"Kanselleer"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Klaar"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Neem weer"</string>
+    <string name="review_button_description" msgid="7932122063748430080">"Resenseer"</string>
     <string name="share_button_description" msgid="5108508790540832053">"Deel"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Aansig"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Wysig"</string>

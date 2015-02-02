@@ -264,7 +264,7 @@
     <string name="set_duration" msgid="1638453882581604341">"設定時間（秒数）"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"画像を撮影するまでカウントダウンします"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"撮影場所を記録しますか？"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"画像や動画に撮影場所のタグを付けることができます。\n\n他のアプリから、保存された画像とともに撮影場所の情報にもアクセスできるようになります。"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"画像や動画に撮影場所のタグを付ける。\n\n他のアプリから、保存された画像とともに撮影場所の情報にもアクセスできるようになります。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"いいえ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"はい"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"その他のオプション"</string>
@@ -316,6 +316,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"キャンセル"</string>
     <string name="done_button_description" msgid="1334963435441544592">"完了"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"撮り直し"</string>
+    <string name="review_button_description" msgid="7932122063748430080">"レビュー"</string>
     <string name="share_button_description" msgid="5108508790540832053">"共有"</string>
     <string name="view_button_description" msgid="4985768837891362075">"表示"</string>
     <string name="edit_button_description" msgid="98550816724901925">"編集"</string>

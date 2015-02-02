@@ -316,6 +316,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"Avbryt"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Ferdig"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Ta på nytt"</string>
+    <string name="review_button_description" msgid="7932122063748430080">"Anmeld"</string>
     <string name="share_button_description" msgid="5108508790540832053">"Del"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Visning"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Rediger"</string>
