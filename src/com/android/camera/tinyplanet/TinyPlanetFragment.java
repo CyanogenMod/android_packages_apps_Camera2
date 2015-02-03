@@ -319,8 +319,7 @@ public class TinyPlanetFragment extends DialogFragment implements PreviewSizeLis
                 String tinyPlanetTitle = FILENAME_PREFIX + mOriginalTitle;
                 mediaSaver.addImage(image.mJpegData, tinyPlanetTitle, (new Date()).getTime(),
                         null,
-                        image.mSize, image.mSize, 0, null, doneListener, getActivity()
-                                .getContentResolver());
+                        image.mSize, image.mSize, 0, null, doneListener);
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
