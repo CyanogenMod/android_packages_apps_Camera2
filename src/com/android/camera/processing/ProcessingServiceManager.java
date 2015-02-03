@@ -32,7 +32,7 @@ import java.util.LinkedList;
  * Clients should only use this class and not the {@link ProcessingService}
  * directly.
  */
-public class ProcessingServiceManager {
+public class ProcessingServiceManager implements ProcessingTaskConsumer {
     private static final Log.Tag TAG = new Log.Tag("ProcessingSvcMgr");
 
     private static class Singleton {
@@ -60,7 +60,7 @@ public class ProcessingServiceManager {
 
     private ProcessingServiceManager(Context context) {
         mAppContext = context;
-        mImageBackend = new ImageBackend();
+        mImageBackend = new ImageBackend(this);
     }
 
     /**
@@ -69,6 +69,7 @@ public class ProcessingServiceManager {
      *
      * @param task The task to be enqueued.
      */
+    @Override
     public synchronized void enqueueTask(ProcessingTask task) {
         mQueue.add(task);
         Log.d(TAG, "Task added. Queue size now: " + mQueue.size());

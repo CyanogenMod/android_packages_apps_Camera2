@@ -114,7 +114,16 @@ public interface ImageConsumer {
      * @return Number of images that are currently being referred by the
      *         consumer
      */
-    public int numberOfReservedOpenImages();
+    public int getNumberOfReservedOpenImages();
+
+    /**
+     * Returns the number of currently outstanding receiveImage calls that are
+     * processing and/or enqueued.
+     *
+     * @return the number of receiveImage calls still running or queued in the
+     *         ImageBackend
+     */
+    public int getNumberOfOutstandingCalls();
 
     /**
      * Shutdown all tasks by blocking on tasks to be completed.
