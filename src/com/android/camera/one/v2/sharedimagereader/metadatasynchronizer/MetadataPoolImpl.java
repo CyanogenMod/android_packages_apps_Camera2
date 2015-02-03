@@ -72,7 +72,7 @@ public class MetadataPoolImpl implements Updatable<TotalCaptureResultProxy>, Met
         Futures.addCallback(future, new FutureCallback<TotalCaptureResultProxy>() {
             @Override
             public void onSuccess(TotalCaptureResultProxy totalCaptureResultProxy) {
-                synchronized (mMetadataFutures) {
+                synchronized (mLock) {
                     mMetadataFutures.remove(timestamp);
                 }
             }
