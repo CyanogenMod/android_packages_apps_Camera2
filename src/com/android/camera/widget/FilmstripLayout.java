@@ -48,6 +48,9 @@ import com.android.camera2.R;
 public class FilmstripLayout extends FrameLayout implements FilmstripContentPanel {
 
     private static final long DEFAULT_DURATION_MS = 250;
+    // If the fling velocity exceeds this threshold, open filmstrip at a constant
+    // speed. Unit: pixel/ms.
+    private static final float FLING_VELOCITY_THRESHOLD = 4.0f;
 
     /**
      * The layout containing the {@link com.android.camera.widget.FilmstripView}
@@ -397,8 +400,17 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             return false;
         }
 
+        private boolean flingShouldOpenFilmstrip(float velocityX) {
+            return (velocityX < 0.0f) && (Math.abs(velocityX / 1000.0f) > FLING_VELOCITY_THRESHOLD);
+        }
+
         @Override
         public boolean onFling(float velocityX, float velocityY) {
+            if (flingShouldOpenFilmstrip(velocityX)) {
+                showFilmstrip();
+                return true;
+            }
+
             if (mFilmstripContentTranslationProgress == 0f) {
                 return mFilmstripGestureListener.onFling(velocityX, velocityY);
             }
@@ -437,8 +449,6 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             if (mSwipeTrend < 0) {
                 hideFilmstrip();
                 onSwipeOut();
-            } else if (mSwipeTrend > 0) {
-                showFilmstrip();
             } else {
                 if (mFilmstripContentLayout.getTranslationX() >= getMeasuredWidth() / 2) {
                     hideFilmstrip();
