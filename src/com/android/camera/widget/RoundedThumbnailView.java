@@ -456,10 +456,17 @@ public class RoundedThumbnailView extends View {
         if (mThumbnailAnimatorSet != null && mThumbnailAnimatorSet.isRunning()) {
             mThumbnailAnimatorSet.removeAllListeners();
             mThumbnailAnimatorSet.cancel();
+            // Release the animator so that a new instance will be created and
+            // its listeners properly reconnected.  Fix for b/19034435
+            mThumbnailAnimatorSet = null;
         }
+
         if (mRippleAnimator != null && mRippleAnimator.isRunning()) {
             mRippleAnimator.removeAllListeners();
             mRippleAnimator.cancel();
+            // Release the animator so that a new instance will be created and
+            // its listeners properly reconnected.  Fix for b/19034435
+            mRippleAnimator = null;
         }
         // Remove all pending reveal requests.
         mRevealRequestWaitQueue.clear();
