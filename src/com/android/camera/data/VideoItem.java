@@ -19,7 +19,6 @@ package com.android.camera.data;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +30,8 @@ import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Optional;
+
+import javax.annotation.Nonnull;
 
 /**
  * Backing data for a single video displayed in the filmstrip.
@@ -63,8 +64,9 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
 
     private Size mCachedSize;
 
-    public VideoItem(Context context, VideoItemData data, VideoItemFactory videoItemFactory) {
-        super(context, data, VIDEO_ITEM_ATTRIBUTES);
+    public VideoItem(Context context, GlideFilmstripManager manager, VideoItemData data,
+          VideoItemFactory videoItemFactory) {
+        super(context, manager, data, VIDEO_ITEM_ATTRIBUTES);
         mVideoItemFactory = videoItemFactory;
     }
 
@@ -140,15 +142,16 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
     }
 
     @Override
-    public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
+    public View getView(Optional<View> optionalView,
           LocalFilmstripDataAdapter adapter, boolean isInProgress,
-          VideoClickedCallback videoClickedCallback) {
+          final VideoClickedCallback videoClickedCallback) {
+
         View view;
         VideoViewHolder viewHolder;
 
         if (optionalView.isPresent()) {
             view = optionalView.get();
-            viewHolder = (VideoViewHolder) view.getTag(R.id.mediadata_tag_target);
+            viewHolder = getViewHolder(view);
         } else {
             view = LayoutInflater.from(mContext).inflate(R.layout.filmstrip_video, null);
             view.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
@@ -159,46 +162,50 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
             view.setTag(R.id.mediadata_tag_target, viewHolder);
         }
 
-        fillVideoView(view, viewHolder, viewWidthPx, viewHeightPx, videoClickedCallback);
+        if (viewHolder != null) {
+            // ImageView for the play icon.
+            viewHolder.mPlayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    videoClickedCallback.playVideo(mData.getUri(), mData.getTitle());
+                }
+            });
+
+            view.setContentDescription(mContext.getResources().getString(
+                  R.string.video_date_content_description,
+                  mDateFormatter.format(mData.getLastModifiedDate())));
+
+            renderTiny(viewHolder);
+        } else {
+            Log.w(TAG, "getView called with a view that is not compatible with VideoItem.");
+        }
 
         return view;
     }
 
-    private void fillVideoView(View view, VideoViewHolder viewHolder, final int viewWidthPx,
-          final int viewHeightPx, final VideoClickedCallback videoClickedCallback) {
-
-        //TODO: Figure out why these can be <= 0.
-        if (viewWidthPx <= 0 || viewHeightPx <=0) {
-            return;
-        }
-
-        Uri uri = mData.getUri();
-
-        glideFilmstripThumb(uri, viewWidthPx, viewHeightPx)
-              .thumbnail(glideMediaStoreThumb(uri))
-              .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
-              .dontAnimate()
-              .into(viewHolder.mVideoView);
-
-        // ImageView for the play icon.
-        viewHolder.mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                videoClickedCallback.playVideo(mData.getUri(), mData.getTitle());
-            }
-        });
-
-        view.setContentDescription(mContext.getResources().getString(
-              R.string.video_date_content_description,
-              mDateFormatter.format(mData.getLastModifiedDate())));
+    @Override
+    public void renderTiny(@Nonnull View view) {
+        renderTiny(getViewHolder(view));
     }
 
+    @Override
+    public void renderThumbnail(@Nonnull View view) {
+        mGlideManager.loadScreen(mData.getUri(), generateSignature(mData),
+              mSuggestedWidthPx, mSuggestedHeightPx)
+              .thumbnail(mGlideManager.loadMediaStoreThumb(mData.getUri(),
+                    generateSignature(mData)))
+              .into(getViewHolder(view).mVideoView);
+    }
 
     @Override
-    public void recycle(View view) {
-        VideoViewHolder videoViewHolder =
-              (VideoViewHolder) view.getTag(R.id.mediadata_tag_target);
-        Glide.clear(videoViewHolder.mVideoView);
+    public void renderFullRes(@Nonnull View view) { }
+
+    @Override
+    public void recycle(@Nonnull View view) {
+        VideoViewHolder holder = getViewHolder(view);
+        if (holder != null) {
+            Glide.clear(getViewHolder(view).mVideoView);
+        }
     }
 
     @Override
@@ -214,5 +221,19 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
     @Override
     public String toString() {
         return "VideoItem: " + mData.toString();
+    }
+
+    private void renderTiny(@Nonnull VideoViewHolder viewHolder) {
+        mGlideManager.loadMediaStoreThumb(mData.getUri(), generateSignature(mData))
+              .into(viewHolder.mVideoView);
+    }
+
+    private VideoViewHolder getViewHolder(@Nonnull View view) {
+        Object container = view.getTag(R.id.mediadata_tag_target);
+        if (container instanceof VideoViewHolder) {
+            return (VideoViewHolder) container;
+        }
+
+        return null;
     }
 }

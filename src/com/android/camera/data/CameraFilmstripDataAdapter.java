@@ -136,16 +136,11 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
             return null;
         }
 
-        return mFilmstripItems.get(index).getView(Optional.fromNullable(recycled), mSuggestedWidth,
-              mSuggestedHeight, this, /* inProgress */ false, videoClickedCallback);
-    }
+        FilmstripItem item = mFilmstripItems.get(index);
+        item.setSuggestedSize(mSuggestedWidth, mSuggestedHeight);
 
-    @Override
-    public void resizeView(int index, View view, int w, int h) {
-        if (index >= mFilmstripItems.size() || index < 0) {
-            return;
-        }
-        mFilmstripItems.get(index).loadFullImage(mSuggestedWidth, mSuggestedHeight, view);
+        return item.getView(Optional.fromNullable(recycled), this, /* inProgress */ false,
+              videoClickedCallback);
     }
 
     @Override

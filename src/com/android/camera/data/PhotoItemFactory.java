@@ -30,12 +30,14 @@ public class PhotoItemFactory implements CursorToFilmstripItemFactory<PhotoItem>
     private static final Log.Tag TAG = new Log.Tag("PhotoItemFact");
 
     private final Context mContext;
+    private final GlideFilmstripManager mGlideManager;
     private final ContentResolver mContentResolver;
     private final PhotoDataFactory mPhotoDataFactory;
 
-    public PhotoItemFactory(Context context, ContentResolver contentResolver,
-          PhotoDataFactory photoDataFactory) {
+    public PhotoItemFactory(Context context, GlideFilmstripManager glideManager,
+          ContentResolver contentResolver, PhotoDataFactory photoDataFactory) {
         mContext = context;
+        mGlideManager = glideManager;
         mContentResolver = contentResolver;
         mPhotoDataFactory = photoDataFactory;
     }
@@ -44,7 +46,7 @@ public class PhotoItemFactory implements CursorToFilmstripItemFactory<PhotoItem>
     public PhotoItem get(Cursor c) {
         FilmstripItemData data = mPhotoDataFactory.fromCursor(c);
         if (data != null) {
-            return new PhotoItem(mContext, data, this);
+            return new PhotoItem(mContext, mGlideManager, data, this);
         } else {
             Log.w(TAG, "skipping item with null data, returning null for item");
             return null;

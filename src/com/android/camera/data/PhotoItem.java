@@ -33,12 +33,16 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
-import com.bumptech.glide.BitmapRequestBuilder;
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.google.common.base.Optional;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+import javax.annotation.Nonnull;
 
 /**
  * Backing data for a single photo displayed in the filmstrip.
@@ -63,8 +67,9 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
     private Bitmap mSessionPlaceholderBitmap;
 
-    public PhotoItem(Context context, FilmstripItemData data, PhotoItemFactory photoItemFactory) {
-        super(context, data, PHOTO_ITEM_ATTRIBUTES);
+    public PhotoItem(Context context, GlideFilmstripManager manager, FilmstripItemData data,
+          PhotoItemFactory photoItemFactory) {
+        super(context, manager, data, PHOTO_ITEM_ATTRIBUTES);
         mPhotoItemFactory = photoItemFactory;
     }
 
@@ -110,9 +115,8 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
     }
 
     @Override
-    public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
-          LocalFilmstripDataAdapter adapter, boolean isInProgress,
-          VideoClickedCallback videoClickedCallback) {
+    public View getView(Optional<View> optionalView, LocalFilmstripDataAdapter adapter,
+          boolean isInProgress, VideoClickedCallback videoClickedCallback) {
         ImageView imageView;
 
         if (optionalView.isPresent()) {
@@ -129,12 +133,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
     }
 
     protected void fillImageView(final ImageView imageView) {
-        Uri uri = mData.getUri();
-
-        glideTinyThumb(uri)
-            .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
-            .dontAnimate()
-            .into(imageView);
+        renderTinySize(mData.getUri()).into(imageView);
 
         // TODO consider having metadata have a "get description" string
         // or some other way of selecting rendering details based on metadata.
@@ -155,7 +154,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
     }
 
     @Override
-    public void recycle(View view) {
+    public void recycle(@Nonnull View view) {
         Glide.clear(view);
         mSessionPlaceholderBitmap = null;
     }
@@ -166,25 +165,59 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
     }
 
     @Override
-    public void loadFullImage(int thumbWidth, int thumbHeight, View v) {
-        Uri uri = mData.getUri();
-        Size size = mData.getDimensions();
-
-        BitmapRequestBuilder<Uri, Bitmap> builder =
-                glideFullResBitmap(uri, size.getWidth(), size.getHeight());
-
-        if (mSessionPlaceholderBitmap != null) {
-            builder.placeholder(new BitmapDrawable(mContext.getResources(),
-                    mSessionPlaceholderBitmap));
+    public void renderTiny(@Nonnull View view) {
+        if (view instanceof ImageView) {
+            renderTinySize(mData.getUri()).into((ImageView) view);
         } else {
-            builder
-                    .thumbnail(glideTinyThumb(uri))
-                    .placeholder(DEFAULT_PLACEHOLDER_RESOURCE);
+            Log.w(TAG, "renderTiny was called with an object that is not an ImageView!");
+        }
+    }
+
+    @Override
+    public void renderThumbnail(@Nonnull View view) {
+        if (view instanceof ImageView) {
+            renderScreenSize(mData.getUri()).into((ImageView) view);
+        } else {
+            Log.w(TAG, "renderThumbnail was called with an object that is not an ImageView!");
+        }
+    }
+
+    @Override
+    public void renderFullRes(@Nonnull View view) {
+        if (view instanceof ImageView) {
+            renderFullSize(mData.getUri()).into((ImageView) view);
+        } else {
+            Log.w(TAG, "renderFullRes was called with an object that is not an ImageView!");
+        }
+    }
+
+    private GenericRequestBuilder<Uri, ?, ?, GlideDrawable> renderTinySize(Uri uri) {
+        return mGlideManager.loadTinyThumb(uri, generateSignature(mData));
+    }
+
+    private DrawableRequestBuilder<Uri> renderScreenSize(Uri uri) {
+        DrawableRequestBuilder<Uri> request =
+              mGlideManager.loadScreen(uri, generateSignature(mData),
+                    mSuggestedWidthPx, mSuggestedHeightPx);
+
+        // If we have a non-null placeholder, use that and do NOT ever render a
+        // tiny thumbnail to prevent un-intended "flash of low resolution image"
+        if (mSessionPlaceholderBitmap != null) {
+            return request.placeholder(new BitmapDrawable(mContext.getResources(),
+                  mSessionPlaceholderBitmap));
         }
 
-        builder
-              .dontAnimate()
-              .into((ImageView) v);
+        // If we do not have a placeholder bitmap, render a thumbnail with
+        // the default placeholder resource like normal.
+        return request
+              .thumbnail(renderTinySize(uri));
+    }
+
+    private DrawableRequestBuilder<Uri> renderFullSize(Uri uri) {
+        Size size = mData.getDimensions();
+        return mGlideManager.loadFull(uri, generateSignature(mData), size.getWidth(),
+              size.getHeight())
+              .thumbnail(renderScreenSize(uri));
     }
 
     @Override

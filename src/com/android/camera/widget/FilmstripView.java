@@ -150,18 +150,25 @@ public class FilmstripView extends ViewGroup {
      * A helper class to tract and calculate the view coordination.
      */
     private static class ViewItem {
+        private static enum RenderSize {
+            TINY,
+            THUMBNAIL,
+            FULL_RES
+        }
+
+        private final FilmstripView mFilmstrip;
+        private final View mView;
+        private final RectF mViewArea;
+
         private int mIndex;
         /** The position of the left of the view in the whole filmstrip. */
         private int mLeftPosition;
-        private final View mView;
         private FilmstripItem mData;
-        private final RectF mViewArea;
-        private boolean mMaximumBitmapRequested;
+        private RenderSize mRenderSize;
 
         private ValueAnimator mTranslationXAnimator;
         private ValueAnimator mTranslationYAnimator;
         private ValueAnimator mAlphaAnimator;
-        private final FilmstripView mFilmstrip;
 
         /**
          * Constructor.
@@ -171,28 +178,50 @@ public class FilmstripView extends ViewGroup {
          * @param v The {@code View} representing the data.
          */
         public ViewItem(int index, View v, FilmstripItem data, FilmstripView filmstrip) {
-            v.setPivotX(0f);
-            v.setPivotY(0f);
+            mFilmstrip = filmstrip;
+            mView = v;
+            mViewArea = new RectF();
+
             mIndex = index;
             mData = data;
-            mView = v;
-            mMaximumBitmapRequested = false;
             mLeftPosition = -1;
-            mViewArea = new RectF();
-            mFilmstrip = filmstrip;
+            mRenderSize = RenderSize.TINY;
+
+            mView.setPivotX(0f);
+            mView.setPivotY(0f);
         }
 
         public void setData(FilmstripItem item) {
             mData = item;
-            mMaximumBitmapRequested = false;
+
+            renderTiny();
         }
 
-        public boolean isMaximumBitmapRequested() {
-            return mMaximumBitmapRequested;
+        public void renderTiny() {
+            if (mRenderSize != RenderSize.TINY) {
+                mRenderSize = RenderSize.TINY;
+
+                Log.i(TAG, "[ViewItem:" + mIndex + "] mData.renderTiny()");
+                mData.renderTiny(mView);
+            }
         }
 
-        public void setMaximumBitmapRequested() {
-            mMaximumBitmapRequested = true;
+        public void renderThumbnail() {
+            if (mRenderSize != RenderSize.THUMBNAIL) {
+                mRenderSize = RenderSize.THUMBNAIL;
+
+                Log.i(TAG, "[ViewItem:" + mIndex + "] mData.renderThumbnail()");
+                mData.renderThumbnail(mView);
+            }
+        }
+
+        public void renderFullRes() {
+            if (mRenderSize != RenderSize.FULL_RES) {
+                mRenderSize = RenderSize.FULL_RES;
+
+                Log.i(TAG, "[ViewItem:" + mIndex + "] mData.renderFullRes()");
+                mData.renderFullRes(mView);
+            }
         }
 
         /**
@@ -368,14 +397,6 @@ public class FilmstripView extends ViewGroup {
         }
 
         /**
-         * Notifies the {@link com.android.camera.filmstrip.FilmstripDataAdapter} to
-         * resize the view.
-         */
-        public void resizeView(int w, int h) {
-            mFilmstrip.mDataAdapter.resizeView(mIndex, mView, w, h);
-        }
-
-        /**
          * Adds the view of the data to the view hierarchy if necessary.
          */
         public void addViewToHierarchy() {
@@ -501,50 +522,6 @@ public class FilmstripView extends ViewGroup {
          */
         public int getDrawAreaLeft() {
             return Math.round(mViewArea.left);
-        }
-
-        public void copyAttributes(ViewItem item) {
-            setLeftPosition(item.getLeftPosition());
-            // X
-            setTranslationX(item.getTranslationX());
-            if (item.mTranslationXAnimator != null) {
-                mTranslationXAnimator = item.mTranslationXAnimator;
-                mTranslationXAnimator.removeAllUpdateListeners();
-                mTranslationXAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        // We invalidate the filmstrip view instead of setting the
-                        // translation X because the translation X of the view is
-                        // touched in onLayout(). See the documentation of
-                        // animateTranslationX().
-                        mFilmstrip.invalidate();
-                    }
-                });
-            }
-            // Y
-            setTranslationY(item.getTranslationY());
-            if (item.mTranslationYAnimator != null) {
-                mTranslationYAnimator = item.mTranslationYAnimator;
-                mTranslationYAnimator.removeAllUpdateListeners();
-                mTranslationYAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        setTranslationY((Float) valueAnimator.getAnimatedValue());
-                    }
-                });
-            }
-            // Alpha
-            setAlpha(item.getAlpha());
-            if (item.mAlphaAnimator != null) {
-                mAlphaAnimator = item.mAlphaAnimator;
-                mAlphaAnimator.removeAllUpdateListeners();
-                mAlphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        ViewItem.this.setAlpha((Float) valueAnimator.getAnimatedValue());
-                    }
-                });
-            }
         }
 
         /**
@@ -850,14 +827,14 @@ public class FilmstripView extends ViewGroup {
         // Always scale by fixed filmstrip scale, since we only show items when
         // in filmstrip. Preloading images with a different scale and bounds
         // interferes with caching.
-        int width = Math.round(FILM_STRIP_SCALE * getWidth());
-        int height = Math.round(FILM_STRIP_SCALE * getHeight());
+        int width = Math.round(FULL_SCREEN_SCALE * getWidth());
+        int height = Math.round(FULL_SCREEN_SCALE * getHeight());
+
         Log.v(TAG, "suggesting item bounds: " + width + "x" + height);
         mDataAdapter.suggestViewSizeBound(width, height);
 
         View recycled = getRecycledView(index);
-        View v = mDataAdapter.getView(recycled, index,
-              mVideoClickedCallback);
+        View v = mDataAdapter.getView(recycled, index, mVideoClickedCallback);
         if (v == null) {
             return null;
         }
@@ -866,22 +843,27 @@ public class FilmstripView extends ViewGroup {
         return item;
     }
 
-    private void ensureItemAtMaxSize(int bufferIndex) {
+    private void renderFullRes(int bufferIndex) {
         ViewItem item = mViewItems[bufferIndex];
-        if (item == null || item.isMaximumBitmapRequested()) {
+        if (item == null) {
             return;
         }
-        item.setMaximumBitmapRequested();
-        // Request full size bitmap, or max that DataAdapter will create.
-        int index = item.getAdapterIndex();
-        int h = mDataAdapter.getFilmstripItemAt(index).getDimensions().getHeight();
-        int w = mDataAdapter.getFilmstripItemAt(index).getDimensions().getWidth();
-        item.resizeView(w, h);
+
+        item.renderFullRes();
     }
 
-    private void ensureBufferItemsAtMaxSize() {
+    private void renderThumbnail(int bufferIndex) {
+        ViewItem item = mViewItems[bufferIndex];
+        if (item == null) {
+            return;
+        }
+
+        item.renderThumbnail();
+    }
+
+    private void renderAllThumbnails() {
         for(int i = 0; i < BUFFER_SIZE; i++) {
-            ensureItemAtMaxSize(i);
+            renderThumbnail(i);
         }
     }
 
@@ -1600,7 +1582,7 @@ public class FilmstripView extends ViewGroup {
         }
 
         mViewItems[bufferIndex] = viewItem;
-        ensureItemAtMaxSize(bufferIndex);
+        renderThumbnail(bufferIndex);
         viewItem.setAlpha(0f);
         viewItem.setTranslationY(getHeight() / 8);
         slideViewBack(viewItem);
@@ -1637,7 +1619,7 @@ public class FilmstripView extends ViewGroup {
                     mListener.onDataFocusChanged(index, getCurrentItemAdapterIndex());
                 }
                 Log.d(TAG, "onFilmstripItemInserted()");
-                ensureBufferItemsAtMaxSize();
+                renderAllThumbnails();
             }
 
             @Override
@@ -1647,7 +1629,7 @@ public class FilmstripView extends ViewGroup {
                     mListener.onDataFocusChanged(index, getCurrentItemAdapterIndex());
                 }
                 Log.d(TAG, "onFilmstripItemRemoved()");
-                ensureBufferItemsAtMaxSize();
+                renderAllThumbnails();
             }
         });
     }
@@ -1770,7 +1752,7 @@ public class FilmstripView extends ViewGroup {
         // is unreliable. Load the full resolution if either value
         // reports that the item is not scrolling.
         if (!mController.isScrolling() || !mIsUserScrolling) {
-            ensureItemAtMaxSize(bufferIndex);
+            renderThumbnail(bufferIndex);
         }
 
         adjustChildZOrder();
@@ -1898,7 +1880,7 @@ public class FilmstripView extends ViewGroup {
         adjustChildZOrder();
 
         Log.d(TAG, "reload() - Ensure all items are loaded at max size.");
-        ensureBufferItemsAtMaxSize();
+        renderAllThumbnails();
         invalidate();
 
         if (mListener != null) {
@@ -2017,10 +1999,10 @@ public class FilmstripView extends ViewGroup {
 
                             Log.d(TAG, "[fling] onScrollEnd() - Ensuring that items are at"
                                   + " full resolution.");
-                            ensureItemAtMaxSize(BUFFER_CENTER);
-                            ensureItemAtMaxSize(BUFFER_CENTER + 1);
-                            ensureItemAtMaxSize(BUFFER_CENTER - 1);
-                            ensureItemAtMaxSize(BUFFER_CENTER + 2);
+                            renderThumbnail(BUFFER_CENTER);
+                            renderThumbnail(BUFFER_CENTER + 1);
+                            renderThumbnail(BUFFER_CENTER - 1);
+                            renderThumbnail(BUFFER_CENTER + 2);
                         }
 
                         if (isCurrentItemCentered()
@@ -2726,7 +2708,7 @@ public class FilmstripView extends ViewGroup {
             }
             if (inFullScreen()) {
                 mController.zoomAt(current, x, y);
-                ensureItemAtMaxSize(BUFFER_CENTER);
+                renderFullRes(BUFFER_CENTER);
                 return true;
             } else if (mScale > FULL_SCREEN_SCALE) {
                 // In zoom view.
@@ -3072,6 +3054,7 @@ public class FilmstripView extends ViewGroup {
                     onLeaveZoomView();
                 }
                 mScale = newScale;
+                renderThumbnail(BUFFER_CENTER);
                 onEnterFilmstrip();
                 invalidate();
             } else {
@@ -3094,7 +3077,7 @@ public class FilmstripView extends ViewGroup {
                 } else {
                     onEnterZoomView();
                 }
-                ensureItemAtMaxSize(BUFFER_CENTER);
+                renderFullRes(BUFFER_CENTER);
             }
             return true;
         }

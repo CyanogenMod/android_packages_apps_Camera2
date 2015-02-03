@@ -117,8 +117,9 @@ public class FixedLastProxyAdapter extends FilmstripDataAdapterProxy {
         if (index < totalNumber) {
             return mAdapter.getView(recycled, index, videoClickedCallback);
         } else if (index == totalNumber) {
-            return mLastData.getView(Optional.fromNullable(recycled), mSuggestedWidth,
-                  mSuggestedHeight, null, false, videoClickedCallback);
+            mLastData.setSuggestedSize(mSuggestedWidth, mSuggestedHeight);
+            return mLastData.getView(Optional.fromNullable(recycled), null, false,
+                  videoClickedCallback);
         }
         return null;
     }
@@ -134,11 +135,6 @@ public class FixedLastProxyAdapter extends FilmstripDataAdapterProxy {
         }
         return -1;
    }
-
-    @Override
-    public void resizeView(int index, View view, int w, int h) {
-        // Do nothing.
-    }
 
     @Override
     public FilmstripItem getFilmstripItemAt(int index) {
