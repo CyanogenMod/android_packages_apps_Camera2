@@ -43,12 +43,19 @@ public class MediaSaverImpl implements MediaSaver {
     // bursts.
     private static final int SAVE_TASK_MEMORY_LIMIT = 30 * 1024 * 1024;
 
-    private QueueListener mQueueListener;
+    private final ContentResolver mContentResolver;
 
     /** Memory used by the total queued save request, in bytes. */
     private long mMemoryUse;
 
-    public MediaSaverImpl() {
+    private QueueListener mQueueListener;
+
+    /**
+     * @param contentResolver The {@link android.content.ContentResolver} to be
+     *                 updated.
+     */
+    public MediaSaverImpl(ContentResolver contentResolver) {
+        mContentResolver = contentResolver;
         mMemoryUse = 0;
     }
 
@@ -59,23 +66,22 @@ public class MediaSaverImpl implements MediaSaver {
 
     @Override
     public void addImage(final byte[] data, String title, long date, Location loc, int width,
-            int height, int orientation, ExifInterface exif, OnMediaSavedListener l,
-            ContentResolver resolver) {
+            int height, int orientation, ExifInterface exif, OnMediaSavedListener l) {
         addImage(data, title, date, loc, width, height, orientation, exif, l,
-                resolver, FilmstripItemData.MIME_TYPE_JPEG);
+                FilmstripItemData.MIME_TYPE_JPEG);
     }
 
     @Override
     public void addImage(final byte[] data, String title, long date, Location loc, int width,
             int height, int orientation, ExifInterface exif, OnMediaSavedListener l,
-            ContentResolver resolver, String mimeType) {
+            String mimeType) {
         if (isQueueFull()) {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
         }
         ImageSaveTask t = new ImageSaveTask(data, title, date,
                 (loc == null) ? null : new Location(loc),
-                width, height, orientation, mimeType, exif, resolver, l);
+                width, height, orientation, mimeType, exif, mContentResolver, l);
 
         mMemoryUse += data.length;
         if (isQueueFull()) {
@@ -86,26 +92,24 @@ public class MediaSaverImpl implements MediaSaver {
 
     @Override
     public void addImage(final byte[] data, String title, long date, Location loc, int orientation,
-            ExifInterface exif, OnMediaSavedListener l, ContentResolver resolver) {
+            ExifInterface exif, OnMediaSavedListener l) {
         // When dimensions are unknown, pass 0 as width and height,
         // and decode image for width and height later in a background thread
-        addImage(data, title, date, loc, 0, 0, orientation, exif, l, resolver,
-              FilmstripItemData.MIME_TYPE_JPEG);
+        addImage(data, title, date, loc, 0, 0, orientation, exif, l,
+                FilmstripItemData.MIME_TYPE_JPEG);
     }
     @Override
     public void addImage(final byte[] data, String title, Location loc, int width, int height,
-            int orientation, ExifInterface exif, OnMediaSavedListener l,
-            ContentResolver resolver) {
-        addImage(data, title, System.currentTimeMillis(), loc, width, height,
-                orientation, exif, l, resolver, FilmstripItemData.MIME_TYPE_JPEG);
+            int orientation, ExifInterface exif, OnMediaSavedListener l) {
+        addImage(data, title, System.currentTimeMillis(), loc, width, height, orientation, exif, l,
+                FilmstripItemData.MIME_TYPE_JPEG);
     }
 
     @Override
-    public void addVideo(String path, ContentValues values, OnMediaSavedListener l,
-                         ContentResolver resolver) {
+    public void addVideo(String path, ContentValues values, OnMediaSavedListener l) {
         // We don't set a queue limit for video saving because the file
         // is already in the storage. Only updating the database.
-        new VideoSaveTask(path, values, l, resolver).execute();
+        new VideoSaveTask(path, values, l, mContentResolver).execute();
     }
 
     @Override

@@ -59,14 +59,14 @@ public class CameraServicesImpl implements CameraServices {
     private final SettingsManager mSettingsManager;
 
     private CameraServicesImpl(Context context) {
-        mMediaSaver = new MediaSaverImpl();
+        mMediaSaver = new MediaSaverImpl(context.getContentResolver());
         PlaceholderManager mPlaceHolderManager = new PlaceholderManager(context);
         SessionStorageManager mSessionStorageManager = SessionStorageManagerImpl.create(context);
 
         StackSaverFactory mStackSaverFactory = new StackSaverFactory(Storage.DIRECTORY,
               context.getContentResolver());
-        mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, context.getContentResolver(),
-              mPlaceHolderManager, mSessionStorageManager, mStackSaverFactory, MainThread.create());
+        mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, mPlaceHolderManager,
+                mSessionStorageManager, mStackSaverFactory, MainThread.create());
         mMemoryManager = MemoryManagerImpl.create(context, mMediaSaver);
         mRemoteShutterListener = RemoteShutterHelper.create(context);
         mSettingsManager = new SettingsManager(context);

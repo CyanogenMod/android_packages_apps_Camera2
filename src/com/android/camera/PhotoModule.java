@@ -976,7 +976,7 @@ public class PhotoModule
                     }
                     getServices().getMediaSaver().addImage(
                             jpegData, title, date, mLocation, width, height,
-                            orientation, exif, mOnMediaSavedListener, mContentResolver);
+                            orientation, exif, mOnMediaSavedListener);
                 }
                 // Animate capture with real jpeg data instead of a preview
                 // frame.

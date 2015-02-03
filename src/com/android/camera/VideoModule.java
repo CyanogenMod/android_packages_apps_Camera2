@@ -1259,7 +1259,7 @@ public class VideoModule extends CameraModule
             mCurrentVideoValues.put(Video.Media.SIZE, new File(mCurrentVideoFilename).length());
             mCurrentVideoValues.put(Video.Media.DURATION, duration);
             getServices().getMediaSaver().addVideo(mCurrentVideoFilename,
-                    mCurrentVideoValues, mOnVideoSavedListener, mContentResolver);
+                    mCurrentVideoValues, mOnVideoSavedListener);
             logVideoCapture(duration);
         }
         mCurrentVideoValues = null;
@@ -1941,9 +1941,8 @@ public class VideoModule extends CameraModule
                 isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn,
                 null, null, null);
 
-        getServices().getMediaSaver().addImage(
-                data, title, dateTaken, loc, orientation,
-                exif, mOnPhotoSavedListener, mContentResolver);
+        getServices().getMediaSaver().addImage(data, title, dateTaken, loc, orientation, exif,
+                mOnPhotoSavedListener);
     }
 
     private String convertOutputFormatToMimeType(int outputFileFormat) {
