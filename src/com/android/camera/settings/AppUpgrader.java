@@ -249,6 +249,14 @@ public class AppUpgrader extends SettingsUpgrader {
                         true);
             }
         }
+
+        if (oldGlobalPreferences.contains(Keys.KEY_POWER_SHUTTER)) {
+            String powerShutter = removeString(oldGlobalPreferences, Keys.KEY_POWER_SHUTTER);
+            if (OLD_SETTINGS_VALUE_ON.equals(powerShutter)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_POWER_SHUTTER,
+                        true);
+            }
+        }
     }
 
     /**
