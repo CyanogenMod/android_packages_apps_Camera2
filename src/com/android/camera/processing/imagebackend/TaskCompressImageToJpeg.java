@@ -118,9 +118,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     // as CLOCKWISE_0.
                     numBytes = compressJpegFromYUV420Image(
                             img.proxy, compressedData, DEFAULT_JPEG_COMPRESSION_QUALITY,
-                            (inputImage.orientation == DeviceOrientation.UNKNOWN) ? 0
-                                    : inputImage.orientation
-                                            .getDegrees());
+                            inputImage.orientation.getDegrees());
 
                     if (numBytes < 0) {
                         throw new RuntimeException("Error compressing jpeg.");
@@ -160,7 +158,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
     /**
      * Wraps a possible log message to be overridden for testability purposes.
-     * 
+     *
      * @param message
      */
     protected void logWrapper(String message) {
@@ -170,7 +168,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     /**
      * Wraps EXIF Interface for JPEG Metadata creation. Can be overridden for
      * testing
-     * 
+     *
      * @param image Metadata for a jpeg image to create EXIF Interface
      * @return the created Exif Interface
      */

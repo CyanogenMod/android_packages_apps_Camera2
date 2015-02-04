@@ -5,7 +5,6 @@ package com.android.camera.app;
  */
 public interface OrientationManager {
     public static enum DeviceOrientation {
-        UNKNOWN(-1),
         CLOCKWISE_0(0),
         CLOCKWISE_90(90),
         CLOCKWISE_180(180),
@@ -27,10 +26,14 @@ public interface OrientationManager {
         /**
          * Turns a degree value (0, 90, 180, 270) into one of CLOCKWISE_0,
          * CLOCKWISE_90, CLOCKWISE_180 or CLOCKWISE_270. If any other degree
-         * value is given, UNKNOWN is returned.
+         * value is given, the closest orientation of CLOCKWISE_0, CLOCKWISE_90,
+         * CLOCKWISE_180, and CLOCKWISE_270 to the angular value is returned.
          */
         public static DeviceOrientation from(int degrees) {
             switch (degrees) {
+                case (-1):  // UNKNOWN Orientation
+                    // Explicitly default to CLOCKWISE_0, when Orientation is UNKNOWN
+                    return CLOCKWISE_0;
                 case 0:
                     return CLOCKWISE_0;
                 case 90:
@@ -40,7 +43,16 @@ public interface OrientationManager {
                 case 270:
                     return CLOCKWISE_270;
                 default:
-                    return UNKNOWN;
+                    int normalizedDegrees = (Math.abs(degrees / 360) * 360 + 360 + degrees) % 360;
+                    if (normalizedDegrees > 315 || normalizedDegrees <= 45) {
+                        return CLOCKWISE_0;
+                    } else if (normalizedDegrees > 45 && normalizedDegrees <= 135) {
+                        return CLOCKWISE_90;
+                    } else if (normalizedDegrees > 135 && normalizedDegrees <= 225) {
+                        return CLOCKWISE_180;
+                    } else {
+                        return CLOCKWISE_270;
+                    }
             }
         }
     }
