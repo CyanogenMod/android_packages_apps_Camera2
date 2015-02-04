@@ -157,7 +157,7 @@ import java.util.concurrent.TimeUnit;
 public class CameraActivity extends Activity
         implements AppController, CameraAgent.CameraOpenCallback,
         ShareActionProvider.OnShareTargetSelectedListener,
-        OrientationManager.OnOrientationChangeListener {
+        OrientationManager.OnOrientationChangeListener, SettingsManager.OnSettingChangedListener {
 
     private static final Log.Tag TAG = new Log.Tag("CameraActivity");
 
@@ -260,6 +260,8 @@ public class CameraActivity extends Activity
     };
     private MemoryManager mMemoryManager;
     private MotionManager mMotionManager;
+    // Keep track of powershutter state
+    public boolean mPowerShutter;
 
     @Override
     public CameraAppUI getCameraAppUI() {
@@ -559,6 +561,13 @@ public class CameraActivity extends Activity
                 eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null);
         Log.w(TAG, "Camera reconnection failure:" + info);
         CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+    }
+
+    @Override
+    public void onSettingChanged(SettingsManager settingsManager, String key) {
+        if (key.equals(Keys.KEY_POWER_SHUTTER)) {
+            initPowerShutter();
+        }
     }
 
     private static class MainHandler extends Handler {
@@ -1345,6 +1354,9 @@ public class CameraActivity extends Activity
         ModulesInfo.setupModules(mAppContext, mModuleManager);
 
         mSettingsManager = getServices().getSettingsManager();
+        mSettingsManager.addListener(this);
+        initPowerShutter();
+
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
         Keys.setDefaults(mSettingsManager, mAppContext);
@@ -1901,9 +1913,25 @@ public class CameraActivity extends Activity
         }
     }
 
+    protected void initPowerShutter() {
+        mPowerShutter = Keys.isPowerShutterOn(mSettingsManager);
+        if (mPowerShutter) {
+            getWindow().addPrivateFlags(
+                    WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY);
+        } else {
+            getWindow().clearPrivateFlags(
+                    WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY);
+        }
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (!mFilmstripVisible) {
+            if (mPowerShutter && keyCode == KeyEvent.KEYCODE_POWER &&
+                    event.getRepeatCount() == 0) {
+                mCurrentModule.onShutterButtonFocus(true);
+                return true;
+            }
             if (mCurrentModule.onKeyDown(keyCode, event)) {
                 return true;
             }
@@ -1922,6 +1950,10 @@ public class CameraActivity extends Activity
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (!mFilmstripVisible) {
+            if (mPowerShutter && keyCode == KeyEvent.KEYCODE_POWER) {
+                mCurrentModule.onShutterButtonClick();
+                return true;
+            }
             // If a module is in the middle of capture, it should
             // consume the key event.
             if (mCurrentModule.onKeyUp(keyCode, event)) {
