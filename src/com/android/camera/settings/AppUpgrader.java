@@ -85,10 +85,16 @@ public class AppUpgrader extends SettingsUpgrader {
      * resolution size on the N5 since we stored it with a swapped width/height.
      */
     public static final int NEEDS_N5_16by9_RESOLUTION_SWAP = 7;
+
+    /**
+     * With this version, port over power shutter settings.
+     */
+    private static final int CAMERA_SETTINGS_POWER_SHUTTER = 8;
+
     /**
      * Increment this value whenever new AOSP UpgradeSteps need to be executed.
      */
-    public static final int APP_UPGRADE_VERSION = 7;
+    public static final int APP_UPGRADE_VERSION = 8;
 
     private final AppController mAppController;
 
@@ -159,6 +165,10 @@ public class AppUpgrader extends SettingsUpgrader {
 
         if (lastVersion < NEEDS_N5_16by9_RESOLUTION_SWAP) {
             updateN516by9ResolutionIfNeeded(settingsManager);
+        }
+
+        if (lastVersion < CAMERA_SETTINGS_POWER_SHUTTER) {
+            upgradePowerShutter(settingsManager);
         }
     }
 
@@ -427,6 +437,18 @@ public class AppUpgrader extends SettingsUpgrader {
 
                     copyPreferences(oldModulePreferences, newModulePreferences);
                 }
+            }
+        }
+    }
+
+    private void upgradePowerShutter(SettingsManager settingsManager) {
+        SharedPreferences oldGlobalPreferences =
+                settingsManager.openPreferences(OLD_GLOBAL_PREFERENCES_FILENAME);
+        if (oldGlobalPreferences.contains(Keys.KEY_POWER_SHUTTER)) {
+            String powerShutter = removeString(oldGlobalPreferences, Keys.KEY_POWER_SHUTTER);
+            if (OLD_SETTINGS_VALUE_ON.equals(powerShutter)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_POWER_SHUTTER,
+                        true);
             }
         }
     }
