@@ -1286,19 +1286,27 @@ public class FilmstripView extends ViewGroup {
                 // It's in full-screen mode.
                 fadeAndScaleRightViewItem(i);
             } else {
-                boolean setToVisible = (curr.getVisibility() == INVISIBLE);
+                boolean isVisible = (curr.getVisibility() == VISIBLE);
+                boolean setToVisible = !isVisible;
 
                 if (i == BUFFER_CENTER + 1) {
+                    // right hand neighbor needs to fade based on scale of
+                    // center
                     curr.setAlpha(1f - scaleFraction);
                 } else {
                     if (scaleFraction == 0f) {
                         curr.setAlpha(1f);
                     } else {
+                        // further right items should not display when center
+                        // is being scaled
                         setToVisible = false;
+                        if (isVisible) {
+                            curr.setVisibility(INVISIBLE);
+                        }
                     }
                 }
 
-                if (setToVisible) {
+                if (setToVisible && !isVisible) {
                     curr.setVisibility(VISIBLE);
                 }
 
