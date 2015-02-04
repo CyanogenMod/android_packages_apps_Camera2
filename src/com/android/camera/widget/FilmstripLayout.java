@@ -50,6 +50,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
     private static final long DEFAULT_DURATION_MS = 250;
     /**
      *  If the fling velocity exceeds this threshold, open filmstrip at a constant
+     *  speed. Unit: pixel/ms.
      */
     private static final float FLING_VELOCITY_THRESHOLD = 4.0f;
 
