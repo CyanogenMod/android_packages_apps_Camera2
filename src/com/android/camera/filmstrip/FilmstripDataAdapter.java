@@ -97,17 +97,6 @@ public interface FilmstripDataAdapter {
     public int getItemViewType(int index);
 
     /**
-     * Resizes the view used to visually present the image data.  This is
-     * useful when the view contains a bitmap.
-     *
-     * @param index The ID of the resize data to be presented.
-     * @param view The view to update that was created by getView().
-     * @param w Width in pixels of rendered view.
-     * @param h Height in pixels of rendered view.
-     */
-    public void resizeView(int index, View view, int w, int h);
-
-    /**
      * Returns the {@link FilmstripItem} specified by the ID.
      *
      * @param index The ID of the {@link FilmstripItem}.

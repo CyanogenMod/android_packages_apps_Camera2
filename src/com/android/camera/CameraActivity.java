@@ -87,6 +87,7 @@ import com.android.camera.data.FilmstripItemData;
 import com.android.camera.data.FilmstripItemType;
 import com.android.camera.data.FilmstripItemUtils;
 import com.android.camera.data.FixedLastProxyAdapter;
+import com.android.camera.data.GlideFilmstripManager;
 import com.android.camera.data.LocalFilmstripDataAdapter;
 import com.android.camera.data.LocalFilmstripDataAdapter.FilmstripItemListener;
 import com.android.camera.data.MediaDetails;
@@ -1389,15 +1390,14 @@ public class CameraActivity extends QuickActivity
             // Prefill glides bitmap pool to prevent excessive jank
             // when loading large images.
             glide.preFillBitmapPool(
-                new PreFillType.Builder(
-                      FilmstripItem.MAXIMUM_TEXTURE_SIZE)
+                new PreFillType.Builder(GlideFilmstripManager.MAXIMUM_TEXTURE_SIZE)
                   .setWeight(5),
                   // It's more important for jank and GC to have
                   // A larger weight of max texture size images than
                   // media store sized images.
                 new PreFillType.Builder(
-                      FilmstripItem.MEDIASTORE_THUMB_WIDTH,
-                      FilmstripItem.MEDIASTORE_THUMB_HEIGHT));
+                      GlideFilmstripManager.MEDIASTORE_THUMB_WIDTH,
+                      GlideFilmstripManager.MEDIASTORE_THUMB_HEIGHT));
         }
 
         mOnCreateTime = System.currentTimeMillis();
@@ -1516,9 +1516,10 @@ public class CameraActivity extends QuickActivity
         mPanoramaViewHelper.onCreate();
 
         ContentResolver appContentResolver = mAppContext.getContentResolver();
-        mPhotoItemFactory = new PhotoItemFactory(mAppContext, appContentResolver,
+        GlideFilmstripManager glideManager = new GlideFilmstripManager(mAppContext);
+        mPhotoItemFactory = new PhotoItemFactory(mAppContext, glideManager, appContentResolver,
               new PhotoDataFactory());
-        mVideoItemFactory = new VideoItemFactory(mAppContext, appContentResolver,
+        mVideoItemFactory = new VideoItemFactory(mAppContext, glideManager, appContentResolver,
               new VideoDataFactory());
         mDataAdapter = new CameraFilmstripDataAdapter(mAppContext,
               mPhotoItemFactory, mVideoItemFactory);

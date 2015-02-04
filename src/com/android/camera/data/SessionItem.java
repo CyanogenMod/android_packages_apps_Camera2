@@ -31,6 +31,8 @@ import com.google.common.base.Optional;
 
 import java.util.Date;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is used to represent a local data item that is in progress and not
  * yet in the media store.
@@ -64,9 +66,8 @@ public class SessionItem implements FilmstripItem {
     }
 
     @Override
-    public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
-          LocalFilmstripDataAdapter adapter, boolean isInProgress,
-          VideoClickedCallback videoClickedCallback) {
+    public View getView(Optional<View> optionalView, LocalFilmstripDataAdapter adapter,
+          boolean isInProgress, VideoClickedCallback videoClickedCallback) {
         ImageView imageView;
 
         if (optionalView.isPresent()) {
@@ -80,7 +81,7 @@ public class SessionItem implements FilmstripItem {
         if (placeholder != null) {
             imageView.setImageBitmap(placeholder);
         } else {
-            imageView.setImageResource(DEFAULT_PLACEHOLDER_RESOURCE);
+            imageView.setImageResource(GlideFilmstripManager.DEFAULT_PLACEHOLDER_RESOURCE);
         }
         imageView.setContentDescription(mContext.getResources().getString(
                 R.string.media_processing_content_description));
@@ -93,8 +94,16 @@ public class SessionItem implements FilmstripItem {
     }
 
     @Override
-    public void loadFullImage(int width, int height, View view) {
-    }
+    public void setSuggestedSize(int widthPx, int heightPx) { }
+
+    @Override
+    public void renderTiny(@Nonnull View view) { }
+
+    @Override
+    public void renderThumbnail(@Nonnull View view) { }
+
+    @Override
+    public void renderFullRes(@Nonnull View view) { }
 
     @Override
     public boolean delete() {
@@ -138,7 +147,7 @@ public class SessionItem implements FilmstripItem {
     }
 
     @Override
-    public void recycle(View view) {
+    public void recycle(@Nonnull View view) {
         Glide.clear(view);
     }
 

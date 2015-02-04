@@ -22,25 +22,15 @@ import android.view.View;
 
 import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
-import com.android.camera2.R;
 import com.google.common.base.Optional;
+
+import javax.annotation.Nonnull;
 
 /**
  * An abstract interface that represents the Local filmstrip items.
  */
 public interface FilmstripItem {
     static final Log.Tag TAG = new Log.Tag("FilmstripItem");
-
-    public static final int MEDIASTORE_THUMB_WIDTH = 512;
-    public static final int MEDIASTORE_THUMB_HEIGHT = 384;
-
-    // GL max texture size: keep bitmaps below this value.
-    public static final int MAXIMUM_TEXTURE_SIZE = 2048;
-    public static final int MAXIMUM_SMOOTH_TEXTURE_SIZE = 1024;
-
-    /** Default placeholder to display while images load */
-    static final int DEFAULT_PLACEHOLDER_RESOURCE = R.color.photo_placeholder;
-
 
     /**
      * An action callback to be used for actions on the filmstrip items.
@@ -84,27 +74,45 @@ public interface FilmstripItem {
      * hierarchy. {@code FilmStripView} should always call this function after its
      * corresponding view is removed from the view hierarchy.
      */
-    public void recycle(View view);
+    public void recycle(@Nonnull View view);
 
     /**
      * Create or recycle an existing view (if provided) to render this item.
      *
-     * @param viewWidthPx Width in pixels of the suggested zoomed out view/image size.
-     * @param viewHeightPx Height in pixels of the suggested zoomed out view/image size.
      * @param adapter Data adapter for this data item.
      */
-    public View getView(Optional<View> view, int viewWidthPx, int viewHeightPx,
+    public View getView(Optional<View> view,
           LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback);
 
     /**
-     * Request resize of View created by getView().
+     * Configure the suggested width and height in pixels for this view to render at.
      *
-     * @param thumbWidth Width in pixels of the suggested zoomed out view/image size.
-     * @param thumbHeight Height in pixels of the suggested zoomed out view/image size.
+     * @param widthPx Suggested width in pixels.
+     * @param heightPx Suggested height in pixels.
+     */
+    public void setSuggestedSize(int widthPx, int heightPx);
+
+    /**
+     * Request to load a tiny preview image into the view as fast as possible.
+     *
      * @param view View created by getView();
      */
-    public void loadFullImage(int thumbWidth, int thumbHeight, View view);
+    public void renderTiny(@Nonnull View view);
+
+    /**
+     * Request to load screen sized version of the image into the view.
+     *
+     * @param view View created by getView();
+     */
+    public void renderThumbnail(@Nonnull View view);
+
+    /**
+     * Request to load the highest possible resolution image supported.
+     *
+     * @param view View created by getView();
+     */
+    public void renderFullRes(@Nonnull View view);
 
     /**
      * Removes the data from the storage if possible.

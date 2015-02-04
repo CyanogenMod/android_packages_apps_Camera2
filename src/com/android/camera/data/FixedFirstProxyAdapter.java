@@ -112,8 +112,9 @@ public class FixedFirstProxyAdapter extends FilmstripDataAdapterProxy
     @Override
     public View getView(View recycled, int index, VideoClickedCallback videoClickedCallback) {
         if (index == 0) {
-            return mFirstData.getView(Optional.fromNullable(recycled), mSuggestedWidth,
-                  mSuggestedHeight, null, false, videoClickedCallback);
+            mFirstData.setSuggestedSize(mSuggestedWidth, mSuggestedHeight);
+            return mFirstData.getView(Optional.fromNullable(recycled), null, false,
+                  videoClickedCallback);
         }
         return mAdapter.getView(recycled, index - 1, videoClickedCallback);
     }
@@ -124,11 +125,6 @@ public class FixedFirstProxyAdapter extends FilmstripDataAdapterProxy
             return mFirstData.getItemViewType().ordinal();
         }
         return mAdapter.getItemViewType(index);
-    }
-
-    @Override
-    public void resizeView(int index, View view, int w, int h) {
-        // Do nothing.
     }
 
     @Override

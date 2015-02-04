@@ -33,12 +33,14 @@ public class VideoItemFactory implements CursorToFilmstripItemFactory<VideoItem>
           + " DESC, " + MediaStore.Video.VideoColumns._ID + " DESC";
 
     private final Context mContext;
+    private final GlideFilmstripManager mGlideManager;
     private final ContentResolver mContentResolver;
     private final VideoDataFactory mVideoDataFactory;
 
-    public VideoItemFactory(Context context, ContentResolver contentResolver,
-          VideoDataFactory videoDataFactory) {
+    public VideoItemFactory(Context context, GlideFilmstripManager glideManager,
+          ContentResolver contentResolver, VideoDataFactory videoDataFactory) {
         mContext = context;
+        mGlideManager = glideManager;
         mContentResolver = contentResolver;
         mVideoDataFactory = videoDataFactory;
     }
@@ -47,7 +49,7 @@ public class VideoItemFactory implements CursorToFilmstripItemFactory<VideoItem>
     public VideoItem get(Cursor c) {
         VideoItemData data = mVideoDataFactory.fromCursor(c);
         if (data != null) {
-            return new VideoItem(mContext, data, this);
+            return new VideoItem(mContext, mGlideManager, data, this);
         } else {
             Log.w(TAG, "skipping item with null data, returning null for item");
             return null;

@@ -17,14 +17,11 @@
 package com.android.camera.data;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.view.View;
 
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
-import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.signature.MediaStoreSignature;
@@ -32,6 +29,8 @@ import com.google.common.base.Optional;
 
 import java.io.File;
 import java.text.DateFormat;
+
+import javax.annotation.Nonnull;
 
 /**
  * A base class for all the local media files. The bitmap is loaded in
@@ -44,16 +43,26 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
     public static final int QUERY_ALL_MEDIA_ID = -1;
 
     protected final Context mContext;
+    protected final GlideFilmstripManager mGlideManager;
     protected final T mData;
     protected final Metadata mMetaData;
     protected final FilmstripItemAttributes mAttributes;
     protected final DateFormat mDateFormatter = DateFormat.getDateTimeInstance();
 
-    public FilmstripItemBase(Context context, T data, FilmstripItemAttributes attributes) {
+    protected int mSuggestedWidthPx;
+    protected int mSuggestedHeightPx;
+
+    public FilmstripItemBase(Context context, GlideFilmstripManager glideManager, T data,
+          FilmstripItemAttributes attributes) {
         mContext = context;
+        mGlideManager = glideManager;
         mData = data;
         mAttributes = attributes;
+
         mMetaData = new Metadata();
+
+        mSuggestedWidthPx = GlideFilmstripManager.TINY_THUMBNAIL_SIZE;
+        mSuggestedHeightPx = GlideFilmstripManager.TINY_THUMBNAIL_SIZE;
     }
 
     @Override
@@ -70,13 +79,19 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
     }
 
     @Override
-    public void loadFullImage(int thumbWidth, int thumbHeight, View view) {
-        // Default is do nothing.
-        // Can be implemented by sub-classes.
+    public void setSuggestedSize(int widthPx, int heightPx) {
+        if (widthPx > 0 && heightPx > 0) {
+            mSuggestedWidthPx = widthPx;
+            mSuggestedHeightPx = heightPx;
+        } else {
+            Log.w(TAG, "Suggested size was set to a zero area value!");
+        }
     }
 
     @Override
-    public void recycle(View view) { }
+    public void recycle(@Nonnull View view) {
+        Glide.clear(view);
+    }
 
     @Override
     public Optional<MediaDetails> getMediaDetails() {
@@ -119,81 +134,12 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
         return mData.getOrientation();
     }
 
-    // TODO: Move the glide classes to a specific rendering class.
-    protected BitmapRequestBuilder<Uri, Bitmap> glideFullResBitmap(Uri uri,
-          int width, int height) {
-        // compute a ratio such that viewWidth and viewHeight are less than
-        // MAXIMUM_SMOOTH_TEXTURE_SIZE but maintain their aspect ratio.
-        float downscaleRatio = downscaleRatioToFit(width, height,
-              MAXIMUM_TEXTURE_SIZE);
-
-        return Glide.with(mContext)
-              .loadFromMediaStore(uri)
-              .asBitmap()
-                  .atMost()
-                  .fitCenter()
-              .signature(getGlideKey())
-              .override(
-                    Math.round(width * downscaleRatio),
-                    Math.round(height * downscaleRatio));
-    }
-
-    protected BitmapRequestBuilder<Uri, Bitmap> glideFilmstripThumb(Uri uri,
-          int viewWidth, int viewHeight) {
-        // compute a ratio such that viewWidth and viewHeight are less than
-        // MAXIMUM_SMOOTH_TEXTURE_SIZE but maintain their aspect ratio.
-        float downscaleRatio = downscaleRatioToFit(viewWidth, viewHeight,
-              MAXIMUM_SMOOTH_TEXTURE_SIZE);
-
-        return Glide.with(mContext)
-              .loadFromMediaStore(uri)
-              .asBitmap()
-                  .atMost()
-                  .fitCenter()
-              .signature(getGlideKey())
-              .override(
-                    Math.round(viewWidth * downscaleRatio),
-                    Math.round(viewHeight * downscaleRatio));
-    }
-
-    protected BitmapRequestBuilder<Uri, Bitmap>glideMediaStoreThumb(Uri uri) {
-        return Glide.with(mContext)
-              .loadFromMediaStore(uri)
-              .asBitmap()
-                  .atMost()
-                  .fitCenter()
-              .signature(getGlideKey())
-              // This attempts to ensure we load the cached media store version.
-              .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
-    }
-
-    protected BitmapRequestBuilder<Uri, Bitmap> glideTinyThumb(Uri uri) {
-        return Glide.with(mContext)
-              .loadFromMediaStore(uri)
-              .asBitmap()
-                  .atMost()
-                  .fitCenter()
-              .signature(getGlideKey())
-              .override(256, 265);
-    }
-
-    protected Key getGlideKey() {
+    protected final Key generateSignature(FilmstripItemData data) {
         // Per Glide docs, make default mime type be the empty String
-        String mimeType = (mData.getMimeType() == null) ? "" : mData.getMimeType();
-        long modTimeSeconds = (mData.getLastModifiedDate() == null) ? 0 :
-            mData.getLastModifiedDate().getTime() / 1000;
-        return new MediaStoreSignature(mimeType, modTimeSeconds, mData.getOrientation());
-    }
-
-    private float downscaleRatioToFit(int width, int height, int fitWithinSize) {
-        // Find the longest dimension
-        int longest = Math.max(width, height);
-
-        if (longest > fitWithinSize) {
-            return (float)fitWithinSize / (float)longest;
-        }
-
-        return 1.0f;
+        String mimeType = (data.getMimeType() == null) ? "" : data.getMimeType();
+        long modTimeSeconds = (data.getLastModifiedDate() == null) ? 0 :
+              data.getLastModifiedDate().getTime() / 1000;
+        return new MediaStoreSignature(mimeType, modTimeSeconds, data.getOrientation());
     }
 
     private void deleteIfEmptyCameraSubDir(File directory) {

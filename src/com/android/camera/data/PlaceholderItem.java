@@ -28,6 +28,8 @@ import com.google.common.base.Optional;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+
 /**
  * A LocalData that does nothing but only shows a view.
  */
@@ -102,19 +104,26 @@ public class PlaceholderItem implements FilmstripItem {
     }
 
     @Override
-    public View getView(Optional<View> optionalView, int viewWidthPx, int viewHeightPx,
+    public View getView(Optional<View> optionalView,
           LocalFilmstripDataAdapter adapter, boolean isInProgress,
           VideoClickedCallback videoClickedCallback) {
         return mView;
     }
 
     @Override
-    public void loadFullImage(int w, int h, View view) {
-        // do nothing.
-    }
+    public void setSuggestedSize(int widthPx, int heightPx) { }
 
     @Override
-    public void recycle(View view) {
+    public void renderTiny(@Nonnull View view) { }
+
+    @Override
+    public void renderThumbnail(@Nonnull View view) { }
+
+    @Override
+    public void renderFullRes(@Nonnull View view) { }
+
+    @Override
+    public void recycle(@Nonnull View view) {
         // Do nothing.
     }
 
