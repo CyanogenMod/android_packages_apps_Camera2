@@ -70,9 +70,14 @@ public class AppUpgrader extends SettingsUpgrader {
     private static final int CAMERA_SETTINGS_SELECTED_MODULE_INDEX = 5;
 
     /**
+     * With this version, port over power shutter settings.
+     */
+    private static final int CAMERA_SETTINGS_POWER_SHUTTER = 6;
+
+    /**
      * Increment this value whenever new AOSP UpgradeSteps need to be executed.
      */
-    public static final int APP_UPGRADE_VERSION = 5;
+    public static final int APP_UPGRADE_VERSION = 6;
 
     private final AppController mAppController;
 
@@ -132,6 +137,10 @@ public class AppUpgrader extends SettingsUpgrader {
 
         if (lastVersion < CAMERA_SETTINGS_SELECTED_MODULE_INDEX) {
             upgradeSelectedModeIndex(settingsManager, context);
+        }
+
+        if (lastVersion < CAMERA_SETTINGS_POWER_SHUTTER) {
+            upgradePowerShutter(settingsManager);
         }
     }
 
@@ -400,6 +409,18 @@ public class AppUpgrader extends SettingsUpgrader {
                             + module.getModuleStringIdentifier());
 
             copyPreferences(oldModulePreferences, newModulePreferences);
+        }
+    }
+
+    private void upgradePowerShutter(SettingsManager settingsManager) {
+        SharedPreferences oldGlobalPreferences =
+                settingsManager.openPreferences(OLD_GLOBAL_PREFERENCES_FILENAME);
+        if (oldGlobalPreferences.contains(Keys.KEY_POWER_SHUTTER)) {
+            String powerShutter = removeString(oldGlobalPreferences, Keys.KEY_POWER_SHUTTER);
+            if (OLD_SETTINGS_VALUE_ON.equals(powerShutter)) {
+                settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_POWER_SHUTTER,
+                        true);
+            }
         }
     }
 
