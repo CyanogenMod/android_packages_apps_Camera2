@@ -56,7 +56,7 @@ public class OrientationManagerImpl implements OrientationManager {
     // We keep the last known orientation. So if the user first orient
     // the camera then point the camera to floor or sky, we still have
     // the correct orientation.
-    private DeviceOrientation mLastDeviceOrientation = DeviceOrientation.UNKNOWN;
+    private DeviceOrientation mLastDeviceOrientation = DeviceOrientation.CLOCKWISE_0;
 
     // If the framework orientation is locked.
     private boolean mOrientationLocked = false;
@@ -219,14 +219,10 @@ public class OrientationManagerImpl implements OrientationManager {
 
     private static DeviceOrientation roundOrientation(DeviceOrientation oldDeviceOrientation,
                                                       int newRawOrientation) {
-        boolean isOrientationChanged = false;
-        if (oldDeviceOrientation == DeviceOrientation.UNKNOWN) {
-            isOrientationChanged = true;
-        } else {
-            int dist = Math.abs(newRawOrientation - oldDeviceOrientation.getDegrees());
-            dist = Math.min(dist, 360 - dist);
-            isOrientationChanged = (dist >= 45 + ORIENTATION_HYSTERESIS);
-        }
+        int dist = Math.abs(newRawOrientation - oldDeviceOrientation.getDegrees());
+        dist = Math.min(dist, 360 - dist);
+        boolean isOrientationChanged = (dist >= 45 + ORIENTATION_HYSTERESIS);
+
         if (isOrientationChanged) {
             int newRoundedOrientation = ((newRawOrientation + 45) / 90 * 90) % 360;
             switch (newRoundedOrientation) {
