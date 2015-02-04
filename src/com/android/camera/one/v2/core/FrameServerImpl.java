@@ -16,97 +16,87 @@
 
 package com.android.camera.one.v2.core;
 
-import java.util.List;
-import java.util.concurrent.Semaphore;
+import static com.google.common.base.Preconditions.checkState;
 
 import android.hardware.camera2.CameraAccessException;
 
+import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
+
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 class FrameServerImpl implements FrameServer {
     public class Session implements FrameServer.Session {
-        private final boolean mExclusive;
+        private final Object mLock;
         private boolean mClosed;
 
-        private Session(boolean exclusive) {
-            mExclusive = exclusive;
+        private Session() {
+            mLock = new Object();
             mClosed = false;
         }
 
         @Override
-        public synchronized void submitRequest(List<Request> burstRequests, RequestType type)
+        public void submitRequest(List<Request> burstRequests, RequestType type)
                 throws CameraAccessException, InterruptedException,
                 CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
-            try {
-                if (mClosed) {
-                    throw new SessionClosedException();
-                }
-
-                // Exclusive sessions already own this lock. Non-exclusive must
-                // acquire it here, for each request.
-                if (!mExclusive) {
-                    mCameraLock.acquire();
-                }
+            synchronized (mLock) {
                 try {
-                    mCaptureSession.submitRequest(burstRequests, type.isRepeating());
-                } finally {
-                    if (!mExclusive) {
-                        mCameraLock.release();
+                    if (mClosed) {
+                        throw new SessionClosedException();
                     }
+
+                    mCaptureSession.submitRequest(burstRequests, type == RequestType.REPEATING);
+                } catch (Exception e) {
+                    for (Request r : burstRequests) {
+                        r.abort();
+                    }
+                    throw e;
                 }
-            } catch (Exception e) {
-                for (Request r : burstRequests) {
-                    r.abort();
-                }
-                throw e;
             }
         }
 
         @Override
         public void close() {
-            if (mClosed) {
-                return;
-            } else {
-                mClosed = true;
-
-                if (mExclusive) {
-                    mCameraLock.release();
+            synchronized (mLock) {
+                if (!mClosed) {
+                    mClosed = true;
+                    mCameraLock.unlock();
                 }
             }
         }
     }
 
     private final TagDispatchCaptureSession mCaptureSession;
-    private final Semaphore mCameraLock;
-    private boolean mClosed;
+    private final ReentrantLock mCameraLock;
 
     public FrameServerImpl(TagDispatchCaptureSession captureSession) {
         mCaptureSession = captureSession;
-        mCameraLock = new Semaphore(1);
-        mClosed = false;
+        mCameraLock = new ReentrantLock(true);
     }
 
     @Override
-    public Session createSession() {
-        // false indicates a nonexclusive session.
-        return new Session(false);
-    }
-
-    @Override
+    @Nonnull
     public Session createExclusiveSession() throws InterruptedException {
-        mCameraLock.acquire();
-        // true indicates an exclusive session, which now owns {@link
-        // mCameraLock}.
-        return new Session(true);
+        checkState(!mCameraLock.isHeldByCurrentThread(), "Cannot acquire another " +
+                "FrameServer.Session on the same thread.");
+        mCameraLock.lockInterruptibly();
+        return new Session();
     }
 
     @Override
+    @Nullable
     public Session tryCreateExclusiveSession() {
-        if (mCameraLock.tryAcquire()) {
-            return new Session(true);
+        if (mCameraLock.isHeldByCurrentThread()) {
+            return null;
+        }
+        if (mCameraLock.tryLock()) {
+            return new Session();
         } else {
             return null;
         }
     }
-
 }

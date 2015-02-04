@@ -23,6 +23,8 @@ import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 
+import java.util.Collection;
+
 /**
  * Static factories for simple {@link ResponseListener}s.
  */
@@ -115,5 +117,19 @@ public final class ResponseListeners {
                 callback.update(null);
             }
         };
+    }
+
+    /**
+     * Combines multiple {@link ResponseListener}s.
+     */
+    public static ResponseListener forListeners(ResponseListener... listeners) {
+        return new ResponseListenerBroadcaster(listeners);
+    }
+
+    /**
+     * Combines multiple {@link ResponseListener}s.
+     */
+    public static ResponseListener forListeners(Collection<ResponseListener> listeners) {
+        return new ResponseListenerBroadcaster(listeners);
     }
 }

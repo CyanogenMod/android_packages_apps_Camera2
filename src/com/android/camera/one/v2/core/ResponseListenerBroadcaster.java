@@ -16,22 +16,27 @@
 
 package com.android.camera.one.v2.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
 
 /**
  * Combines multiple {@link ResponseListener}s into a single one which
  * dispatches to all listeners for each callback.
  */
 class ResponseListenerBroadcaster extends ResponseListener {
-    private final List<ResponseListener> mListeners;
+    private final ImmutableList<ResponseListener> mListeners;
 
-    public ResponseListenerBroadcaster(List<ResponseListener> listeners) {
-        mListeners = new ArrayList<>(listeners);
+    public ResponseListenerBroadcaster(ResponseListener[] listeners) {
+        mListeners = ImmutableList.copyOf(listeners);
+    }
+
+    public ResponseListenerBroadcaster(Collection<ResponseListener> listeners) {
+        mListeners = ImmutableList.copyOf(listeners);
     }
 
     @Override

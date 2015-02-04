@@ -48,7 +48,7 @@ public class PreviewCommand implements CameraCommand {
 
     public void run() throws InterruptedException, CameraAccessException,
             CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
-        try (FrameServer.Session session = mFrameServer.createSession()) {
+        try (FrameServer.Session session = mFrameServer.createExclusiveSession()) {
             RequestBuilder photoRequest = mBuilderFactory.create(mRequestType);
             session.submitRequest(Arrays.asList(photoRequest.build()),
                     FrameServer.RequestType.REPEATING);

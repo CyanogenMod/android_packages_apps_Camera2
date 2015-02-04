@@ -20,22 +20,52 @@ import android.os.Handler;
 
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
+import com.android.camera.async.Observable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 
 public class FrameServerFactory {
+    private FrameServer mEphemeralFrameServer;
     private FrameServer mFrameServer;
+    private Observable<Boolean> mReadyState;
 
     public FrameServerFactory(Lifetime lifetime, CameraCaptureSessionProxy cameraCaptureSession,
             HandlerFactory handlerFactory) {
         Handler cameraHandler = handlerFactory.create(lifetime, "CameraMetadataHandler");
         // TODO Maybe enable closing the FrameServer along with the lifetime?
         // It would allow clean reuse of the cameraCaptureSession with
-        // non-frameserver interaction
-        mFrameServer = new FrameServerImpl(new TagDispatchCaptureSession(cameraCaptureSession,
-                cameraHandler));
+        // non-frameserver interaction.
+        mEphemeralFrameServer = new FrameServerImpl(new TagDispatchCaptureSession
+                (cameraCaptureSession, cameraHandler));
+
+        ObservableFrameServer ofs = new ObservableFrameServer(mEphemeralFrameServer);
+        mFrameServer = ofs;
+        mReadyState = ofs;
     }
 
+    /**
+     * @return The {@link FrameServer} to use for interactions with the camera
+     *         device which should affect the ready-state.
+     */
     public FrameServer provideFrameServer() {
         return mFrameServer;
+    }
+
+    /**
+     * @return The {@link FrameServer} to use for interactions with the camera
+     *         device which should not affect the ready-state (e.g. trivial
+     *         interactions such as restarting the preview as well as
+     *         interactions which should not block the ready-state, such as
+     *         performing a tap-to-focus routine).
+     */
+    public FrameServer provideEphemeralFrameServer() {
+        return mEphemeralFrameServer;
+    }
+
+    /**
+     * @return A hint as to whether or not a {@link FrameServer} session can be
+     *         acquired immediately.
+     */
+    public Observable<Boolean> provideReadyState() {
+        return mReadyState;
     }
 }

@@ -16,33 +16,30 @@
 
 package com.android.camera.one.v2.core;
 
-import java.util.List;
-
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
- * Provides thread-safe concurrent access to a camera.
- * <p>
- * Clients should choose whether to create an exclusive session, which
- * guarantees that no other clients will access the camera between requests, or
- * a nonexclusive session which allows other clients to access the camera
- * between subsequent requests.
+ * Provides thread-safe access to a camera.
  */
+@ThreadSafe
 public interface FrameServer {
     /**
      * A Session enables submitting multiple Requests for frames.
      */
+    @ThreadSafe
     public interface Session extends SafeCloseable {
         /**
-         * Submits the given request, blocking until the following conditions
-         * are met:
-         * <ul>
-         * <li>Resources are allocated for the request.</li>
-         * <li>Any existing exclusive session (other than this one) is closed.</li>
-         * </ul>
+         * Submits the given request, blocking until resources are allocated for
+         * the request.
          *
          * @param burstRequests The request to submit to the camera device.
          * @throws java.lang.InterruptedException if interrupted before the
@@ -64,46 +61,23 @@ public interface FrameServer {
     }
 
     public static enum RequestType {
-        REPEATING, NON_REPEATING;
-
-        public boolean isRepeating() {
-            return equals(REPEATING);
-        }
+        REPEATING, NON_REPEATING
     }
 
     /**
-     * Creates a non-exclusive session. If there are no exclusive sessions
-     * currently open, this returns immediately. Otherwise, it will block until
-     * the existing exclusive session closes.
+     * Creates an exclusive session. Blocks, if necessary, until any existing
+     * exclusive session is closed.
      *
      * @return A new session which may be used to interact with the underlying
      *         camera.
      */
-    public Session createSession();
-
-    /**
-     * Creates an exclusive session.
-     * <p>
-     * If there are no sessions currently open, this returns immediately with a
-     * new one. If there are no exclusive sessions currently open, this returns
-     * immediately. Otherwise, it will block until the existing exclusive
-     * session closes.
-     * </p>
-     * <p>
-     * Note that the above implies that exclusive sessions may be created
-     * alongside existing non-exclusive sessions. In this case, requests issued
-     * by the non-exclusive sessions will block until the exclusive session is
-     * closed.
-     * </p>
-     *
-     * @return A new session which may be used to interact with the underlying
-     *         camera.
-     */
+    @Nonnull
     public Session createExclusiveSession() throws InterruptedException;
 
     /**
      * Like {@link #createExclusiveSession}, but returns null instead of
      * blocking if the session cannot be created immediately.
      */
+    @Nullable
     public Session tryCreateExclusiveSession();
 }
