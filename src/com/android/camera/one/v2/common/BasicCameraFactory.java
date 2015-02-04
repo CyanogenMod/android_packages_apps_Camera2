@@ -22,7 +22,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.CallbackRunnable;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
