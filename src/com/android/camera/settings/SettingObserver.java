@@ -20,8 +20,6 @@ import com.android.camera.async.ExecutorCallback;
 import com.android.camera.async.FilteredUpdatable;
 import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
-import com.android.camera.async.Updatable;
-import com.android.camera.util.Callback;
 
 import java.util.concurrent.Executor;
 
@@ -36,18 +34,17 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class SettingObserver<T> implements Observable<T> {
     private class Listener implements SettingsManager.OnSettingChangedListener, SafeCloseable {
-        private final Updatable<? super T> mCallback;
+        private final Runnable mRunnable;
+        private final Executor mExecutor;
 
-        private Listener(Updatable<? super T> callback) {
-            mCallback = callback;
+        private Listener(Runnable runnable, Executor executor) {
+            mRunnable = runnable;
+            mExecutor = executor;
         }
 
         @Override
         public void onSettingChanged(SettingsManager settingsManager, String key) {
-            T t = get();
-            if (t != null) {
-                mCallback.update(t);
-            }
+            mExecutor.execute(mRunnable);
         }
 
         @Override
@@ -89,9 +86,8 @@ public final class SettingObserver<T> implements Observable<T> {
     @CheckReturnValue
     @Nonnull
     @Override
-    public SafeCloseable addCallback(@Nonnull Callback<T> callback, @Nonnull Executor executor) {
-        final Listener listener =
-                new Listener(new FilteredUpdatable<>(new ExecutorCallback<>(callback, executor)));
+    public SafeCloseable addCallback(@Nonnull Runnable callback, @Nonnull Executor executor) {
+        Listener listener = new Listener(callback, executor);
         mSettingsManager.addListener(listener);
         return listener;
     }

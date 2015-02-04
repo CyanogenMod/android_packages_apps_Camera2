@@ -35,7 +35,7 @@ public abstract class ForwardingObservable<T> implements Observable<T> {
     @Nonnull
     @Override
     @CheckReturnValue
-    public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
+    public SafeCloseable addCallback(Runnable callback, Executor executor) {
         return mDelegate.addCallback(callback, executor);
     }
 

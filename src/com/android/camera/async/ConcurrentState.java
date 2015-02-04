@@ -16,10 +16,8 @@
 
 package com.android.camera.async;
 
-import com.android.camera.util.Callback;
-
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 import javax.annotation.CheckReturnValue;
@@ -32,36 +30,32 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
-
-    private static class ExecutorListenerPair<T> {
+    private static class ExecutorListenerPair implements Runnable {
         private final Executor mExecutor;
-        private final Callback<T> mListener;
+        private final Runnable mListener;
 
-        public ExecutorListenerPair(Executor executor, Callback<T> listener) {
+        public ExecutorListenerPair(Executor executor, Runnable listener) {
             mExecutor = executor;
             mListener = listener;
         }
 
         /**
-         * Runs the callback on the executor with the given value.
+         * Runs the callback on the executor.
          */
-        public void run(final T t) {
-            mExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    mListener.onCallback(t);
-                }
-            });
+        @Override
+        public void run() {
+            mExecutor.execute(mListener);
         }
     }
 
-    private final Object mLock;
-    private final Set<ExecutorListenerPair<? super T>> mListeners;
-    private T mValue;
+    private final Set<ExecutorListenerPair> mListeners;
+    private volatile T mValue;
 
     public ConcurrentState(T initialValue) {
-        mLock = new Object();
-        mListeners = new HashSet<>();
+        // Callbacks are typically only added and removed at startup/shutdown,
+        // but {@link #update} is often called at high-frequency. So, using a
+        // read-optimized data structure is appropriate here.
+        mListeners = new CopyOnWriteArraySet<>();
         mValue = initialValue;
     }
 
@@ -70,35 +64,24 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
      */
     @Override
     public void update(T newValue) {
-        synchronized (mLock) {
-            mValue = newValue;
-            // Invoke executors.execute within mLock to guarantee that
-            // callbacks are serialized into their respective executor in
-            // the proper order.
-            for (ExecutorListenerPair<? super T> pair : mListeners) {
-                pair.run(newValue);
-            }
+        mValue = newValue;
+        for (ExecutorListenerPair pair : mListeners) {
+            pair.run();
         }
     }
 
     @CheckReturnValue
     @Nonnull
     @Override
-    public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
-        synchronized (mLock) {
-            final ExecutorListenerPair<? super T> pair =
-                    new ExecutorListenerPair<>(executor, callback);
-            mListeners.add(pair);
-
-            return new SafeCloseable() {
-                @Override
-                public void close() {
-                    synchronized (mLock) {
-                        mListeners.remove(pair);
-                    }
-                }
-            };
-        }
+    public SafeCloseable addCallback(Runnable callback, Executor executor) {
+        final ExecutorListenerPair pair = new ExecutorListenerPair(executor, callback);
+        mListeners.add(pair);
+        return new SafeCloseable() {
+            @Override
+            public void close() {
+                mListeners.remove(pair);
+            }
+        };
     }
 
     /**
@@ -109,8 +92,6 @@ public class ConcurrentState<T> implements Updatable<T>, Observable<T> {
     @Nonnull
     @Override
     public T get() {
-        synchronized (mLock) {
-            return mValue;
-        }
+        return mValue;
     }
 }
