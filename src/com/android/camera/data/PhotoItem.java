@@ -122,8 +122,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
         if (optionalView.isPresent()) {
             imageView = (ImageView) optionalView.get();
         } else {
-            imageView = (ImageView) LayoutInflater.from(mContext)
-                  .inflate(R.layout.filmstrip_image, null);
+            imageView = new ImageView(mContext);
             imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 

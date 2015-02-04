@@ -994,17 +994,8 @@ public class FilmstripView extends ViewGroup {
             }
             mViewItems[i].bringViewToFront();
         }
-        // ZoomView is a special case to always be in the front. In L set to
-        // max elevation to make sure ZoomView is above other elevated views.
+        // ZoomView is a special case to always be in the front.
         bringChildToFront(mZoomView);
-        if (ApiHelper.isLOrHigher()) {
-            setMaxElevation(mZoomView);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setMaxElevation(View v) {
-        v.setElevation(Float.MAX_VALUE);
     }
 
     /**
