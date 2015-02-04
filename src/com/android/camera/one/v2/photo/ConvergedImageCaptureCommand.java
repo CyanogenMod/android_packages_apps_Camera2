@@ -177,6 +177,8 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
             RequestBuilder builder = builderTemplate.create(mStillCaptureRequestTemplate);
             builder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
                     .CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            builder.setParam(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest
+                    .CONTROL_CAPTURE_INTENT_STILL_CAPTURE);
             if (first) {
                 first = false;
                 builder.addResponseListener(forFrameExposure(imageExposureUpdatable));
