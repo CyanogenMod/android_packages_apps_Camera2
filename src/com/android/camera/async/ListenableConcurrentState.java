@@ -43,7 +43,7 @@ public class ListenableConcurrentState<T> implements Listenable<T> {
      * Sets the callback, removing any existing callback first.
      */
     @Override
-    public void setCallback(Callback<T> callback) {
+    public void setCallback(final Callback<T> callback) {
         synchronized (mLock) {
             if (mClosed) {
                 return;
@@ -52,7 +52,12 @@ public class ListenableConcurrentState<T> implements Listenable<T> {
                 // Unregister any existing callback
                 mExistingCallbackHandle.close();
             }
-            mExistingCallbackHandle = mState.addCallback(callback, mExecutor);
+            mExistingCallbackHandle = mState.addCallback(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onCallback(mState.get());
+                }
+            }, mExecutor);
         }
     }
 

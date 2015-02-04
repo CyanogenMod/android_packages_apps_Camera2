@@ -16,7 +16,6 @@
 
 package com.android.camera.async;
 
-import com.android.camera.util.Callback;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
@@ -27,7 +26,6 @@ import java.util.concurrent.Executor;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -43,34 +41,10 @@ final class ObservableCombiner<I, O> implements Observable<O> {
     private final ImmutableList<Observable<I>> mInputs;
     private final Function<List<I>, O> mFunction;
 
-    private final Object mLock;
-
-    @GuardedBy("mLock")
-    private final ConcurrentState<O> mListenerNotifier;
-
-    @GuardedBy("mLock")
-    private final List<SafeCloseable> mInputCallbackHandles;
-
-    @GuardedBy("mLock")
-    private int mNumRegisteredCallbacks;
-
-    /**
-     * The thread-safe callback to be registered with each input.
-     */
-    private final Updatable<I> mInputCallback = new Updatable<I>() {
-        public void update(I ignored) {
-            mListenerNotifier.update(get());
-        }
-    };
-
     private ObservableCombiner(List<? extends Observable<I>> inputs,
-            Function<List<I>, O> function, O initialValue) {
+            Function<List<I>, O> function) {
         mInputs = ImmutableList.copyOf(inputs);
         mFunction = function;
-        mListenerNotifier = new ConcurrentState<>(initialValue);
-        mLock = new Object();
-        mInputCallbackHandles = new ArrayList<>();
-        mNumRegisteredCallbacks = 0;
     }
 
     /**
@@ -86,70 +60,20 @@ final class ObservableCombiner<I, O> implements Observable<O> {
      */
     static <I, O> Observable<O> transform(List<? extends Observable<I>> inputs,
             Function<List<I>, O> function) {
-        // Compute the initial value.
-        ArrayList<I> deps = new ArrayList<>();
-        for (Observable<? extends I> input : inputs) {
-            deps.add(input.get());
-        }
-        O initialValue = function.apply(deps);
-
-        return new ObservableCombiner<>(inputs, function, initialValue);
-    }
-
-    @GuardedBy("mLock")
-    private void addCallbacksToInputs() {
-        for (Observable<I> observable : mInputs) {
-            final SafeCloseable callbackHandle =
-                    Observables.addThreadSafeCallback(observable, mInputCallback);
-
-            mInputCallbackHandles.add(callbackHandle);
-        }
-    }
-
-    @GuardedBy("mLock")
-    private void removeCallbacksFromInputs() {
-        for (SafeCloseable callbackHandle : mInputCallbackHandles) {
-            callbackHandle.close();
-        }
+        return new ObservableCombiner<>(inputs, function);
     }
 
     @Nonnull
     @Override
     @CheckReturnValue
-    public SafeCloseable addCallback(final Callback<O> callback, Executor executor) {
-        // When a callback is added to this, the "output", we must ensure that
-        // callbacks are registered with all of the inputs so that they can be
-        // forwarded properly.
-        // Instead of adding another callback to each input for each callback
-        // registered with the output, callbacks are registered when the first
-        // output callback is added, and removed when the last output callback
-        // is removed.
+    public SafeCloseable addCallback(Runnable callback, Executor executor) {
+        Lifetime callbackLifetime = new Lifetime();
 
-        synchronized (mLock) {
-            if (mNumRegisteredCallbacks == 0) {
-                addCallbacksToInputs();
-            }
-            mNumRegisteredCallbacks++;
+        for (Observable<I> input : mInputs) {
+            callbackLifetime.add(input.addCallback(callback, executor));
         }
 
-        // Wrap the callback in a {@link FilteredCallback} to prevent many
-        // duplicate/cascading updates even if the output does not change.
-        final SafeCloseable resultingCallbackHandle = mListenerNotifier.addCallback(
-                new FilteredCallback<O>(callback), executor);
-
-        return new SafeCloseable() {
-            @Override
-            public void close() {
-                resultingCallbackHandle.close();
-
-                synchronized (mLock) {
-                    mNumRegisteredCallbacks--;
-                    if (mNumRegisteredCallbacks == 0) {
-                        removeCallbacksFromInputs();
-                    }
-                }
-            }
-        };
+        return callbackLifetime;
     }
 
     @Nonnull

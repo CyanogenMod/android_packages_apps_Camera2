@@ -16,7 +16,6 @@
 
 package com.android.camera.async;
 
-import com.android.camera.util.Callback;
 import com.google.common.base.Supplier;
 
 import java.util.concurrent.Executor;
@@ -33,8 +32,11 @@ import javax.annotation.concurrent.ThreadSafe;
 @ParametersAreNonnullByDefault
 public interface Observable<T> extends Supplier<T> {
     /**
-     * Adds the given callback, returning a handle to be closed when the
-     * callback must be deregistered.
+     * Adds the given callback to be invoked upon changes, returning a handle to
+     * be closed when the callback must be deregistered.
+     * <p>
+     * Note that the callback may be invoked multiple times even if the value
+     * has not actually changed.
      *
      * @param callback The callback to add.
      * @param executor The executor on which the callback will be invoked.
@@ -42,7 +44,7 @@ public interface Observable<T> extends Supplier<T> {
      */
     @Nonnull
     @CheckReturnValue
-    public SafeCloseable addCallback(Callback<T> callback, Executor executor);
+    public SafeCloseable addCallback(Runnable callback, Executor executor);
 
     /**
      * @return The current/latest value.

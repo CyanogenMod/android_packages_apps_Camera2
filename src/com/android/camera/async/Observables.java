@@ -60,14 +60,8 @@ public class Observables {
             @CheckReturnValue
             @Nonnull
             @Override
-            public SafeCloseable addCallback(final Callback<T> callback,
-                    Executor executor) {
-                return input.addCallback(new Callback<F>() {
-                    @Override
-                    public void onCallback(F result) {
-                        callback.onCallback(function.apply(result));
-                    }
-                }, executor);
+            public SafeCloseable addCallback(Runnable callback, Executor executor) {
+                return input.addCallback(callback, executor);
             }
         };
     }
@@ -86,7 +80,7 @@ public class Observables {
      * @return An observable which has the given constant value.
      */
     @Nonnull
-    public static <T> Observable<T> of(final @Nullable T constant) {
+    public static <T> Observable<T> of(final T constant) {
         return new Observable<T>() {
             @Nonnull
             @Override
@@ -97,7 +91,7 @@ public class Observables {
             @CheckReturnValue
             @Nonnull
             @Override
-            public SafeCloseable addCallback(Callback<T> callback, Executor executor) {
+            public SafeCloseable addCallback(Runnable callback, Executor executor) {
                 return NOOP_CALLBACK_HANDLE;
             }
         };
@@ -105,12 +99,12 @@ public class Observables {
 
     @Nonnull
     @CheckReturnValue
-    public static <T> SafeCloseable addThreadSafeCallback(Observable<T> observable,
+    public static <T> SafeCloseable addThreadSafeCallback(final Observable<T> observable,
             final Updatable<T> callback) {
-        return observable.addCallback(new Callback<T>() {
+        return observable.addCallback(new Runnable() {
             @Override
-            public void onCallback(T result) {
-                callback.update(result);
+            public void run() {
+                callback.update(observable.get());
             }
         }, MoreExecutors.sameThreadExecutor());
     }

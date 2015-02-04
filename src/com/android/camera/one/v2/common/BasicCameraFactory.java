@@ -98,12 +98,9 @@ public class BasicCameraFactory {
         // changes to apply the new setting.
         // Also, de-register these callbacks when the camera is closed (to
         // not leak memory).
-        SafeCloseable zoomCallback = zoom.addCallback(
-                new CallbackRunnable<Float>(mPreviewStarter), threadPool);
+        SafeCloseable zoomCallback = zoom.addCallback(mPreviewStarter, threadPool);
         lifetime.add(zoomCallback);
-        SafeCloseable flashCallback = flash.addCallback(
-                new CallbackRunnable<OneCamera.PhotoCaptureParameters.Flash>(mPreviewStarter),
-                threadPool);
+        SafeCloseable flashCallback = flash.addCallback(mPreviewStarter, threadPool);
         lifetime.add(flashCallback);
 
         int sensorOrientation =
