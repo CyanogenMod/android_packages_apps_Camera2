@@ -142,7 +142,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
                         (cameraLifetime), characteristics, frameServer, rootBuilder,
                         miscThreadPool, flashSetting, zoomState, CameraDevice
-                        .TEMPLATE_ZERO_SHUTTER_LAG);
+                        .TEMPLATE_PREVIEW);
 
                 RequestBuilder.Factory meteredZooomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
