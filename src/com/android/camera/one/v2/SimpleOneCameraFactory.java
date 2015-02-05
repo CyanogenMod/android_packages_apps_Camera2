@@ -39,15 +39,16 @@ import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
-import com.android.camera.one.v2.common.TimestampResponseListener;
-import com.android.camera.one.v2.common.TotalCaptureResultResponseListener;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.core.ResponseListeners;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
+import com.android.camera.one.v2.photo.LegacyPictureTakerFactory;
+import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
@@ -133,9 +134,9 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 // The shared image reader must be wired to receive every
                 // timestamp for every image (including the preview).
                 rootBuilder.addResponseListener(
-                        new TimestampResponseListener(globalTimestampCallback));
+                        ResponseListeners.forTimestamps(globalTimestampCallback));
                 rootBuilder.addStream(new SimpleCaptureStream(previewSurface));
-                rootBuilder.addResponseListener(new TotalCaptureResultResponseListener(
+                rootBuilder.addResponseListener(ResponseListeners.forFinalMetadata(
                         metadataCallback));
 
                 // Create basic functionality (zoom, AE, AF).
@@ -151,14 +152,22 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
                         miscThreadPool);
 
-                PictureTakerFactory pictureTakerFactory = new PictureTakerFactory(mainExecutor,
-                        cameraCommandExecutor, imageSaverBuilder, frameServer,
-                        meteredZooomedRequestBuilder, imageStreamFactory);
+                PictureTaker pictureTaker;
+                if (characteristics.getSupportedHardwareLevel() == OneCameraCharacteristics
+                        .SupportedHardwareLevel.LEGACY) {
+                    pictureTaker = new LegacyPictureTakerFactory(imageSaverBuilder,
+                            cameraCommandExecutor, mainExecutor, frameServer,
+                            meteredZooomedRequestBuilder, imageStreamFactory).providePictureTaker();
+                } else {
+                    pictureTaker = new PictureTakerFactory(mainExecutor,
+                            cameraCommandExecutor, imageSaverBuilder, frameServer,
+                            meteredZooomedRequestBuilder, imageStreamFactory).providePictureTaker();
+                }
 
                 basicCameraFactory.providePreviewStarter().run();
 
                 return new CameraStarter.CameraControls(
-                        pictureTakerFactory.providePictureTaker(),
+                        pictureTaker,
                         basicCameraFactory.provideManualAutoFocus());
             }
         };
