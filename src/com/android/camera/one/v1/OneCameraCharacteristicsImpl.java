@@ -98,4 +98,9 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     public boolean isFlashSupported() {
         return (mCameraParameters.getFlashMode() != null);
     }
+
+    @Override
+    public SupportedHardwareLevel getSupportedHardwareLevel() {
+        throw new RuntimeException("Not implemented yet.");
+    }
 }

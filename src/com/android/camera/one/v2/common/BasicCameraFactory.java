@@ -64,17 +64,18 @@ public class BasicCameraFactory {
      *            resources.
      * @param cameraCharacteristics
      * @param rootBuilder Provides preconfigured request builders to be used for
-     *            all requests to mFrameServer.
+ *            all requests to mFrameServer.
      * @param threadPool A dynamically-sized thread pool on which to interact
-     * @param templateType
+     * @param templateType The template (e.g. CameraDevice.TEMPLATE_PREVIEW) to use for repeating
+     *                     requests.
      */
     public BasicCameraFactory(Lifetime lifetime,
-            OneCameraCharacteristics cameraCharacteristics,
-            FrameServer frameServer,
-            RequestBuilder.Factory rootBuilder,
-            ScheduledExecutorService threadPool,
-            Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
-            Observable<Float> zoom, int templateType) {
+                              OneCameraCharacteristics cameraCharacteristics,
+                              FrameServer frameServer,
+                              RequestBuilder.Factory rootBuilder,
+                              ScheduledExecutorService threadPool,
+                              Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
+                              Observable<Float> zoom, int templateType) {
         RequestTemplate previewBuilder = new RequestTemplate(rootBuilder);
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
@@ -108,7 +109,7 @@ public class BasicCameraFactory {
         ManualAutoFocusFactory manualAutoFocusFactory = new ManualAutoFocusFactory(new
                 Lifetime(lifetime), frameServer, threadPool, cropRegion,
                 sensorOrientation, mPreviewStarter, rootBuilder,
-                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+                templateType);
         mManualAutoFocus = manualAutoFocusFactory.provideManualAutoFocus();
         Supplier<MeteringRectangle[]> aeRegions =
                 manualAutoFocusFactory.provideAEMeteringRegion();

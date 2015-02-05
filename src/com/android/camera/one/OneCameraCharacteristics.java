@@ -29,6 +29,10 @@ import java.util.List;
  * a given OneCamera device.
  */
 public interface OneCameraCharacteristics {
+    public enum SupportedHardwareLevel {
+        FULL, LIMITED, LEGACY
+    }
+
     /**
      * Gets the supported picture sizes for the given image format.
      *
@@ -66,4 +70,9 @@ public interface OneCameraCharacteristics {
      * @return If flash is supported for this camera.
      */
     public boolean isFlashSupported();
+
+    /**
+     * @return The supported hardware level.
+     */
+    public SupportedHardwareLevel getSupportedHardwareLevel();
 }

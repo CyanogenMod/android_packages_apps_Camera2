@@ -28,6 +28,8 @@ import com.android.camera.util.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Describes a OneCamera device which is on top of camera2 API. This is
  * essential a wrapper for #{link
@@ -90,5 +92,23 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     @Override
     public boolean isFlashSupported() {
         return mCameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+    }
+
+    @Override
+    public SupportedHardwareLevel getSupportedHardwareLevel() {
+        Integer supportedHardwareLevel = mCameraCharacteristics.get(CameraCharacteristics
+                .INFO_SUPPORTED_HARDWARE_LEVEL);
+        // If this fails, it is a framework bug, per API documentation.
+        checkNotNull(supportedHardwareLevel, "INFO_SUPPORTED_HARDWARE_LEVEL not found");
+        switch ((int) supportedHardwareLevel) {
+            case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL:
+                return SupportedHardwareLevel.FULL;
+            case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED:
+                return SupportedHardwareLevel.LIMITED;
+            case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY:
+                return SupportedHardwareLevel.LEGACY;
+            default:
+                throw new IllegalStateException("Invalid value for INFO_SUPPORTED_HARDWARE_LEVEL");
+        }
     }
 }
