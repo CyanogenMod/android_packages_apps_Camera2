@@ -198,7 +198,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
             @Nonnull OrientationManager.DeviceOrientation orientation,
             @Nonnull CaptureSession session) {
         final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
-                .toImageRotation(orientation);
+                .toImageRotation();
 
         ImageProcessorProxyListener proxyListener = mImageBackend.getProxyListener();
 

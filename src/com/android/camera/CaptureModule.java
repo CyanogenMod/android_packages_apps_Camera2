@@ -1185,7 +1185,7 @@ public class CaptureModule extends CameraModule implements
         // Derive objects necessary for camera creation.
         MainThread mainThread = MainThread.create();
         ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
-                .from(mCameraCharacteristics);
+                .from(mAppController.getOrientationManager(), mCameraCharacteristics);
 
         // Only enable HDR on the back camera
         boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;

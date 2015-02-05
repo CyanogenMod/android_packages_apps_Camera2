@@ -19,6 +19,7 @@ package com.android.camera.one.v2;
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
 import android.view.Surface;
 
@@ -40,7 +41,6 @@ import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
-import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
@@ -48,12 +48,14 @@ import com.android.camera.one.v2.core.ResponseListeners;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
+import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.LegacyPictureTakerFactory;
 import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Size;
+
 import com.google.common.base.Function;
 
 import java.util.ArrayList;
@@ -70,6 +72,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class SimpleOneCameraFactory implements OneCameraFactory {
     private final int mImageFormat;
     private final int mMaxImageCount;
+    private final ImageRotationCalculator mImageRotationCalculator;
 
     /**
      * @param imageFormat The {@link ImageFormat} to use for full-size images to
@@ -77,9 +80,11 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
      * @param maxImageCount The size of the image reader to use for full-size
      *            images.
      */
-    public SimpleOneCameraFactory(int imageFormat, int maxImageCount) {
+    public SimpleOneCameraFactory(int imageFormat, int maxImageCount,
+            ImageRotationCalculator imageRotationCalculator) {
         mImageFormat = imageFormat;
         mMaxImageCount = maxImageCount;
+        mImageRotationCalculator = imageRotationCalculator;
     }
 
     @Override
@@ -147,6 +152,10 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                         frameServerComponent.provideEphemeralFrameServer(), rootBuilder,
                         miscThreadPool, flashSetting, zoomState, CameraDevice
                         .TEMPLATE_PREVIEW);
+
+                // Register the dynamic updater via orientation supplier
+                rootBuilder.setParam(CaptureRequest.JPEG_ORIENTATION,
+                        mImageRotationCalculator.getSupplier());
 
                 RequestBuilder.Factory meteredZooomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();

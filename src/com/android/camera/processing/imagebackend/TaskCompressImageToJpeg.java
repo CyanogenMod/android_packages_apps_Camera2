@@ -19,8 +19,11 @@ package com.android.camera.processing.imagebackend;
 import android.graphics.ImageFormat;
 import android.net.Uri;
 
+import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver;
+import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
@@ -63,59 +66,88 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         return JpegUtilNative.compressJpegFromYUV420Image(img, outBuf, quality, degrees);
     }
 
+    /**
+     * Wraps static call to Exif for testability.
+     * @param jpegData  Binary data of the JPEG with EXIF flags
+     *
+     * @return Degrees of rotation of the EXIF flag
+     */
+    public int exifGetOrientation(byte [] jpegData) {
+        return Exif.getOrientation(jpegData);
+    }
+
     @Override
     public void run() {
         ImageToProcess img = mImage;
-        if (img.rotation != DeviceOrientation.CLOCKWISE_0
-                && img.proxy.getFormat() == ImageFormat.JPEG) {
-            // TODO: Ensure the capture for SimpleOneCameraFactory is always
-            // at zero rotation
-            // To avoid suboptimal rotation implementation, the JPEG should
-            // come with zero orientation. Any post-rotation of JPEG would be
-            // REALLY sub-optimal.
 
-            // Release image references on error
-            mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+        // For JPEG, it is the capture devices responsibility to get proper
+        // orientation.
 
-            throw new IllegalStateException(
-                    "Image Rotation for JPEG should be zero, but is actually "
-                            + img.rotation.getDegrees());
-        }
+        TaskImage inputImage, resultImage;
 
-        final TaskImage inputImage = new TaskImage(
-                img.rotation, img.proxy.getWidth(), img.proxy.getHeight(),
-                img.proxy.getFormat());
-        Size resultSize = getImageSizeForOrientation(img.proxy.getWidth(),
-                img.proxy.getHeight(),
-                img.rotation);
-        final TaskImage resultImage = new TaskImage(
-                DeviceOrientation.CLOCKWISE_0, resultSize.getWidth(), resultSize.getHeight(),
-                ImageFormat.JPEG);
         byte[] writeOut;
         int numBytes;
+        ByteBuffer compressedData;
 
-        try {
-            // Resulting image will be rotated so that viewers won't have to
-            // rotate. That's why the resulting image will have 0 rotation.
+        switch (img.proxy.getFormat()) {
+            case ImageFormat.JPEG:
+                try {
+                    // In the cases, we will request a zero-oriented JPEG from
+                    // the HAL; the HAL may deliver its orientation in the JPEG
+                    // encoding __OR__ EXIF -- we don't know. We need to read
+                    // the EXIF setting from byte payload and the EXIF reader
+                    // doesn't work on direct buffers. So, we make a local
+                    // copy in a non-direct buffer.
+                    ByteBuffer origBuffer = img.proxy.getPlanes().get(0).getBuffer();
+                    compressedData = ByteBuffer.allocate(origBuffer.capacity());
+                    origBuffer.rewind();
+                    compressedData.put(origBuffer);
+                    origBuffer.rewind();
+                    compressedData.rewind();
 
-            onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
-            logWrapper("TIMER_END Full-size YUV buffer available, w=" + img.proxy.getWidth()
-                    + " h="
-                    + img.proxy.getHeight() + " of format " + img.proxy.getFormat()
-                    + " (35==YUV_420_888)");
+                    // For JPEG, always use the EXIF orientation as ground truth.
+                    int exifDerivedRotation = exifGetOrientation(compressedData.array());
 
-            ByteBuffer compressedData;
-            switch (inputImage.format) {
-                case ImageFormat.JPEG:
-                    compressedData = img.proxy.getPlanes().get(0).getBuffer();
-                    numBytes = compressedData.capacity();
-                    break;
-                case ImageFormat.YUV_420_888:
+                    // Ignore the passed-in rotation and use the EXIF from byte[] payload
+                    inputImage = new TaskImage(
+                            OrientationManager.DeviceOrientation.from(exifDerivedRotation),
+                            img.proxy.getWidth(),
+                            img.proxy.getHeight(),
+                            img.proxy.getFormat());
+                    resultImage = inputImage; // Pass through
+                } finally {
+                    // Release the image now that you have a usable copy in
+                    // local memory
+                    // Or you failed to process
+                    mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+                }
+
+                onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
+
+                numBytes = compressedData.capacity();
+                break;
+            case ImageFormat.YUV_420_888:
+                try {
+                    inputImage = new TaskImage(img.rotation, img.proxy.getWidth(),
+                            img.proxy.getHeight(),
+                            img.proxy.getFormat());
+                    Size resultSize = getImageSizeForOrientation(img.proxy.getWidth(),
+                            img.proxy.getHeight(),
+                            img.rotation);
+
+                    // Resulting image will be rotated so that viewers won't
+                    // have to rotate. That's why the resulting image will have 0
+                    // rotation.
+                    resultImage = new TaskImage(
+                            DeviceOrientation.CLOCKWISE_0, resultSize.getWidth(),
+                            resultSize.getHeight(),
+                            ImageFormat.JPEG);
+                    onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
+
                     compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
                             * resultImage.height);
 
-                    // If Orientation is UNKNOWN, treat input image orientation
-                    // as CLOCKWISE_0.
+                    // Do the actual compression here.
                     numBytes = compressJpegFromYUV420Image(
                             img.proxy, compressedData, DEFAULT_JPEG_COMPRESSION_QUALITY,
                             inputImage.orientation.getDegrees());
@@ -124,33 +156,37 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                         throw new RuntimeException("Error compressing jpeg.");
                     }
                     compressedData.limit(numBytes);
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unsupported input image format for TaskCompressImageToJpeg");
-            }
-
-            writeOut = new byte[numBytes];
-            compressedData.get(writeOut);
-            compressedData.rewind();
-        } finally {
-            // Release the image now that you have a usable copy in local memory
-            // Or you failed to process
-            mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+                } finally {
+                    // Release the image now that you have a usable copy in local memory
+                    // Or you failed to process
+                    mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+                }
+                break;
+            default:
+                mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
+                throw new IllegalArgumentException(
+                        "Unsupported input image format for TaskCompressImageToJpeg");
         }
+
+        writeOut = new byte[numBytes];
+        compressedData.get(writeOut);
+        compressedData.rewind();
 
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut,
                 TaskInfo.Destination.FINAL_IMAGE);
 
-        // TODO: the app actually crashes here on a race condition:
-        // TaskCompressImageToJpeg might complete before
-        // TaskConvertImageToRGBPreview.
+        // In rare cases, TaskCompressImageToJpeg might complete before
+        // TaskConvertImageToRGBPreview. However, session should take care
+        // of out-of-order completion.
+        // EXIF tags are rewritten so that output from this task is normalized.
+        final TaskImage finalInput = inputImage;
+        final TaskImage finalResult = resultImage;
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
                 resultImage.orientation.getDegrees(), createExif(resultImage),
                 new MediaSaver.OnMediaSavedListener() {
                     @Override
                     public void onMediaSaved(Uri uri) {
-                        onUriResolved(mId, inputImage, resultImage, uri,
+                        onUriResolved(mId, finalInput, finalResult, uri,
                                 TaskInfo.Destination.FINAL_IMAGE);
                     }
                 });

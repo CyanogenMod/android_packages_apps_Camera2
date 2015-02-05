@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import com.android.camera.Exif;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
@@ -122,8 +123,11 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
                 // Just start the thumbnail now, since there's no earlier event.
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(payload.data, 0,
                         payload.data.length);
-                // Send image to disk saver.
-                mPictureSaverCallback.onThumbnailAvailable(bitmap, mImageRotation.getDegrees());
+                // If the rotation is implemented as an EXIF flag, we need to
+                // pass this information onto the UI call, since the rotation is
+                // NOT applied to the bitmap directly.
+                int rotation = Exif.getOrientation(payload.data);
+                mPictureSaverCallback.onThumbnailAvailable(bitmap, rotation);
                 // Send image to remote devices
                 mPictureSaverCallback.onRemoteThumbnailAvailable(payload.data);
             }
@@ -139,8 +143,6 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
         @Override
         public void onResultUri(TaskImageContainer.TaskInfo task, Uri uri) {
             // Remove yourself from the listener after JPEG save.
-            // TODO: This should really be done by the ImageBackend to guarantee
-            // ordering, since technically this could happen out of order.
             mListenerProxy.unregisterListener(this);
         }
     }
@@ -174,7 +176,7 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
             @Nonnull OrientationManager.DeviceOrientation orientation,
             @Nonnull CaptureSession session) {
         final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
-                .toImageRotation(orientation);
+                .toImageRotation();
 
         ImageProcessorProxyListener proxyListener = mImageBackend.getProxyListener();
 
