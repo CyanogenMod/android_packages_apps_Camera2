@@ -67,12 +67,14 @@ public final class GlideFilmstripManager {
               .asBitmap() // This prevents gifs from animating at tiny sizes.
               .transcode(new BitmapToGlideDrawableTranscoder(context), GlideDrawable.class)
               .fitCenter()
+              .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
               .dontAnimate();
 
         mLargeImageBuilder = request
               .fromMediaStore()
               .encoder(drawableEncoder)
               .fitCenter()
+              .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
               .dontAnimate();
     }
 
@@ -106,7 +108,7 @@ public final class GlideFilmstripManager {
           int height) {
         // compute a ratio such that viewWidth and viewHeight are less than
         // MAXIMUM_SMOOTH_TEXTURE_SIZE but maintain their aspect ratio.
-        float downscaleRatio = downscaleRatioToFit(width, height, (double) MAXIMUM_SMOOTH_PIXELS);
+        float downscaleRatio = downscaleRatioToFit(width, height, MAXIMUM_SMOOTH_PIXELS);
 
         return mLargeImageBuilder
               .clone()
@@ -128,7 +130,6 @@ public final class GlideFilmstripManager {
               .clone()
               .load(uri)
               .signature(key)
-              .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
               // This attempts to ensure we load the cached media store version.
               .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
     }
@@ -144,7 +145,6 @@ public final class GlideFilmstripManager {
               .clone()
               .load(uri)
               .signature(key)
-              .placeholder(DEFAULT_PLACEHOLDER_RESOURCE)
               .override(TINY_THUMBNAIL_SIZE, TINY_THUMBNAIL_SIZE);
     }
 
