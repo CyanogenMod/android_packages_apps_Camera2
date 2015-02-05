@@ -46,8 +46,8 @@ public class ModeOptionsOverlay extends FrameLayout
     private final static Log.Tag TAG = new Log.Tag("ModeOptionsOverlay");
 
     private static final int BOTTOMBAR_OPTIONS_TIMEOUT_MS = 2000;
-    private final static int BOTTOM_RIGHT = Gravity.BOTTOM | Gravity.RIGHT;
-    private final static int TOP_RIGHT = Gravity.TOP | Gravity.RIGHT;
+    private static final int BOTTOM_RIGHT = Gravity.BOTTOM | Gravity.RIGHT;
+    private static final int TOP_RIGHT = Gravity.TOP | Gravity.RIGHT;
 
     private ModeOptions mModeOptions;
     // need a reference to set the onClickListener and fix the layout gravity on orientation change
@@ -61,6 +61,21 @@ public class ModeOptionsOverlay extends FrameLayout
     }
 
     /**
+     * Whether the mode options are hidden.
+     */
+    public boolean isModeOptionsHidden() {
+        return mModeOptions.isHiddenOrHiding();
+    }
+
+    /**
+     * Gets the current width of the mode options toggle including the three dots and various mode
+     * option indicators.
+     */
+    public float getModeOptionsToggleWidth() {
+        return mModeOptionsToggle.getWidth();
+    }
+
+    /**
      * Sets a capture layout helper to query layout rect from.
      */
     public void setCaptureLayoutHelper(CaptureLayoutHelper helper) {
@@ -69,6 +84,15 @@ public class ModeOptionsOverlay extends FrameLayout
 
     public void setToggleClickable(boolean clickable) {
         mModeOptionsToggle.setClickable(clickable);
+    }
+
+    /**
+     * Sets the mode options listener.
+     *
+     * @param listener The listener to be set.
+     */
+    public void setModeOptionsListener(ModeOptions.Listener listener) {
+        mModeOptions.setListener(listener);
     }
 
     @Override

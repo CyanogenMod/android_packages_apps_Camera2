@@ -23,7 +23,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -36,13 +35,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
+import com.android.camera.ui.motion.InterpolatorHelper;
 import com.android.camera.util.ApiHelper;
-import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
 import com.google.common.base.Optional;
@@ -226,7 +224,6 @@ public class RoundedThumbnailView extends View {
         setClickable(true);
         setOnClickListener(mOnClickListener);
 
-        // TODO: Adjust layout when mode option overlay is visible.
         mThumbnailPadding = getResources().getDimension(R.dimen.rounded_thumbnail_padding);
 
         // Load thumbnail pop-out effect constants.
@@ -331,7 +328,6 @@ public class RoundedThumbnailView extends View {
                         centerX,
                         centerY,
                         thumbnailPaint);
-
             }
 
             // Draw the reveal while circle.
@@ -370,44 +366,21 @@ public class RoundedThumbnailView extends View {
     }
 
     /**
-     * Calculates the desired layout of capture indicator.
+     * Gets the padding size with mode options and preview edges.
      *
-     * @param parentRect The bound of the view which contains capture indicator.
-     * @param uncoveredPreviewRect The uncovered preview bound which contains mode option
-     *                             overlay and capture indicator.
-     * @return the desired view bound for capture indicator.
+     * @return The padding size with mode options and preview edges.
      */
-    public RectF getDesiredLayout(RectF parentRect, RectF uncoveredPreviewRect) {
-        float parentViewWidth = parentRect.right - parentRect.left;
-        float x = 0;
-        float y = 0;
+    public float getThumbnailPadding() {
+        return mThumbnailPadding;
+    }
 
-        // The view bound is based on the maximal ripple ring diameter. This is the diff of maximal
-        // ripple ring radius and the final thumbnail radius.
-        float radius_diff_max_normal = (mRippleRingDiameterEnd - mThumbnailShrinkDiameterEnd) / 2;
-        float modeSwitchThreeDotsDiameter = mThumbnailShrinkDiameterEnd;
-        float modeSwitchThreeDotsBottomPadding = mThumbnailPadding;
-
-        int orientation = getResources().getConfiguration().orientation;
-        int rotation = CameraUtil.getDisplayRotation();
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // The view finder of 16:9 aspect ratio might have a black padding.
-            float previewRightEdgeGap =
-                    parentRect.right - uncoveredPreviewRect.right;
-            x = parentViewWidth - previewRightEdgeGap - mThumbnailPadding -
-                    mThumbnailShrinkDiameterEnd - radius_diff_max_normal;
-            y = uncoveredPreviewRect.bottom;
-            y -= modeSwitchThreeDotsBottomPadding + modeSwitchThreeDotsDiameter +
-                    mThumbnailPadding + mThumbnailShrinkDiameterEnd + radius_diff_max_normal;
-        }
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            float previewTopEdgeGap = uncoveredPreviewRect.top;
-            x = uncoveredPreviewRect.right;
-            x -= modeSwitchThreeDotsBottomPadding + modeSwitchThreeDotsDiameter +
-                    mThumbnailPadding + mThumbnailShrinkDiameterEnd + radius_diff_max_normal;
-            y = previewTopEdgeGap + mThumbnailPadding - radius_diff_max_normal;
-        }
-        return new RectF(x, y, x + mRippleRingDiameterEnd, y + mRippleRingDiameterEnd);
+    /**
+     * Gets the diameter of the thumbnail image after the revealing animation.
+     *
+     * @return The diameter of the thumbnail image after the revealing animation.
+     */
+    public float getThumbnailFinalDiameter() {
+        return mThumbnailShrinkDiameterEnd;
     }
 
     /**
@@ -566,14 +539,8 @@ public class RoundedThumbnailView extends View {
         if (mRippleAnimator == null) {
 
             // Ripple effect uses linear_out_slow_in interpolator.
-            Interpolator rippleInterpolator;
-            if (ApiHelper.isLOrHigher()) {
-                // Both phases use fast_out_flow_in interpolator.
-                rippleInterpolator = AnimationUtils.loadInterpolator(
-                        getContext(), android.R.interpolator.linear_out_slow_in);
-            } else {
-                rippleInterpolator = new DecelerateInterpolator();
-            }
+            Interpolator rippleInterpolator =
+                    InterpolatorHelper.getLinearOutSlowInInterpolator(getContext());
 
             // When start shrinking the thumbnail, a ripple effect is triggered at the same time.
             mRippleAnimator =
