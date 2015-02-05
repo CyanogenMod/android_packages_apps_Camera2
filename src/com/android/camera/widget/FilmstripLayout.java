@@ -402,8 +402,15 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
             return false;
         }
 
+        /**
+         * @param velocityX The fling velocity in the X direction.
+         * @return Whether the filmstrip should be opened,
+         * given velocityX and mSwipeTrend.
+         */
         private boolean flingShouldOpenFilmstrip(float velocityX) {
-            return (velocityX < 0.0f) && (Math.abs(velocityX / 1000.0f) > FLING_VELOCITY_THRESHOLD);
+            return (mSwipeTrend > 0) &&
+                    (velocityX < 0.0f) &&
+                    (Math.abs(velocityX / 1000.0f) > FLING_VELOCITY_THRESHOLD);
         }
 
         @Override
