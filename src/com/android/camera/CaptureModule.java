@@ -246,7 +246,7 @@ public class CaptureModule extends CameraModule implements
             new OneCamera.PictureSaverCallback() {
                 @Override
                 public void onRemoteThumbnailAvailable(final byte[] jpegImage) {
-                    mMainHandler.post(new Runnable() {
+                    mMainThread.execute(new Runnable() {
                         @Override
                         public void run() {
                             mAppController.getServices().getRemoteShutterListener()
@@ -259,7 +259,7 @@ public class CaptureModule extends CameraModule implements
                 public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
                     // Call ripple effect when you know that you have the bitmap
                     // then update bitmap.
-                    mMainHandler.post(new Runnable() {
+                    mMainThread.execute(new Runnable() {
                         @Override
                         public void run() {
                             mAppController.getCameraAppUI().startCaptureIndicatorRevealAnimation(
@@ -301,8 +301,8 @@ public class CaptureModule extends CameraModule implements
     /** Whether the module is paused right now. */
     private boolean mPaused;
 
-    /** Main thread handler. */
-    private Handler mMainHandler;
+    /** Main thread. */
+    private final MainThread mMainThread;
     /** Handler thread for camera-related operations. */
     private Handler mCameraHandler;
 
@@ -334,6 +334,7 @@ public class CaptureModule extends CameraModule implements
     public CaptureModule(AppController appController, boolean stickyHdr) {
         super(appController);
         mPaused = true;
+        mMainThread = MainThread.create();
         mAppController = appController;
         mContext = mAppController.getAndroidContext();
         mSettingsManager = mAppController.getSettingsManager();
@@ -364,7 +365,6 @@ public class CaptureModule extends CameraModule implements
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         Log.d(TAG, "init");
-        mMainHandler = new Handler(activity.getMainLooper());
         HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
         thread.start();
         mCameraHandler = new Handler(thread.getLooper());
@@ -378,7 +378,7 @@ public class CaptureModule extends CameraModule implements
 
         mSoundPlayer = new SoundPlayer(mContext);
         FocusSound focusSound = new FocusSound(mSoundPlayer, R.raw.material_camera_focus);
-        mFocusController = new FocusController(mUI.getFocusRing(), focusSound, mMainHandler);
+        mFocusController = new FocusController(mUI.getFocusRing(), focusSound, mMainThread);
 
         // Set the preview texture from UI for the SurfaceTextureConsumer.
         mBurstController.setSurfaceTexture(
@@ -509,7 +509,7 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void onQuickExpose() {
-        mMainHandler.post(new Runnable() {
+        mMainThread.execute(new Runnable() {
             @Override
             public void run() {
                 // Starts the short version of the capture animation UI.
@@ -611,8 +611,6 @@ public class CaptureModule extends CameraModule implements
         mBurstController.closeFrameDistributor();
         mSoundPlayer.unloadSound(R.raw.timer_final_second);
         mSoundPlayer.unloadSound(R.raw.timer_increment);
-        // Remove delayed resume trigger, if it hasn't been executed yet.
-        mMainHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -1247,7 +1245,7 @@ public class CaptureModule extends CameraModule implements
                                         // getting ready to close the camera.
                                         mCameraOpenCloseLock.release();
                                         Log.e(TAG, "Could not set up preview.");
-                                        mMainHandler.post(new Runnable() {
+                                        mMainThread.execute(new Runnable() {
                                             @Override
                                             public void run() {
                                                 if (mCamera == null) {
@@ -1269,7 +1267,7 @@ public class CaptureModule extends CameraModule implements
                                         // since we may be blocked in pause(),
                                         // getting ready to close the camera.
                                         mCameraOpenCloseLock.release();
-                                        mMainHandler.post(new Runnable() {
+                                        mMainThread.execute(new Runnable() {
                                             @Override
                                             public void run() {
                                                 Log.d(TAG, "Ready for capture.");
@@ -1282,7 +1280,8 @@ public class CaptureModule extends CameraModule implements
                                                 // has started.
                                                 mUI.initializeZoom(mCamera.getMaxZoom());
                                                 mCamera.setFocusStateListener(CaptureModule.this);
-                                                mCamera.setReadyStateChangedListener(CaptureModule.this);
+                                                mCamera.setReadyStateChangedListener(
+                                                        CaptureModule.this);
                                             }
                                         });
                                     }

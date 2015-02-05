@@ -16,8 +16,7 @@
 
 package com.android.camera.ui.focus;
 
-import android.os.Handler;
-
+import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.FocusDistanceListener;
 
@@ -28,13 +27,13 @@ public class FocusController implements FocusDistanceListener {
     private static final Tag TAG = new Tag("FocusController");
 
     private final FocusRing mFocusRing;
-    private final Handler mHandler;
     private final FocusSound mFocusSound;
+    private final MainThread mMainThread;
 
-    public FocusController(FocusRing focusRing, FocusSound focusSound, Handler handler) {
+    public FocusController(FocusRing focusRing, FocusSound focusSound, MainThread mainThread) {
         mFocusRing = focusRing;
-        mHandler = handler;
         mFocusSound = focusSound;
+        mMainThread = mainThread;
     }
 
     /**
@@ -46,7 +45,7 @@ public class FocusController implements FocusDistanceListener {
      * @param viewY the view's y coordinate
      */
     public void showPassiveFocusAt(final int viewX, final int viewY) {
-        mHandler.post(new Runnable() {
+        mMainThread.execute(new Runnable() {
             @Override
             public void run() {
                 mFocusRing.startPassiveFocus();
@@ -64,7 +63,7 @@ public class FocusController implements FocusDistanceListener {
      * @param viewY the view's y coordinate
      */
     public void showActiveFocusAt(final int viewX, final int viewY) {
-        mHandler.post(new Runnable() {
+        mMainThread.execute(new Runnable() {
             @Override
             public void run() {
                 mFocusRing.startActiveFocus();
@@ -80,7 +79,7 @@ public class FocusController implements FocusDistanceListener {
      * Stop any currently executing focus animation.
      */
     public void clearFocusIndicator() {
-        mHandler.post(new Runnable() {
+        mMainThread.execute(new Runnable() {
             @Override
             public void run() {
                 mFocusRing.stopFocusAnimations();
@@ -90,11 +89,11 @@ public class FocusController implements FocusDistanceListener {
 
     @Override
     public void onFocusDistance(final float diopter, final boolean isActive) {
-        mHandler.post(new Runnable() {
+        mMainThread.execute(new Runnable() {
             @Override
             public void run() {
                 if (isActive || mFocusRing.isPassiveFocusRunning() ||
-                      mFocusRing.isActiveFocusRunning()) {
+                        mFocusRing.isActiveFocusRunning()) {
                     mFocusRing.setFocusDiopter(diopter);
                 }
             }
