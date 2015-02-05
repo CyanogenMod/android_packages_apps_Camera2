@@ -109,13 +109,18 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
     public void run(Updatable<Void> imageExposureUpdatable, ImageSaver imageSaver) throws
             InterruptedException, CameraAccessException, CameraCaptureSessionClosedException,
             ResourceAcquisitionFailedException {
-        try (
-                FrameServer.Session session = mFrameServer.createExclusiveSession();
-                ImageStream imageStream = mImageReader.createPreallocatedStream(mBurst.size())) {
-            waitForAFConvergence(session);
-            waitForAEConvergence(session);
-            captureBurst(session, imageStream, imageExposureUpdatable, imageSaver);
-            resetRepeating(session);
+        try (FrameServer.Session session = mFrameServer.createExclusiveSession()) {
+            try (ImageStream imageStream = mImageReader.createPreallocatedStream(mBurst.size())) {
+                waitForAFConvergence(session);
+                waitForAEConvergence(session);
+                captureBurst(session, imageStream, imageExposureUpdatable, imageSaver);
+            } finally {
+                // Always reset the repeating stream to ensure AF/AE are not
+                // locked when this exits.
+                // Note that this may still throw if the camera or session is
+                // closed.
+                resetRepeating(session);
+            }
         } finally {
             imageSaver.close();
         }
@@ -177,8 +182,8 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
             RequestBuilder builder = builderTemplate.create(mStillCaptureRequestTemplate);
             builder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
                     .CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            builder.setParam(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest
-                    .CONTROL_CAPTURE_INTENT_STILL_CAPTURE);
+            builder.setParam(CaptureRequest.CONTROL_CAPTURE_INTENT,
+                    CaptureRequest.CONTROL_CAPTURE_INTENT_STILL_CAPTURE);
             if (first) {
                 first = false;
                 builder.addResponseListener(forFrameExposure(imageExposureUpdatable));
@@ -213,6 +218,24 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         triggerCancelBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
                 CaptureRequest.CONTROL_AF_TRIGGER_CANCEL);
         session.submitRequest(Arrays.asList(triggerCancelBuilder.build()),
+                FrameServer.RequestType.NON_REPEATING);
+
+        // Some devices (e.g. N6) implicitly lock AE after sending an
+        // AE_PRECAPTURE trigger. (see bug: 19265647)
+        // The implicit lock is released when a request with
+        // INTENT_STILL_CAPTURE is taken.
+
+        // However, if we never get to that point (because the command was
+        // interrupted before the request for a photo was sent), then we must be
+        // sure to cancel this implicit AE lock to resume normal AE behavior.
+        // Sending a request for an explicit AE lock (followed, implicitly, by a
+        // request from the current repeating request, which has AE lock off)
+        // fixes the issue and results in normal AE behavior.
+        RequestBuilder hackAETriggerCancelBuilder = mRepeatingRequestBuilder.create
+                (mRepeatingRequestTemplate);
+        hackAETriggerCancelBuilder.setParam(CaptureRequest.CONTROL_AE_LOCK, true);
+
+        session.submitRequest(Arrays.asList(hackAETriggerCancelBuilder.build()),
                 FrameServer.RequestType.NON_REPEATING);
     }
 }
