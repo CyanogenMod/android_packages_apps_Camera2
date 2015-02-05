@@ -22,10 +22,15 @@ import android.content.Context;
 import android.content.Intent;
 
 public class GoogleHelpHelper {
-    public static Intent getGoogleHelpIntent(Context context) {
+    public GoogleHelpHelper(Activity activity) {
+    }
+
+    public Intent getGoogleHelpIntent() {
         return null;
     }
 
-    public static void launchGoogleHelp(Activity activity) {
+    public void launchGoogleHelp() {
     }
+
+    public void sendGoogleFeedback() {}
 }

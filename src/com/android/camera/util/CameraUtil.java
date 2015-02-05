@@ -281,11 +281,24 @@ public class CameraUtil {
         }
     }
 
+    /**
+     * Shows custom error dialog. Designed specifically
+     * for the scenario where the camera cannot be attached.
+     */
     public static void showErrorAndFinish(final Activity activity, int msgId) {
         DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                };
+
+        DialogInterface.OnClickListener reportButtonListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new GoogleHelpHelper(activity).sendGoogleFeedback();
                         activity.finish();
                     }
                 };
@@ -300,7 +313,8 @@ public class CameraUtil {
                     .setCancelable(false)
                     .setTitle(R.string.camera_error_title)
                     .setMessage(msgId)
-                    .setNeutralButton(R.string.dialog_ok, buttonListener)
+                    .setNegativeButton(R.string.dialog_report, reportButtonListener)
+                    .setPositiveButton(R.string.dialog_dismiss, buttonListener)
                     .setIcon(out.resourceId)
                     .show();
         }
