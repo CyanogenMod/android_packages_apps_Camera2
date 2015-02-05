@@ -42,6 +42,7 @@ import com.android.camera.debug.Log.Tag;
  */
 public class AndroidServices {
     private static Tag TAG = new Tag("AndroidServices");
+    private static final boolean DEBUG_LOGGING = false;
 
     private static class Singleton {
         private static final AndroidServices INSTANCE =
@@ -125,8 +126,10 @@ public class AndroidServices {
         try {
             long start = System.currentTimeMillis();
             Object result = mContext.getSystemService(service);
-            Log.i(TAG, "Provided system service " + service + " in " +
-                  (System.currentTimeMillis() - start) + "ms");
+            if (DEBUG_LOGGING) {
+                Log.i(TAG, "Provided system service " + service + " in " +
+                        (System.currentTimeMillis() - start) + "ms");
+            }
             return result;
         } catch (Exception e) {
             return null;
