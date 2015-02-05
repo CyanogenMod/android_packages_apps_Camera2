@@ -17,12 +17,13 @@
 package com.android.camera.util;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-
 import com.android.camera.debug.Log;
+import javax.annotation.Nullable;
 
 /**
  * Workaround for secure-lockscreen double-onResume() bug:
@@ -62,7 +63,9 @@ public abstract class QuickActivity extends Activity {
      * call to onResume() should execute onResumeTasks() immediately.
      */
     private boolean mCanceledResumeTasks = false;
-
+    /** Handle to Keyguard service. */
+    @Nullable
+    private KeyguardManager mKeyguardManager = null;
     /**
      * A runnable for deferring tasks to be performed in onResume() if starting
      * from the lockscreen.
@@ -116,6 +119,8 @@ public abstract class QuickActivity extends Activity {
     @Override
     protected final void onResume() {
         logLifecycle("onResume", true);
+        Log.v(TAG, "Intent Action = " + getIntent().getAction());
+
         mMainHandler.removeCallbacks(mOnResumeTasks);
         if (delayOnResumeOnStart() && !mCanceledResumeTasks) {
             mMainHandler.postDelayed(mOnResumeTasks, ON_RESUME_DELAY_MILLIS);
@@ -177,10 +182,13 @@ public abstract class QuickActivity extends Activity {
     }
 
     private boolean delayOnResumeOnStart() {
-        String action = getIntent().getAction();
-        boolean isSecureLockscreenCamera =
-                MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action);
-        return isSecureLockscreenCamera;
+        if (mKeyguardManager == null) {
+            mKeyguardManager = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+        }
+        if (mKeyguardManager != null) {
+            return mKeyguardManager.isKeyguardLocked();
+        }
+        return false;
     }
 
     /**
