@@ -221,6 +221,7 @@ public class CaptureModule extends CameraModule implements
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             Log.d(TAG, "onSurfaceTextureDestroyed");
+            mBurstController.setSurfaceTexture(null, 0, 0);
             closeCamera();
             return true;
         }
