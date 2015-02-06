@@ -44,7 +44,7 @@ import com.android.camera.one.v2.sharedimagereader.util.ImageCloser;
  * RequestBuilder builder = ...;
  *
  * // Create a stream which holds 3 images.
- * ImageStream stream = imageStreamFactory.createStream(3);
+ * ImageStream stream = managedImageReader.createStream(3);
  *
  * builder.addStream(stream);
  * builder.setParam(...);
@@ -57,17 +57,19 @@ import com.android.camera.one.v2.sharedimagereader.util.ImageCloser;
  * ImageProxy image1 = stream.getNext();
  * ImageProxy image2 = stream.getNext();
  * ImageProxy image3 = stream.getNext();
+ *
+ * // Close the stream when no more images are expected.
  * stream.close();
  *
  * // Process the Images...
  *
- * // Close the images
+ * // Close the images.
  * image1.close();
  * image2.close();
  * image3.close();
  * </pre>
  */
-public class ImageStreamFactory {
+public class ManagedImageReader {
     private final Lifetime mLifetime;
     private final TicketPool mTicketPool;
     /**
@@ -83,8 +85,8 @@ public class ImageStreamFactory {
      * @param surface
      * @param imageDistributor
      */
-    public ImageStreamFactory(Lifetime lifetime, TicketPool ticketPool, Surface surface,
-            ImageDistributor imageDistributor) {
+    public ManagedImageReader(Lifetime lifetime, TicketPool ticketPool, Surface surface,
+                              ImageDistributor imageDistributor) {
         mLifetime = lifetime;
         mTicketPool = ticketPool;
         mSurface = surface;

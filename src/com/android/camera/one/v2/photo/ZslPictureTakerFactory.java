@@ -28,7 +28,7 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.zsl.AcceptableZslImageFilter;
 import com.android.camera.one.v2.photo.zsl.ZslImageCaptureCommand;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
+import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.MetadataPool;
 import com.google.common.base.Supplier;
 
@@ -45,7 +45,7 @@ public class ZslPictureTakerFactory {
             ImageSaver.Builder imageSaverBuilder,
             FrameServer frameServer,
             RequestBuilder.Factory rootRequestBuilder,
-            ImageStreamFactory sharedImageReader,
+            ManagedImageReader sharedImageReader,
             BufferQueue<ImageProxy> ringBuffer,
             MetadataPool metadataPool,
             Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode) {

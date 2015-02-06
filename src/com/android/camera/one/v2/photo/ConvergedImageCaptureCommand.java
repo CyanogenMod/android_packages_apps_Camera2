@@ -36,7 +36,7 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
+import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class ConvergedImageCaptureCommand implements ImageCaptureCommand {
-    private final ImageStreamFactory mImageReader;
+    private final ManagedImageReader mImageReader;
     private final FrameServer mFrameServer;
     private final RequestBuilder.Factory mScanRequestTemplate;
     private final RequestBuilder.Factory mRepeatingRequestBuilder;
@@ -88,7 +88,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
      * @param burst Creates request builders to use for each image captured from
      *            the burst.
      */
-    public ConvergedImageCaptureCommand(ImageStreamFactory imageReader, FrameServer frameServer,
+    public ConvergedImageCaptureCommand(ManagedImageReader imageReader, FrameServer frameServer,
             RequestBuilder.Factory repeatingRequestBuilder,
             int repeatingRequestTemplate, int stillCaptureRequestTemplate,
             List<RequestBuilder.Factory> burst) {

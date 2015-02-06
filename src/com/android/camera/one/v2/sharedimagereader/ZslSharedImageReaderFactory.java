@@ -37,16 +37,13 @@ import com.android.camera.one.v2.sharedimagereader.ringbuffer.DynamicRingBufferF
 import com.android.camera.one.v2.sharedimagereader.ticketpool.FiniteTicketPool;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 
-import static com.android.camera.one.v2.core.ResponseListeners.forFinalMetadata;
-import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
-
 /**
  * Like {@link SharedImageReaderFactory}, but provides a single
  * {@link ImageStream} with a dynamic capacity which changes depending on demand
- * from the {@link ImageStreamFactory}.
+ * from the {@link ManagedImageReader}.
  */
 public class ZslSharedImageReaderFactory {
-    private final ImageStreamFactory mSharedImageReader;
+    private final ManagedImageReader mSharedImageReader;
     private final ImageStream mZslCaptureStream;
     private final MetadataPool mMetadataPool;
     private final RequestTemplate mRequestTemplate;
@@ -85,7 +82,7 @@ public class ZslSharedImageReaderFactory {
 
         mMetadataPool = metadataPoolFactory.provideMetadataPool();
 
-        mSharedImageReader = new ImageStreamFactory(
+        mSharedImageReader = new ManagedImageReader(
                 new Lifetime(lifetime), ringBufferFactory.provideTicketPool(),
                 imageReader.getSurface(), imageDistributor);
 
@@ -98,7 +95,7 @@ public class ZslSharedImageReaderFactory {
                 metadataPoolFactory.provideMetadataCallback()));
     }
 
-    public ImageStreamFactory provideSharedImageReader() {
+    public ManagedImageReader provideSharedImageReader() {
         return mSharedImageReader;
     }
 

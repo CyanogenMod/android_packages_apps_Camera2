@@ -23,7 +23,7 @@ import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
+import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 
 import java.util.Arrays;
 
@@ -35,7 +35,7 @@ public final class PictureTakerFactory {
             ImageSaver.Builder imageSaverBuilder,
             FrameServer frameServer,
             RequestBuilder.Factory rootRequestBuilder,
-            ImageStreamFactory sharedImageReader) {
+            ManagedImageReader sharedImageReader) {
         ImageCaptureCommand captureCommand = new ConvergedImageCaptureCommand(sharedImageReader,
                 frameServer, rootRequestBuilder, CameraDevice.TEMPLATE_PREVIEW,
                 CameraDevice.TEMPLATE_STILL_CAPTURE, Arrays.asList(rootRequestBuilder));
