@@ -26,6 +26,7 @@ import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
+import com.android.camera.async.Observables;
 import com.android.camera.async.Updatable;
 import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
@@ -53,8 +54,10 @@ import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Size;
+import com.google.common.base.Function;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -84,7 +87,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             final OneCameraCharacteristics characteristics, final MainThread mainExecutor,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
-        Lifetime lifetime = new Lifetime();
+        final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(new LoggingImageReader(
                 AndroidImageReaderProxy.newInstance(
@@ -110,9 +113,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                     Updatable<TotalCaptureResultProxy> metadataCallback,
                     Updatable<Boolean> readyState) {
                 // Create the FrameServer from the CaptureSession.
-                FrameServer frameServer = new FrameServerFactory(
-                        new Lifetime(cameraLifetime), cameraCaptureSession, new HandlerFactory())
-                        .provideFrameServer();
+                FrameServerFactory frameServerComponent = new FrameServerFactory(
+                        new Lifetime(cameraLifetime), cameraCaptureSession, new HandlerFactory());
 
                 // Create a thread pool on which to execute camera operations.
                 ScheduledExecutorService miscThreadPool = Executors.newScheduledThreadPool(1);
@@ -141,7 +143,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
 
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
-                        (cameraLifetime), characteristics, frameServer, rootBuilder,
+                        (cameraLifetime), characteristics,
+                        frameServerComponent.provideEphemeralFrameServer(), rootBuilder,
                         miscThreadPool, flashSetting, zoomState, CameraDevice
                         .TEMPLATE_PREVIEW);
 
@@ -156,13 +159,47 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 if (characteristics.getSupportedHardwareLevel() == OneCameraCharacteristics
                         .SupportedHardwareLevel.LEGACY) {
                     pictureTaker = new LegacyPictureTakerFactory(imageSaverBuilder,
-                            cameraCommandExecutor, mainExecutor, frameServer,
+                            cameraCommandExecutor, mainExecutor,
+                            frameServerComponent.provideFrameServer(),
                             meteredZooomedRequestBuilder, managedImageReader).providePictureTaker();
                 } else {
                     pictureTaker = new PictureTakerFactory(mainExecutor,
-                            cameraCommandExecutor, imageSaverBuilder, frameServer,
+                            cameraCommandExecutor, imageSaverBuilder,
+                            frameServerComponent.provideFrameServer(),
                             meteredZooomedRequestBuilder, managedImageReader).providePictureTaker();
                 }
+
+                // Wire-together ready-state.
+                Observable<Boolean> atLeastOneImageAvailable = Observables.transform(
+                        sharedImageReaderFactory.provideAvailableImageCount(),
+                        new Function<Integer, Boolean>() {
+                            @Override
+                            public Boolean apply(Integer integer) {
+                                return integer >= 1;
+                            }
+                        });
+
+                Function<List<Boolean>, Boolean> andFunc = new Function<List<Boolean>, Boolean>() {
+                    @Override
+                    public Boolean apply(List<Boolean> booleans) {
+                        for (Boolean input : booleans) {
+                            if (!input) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                };
+
+                // The camera is "ready" if and only if at least one image is
+                // available AND the frame server is available.
+                Observable<Boolean> ready = Observables.transform(
+                        Arrays.asList(
+                                atLeastOneImageAvailable,
+                                frameServerComponent.provideReadyState()),
+                        andFunc);
+
+                lifetime.add(Observables.addThreadSafeCallback(ready, readyState));
 
                 basicCameraFactory.providePreviewStarter().run();
 
