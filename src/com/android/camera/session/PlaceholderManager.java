@@ -32,6 +32,8 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 
+import java.io.IOException;
+
 /**
  * Handles placeholders in filmstrip that show up temporarily while a final
  * output media item is being produced.
@@ -131,7 +133,7 @@ public class PlaceholderManager {
      * @return The content URI of the new media item.
      */
     public Uri finishPlaceholder(Session session, Location location, int orientation,
-            ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
+            ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) throws IOException {
         Uri resultUri = Storage.updateImage(session.outputUri, mContext.getContentResolver(),
                 session.outputTitle, session.time, location, orientation, exif, jpeg, width,
                 height, mimeType);

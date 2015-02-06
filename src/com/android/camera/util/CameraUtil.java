@@ -284,12 +284,15 @@ public class CameraUtil {
      * Shows custom error dialog. Designed specifically
      * for the scenario where the camera cannot be attached.
      */
-    public static void showErrorAndFinish(final Activity activity, int msgId) {
-        DialogInterface.OnClickListener buttonListener =
+    public static void showError(final Activity activity, final int dialogMsgId, final int feedbackMsgId,
+                                 final boolean finishActivity) {
+        final DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.finish();
+                        if (finishActivity) {
+                            activity.finish();
+                        }
                     }
                 };
 
@@ -297,8 +300,10 @@ public class CameraUtil {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new GoogleHelpHelper(activity).sendGoogleFeedback();
-                        activity.finish();
+                        new GoogleHelpHelper(activity).sendGoogleFeedback(feedbackMsgId);
+                        if (finishActivity) {
+                            activity.finish();
+                        }
                     }
                 };
         TypedValue out = new TypedValue();
@@ -311,7 +316,7 @@ public class CameraUtil {
             new AlertDialog.Builder(activity)
                     .setCancelable(false)
                     .setTitle(R.string.camera_error_title)
-                    .setMessage(msgId)
+                    .setMessage(dialogMsgId)
                     .setNegativeButton(R.string.dialog_report, reportButtonListener)
                     .setPositiveButton(R.string.dialog_dismiss, buttonListener)
                     .setIcon(out.resourceId)

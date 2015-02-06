@@ -19,6 +19,7 @@ package com.android.camera.exif;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.SparseIntArray;
+import com.android.camera.debug.Log;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -317,6 +318,7 @@ public class ExifInterface {
     // IFD Interoperability tags
     public static final int TAG_INTEROPERABILITY_INDEX =
         defineTag(IfdId.TYPE_IFD_INTEROPERABILITY, (short) 1);
+    private static final Log.Tag TAG = new Log.Tag("ExifInterface");
 
     /**
      * Tags that contain offset markers. These are included in the banned
@@ -758,13 +760,10 @@ public class ExifInterface {
             throw new IllegalArgumentException(NULL_ARGUMENT_STRING);
         }
         InputStream is = null;
-        try {
-            is = new BufferedInputStream(new FileInputStream(inFileName));
-            readExif(is);
-        } catch (IOException e) {
-            closeSilently(is);
-            throw e;
-        }
+
+        is = new BufferedInputStream(new FileInputStream(inFileName));
+        readExif(is);
+
         is.close();
     }
 
@@ -856,14 +855,9 @@ public class ExifInterface {
             throw new IllegalArgumentException(NULL_ARGUMENT_STRING);
         }
         OutputStream s = null;
-        try {
-            s = getExifWriterStream(exifOutFileName);
-            s.write(jpeg, 0, jpeg.length);
-            s.flush();
-        } catch (IOException e) {
-            closeSilently(s);
-            throw e;
-        }
+        s = getExifWriterStream(exifOutFileName);
+        s.write(jpeg, 0, jpeg.length);
+        s.flush();
         s.close();
     }
 
@@ -883,14 +877,10 @@ public class ExifInterface {
             throw new IllegalArgumentException(NULL_ARGUMENT_STRING);
         }
         OutputStream s = null;
-        try {
-            s = getExifWriterStream(exifOutFileName);
-            bmap.compress(Bitmap.CompressFormat.JPEG, 90, s);
-            s.flush();
-        } catch (IOException e) {
-            closeSilently(s);
-            throw e;
-        }
+
+        s = getExifWriterStream(exifOutFileName);
+        bmap.compress(Bitmap.CompressFormat.JPEG, 90, s);
+        s.flush();
         s.close();
     }
 
@@ -910,14 +900,11 @@ public class ExifInterface {
             throw new IllegalArgumentException(NULL_ARGUMENT_STRING);
         }
         OutputStream s = null;
-        try {
-            s = getExifWriterStream(exifOutFileName);
-            doExifStreamIO(jpegStream, s);
-            s.flush();
-        } catch (IOException e) {
-            closeSilently(s);
-            throw e;
-        }
+
+        s = getExifWriterStream(exifOutFileName);
+        doExifStreamIO(jpegStream, s);
+        s.flush();
+
         s.close();
     }
 
@@ -937,13 +924,10 @@ public class ExifInterface {
             throw new IllegalArgumentException(NULL_ARGUMENT_STRING);
         }
         InputStream is = null;
-        try {
-            is = new FileInputStream(jpegFileName);
-            writeExif(is, exifOutFileName);
-        } catch (IOException e) {
-            closeSilently(is);
-            throw e;
-        }
+
+        is = new FileInputStream(jpegFileName);
+        writeExif(is, exifOutFileName);
+
         is.close();
     }
 
@@ -1042,9 +1026,6 @@ public class ExifInterface {
             // Attempt to overwrite tag values without changing lengths (avoids
             // file copy).
             ret = rewriteExif(buf, tags);
-        } catch (IOException e) {
-            closeSilently(file);
-            throw e;
         } finally {
             closeSilently(is);
         }
@@ -1108,9 +1089,6 @@ public class ExifInterface {
                 readExif(imageBytes);
                 setTags(tags);
                 writeExif(imageBytes, filename);
-            } catch (IOException e) {
-                closeSilently(is);
-                throw e;
             } finally {
                 is.close();
                 // Prevent clobbering of mData

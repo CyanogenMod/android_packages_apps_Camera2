@@ -25,6 +25,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Default implementation of the {@link StackSaver} interface. It creates a
@@ -60,7 +61,7 @@ public class StackSaverImpl implements StackSaver {
 
     @Override
     public Uri saveStackedImage(byte[] data, String title, int width, int height,
-            int imageOrientation, ExifInterface exif, long captureTimeEpoch, String mimeType) {
+            int imageOrientation, ExifInterface exif, long captureTimeEpoch, String mimeType)  {
         if (exif != null) {
             exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION, imageOrientation));
         }
@@ -69,7 +70,12 @@ public class StackSaverImpl implements StackSaver {
                 Storage.generateFilepath(mStackDirectory.getAbsolutePath(), title, mimeType);
         Log.d(TAG, "Saving using stack image saver: " + filePath);
 
-        long fileLength = Storage.writeFile(filePath, data, exif);
+        long fileLength = 0;
+        try {
+            fileLength = Storage.writeFile(filePath, data, exif);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (fileLength >= 0) {
             return Storage.addImageToMediaStore(mContentResolver, title, captureTimeEpoch,
                     mGpsLocation, imageOrientation, fileLength, filePath, width, height, mimeType);

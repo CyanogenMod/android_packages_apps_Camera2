@@ -30,6 +30,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * A class implementing {@link com.android.camera.app.MediaSaver}.
@@ -177,14 +178,19 @@ public class MediaSaverImpl implements MediaSaver {
                 width = options.outWidth;
                 height = options.outHeight;
             }
-            return Storage.addImage(
-                    resolver, title, date, loc, orientation, exif, data, width, height,
-                    mimeType);
+            try {
+                return Storage.addImage(
+                        resolver, title, date, loc, orientation, exif, data, width, height,
+                        mimeType);
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to write data", e);
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(Uri uri) {
-            if (listener != null && uri != null) {
+            if (listener != null) {
                 listener.onMediaSaved(uri);
             }
             boolean previouslyFull = isQueueFull();

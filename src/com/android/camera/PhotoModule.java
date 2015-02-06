@@ -95,6 +95,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+
 public class PhotoModule
         extends CameraModule
         implements PhotoController,
@@ -250,13 +251,27 @@ public class PhotoModule
 
     private final MediaSaver.OnMediaSavedListener mOnMediaSavedListener =
             new MediaSaver.OnMediaSavedListener() {
+
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
                         mActivity.notifyNewMedia(uri);
+                    } else {
+                        onError(false);
                     }
                 }
             };
+
+    /**
+     * Displays Feedback dialog on non-fatal errors
+     * @param finishActivity indicates whether to finish the activity after the user submits Feedback
+     */
+    private void onError(boolean finishActivity) {
+        UsageStatistics.instance().storageWarning(Storage.ACCESS_FAILURE);
+        CameraUtil.showError(mActivity, R.string.media_storage_failure,
+                R.string.feedback_description_save_photo, finishActivity);
+    }
+
     private boolean mShouldResizeTo16x9 = false;
 
     /**
@@ -1247,8 +1262,7 @@ public class PhotoModule
                     mActivity.setResultEx(Activity.RESULT_OK);
                     mActivity.finish();
                 } catch (IOException ex) {
-                    Log.w(TAG, "exception saving result to URI: " + mSaveUri, ex);
-                    // ignore exception
+                    onError(true);
                 } finally {
                     CameraUtil.closeSilently(outputStream);
                 }
@@ -1277,12 +1291,12 @@ public class PhotoModule
             } catch (FileNotFoundException ex) {
                 Log.w(TAG, "error writing temp cropping file to: " + sTempCropFilename, ex);
                 mActivity.setResultEx(Activity.RESULT_CANCELED);
-                mActivity.finish();
+                onError(true);
                 return;
             } catch (IOException ex) {
                 Log.w(TAG, "error writing temp cropping file to: " + sTempCropFilename, ex);
                 mActivity.setResultEx(Activity.RESULT_CANCELED);
-                mActivity.finish();
+                onError(true);
                 return;
             } finally {
                 CameraUtil.closeSilently(tempStream);
