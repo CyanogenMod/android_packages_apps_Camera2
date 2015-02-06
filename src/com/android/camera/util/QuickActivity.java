@@ -18,7 +18,6 @@ package com.android.camera.util;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -183,7 +182,7 @@ public abstract class QuickActivity extends Activity {
 
     private boolean delayOnResumeOnStart() {
         if (mKeyguardManager == null) {
-            mKeyguardManager = (KeyguardManager) this.getSystemService(Context.KEYGUARD_SERVICE);
+            mKeyguardManager = AndroidServices.instance().provideKeyguardManager();
         }
         if (mKeyguardManager != null) {
             return mKeyguardManager.isKeyguardLocked();
