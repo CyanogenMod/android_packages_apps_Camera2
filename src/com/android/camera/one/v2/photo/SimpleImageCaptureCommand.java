@@ -27,7 +27,7 @@ import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
+import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 
 import java.util.Arrays;
@@ -35,7 +35,6 @@ import java.util.Arrays;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
-import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
 
 /**
  * Captures single images.
@@ -44,10 +43,10 @@ import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
 class SimpleImageCaptureCommand implements ImageCaptureCommand {
     private final FrameServer mFrameServer;
     private final RequestBuilder.Factory mBuilderFactory;
-    private final ImageStreamFactory mImageReader;
+    private final ManagedImageReader mImageReader;
 
     public SimpleImageCaptureCommand(FrameServer frameServer, RequestBuilder.Factory builder,
-            ImageStreamFactory imageReader) {
+            ManagedImageReader imageReader) {
         mFrameServer = frameServer;
         mBuilderFactory = builder;
         mImageReader = imageReader;

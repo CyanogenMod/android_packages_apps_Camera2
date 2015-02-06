@@ -50,7 +50,7 @@ import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.LegacyPictureTakerFactory;
 import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
+import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Size;
 
@@ -123,7 +123,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                                 new HandlerFactory());
                 Updatable<Long> globalTimestampCallback =
                         sharedImageReaderFactory.provideGlobalTimestampQueue();
-                ImageStreamFactory imageStreamFactory =
+                ManagedImageReader managedImageReader =
                         sharedImageReaderFactory.provideSharedImageReader();
 
                 // Create the request builder used by all camera operations.
@@ -157,11 +157,11 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                         .SupportedHardwareLevel.LEGACY) {
                     pictureTaker = new LegacyPictureTakerFactory(imageSaverBuilder,
                             cameraCommandExecutor, mainExecutor, frameServer,
-                            meteredZooomedRequestBuilder, imageStreamFactory).providePictureTaker();
+                            meteredZooomedRequestBuilder, managedImageReader).providePictureTaker();
                 } else {
                     pictureTaker = new PictureTakerFactory(mainExecutor,
                             cameraCommandExecutor, imageSaverBuilder, frameServer,
-                            meteredZooomedRequestBuilder, imageStreamFactory).providePictureTaker();
+                            meteredZooomedRequestBuilder, managedImageReader).providePictureTaker();
                 }
 
                 basicCameraFactory.providePreviewStarter().run();

@@ -23,7 +23,7 @@ import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
-import com.android.camera.one.v2.sharedimagereader.ImageStreamFactory;
+import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -39,7 +39,7 @@ public final class LegacyPictureTakerFactory {
     public LegacyPictureTakerFactory(ImageSaver.Builder imageSaverBuilder,
             CameraCommandExecutor cameraCommandExecutor, MainThread mainExecutor, FrameServer
             frameServer, RequestBuilder.Factory rootRequestBuilder,
-            ImageStreamFactory imageReader) {
+            ManagedImageReader imageReader) {
         SimpleImageCaptureCommand imageCaptureCommand = new SimpleImageCaptureCommand(frameServer,
                 rootRequestBuilder, imageReader);
         mPictureTaker = new PictureTakerImpl(mainExecutor, cameraCommandExecutor,

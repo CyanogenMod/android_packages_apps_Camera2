@@ -26,11 +26,12 @@ import com.android.camera.async.BufferQueue;
  * provide a {@link Surface} on which to send frames from the camera. However,
  * other implementations may wish to filter images sent to the {@link Surface}
  * in response to different {@link Request}s. To enable this, {@link #bind} is
- * called for each request with a stream which will contain the timestamps of
+ * called for each Request with a queue which will contain the timestamps of
  * every image captured for that request.
  * <p>
- * Implementations must provide a {@link Surface} and (optionally) logic to
- * filter images added to the surface according to a stream of image timestamps.
+ * Implementations must provide a {@link Surface} and (optionally) implement
+ * logic to filter images added to the surface according to a stream of image
+ * timestamps.
  * </p>
  * <p>
  * Implementations should use the {@link CaptureStream#bind} method to kick off
