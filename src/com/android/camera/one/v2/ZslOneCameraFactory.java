@@ -18,6 +18,7 @@ package com.android.camera.one.v2;
 
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
+import android.util.Log;
 import android.util.Range;
 import android.view.Surface;
 
@@ -25,6 +26,7 @@ import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
+import com.android.camera.async.Observables;
 import com.android.camera.async.Updatable;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
@@ -51,12 +53,15 @@ import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+import com.google.common.base.Function;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
@@ -99,7 +104,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
             final MainThread mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting) {
-        Lifetime lifetime = new Lifetime();
+        final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
                 new LoggingImageReader(AndroidImageReaderProxy.newInstance(
@@ -125,9 +130,17 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                     Updatable<TotalCaptureResultProxy> metadataCallback,
                     Updatable<Boolean> readyState) {
                 // Create the FrameServer from the CaptureSession.
-                FrameServer frameServer = new FrameServerFactory(
-                        new Lifetime(cameraLifetime), cameraCaptureSession, new HandlerFactory())
-                        .provideFrameServer();
+                FrameServerFactory frameServerComponent = new FrameServerFactory(new Lifetime
+                        (cameraLifetime), cameraCaptureSession, new HandlerFactory());
+
+                FrameServer frameServer = frameServerComponent.provideFrameServer();
+                FrameServer ephemeralFrameServer = frameServerComponent
+                        .provideEphemeralFrameServer();
+
+                // Create the shared image reader.
+                ZslSharedImageReaderFactory sharedImageReaderFactory =
+                        new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime),
+                                imageReader, new HandlerFactory());
 
                 // Create a thread pool on which to execute camera operations.
                 ScheduledExecutorService miscThreadPool = Executors.newScheduledThreadPool(1);
@@ -137,14 +150,12 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // this will be applied to *all* requests sent to the camera.
                 RequestTemplate rootBuilder = new RequestTemplate(
                         new CameraDeviceRequestBuilderFactory(device));
+                rootBuilder.addResponseListener(sharedImageReaderFactory
+                        .provideGlobalResponseListener());
+                rootBuilder.addStream(sharedImageReaderFactory.provideZSLStream());
                 rootBuilder.addStream(new SimpleCaptureStream(previewSurface));
                 rootBuilder.addResponseListener(
                         ResponseListeners.forFinalMetadata(metadataCallback));
-
-                // Create the shared image reader.
-                ZslSharedImageReaderFactory sharedImageReaderFactory =
-                        new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime),
-                                imageReader, rootBuilder, new HandlerFactory());
 
                 boolean isBackCamera = characteristics.getCameraDirection() ==
                         OneCamera.Facing.BACK;
@@ -156,25 +167,58 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(
                         new Lifetime(cameraLifetime), characteristics,
-                        frameServer, sharedImageReaderFactory.provideRequestTemplate(),
+                        ephemeralFrameServer, rootBuilder,
                         miscThreadPool, flashSetting, zoomState,
                         CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
 
-                // Create the picture-taker.
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
                         miscThreadPool);
+                lifetime.add(cameraCommandExecutor);
 
+                // Create the picture-taker.
                 ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(
                         mainThread,
-                        cameraCommandExecutor,
+                        new CameraCommandExecutor(miscThreadPool),
                         imageSaverBuilder,
                         frameServer,
                         basicCameraFactory.provideMeteredZoomedRequestBuilder(),
                         sharedImageReaderFactory.provideSharedImageReader(),
-                        sharedImageReaderFactory.provideZSLCaptureStream(),
+                        sharedImageReaderFactory.provideZSLStream(),
                         sharedImageReaderFactory.provideMetadataPool(), flashSetting);
 
                 basicCameraFactory.providePreviewStarter().run();
+
+                // Wire-together ready-state.
+                Observable<Boolean> atLeastOneImageAvailable = Observables.transform(
+                        sharedImageReaderFactory.provideAvailableImageCount(),
+                        new Function<Integer, Boolean>() {
+                            @Override
+                            public Boolean apply(Integer integer) {
+                                return integer >= 1;
+                            }
+                        });
+
+                Function<List<Boolean>, Boolean> andFunc = new Function<List<Boolean>, Boolean>() {
+                    @Override
+                    public Boolean apply(List<Boolean> booleans) {
+                        for (Boolean input : booleans) {
+                            if (!input) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                };
+
+                // The camera is "ready" iff at least one image is available AND
+                // the frame server is available.
+                Observable<Boolean> ready = Observables.transform(
+                        Arrays.asList(
+                                atLeastOneImageAvailable,
+                                frameServerComponent.provideReadyState()),
+                        andFunc);
+
+                lifetime.add(Observables.addThreadSafeCallback(ready, readyState));
 
                 return new CameraControls(
                         pictureTakerFactory.providePictureTaker(),
