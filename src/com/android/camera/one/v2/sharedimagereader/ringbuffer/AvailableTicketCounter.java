@@ -20,8 +20,8 @@ import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
-import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,12 +39,12 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 @ParametersAreNonnullByDefault
 final class AvailableTicketCounter implements Observable<Integer> {
-    private final ImmutableList<Observable<Integer>> mInputs;
+    private final List<Observable<Integer>> mInputs;
     private final ConcurrentState<Integer> mCount;
     private final AtomicInteger mCounterLocked;
 
     public AvailableTicketCounter(List<Observable<Integer>> inputs) {
-        mInputs = ImmutableList.copyOf(inputs);
+        mInputs = new ArrayList<>(inputs);
         mCount = new ConcurrentState<>(0);
         mCounterLocked = new AtomicInteger(0);
     }
@@ -59,7 +59,7 @@ final class AvailableTicketCounter implements Observable<Integer> {
         return callbackLifetime;
     }
 
-    private int recompute() {
+    private int compute() {
         int sum = 0;
         for (Observable<Integer> input : mInputs) {
             sum += input.get();
@@ -72,7 +72,7 @@ final class AvailableTicketCounter implements Observable<Integer> {
     public Integer get() {
         int value = mCount.get();
         if (mCounterLocked.get() == 0) {
-            value = recompute();
+            value = compute();
         }
         return value;
     }
@@ -83,7 +83,7 @@ final class AvailableTicketCounter implements Observable<Integer> {
      * propagated to callbacks until a matching call to {@link #unfreeze}.
      */
     public void freeze() {
-        int value = recompute();
+        int value = compute();
         // Update the count with the current, valid value before freezing it, if
         // it was not already frozen.
         mCounterLocked.incrementAndGet();
@@ -99,7 +99,7 @@ final class AvailableTicketCounter implements Observable<Integer> {
         // Note that the value used *must* be that recomputed before
         // decrementing the lock counter to guarantee that we only update
         // listeners with a valid value.
-        int newValue = recompute();
+        int newValue = compute();
         int numLocksHeld = mCounterLocked.decrementAndGet();
         if (numLocksHeld == 0) {
             mCount.update(newValue);

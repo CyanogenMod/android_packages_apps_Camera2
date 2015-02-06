@@ -18,7 +18,6 @@ package com.android.camera.one.v2;
 
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
-import android.util.Log;
 import android.util.Range;
 import android.view.Surface;
 
@@ -61,7 +60,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
@@ -210,8 +208,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                     }
                 };
 
-                // The camera is "ready" iff at least one image is available AND
-                // the frame server is available.
+                // The camera is "ready" if and only if at least one image is
+                // available AND the frame server is available.
                 Observable<Boolean> ready = Observables.transform(
                         Arrays.asList(
                                 atLeastOneImageAvailable,
