@@ -25,7 +25,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:visibility="invisible"
-    android:background="@color/bottombar_unpressed" >
+    android:background="@color/camera_gray_background" >
       <ImageButton
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"

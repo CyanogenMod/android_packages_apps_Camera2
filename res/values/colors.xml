@@ -14,38 +14,7 @@
      limitations under the License.
 -->
 <resources>
-    <color name="default_background">#000</color>
-
-    <!-- configuration for album set page -->
-    <color name="albumset_background">#1A1A1A</color>
-    <color name="albumset_placeholder">#333</color>
-    <color name="albumset_label_background">#EE414143</color>
-    <color name="albumset_label_title">#FBFBFB</color>
-    <color name="albumset_label_count">#A9ABAD</color>
-
-    <!-- configuration for album page -->
-    <color name="album_background">#1A1A1A</color>
-    <color name="album_placeholder">#333</color>
-
-    <!-- configuration for photo page -->
-    <color name="photo_background">#1A1A1A</color>
     <color name="photo_placeholder">#333</color>
-
-    <!-- configuration for manage cache page -->
-    <color name="cache_background">#1A1A1A</color>
-    <color name="cache_placeholder">#333</color>
-
-    <color name="bitmap_screennail_placeholder">#333</color>
-
-    <color name="slideshow_background">#1A1A1A</color>
-
-    <color name="button_dark_transparent_background">#6000</color>
-
-    <color name="ingest_highlight_semitransparent">#8833b5e5</color>
-    <color name="ingest_date_tile_text">#33b5e5</color>
-
-    <!-- Camera resources below -->
-
     <color name="recording_time_elapsed_text">#FFFFFFFF</color>
     <color name="recording_time_remaining_text">#FFFF0033</color>
     <color name="on_viewfinder_label_background_color">#77333333</color>
@@ -88,14 +57,12 @@
     <color name="refocus_mode_color">#0f9d58</color>
     <color name="photosphere_mode_color">#ab47bc</color>
     <color name="panorama_mode_color">#ff9e00</color>
-    <color name="mode_cover_default_color">#191919</color>
     <color name="main_color_global">#00acc1</color>
 
-    <color name="bottombar_unpressed">#191919</color>
     <color name="bottombar_pressed">#262626</color>
     <color name="mode_options_background">#4C000000</color>
 
-    <color name="filmstrip_background">#1b1b1b</color>
+    <color name="camera_gray_background">#1b1b1b</color>
 
     <color name="indicators_background_color">#4c000000</color>
 

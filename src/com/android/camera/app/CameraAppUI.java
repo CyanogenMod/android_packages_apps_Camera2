@@ -953,7 +953,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     mController.getQuickSwitchToModuleId(currentModuleIndex);
             if (currentModuleIndex != moduleToTransitionTo) {
                 mAppRootView.redirectTouchEventsTo(mModeTransitionView);
-                int shadeColorId = R.color.mode_cover_default_color;
+                int shadeColorId = R.color.camera_gray_background;
                 int iconRes = CameraUtil.getCameraModeCoverIconResId(moduleToTransitionTo,
                         mController.getAndroidContext());
 
@@ -1029,7 +1029,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     private void showModeCoverUntilPreviewReady() {
         int modeId = mController.getCurrentModuleIndex();
-        int colorId = R.color.mode_cover_default_color;;
+        int colorId = R.color.camera_gray_background;;
         int iconId = CameraUtil.getCameraModeCoverIconResId(modeId, mController.getAndroidContext());
         mModeTransitionView.setupModeCover(colorId, iconId);
         mHideCoverRunnable = new Runnable() {
@@ -1226,7 +1226,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         mBottomBar = (BottomBar) mCameraRootView.findViewById(R.id.bottom_bar);
         int unpressedColor = mController.getAndroidContext().getResources()
-            .getColor(R.color.bottombar_unpressed);
+            .getColor(R.color.camera_gray_background);
         setBottomBarColor(unpressedColor);
         updateModeSpecificUIColors();
 
