@@ -562,6 +562,8 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void resume() {
+        // We'll transition into 'ready' once the preview is started.
+        onReadyStateChanged(false);
         mPaused = false;
         mAppController.addPreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         mAppController.addPreviewAreaSizeChangedListener(mUI);
