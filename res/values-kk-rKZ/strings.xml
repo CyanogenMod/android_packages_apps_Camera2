@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"АРТҚЫ КАМЕРА"</string>
     <string name="dialog_ok" msgid="774141340500181131">"Жарайды"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Өшіру"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Есеп"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Бас тарту"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD картаңызда орын азайып барады. Сапа параметрін өзгертіңіз немесе кейбір суреттер немесе файлдарды жойыңыз."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Өлшем шектеуінен асып кетті."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Тым жылдам"</string>

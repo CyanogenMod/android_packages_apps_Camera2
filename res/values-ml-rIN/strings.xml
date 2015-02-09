@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"പുറകിലെ ക്യാമറ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ശരി"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"റദ്ദാക്കുക"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"റിപ്പോര്‍ട്ടുചെയ്യുക"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"നിരസിക്കുക"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"നിങ്ങളുടെ SD കാർഡിലെ സംഭരണയിടം കഴിഞ്ഞു. നിലവാര ക്രമീകരണം മാറ്റുക അല്ലെങ്കിൽ ചില ചിത്രങ്ങളോ മറ്റ് ഫയലുകളോ ഇല്ലാതാക്കുക."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"വലുപ്പ പരിധിയിൽ എത്തിച്ചേർന്നു."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"വളരെയധികം വേഗത"</string>

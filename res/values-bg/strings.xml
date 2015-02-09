@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ЗАДНА КАМЕРА"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ОK"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Отказ"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Сигнал"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Отхвърляне"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Мястото на SD картата ви привършва. Променете настройката за качество или изтрийте някои изображения или други файлове."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Достигнато е ограничението за размер."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Твърде бързо"</string>

@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"CÁMARA TRASEIRA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"Aceptar"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Cancelar"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Informar"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Rexeitar"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Estase esgotando o espazo da tarxeta SD. Cambia a configuración de calidade ou elimina algunhas imaxes ou outros ficheiros."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Alcanzouse o límite de tamaño."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Demasiado rápido"</string>

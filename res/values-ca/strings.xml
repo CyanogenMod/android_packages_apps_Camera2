@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"CÀMERA POSTERIOR"</string>
     <string name="dialog_ok" msgid="774141340500181131">"D\'acord"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Cancel·la"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Informa"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Ignora"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"La targeta SD s\'està quedant sense espai. Canvia la configuració de qualitat o suprimeix unes quantes imatges o altres fitxers."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"S\'ha arribat al límit de mida."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Massa ràpid"</string>

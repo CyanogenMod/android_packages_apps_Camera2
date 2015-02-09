@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ARKA KAMERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"Tamam"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"İptal"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Bildir"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Kapat"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD kartınızda boş alan azaldı. Kalite ayarını değiştirin veya bazı resimleri ya da diğer dosyaları silin."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Boyut sınırına ulaşıldı."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Çok hızlı"</string>

@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"CAMÉRA ARRIÈRE"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Annuler"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Signaler"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Ignorer"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"L\'espace disponible sur votre carte SD est insuffisant. Modifiez les paramètres de qualité, ou supprimez des images ou d\'autres fichiers."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Taille maximale atteinte."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Trop rapide"</string>

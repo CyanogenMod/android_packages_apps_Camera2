@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"பின்பக்க கேமரா"</string>
     <string name="dialog_ok" msgid="774141340500181131">"சரி"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"ரத்துசெய்"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"புகாரளி"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"நிராகரி"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD கார்டில் இடம் இல்லை. தர அமைப்புகளை மாற்றவும் அல்லது சில படங்களையோ, பிற கோப்புகளையோ நீக்கவும்."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"அளவிற்கான வரம்பை அடைந்துவிட்டீர்கள்."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"மிகவும் விரைவானது"</string>

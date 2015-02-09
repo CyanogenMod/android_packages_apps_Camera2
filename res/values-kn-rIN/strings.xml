@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"ಹಿಂಬದಿ ಕ್ಯಾಮರಾ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ಸರಿ"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"ರದ್ದುಮಾಡು"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"ವರದಿ ಮಾಡು"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"ವಜಾಗೊಳಿಸು"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"ನಿಮ್ಮ SD ಕಾರ್ಡ್ ಸ್ಥಳವು ಭರ್ತಿಯಾಗಿದೆ. ಗುಣಮಟ್ಟದ ಸೆಟ್ಟಿಂಗ್ ಬದಲಾಯಿಸಿ ಅಥವಾ ಕೆಲವು ಚಿತ್ರಗಳನ್ನು ಇಲ್ಲವೇ ಇತರ ಫೈಲ್‌ಗಳನ್ನು ಅಳಿಸಿ."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"ಗಾತ್ರದ ಮಿತಿ ತಲುಪಿದೆ."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"ತುಂಬಾ ವೇಗವಾಗಿದೆ"</string>

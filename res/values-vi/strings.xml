@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"MÁY ẢNH MẶT SAU"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Hủy"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Báo cáo"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Loại bỏ"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Thẻ SD của bạn sắp hết dung lượng. Thay đổi cài đặt chất lượng hoặc xóa một số ảnh hoặc tệp khác."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Đã đạt tới giới hạn kích thước."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Quá nhanh"</string>

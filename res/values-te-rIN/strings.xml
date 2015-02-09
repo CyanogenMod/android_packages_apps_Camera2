@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"వెనుకభాగంలో ఉండే కెమెరా"</string>
     <string name="dialog_ok" msgid="774141340500181131">"సరే"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"రద్దు చెేయి"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"నివేదించు"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"తీసివేయి"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"మీ SD కార్డు నిల్వ దాదాపు నిండింది. నాణ్యత సెట్టింగ్‌ను మార్చండి లేదంటే కొన్ని చిత్రాలు లేదా ఇతర ఫైల్‌లను తొలగించండి."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"పరిమాణ పరిమితి చేరుకున్నారు."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"అత్యంత వేగవంతం"</string>

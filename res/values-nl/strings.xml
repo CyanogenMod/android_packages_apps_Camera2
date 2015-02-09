@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"CAMERA AAN ACHTERZIJDE"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Annuleren"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"Melden"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Sluiten"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Uw SD-kaart is bijna vol. Wijzig de kwaliteitsinstelling of verwijder enkele afbeeldingen of andere bestanden."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Maximale grootte bereikt."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Te snel"</string>

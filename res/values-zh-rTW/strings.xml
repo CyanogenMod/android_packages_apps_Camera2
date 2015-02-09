@@ -153,6 +153,8 @@
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"後置鏡頭"</string>
     <string name="dialog_ok" msgid="774141340500181131">"確定"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"取消"</string>
+    <string name="dialog_report" msgid="7616428760369876209">"回報"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"關閉"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"您 SD 卡的空間即將用盡，請變更圖片的品質設定，或是刪除部分圖片或其他檔案。"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"已達大小上限。"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"速度過快"</string>
