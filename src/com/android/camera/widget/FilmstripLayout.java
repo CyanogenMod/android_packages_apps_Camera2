@@ -489,7 +489,7 @@ public class FilmstripLayout extends FrameLayout implements FilmstripContentPane
         public FilmstripBackground() {
             mPaint = new Paint();
             mPaint.setAntiAlias(true);
-            mPaint.setColor(getResources().getColor(R.color.filmstrip_background));
+            mPaint.setColor(getResources().getColor(R.color.camera_gray_background));
             mPaint.setAlpha(255);
         }
 

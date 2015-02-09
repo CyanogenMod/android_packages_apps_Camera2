@@ -27,9 +27,9 @@
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <!-- TODO: add background as @drawable/cover after Camera mode cold
                    start default per b/17702056 -->
-        <item name="android:windowBackground">@color/mode_cover_default_color</item>
-        <item name="android:colorBackground">@color/mode_cover_default_color</item>
-        <item name="android:colorBackgroundCacheHint">@color/mode_cover_default_color</item>
+        <item name="android:windowBackground">@color/camera_gray_background</item>
+        <item name="android:colorBackground">@color/camera_gray_background</item>
+        <item name="android:colorBackgroundCacheHint">@color/camera_gray_background</item>
         <item name="android:actionBarStyle">@style/Camera.ActionBar</item>
     </style>
 
