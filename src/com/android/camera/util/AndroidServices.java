@@ -18,6 +18,7 @@ package com.android.camera.util;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -92,6 +93,10 @@ public class AndroidServices {
 
     public DisplayManager provideDisplayManager() {
         return (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+    }
+
+    public KeyguardManager provideKeyguardManager() {
+        return (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
     }
 
     public LayoutInflater provideLayoutInflater() {
