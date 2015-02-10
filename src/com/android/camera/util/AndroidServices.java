@@ -43,7 +43,10 @@ import com.android.camera.debug.Log.Tag;
  */
 public class AndroidServices {
     private static Tag TAG = new Tag("AndroidServices");
-    private static final boolean DEBUG_LOGGING = false;
+    /** Log all requests; otherwise will only log long requests. */
+    private static final boolean LOG_ALL_REQUESTS = false;
+    /** Log requests if this threshold is exceeded. */
+    private static final int LOG_THRESHOLD_MILLIS = 10;
 
     private static class Singleton {
         private static final AndroidServices INSTANCE =
@@ -131,9 +134,12 @@ public class AndroidServices {
         try {
             long start = System.currentTimeMillis();
             Object result = mContext.getSystemService(service);
-            if (DEBUG_LOGGING) {
-                Log.i(TAG, "Provided system service " + service + " in " +
-                        (System.currentTimeMillis() - start) + "ms");
+            long duration = System.currentTimeMillis() - start;
+            if (duration > LOG_THRESHOLD_MILLIS) {
+                Log.w(TAG, "Warning: providing system service " + service + " took " +
+                        duration + "ms");
+            } else if (LOG_ALL_REQUESTS) {
+                Log.v(TAG, "Provided system service " + service + " in " + duration + "ms");
             }
             return result;
         } catch (Exception e) {
