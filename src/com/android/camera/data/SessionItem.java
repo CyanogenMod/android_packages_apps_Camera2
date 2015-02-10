@@ -149,7 +149,7 @@ public class SessionItem implements FilmstripItem {
 
     @Override
     public Optional<Bitmap> generateThumbnail(int boundingWidthPx, int boundingHeightPx) {
-        return Optional.of(Storage.getPlacerHolderForSession(mUri));
+        return Optional.fromNullable(Storage.getPlacerHolderForSession(mUri));
     }
 
     @Override
