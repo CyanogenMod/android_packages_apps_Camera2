@@ -18,7 +18,6 @@ package com.android.camera;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -261,22 +260,6 @@ public class CaptureModule extends CameraModule implements
                         }
                     });
                 }
-
-                @Override
-                public void onThumbnailAvailable(final Bitmap thumbnailBitmap, final int rotation) {
-                    // Call ripple effect when you know that you have the bitmap
-                    // then update bitmap.
-                    mMainThread.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAppController.getCameraAppUI().startCaptureIndicatorRevealAnimation(
-                                    getPeekAccessibilityString());
-                            mAppController.getCameraAppUI().updateCaptureIndicatorThumbnail(
-                                    thumbnailBitmap, rotation);
-                        }
-                    });
-                }
-
             };
 
     /** State by the module state machine. */

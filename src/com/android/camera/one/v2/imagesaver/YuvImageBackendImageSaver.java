@@ -137,7 +137,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                     final Bitmap bitmap = Bitmap.createBitmap(payload.data,
                             task.result.width,
                             task.result.height, Bitmap.Config.ARGB_8888);
-                    mPictureSaverCallback.onThumbnailAvailable(bitmap, mImageRotation.getDegrees());
+                    mSession.updateCaptureIndicatorThumbnail(bitmap, mImageRotation.getDegrees());
                     break;
                 case INTERMEDIATE_THUMBNAIL:
                     final Bitmap bitmapIntermediate = Bitmap.createBitmap(payload.data,
@@ -152,6 +152,8 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                         @Override
                         public void run() {
                             // TODO: Finalize and I18N string.
+                            // Don't use this thumbnail for the capture
+                            // indicator.
                             mSession.updateThumbnail(bitmapIntermediateRotated);
                             mSession.setProgressMessage("Saving image ...");
                         }

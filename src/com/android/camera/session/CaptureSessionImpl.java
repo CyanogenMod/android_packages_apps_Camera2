@@ -22,6 +22,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.android.camera.Storage;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
@@ -151,7 +152,11 @@ public class CaptureSessionImpl implements CaptureSession {
     public void updateThumbnail(Bitmap bitmap) {
         mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, bitmap);
         mSessionManager.notifyTaskQueued(mUri);
-        onPreviewAvailable();
+    }
+
+    @Override
+    public void updateCaptureIndicatorThumbnail(Bitmap indicator, int rotationDegrees) {
+        onCaptureIndicatorUpdate(indicator, rotationDegrees);
     }
 
     @Override
@@ -166,7 +171,6 @@ public class CaptureSessionImpl implements CaptureSession {
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionManager.notifyTaskQueued(mUri);
-        onPreviewAvailable();
     }
 
     @Override
@@ -181,7 +185,7 @@ public class CaptureSessionImpl implements CaptureSession {
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionManager.notifyTaskQueued(mUri);
-        onPreviewAvailable();
+        onCaptureIndicatorUpdate(placeholder, 0);
     }
 
     @Override
@@ -197,7 +201,8 @@ public class CaptureSessionImpl implements CaptureSession {
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionManager.notifyTaskQueued(mUri);
-        onPreviewAvailable();
+        Bitmap placeholderBitmap = Storage.getPlacerHolderForSession(mUri);
+        onCaptureIndicatorUpdate(placeholderBitmap, 0);
     }
 
     @Override
@@ -294,7 +299,7 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public void updatePreview() {
+    public void updatePreviewAndIndicator() {
         final File path;
         if (mTempOutputFile.isUsable()) {
             path = mTempOutputFile.getFile();
@@ -317,7 +322,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 Bitmap placeholder = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length,
                         options);
                 mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, placeholder);
-                onPreviewAvailable();
+                onCaptureIndicatorUpdate(placeholder, 0 /* rotation */);
             }
         });
     }
@@ -346,8 +351,9 @@ public class CaptureSessionImpl implements CaptureSession {
         mProgressListeners.remove(listener);
     }
 
-    private void onPreviewAvailable() {
-        mSessionManager.notifySessionPreviewAvailable(mPlaceHolderSession.outputUri);
+
+    private void onCaptureIndicatorUpdate(Bitmap indicator, int rotationDegrees) {
+        mSessionManager.notifySessionCaptureIndicatorAvailable(indicator, rotationDegrees);
     }
 
     private boolean isStarted() {

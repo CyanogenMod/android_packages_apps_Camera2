@@ -16,6 +16,7 @@
 
 package com.android.camera.session;
 
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 
@@ -149,7 +150,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
-    public CharSequence getErrorMesage(Uri uri) {
+    public CharSequence getErrorMessage(Uri uri) {
         return mFailedSessionMessages.get(uri);
     }
 
@@ -275,17 +276,21 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     /**
      * Notifies all task listeners that the task with the given URI has updated
      * its media.
+     *
+     * @param uri the URI of the session whose preview has been updated
+     * @param rotationDegrees the rotation of the updated preview
      */
-    void notifySessionPreviewAvailable(final Uri uri) {
+    void notifySessionCaptureIndicatorAvailable(final Bitmap indicator, final int rotationDegrees) {
         mMainHandler.execute(new Runnable() {
             @Override
             public void run() {
                 synchronized (mTaskListeners) {
                     for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionPreviewAvailable(uri);
+                        listener.onSessionCaptureIndicatorUpdate(indicator, rotationDegrees);
                     }
                 }
             }
         });
+
     }
 }

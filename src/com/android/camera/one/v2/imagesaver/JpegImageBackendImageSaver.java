@@ -34,7 +34,6 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
-
 import com.google.common.base.Optional;
 
 import java.util.HashSet;
@@ -127,7 +126,7 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
                 // pass this information onto the UI call, since the rotation is
                 // NOT applied to the bitmap directly.
                 int rotation = Exif.getOrientation(payload.data);
-                mPictureSaverCallback.onThumbnailAvailable(bitmap, rotation);
+                mSession.updateCaptureIndicatorThumbnail(bitmap, rotation);
                 // Send image to remote devices
                 mPictureSaverCallback.onRemoteThumbnailAvailable(payload.data);
             }

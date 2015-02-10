@@ -391,10 +391,10 @@ public class PhotoModule
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
         mIsImageCaptureIntent = isImageCaptureIntent();
+        mUI.setCountdownFinishedListener(this);
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mHeadingSensor = new HeadingSensor(AndroidServices.instance().provideSensorManager());
-        mUI.setCountdownFinishedListener(this);
         mCountdownSoundPlayer = new SoundPlayer(mAppController.getAndroidContext());
 
         // TODO: Make this a part of app controller API.
