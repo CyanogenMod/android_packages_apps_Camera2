@@ -20,6 +20,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -51,6 +52,7 @@ import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.GridLines;
 import com.android.camera.ui.MainActivityLayout;
+import com.android.camera.ui.MarginDrawable;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
@@ -1078,17 +1080,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     /**
-     * Call to stop the preview from being rendered.
+     * Call to stop the preview from being rendered. Sets the entire capture
+     * root view to invisible which includes the preview plus focus indicator
+     * and any other auxiliary views for capture modes.
      */
     public void pausePreviewRendering() {
-        mTextureView.setVisibility(View.INVISIBLE);
+        mCameraRootView.setVisibility(View.INVISIBLE);
     }
 
     /**
-     * Call to begin rendering the preview again.
+     * Call to begin rendering the preview and auxiliary views again.
      */
     public void resumePreviewRendering() {
-        mTextureView.setVisibility(View.VISIBLE);
+        mCameraRootView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -1281,6 +1285,23 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     public void onPreviewAspectRatioChanged(float aspectRatio) {
                         mModeOptionsOverlay.requestLayout();
                         mBottomBar.requestLayout();
+                    }
+                }
+        );
+
+        // The camera root view may show gaps between the preview and the screen
+        // if the aspect ratio of the capture doesn't match the screen. We keep
+        // the window background null and fill in the edges with this overlay
+        // rather than paint a background behind the entire preview.
+        final MarginDrawable margins = new MarginDrawable(Color.BLACK);
+        mCameraRootView.getOverlay().add(margins);
+        mTextureViewHelper.addAspectRatioChangedListener(
+                new PreviewStatusListener.PreviewAspectRatioChangedListener() {
+                    @Override
+                    public void onPreviewAspectRatioChanged(float aspectRatio) {
+                        RectF screenArea = mCaptureLayoutHelper.getPreviewRect();
+                        screenArea.union(mCaptureLayoutHelper.getBottomBarRect());
+                        margins.setScreen(screenArea);
                     }
                 }
         );

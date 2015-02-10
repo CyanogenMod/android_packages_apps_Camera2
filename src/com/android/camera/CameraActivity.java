@@ -1432,9 +1432,15 @@ public class CameraActivity extends QuickActivity
         if (ApiHelper.isLOrHigher()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
-        // We set a background drawable for startup background, reset to black
-        getWindow().setBackgroundDrawableResource(android.R.color.black);
         setContentView(R.layout.activity_main);
+        // A window background is set in styles.xml for the system to show a
+        // drawable background with gray color and camera icon before the
+        // activity is created. We set the background to null here to prevent
+        // overdraw, all views must take care of drawing backgrounds if
+        // necessary. This call to setBackgroundDrawable must occur after
+        // setContentView, otherwise a background may be set again from the
+        // style.
+        getWindow().setBackgroundDrawable(null);
 
         mActionBar = getActionBar();
         // set actionbar background to 100% or 50% transparent
