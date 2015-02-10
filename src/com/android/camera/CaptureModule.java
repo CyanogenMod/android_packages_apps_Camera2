@@ -1023,9 +1023,7 @@ public class CaptureModule extends CameraModule implements
         if (mState == ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED) {
             mState = ModuleState.UPDATE_TRANSFORM_ON_NEXT_SURFACE_TEXTURE_UPDATE;
         }
-
         mAppController.onPreviewStarted();
-        onReadyStateChanged(true);
     }
 
     /**
@@ -1277,12 +1275,16 @@ public class CaptureModule extends CameraModule implements
                                                     return;
                                                 }
                                                 onPreviewStarted();
+                                                // May be overridden by
+                                                // subsequent call to
+                                                // onReadyStateChanged().
+                                                onReadyStateChanged(true);
+                                                mCamera.setReadyStateChangedListener(
+                                                        CaptureModule.this);
                                                 // Enable zooming after preview
                                                 // has started.
                                                 mUI.initializeZoom(mCamera.getMaxZoom());
                                                 mCamera.setFocusStateListener(CaptureModule.this);
-                                                mCamera.setReadyStateChangedListener(
-                                                        CaptureModule.this);
                                             }
                                         });
                                     }
