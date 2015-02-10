@@ -38,9 +38,9 @@ public class ModulesInfo {
     private static final Log.Tag TAG = new Log.Tag("ModulesInfo");
 
     /** Selects CaptureModule if true, PhotoModule if false. */
+    // TODO: DO __NOT__ TURN ON BY DEFAULT FOR NEXUS4
     private static final boolean ENABLE_CAPTURE_MODULE = ApiHelper.HAS_CAMERA_2_API
-            && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6
-            || ApiHelper.IS_NEXUS_9);
+            && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6 || ApiHelper.IS_NEXUS_9);
 
     public static void setupModules(Context context, ModuleManager moduleManager) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
