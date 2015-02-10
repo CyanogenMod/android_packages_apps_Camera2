@@ -304,14 +304,32 @@ public class BottomBar extends FrameLayout {
         ((ImageButton) findViewById(R.id.retake_button)).setImageLevel(level);
     }
 
+    /**
+     * Configure the bottom bar to either overlay a live preview, or render off
+     * the preview. If overlaying the preview, ensure contained drawables have
+     * reduced opacity and that the bottom bar itself has no background to allow
+     * the preview to render through. If not overlaying the preview, set
+     * contained drawables to opaque and ensure that the bottom bar itself has
+     * a view background, so that varying alpha (i.e. mode list transitions) are
+     * based upon that background instead of an underlying preview.
+     *
+     * @param overlay if true, treat bottom bar as overlaying the preview
+     */
     private void setOverlayBottomBar(boolean overlay) {
         mOverLayBottomBar = overlay;
         if (overlay) {
             setBackgroundAlpha(mBackgroundAlphaOverlay);
             setButtonImageLevels(1);
+            // clear background on the containing bottom bar, rather than the
+            // contained drawables
+            super.setBackground(null);
         } else {
             setBackgroundAlpha(mBackgroundAlphaDefault);
             setButtonImageLevels(0);
+            // setBackgroundColor is overridden and delegates to contained
+            // drawables, call super to set the containing background color in
+            // this mode.
+            super.setBackgroundColor(mBackgroundColor);
         }
     }
 
