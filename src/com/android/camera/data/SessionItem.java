@@ -42,9 +42,12 @@ public class SessionItem implements FilmstripItem {
     private FilmstripItemData mData;
     private final FilmstripItemAttributes mAttributes;
     private final Context mContext;
+    private final Uri mUri;
 
     public SessionItem(Context context, Uri uri) {
         mContext = context;
+        mUri = uri;
+
         mMetaData = new Metadata();
         mMetaData.setLoaded(true);
 
@@ -57,7 +60,10 @@ public class SessionItem implements FilmstripItem {
               .withDimensions(dimension)
               .build();
 
-        mAttributes = FilmstripItemAttributes.DEFAULT;
+        mAttributes = new FilmstripItemAttributes.Builder()
+                .with(FilmstripItemAttributes.Attributes.IS_RENDERING)
+                .build();
+
     }
 
     private Size getSessionSize(Uri uri) {
@@ -143,7 +149,7 @@ public class SessionItem implements FilmstripItem {
 
     @Override
     public Optional<Bitmap> generateThumbnail(int boundingWidthPx, int boundingHeightPx) {
-        return Optional.absent();
+        return Optional.of(Storage.getPlacerHolderForSession(mUri));
     }
 
     @Override
