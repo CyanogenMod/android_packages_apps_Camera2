@@ -112,8 +112,10 @@ class GenericOneCameraImpl implements OneCamera {
                 // TODO delete frameNumber from FocusStateListener callback. It
                 // is optional and never actually used.
                 long frameNumber = -1;
-                listener.onFocusStatusUpdate(AutoFocusHelper.stateFromCamera2State(afState),
-                        frameNumber);
+                if(listener !=null) {
+                    listener.onFocusStatusUpdate(AutoFocusHelper.stateFromCamera2State(afState),
+                            frameNumber);
+                }
             }
         });
     }

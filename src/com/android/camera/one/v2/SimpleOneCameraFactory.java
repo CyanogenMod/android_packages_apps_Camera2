@@ -101,6 +101,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 Loggers.tagFactory()));
 
         lifetime.add(imageReader);
+        lifetime.add(device);
 
         List<Surface> outputSurfaces = new ArrayList<>();
         outputSurfaces.add(imageReader.getSurface());
