@@ -105,6 +105,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
             final MainThread mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
+            final Observable<Integer> exposureSetting,
             final BurstFacade burstFacade) {
         final Lifetime lifetime = new Lifetime();
 
@@ -173,7 +174,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(
                         new Lifetime(cameraLifetime), characteristics,
                         ephemeralFrameServer, rootBuilder,
-                        miscThreadPool, flashSetting, zoomState,
+                        miscThreadPool, flashSetting, exposureSetting, zoomState,
                         CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
 
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(

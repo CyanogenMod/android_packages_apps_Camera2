@@ -18,15 +18,20 @@ package com.android.camera.one.v2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Build;
+import android.util.Range;
+import android.util.Rational;
 
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -37,6 +42,7 @@ import java.util.List;
  * essential a wrapper for #{link
  * android.hardware.camera2.CameraCharacteristics}.
  */
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     private final CameraCharacteristics mCameraCharacteristics;
 
@@ -116,7 +122,48 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
 
     @Override
     public LinearScale getLensFocusRange() {
-        return LensRangeCalculator
-              .getDiopterToRatioCalculator(mCameraCharacteristics);
+        return LensRangeCalculator.getDiopterToRatioCalculator(mCameraCharacteristics);
+    }
+
+    @Override
+    public boolean isExposureCompensationSupported() {
+        // Turn off exposure compensation for Nexus 6 on L (API level 21)
+        // because the bug in framework b/19219128.
+        if (ApiHelper.IS_NEXUS_6 && ApiHelper.isLollipop()) {
+            return false;
+        }
+        Range<Integer> compensationRange =
+                mCameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+        return compensationRange.getLower() != 0 || compensationRange.getUpper() != 0;
+    }
+
+    @Override
+    public int getMinExposureCompensation() {
+        if (!isExposureCompensationSupported()) {
+            return -1;
+        }
+        Range<Integer> compensationRange =
+                mCameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+        return compensationRange.getLower();
+    }
+
+    @Override
+    public int getMaxExposureCompensation() {
+        if (!isExposureCompensationSupported()) {
+            return -1;
+        }
+        Range<Integer> compensationRange =
+                mCameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
+        return compensationRange.getUpper();
+    }
+
+    @Override
+    public float getExposureCompensationStep() {
+        if (!isExposureCompensationSupported()) {
+            return -1.0f;
+        }
+        Rational compensationStep = mCameraCharacteristics.get(
+                CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP);
+        return (float) compensationStep.getNumerator() / compensationStep.getDenominator();
     }
 }

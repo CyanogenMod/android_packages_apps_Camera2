@@ -23,6 +23,7 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -110,5 +111,40 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     public LinearScale getLensFocusRange() {
         // Diopter range is not supported on legacy camera devices.
         return LensRangeCalculator.getNoOp();
+    }
+
+    @Override
+    public boolean isExposureCompensationSupported() {
+        // Turn off exposure compensation for Nexus 6 on L (API level 21)
+        // because the bug in framework b/19219128.
+        if (ApiHelper.IS_NEXUS_6 && ApiHelper.isLollipop()) {
+            return false;
+        }
+        return mCameraParameters.getMinExposureCompensation() != 0 ||
+                mCameraParameters.getMaxExposureCompensation() != 0;
+    }
+
+    @Override
+    public int getMinExposureCompensation() {
+        if (!isExposureCompensationSupported()) {
+            return -1;
+        }
+        return mCameraParameters.getMinExposureCompensation();
+    }
+
+    @Override
+    public int getMaxExposureCompensation() {
+        if (!isExposureCompensationSupported()) {
+            return -1;
+        }
+        return mCameraParameters.getMaxExposureCompensation();
+    }
+
+    @Override
+    public float getExposureCompensationStep() {
+        if (!isExposureCompensationSupported()) {
+            return -1.0f;
+        }
+        return mCameraParameters.getExposureCompensationStep();
     }
 }

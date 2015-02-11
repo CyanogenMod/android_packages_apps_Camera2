@@ -93,6 +93,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             final OneCameraCharacteristics characteristics, final MainThread mainExecutor,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
+            final Observable<Integer> exposureSetting,
             final BurstFacade burstFacade) {
         final Lifetime lifetime = new Lifetime();
 
@@ -153,7 +154,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
                         (cameraLifetime), characteristics,
                         frameServerComponent.provideEphemeralFrameServer(), rootBuilder,
-                        miscThreadPool, flashSetting, zoomState, CameraDevice
+                        miscThreadPool, flashSetting, exposureSetting, zoomState, CameraDevice
                         .TEMPLATE_PREVIEW);
 
                 // Register the dynamic updater via orientation supplier

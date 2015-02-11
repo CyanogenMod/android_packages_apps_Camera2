@@ -86,6 +86,10 @@ public class ModeOptionsOverlay extends FrameLayout
         mModeOptionsToggle.setClickable(clickable);
     }
 
+    public void showExposureOptions() {
+        mModeOptions.showExposureOptions();
+    }
+
     /**
      * Sets the mode options listener.
      *

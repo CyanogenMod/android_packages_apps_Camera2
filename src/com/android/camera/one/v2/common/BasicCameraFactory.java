@@ -75,12 +75,15 @@ public class BasicCameraFactory {
                               RequestBuilder.Factory rootBuilder,
                               ScheduledExecutorService threadPool,
                               Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
+                              Observable<Integer> exposure,
                               Observable<Float> zoom, int templateType) {
         RequestTemplate previewBuilder = new RequestTemplate(rootBuilder);
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AE_MODE, new FlashBasedAEMode(flash));
+        previewBuilder.setParam(
+                CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, exposure);
 
         Supplier<Rect> cropRegion = new ZoomedCropRegion(
                 cameraCharacteristics.getSensorInfoActiveArraySize(), zoom);
@@ -102,6 +105,8 @@ public class BasicCameraFactory {
         lifetime.add(zoomCallback);
         SafeCloseable flashCallback = flash.addCallback(mPreviewStarter, threadPool);
         lifetime.add(flashCallback);
+        SafeCloseable exposureCallback = exposure.addCallback(mPreviewStarter, threadPool);
+        lifetime.add(exposureCallback);
 
         int sensorOrientation =
                 cameraCharacteristics.getSensorOrientation();

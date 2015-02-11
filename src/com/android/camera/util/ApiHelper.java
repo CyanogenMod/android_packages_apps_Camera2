@@ -95,6 +95,10 @@ public class ApiHelper {
                        ("4.4.4".equals(Build.VERSION.RELEASE) || "4.4.3".equals(Build.VERSION.RELEASE)));
     }
 
+    public static boolean isLollipop() {
+        return Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP;
+    }
+
     public static boolean isLOrHigher() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 || "L".equals(Build.VERSION.CODENAME) || "LOLLIPOP".equals(Build.VERSION.CODENAME);

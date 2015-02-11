@@ -682,7 +682,7 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public BottomBarUISpec getBottomBarSpec() {
-        CameraAppUI.BottomBarUISpec bottomBarSpec = new CameraAppUI.BottomBarUISpec();
+        BottomBarUISpec bottomBarSpec = new BottomBarUISpec();
         bottomBarSpec.enableGridLines = true;
         bottomBarSpec.enableCamera = true;
         bottomBarSpec.cameraCallback = getCameraCallback();
@@ -697,6 +697,24 @@ public class CaptureModule extends CameraModule implements
         if (mStickyGcamCamera) {
             bottomBarSpec.enableFlash = false;
         }
+
+        bottomBarSpec.enableExposureCompensation =
+                mCameraCharacteristics.isExposureCompensationSupported();
+        bottomBarSpec.minExposureCompensation =
+                mCameraCharacteristics.getMinExposureCompensation();
+        bottomBarSpec.maxExposureCompensation =
+                mCameraCharacteristics.getMaxExposureCompensation();
+        bottomBarSpec.exposureCompensationStep =
+                mCameraCharacteristics.getExposureCompensationStep();
+        bottomBarSpec.exposureCompensationSetCallback =
+                new BottomBarUISpec.ExposureCompensationSetCallback() {
+                    @Override
+                    public void setExposure(int value) {
+                        mSettingsManager.set(
+                                mAppController.getCameraScope(), Keys.KEY_EXPOSURE, value);
+                    }
+                };
+
         return bottomBarSpec;
     }
 

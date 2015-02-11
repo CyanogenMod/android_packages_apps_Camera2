@@ -81,4 +81,32 @@ public interface OneCameraCharacteristics {
      * A converter from the physical focus range of the camera to a ratio.
      */
     public LinearScale getLensFocusRange();
+
+    /**
+     * Whether exposure compensation is supported for this camera.
+     *
+     * @return true if exposure compensation is supported for this camera.
+     */
+    public boolean isExposureCompensationSupported();
+
+    /**
+     * @return The min exposure compensation index. The EV is the compensation
+     * index multiplied by the step value. If {@link
+     * #isExposureCompensationSupported()} is false, return -1.
+     */
+    public int getMinExposureCompensation();
+
+    /**
+     * @return The max exposure compensation index. The EV is the compensation
+     * index multiplied by the step value. If {@link
+     * #isExposureCompensationSupported()} is false, return -1.
+     */
+    public int getMaxExposureCompensation();
+
+    /**
+     * @return The exposure compensation step. The EV is the compensation index
+     * multiplied by the step value. If {@link
+     * #isExposureCompensationSupported()} is false, return -1.
+     */
+    public float getExposureCompensationStep();
 }

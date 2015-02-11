@@ -2014,7 +2014,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
                         Keys.KEY_EXPOSURE_COMPENSATION_ENABLED);
         if (enableExposureCompensation) {
-            buttonManager.initializePushButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION, null);
+            buttonManager.initializePushButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION,
+                    new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mModeOptionsOverlay.showExposureOptions();
+                }
+            });
             buttonManager.setExposureCompensationParameters(
                 bottomBarSpec.minExposureCompensation,
                 bottomBarSpec.maxExposureCompensation,
