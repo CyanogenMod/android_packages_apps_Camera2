@@ -1288,23 +1288,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     }
                 }
         );
-
-        // The camera root view may show gaps between the preview and the screen
-        // if the aspect ratio of the capture doesn't match the screen. We keep
-        // the window background null and fill in the edges with this overlay
-        // rather than paint a background behind the entire preview.
-        final MarginDrawable margins = new MarginDrawable(Color.BLACK);
-        mCameraRootView.getOverlay().add(margins);
-        mTextureViewHelper.addAspectRatioChangedListener(
-                new PreviewStatusListener.PreviewAspectRatioChangedListener() {
-                    @Override
-                    public void onPreviewAspectRatioChanged(float aspectRatio) {
-                        RectF screenArea = mCaptureLayoutHelper.getPreviewRect();
-                        screenArea.union(mCaptureLayoutHelper.getBottomBarRect());
-                        margins.setScreen(screenArea);
-                    }
-                }
-        );
     }
 
     /**
