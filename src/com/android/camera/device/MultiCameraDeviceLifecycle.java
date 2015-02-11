@@ -27,7 +27,11 @@ import com.android.camera.debug.Loggers;
 import com.android.camera.device.CameraDeviceKey.ApiType;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+
+import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -84,6 +88,10 @@ public class MultiCameraDeviceLifecycle {
     @Nullable
     @GuardedBy("mDeviceLock")
     private SingleDeviceLifecycle mTargetDevice;
+
+    @Nullable
+    @GuardedBy("mDeviceLock")
+    private SettableFuture<Void> mShutdownFuture;
 
     @VisibleForTesting
     MultiCameraDeviceLifecycle(
@@ -230,6 +238,39 @@ public class MultiCameraDeviceLifecycle {
     }
 
     /**
+     * This will close any open or pending requests and will execute the future
+     * when all requests have been cleared out. This method executes immediately.
+     */
+    public ListenableFuture<Void> shutdown() {
+        synchronized (mDeviceLock) {
+            mLogger.d("shutdownAsync()");
+            if (mCurrentDevice != null) {
+                // Ensure there are no queued requests. Cancel any existing requests.
+                clearTargetDevice();
+
+                // Create a future that we can complete when the device completes
+                // its shutdown cycle.
+                mShutdownFuture = SettableFuture.create();
+
+                // Execute close on the current device.
+                mCurrentDevice.close();
+                return mShutdownFuture;
+            } else if (mShutdownFuture != null) {
+                // This could occur if a previous shutdown call occurred, and
+                // the receiver called cancel on the future before it completed.
+                if (mShutdownFuture.isDone()) {
+                    mShutdownFuture = null;
+                } else {
+                    return mShutdownFuture;
+                }
+            }
+            // If there is no currently open device, this instance is already in a
+            // clean shutdown state.
+            return Futures.immediateFuture(null);
+        }
+    }
+
+    /**
      * Given a request lifetime, a key and a provider, open a new device.
      */
     private <TDevice, TDeviceId> ListenableFuture<TDevice> openDevice(Lifetime requestLifetime,
@@ -240,6 +281,8 @@ public class MultiCameraDeviceLifecycle {
 
         synchronized (mDeviceLock) {
             mLogger.d("[openDevice()] open(cameraId: '" + key + "')");
+            cancelShutdown();
+
             if (mCurrentDevice == null) {
                 mLogger.d("[openDevice()] No existing request. Creating a new device.");
                 deviceLifecycle = createLifecycle(key, provider);
@@ -292,10 +335,35 @@ public class MultiCameraDeviceLifecycle {
         }
     }
 
+    private void cancelShutdown() {
+        if (mShutdownFuture != null) {
+            mLogger.i("Canceling shutdown.");
+            Future<Void> shutdownFuture = mShutdownFuture;
+            mShutdownFuture = null;
+            shutdownFuture.cancel(true /* mayInterruptIfRunning */);
+        }
+    }
+
+    private void completeShutdown() {
+        if (mShutdownFuture != null) {
+            mLogger.i("Completing shutdown.");
+            SettableFuture<Void> shutdownFuture = mShutdownFuture;
+            mShutdownFuture = null;
+            shutdownFuture.set(null);
+        }
+    }
+
     private <TDeviceId> void onCameraDeviceShutdown(CameraDeviceKey<TDeviceId> key) {
         synchronized (mDeviceLock) {
             mLogger.d("onCameraClosed(id: " + key + ").");
-            if (mCurrentDevice != null && mCurrentDevice.getId().equals(key)) {
+            if (mShutdownFuture != null &&
+                  (mCurrentDevice == null || (mCurrentDevice.getId().equals(key)))) {
+                // if the shutdown future is set but there is no current device,
+                // we should call shutdown, just in case so that it clears out the
+                // shutdown state. If
+                mCurrentDevice = null;
+                completeShutdown();
+            } if (mCurrentDevice != null && mCurrentDevice.getId().equals(key)) {
 
                 mLogger.d("Current device was closed.");
 
