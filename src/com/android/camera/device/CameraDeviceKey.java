@@ -35,6 +35,7 @@ public final class CameraDeviceKey<T> {
      * Unified set of supported types.
      */
     public enum ApiType {
+        UNKNOWN,
         CAMERA_API1,
         CAMERA_API2,
         CAMERA_API_PORTABILITY_AUTO,
@@ -57,6 +58,15 @@ public final class CameraDeviceKey<T> {
      */
     public T getCameraId() {
         return mCameraId;
+    }
+
+    /**
+     * Create a camera device key without an explicit API version.
+     * Used for porting legacy code to use CameraDeviceKey where
+     * a version is not specified.
+     */
+    public CameraDeviceKey(T cameraId) {
+        this(ApiType.UNKNOWN, cameraId);
     }
 
     public CameraDeviceKey(ApiType apiType, T cameraId) {

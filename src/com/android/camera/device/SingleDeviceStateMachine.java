@@ -315,6 +315,8 @@ public class SingleDeviceStateMachine<TDevice, TKey> implements SingleDeviceClos
     private void closeRequestWithException(Throwable exception) {
         mOpenDevice = null;
         if (mDeviceRequest != null) {
+            mLogger.w("There was a problem closing device: " + mDeviceKey, exception);
+
             mDeviceRequest.closeWithException(exception);
             mDeviceRequest = null;
         }
@@ -337,7 +339,7 @@ public class SingleDeviceStateMachine<TDevice, TKey> implements SingleDeviceClos
         try {
             if (!mIsShutdown) {
                 mIsShutdown = true;
-                mLogger.e("Shutting down this device lifecycle.");
+                mLogger.i("Shutting down the device lifecycle for: " + mDeviceKey);
                 mOpenDevice = null;
                 mDeviceState = DeviceState.CLOSED;
                 mTargetState = TargetState.CLOSED;
@@ -346,7 +348,7 @@ public class SingleDeviceStateMachine<TDevice, TKey> implements SingleDeviceClos
                 mDeviceLifetime.close();
                 mShutdownListener.onShutdown(mDeviceKey);
             } else {
-                mLogger.e("Shutdown was called multiple times!");
+                mLogger.w("Shutdown was called multiple times!");
             }
         } finally {
             mLock.unlock();
