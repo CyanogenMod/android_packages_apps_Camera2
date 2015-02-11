@@ -30,12 +30,15 @@ import com.android.camera.debug.Logger;
 
 import java.util.concurrent.Executor;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Set of device actions for opening and closing a single Camera2 device.
  */
 @TargetApi(VERSION_CODES.LOLLIPOP)
+@ParametersAreNonnullByDefault
 public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
-    private static final Tag TAG = new Tag("Camera2Req");
+    private static final Tag TAG = new Tag("Camera2Act");
 
     private final CameraDeviceKey<String> mId;
     private final CameraManager mCameraManager;
@@ -53,14 +56,13 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         mBackgroundExecutor = backgroundExecutor;
         mHandlerFactory = handlerFactory;
         mLogger = logFactory.create(TAG);
-
         mLogger.d("Created Camera2Request");
     }
 
     @Override
     public void executeOpen(SingleDeviceOpenListener<CameraDevice> openListener,
           Lifetime deviceLifetime) {
-        mLogger.d("executeOpen()");
+        mLogger.i("executeOpen(id: " + mId.getCameraId() + ")");
         mBackgroundExecutor.execute(new OpenCameraRunnable(mCameraManager,
               mId.getCameraId(),
               // TODO THIS IS BAD. If there are multiple requests to open,
@@ -73,7 +75,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
 
     @Override
     public void executeClose(SingleDeviceCloseListener closeListener, CameraDevice device) {
-        mLogger.d("executeClose()");
+        mLogger.i("executeClose(" + device.getId() + ")");
         mBackgroundExecutor.execute(new CloseCameraRunnable(device, closeListener, mLogger));
     }
 
@@ -100,7 +102,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         @Override
         public void run() {
             try {
-                mLogger.d("mCameraManager.openCamera()");
+                mLogger.i("mCameraManager.openCamera(id: " + mCameraId + ")");
                 mCameraManager.openCamera(mCameraId, new OpenCameraStateCallback(mOpenListener,
                             mLogger), mHandler);
             } catch (CameraAccessException | SecurityException | IllegalArgumentException e) {
@@ -129,7 +131,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         @Override
         public void run() {
             try {
-                mLogger.d("mCameraDevice.close()");
+                mLogger.i("mCameraDevice.close(id: " + mCameraDevice.getId() + ")");
                 mCameraDevice.close();
                 mCloseListener.onDeviceClosed();
             } catch (Exception e) {
@@ -156,7 +158,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         @Override
         public void onOpened(CameraDevice cameraDevice) {
             if (!called()) {
-                mLogger.d("onClosed(cameraDevice: " + cameraDevice.getId() + ")");
+                mLogger.i("onOpened(id: " + cameraDevice.getId() + ")");
                 mOpenListener.onDeviceOpened(cameraDevice);
             }
         }
@@ -164,7 +166,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         @Override
         public void onClosed(CameraDevice cameraDevice) {
             if (!called()) {
-                mLogger.d("onClosed(cameraDevice: " + cameraDevice.getId() + ")");
+                mLogger.w("onClosed(id: " + cameraDevice.getId() + ")");
                 mOpenListener.onDeviceOpenException(cameraDevice);
             }
         }
@@ -172,7 +174,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         @Override
         public void onDisconnected(CameraDevice cameraDevice) {
             if (!called()) {
-                mLogger.d("onDisconnected(cameraDevice: " + cameraDevice.getId() + ")");
+                mLogger.w("onDisconnected(id: " + cameraDevice.getId() + ")");
                 mOpenListener.onDeviceOpenException(cameraDevice);
             }
         }
@@ -180,7 +182,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
         @Override
         public void onError(CameraDevice cameraDevice, int errorId) {
             if (!called()) {
-                mLogger.d("onError(cameraDevice: " + cameraDevice.getId()
+                mLogger.e("onError(id: " + cameraDevice.getId()
                       + ", errorId: " + errorId + ")");
                 mOpenListener.onDeviceOpenException(new CameraOpenException(errorId));
             }
@@ -191,7 +193,7 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
             if (!mHasBeenCalled) {
                 mHasBeenCalled = true;
             } else {
-                mLogger.d("Callback was re-executed.");
+                mLogger.v("Callback was re-executed.");
             }
 
             return result;

@@ -33,12 +33,15 @@ import com.android.ex.camera2.portability.CameraAgentFactory.CameraApi;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Set of device actions for opening and closing a single portability
  * layer camera device.
  */
+@ParametersAreNonnullByDefault
 public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy> {
-    private static final Tag TAG = new Tag("Camera2PReq");
+    private static final Tag TAG = new Tag("PortCamAct");
 
     private final CameraDeviceKey<Integer> mId;
     private final HandlerFactory mHandlerFactory;
@@ -67,7 +70,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
     @Override
     public void executeOpen(SingleDeviceOpenListener<CameraProxy> openListener,
           Lifetime deviceLifetime) {
-        mLogger.d("executeOpen()");
+        mLogger.i("executeOpen(id: " + mId.getCameraId() + ")");
         CameraAgent agent = CameraAgentFactory.getAndroidCameraAgent(mContext, mApiVersion);
         deviceLifetime.add(new CameraAgentRecycler(mApiVersion, mLogger));
 
@@ -78,7 +81,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
 
     @Override
     public void executeClose(SingleDeviceCloseListener closeListener, CameraProxy device) {
-        mLogger.d("executeClose()");
+        mLogger.i("executeClose(" + device.getCameraId() + ")");
         mBackgroundRunner.execute(new CloseCameraRunnable(device, device.getAgent(),
               closeListener, mLogger));
     }
@@ -130,7 +133,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
         @Override
         public void run() {
             try {
-                mLogger.d("mCameraAgent.openCamera()");
+                mLogger.i("mCameraAgent.openCamera(id: " + mCameraId + ")");
                 mCameraAgent.openCamera(mHandler, mCameraId,
                       new OpenCameraStateCallback(mOpenListener, mLogger));
             } catch (SecurityException e) {
@@ -159,7 +162,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
         @Override
         public void run() {
             try {
-                mLogger.d("mCameraAgent.closeCamera");
+                mLogger.i("mCameraAgent.closeCamera(id: " + mCameraDevice.getCameraId() + ")");
                 mCameraAgent.closeCamera(mCameraDevice, true /* synchronous */);
                 mCloseListener.onDeviceClosed();
             } catch (Exception e) {
@@ -182,21 +185,10 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
             mLogger = logger;
         }
 
-        private boolean called() {
-            boolean result = mHasBeenCalled;
-            if (!mHasBeenCalled) {
-                mHasBeenCalled = true;
-            } else {
-                mLogger.d("Callback was re-executed.");
-            }
-
-            return result;
-        }
-
         @Override
         public void onCameraOpened(CameraProxy camera) {
             if (!called()) {
-                mLogger.d("onOpened(cameraDevice: " + camera.getCameraId() + ")");
+                mLogger.i("onCameraOpened(id: " + camera.getCameraId() + ")");
                 mOpenListener.onDeviceOpened(camera);
             }
         }
@@ -204,7 +196,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
         @Override
         public void onCameraDisabled(int cameraId) {
             if (!called()) {
-                mLogger.d("onCameraDisabled(cameraId: " + cameraId + ")");
+                mLogger.w("onCameraDisabled(id: " + cameraId + ")");
                 mOpenListener.onDeviceOpenException(new CameraOpenException(-1));
             }
         }
@@ -212,7 +204,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
         @Override
         public void onDeviceOpenFailure(int cameraId, String info) {
             if (!called()) {
-                mLogger.d("onDeviceOpenFailure(cameraId: " + cameraId
+                mLogger.e("onDeviceOpenFailure(id: " + cameraId
                       + ", info: " + info + ")");
                 mOpenListener.onDeviceOpenException(new CameraOpenException(-1));
             }
@@ -221,7 +213,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
         @Override
         public void onDeviceOpenedAlready(int cameraId, String info) {
             if (!called()) {
-                mLogger.d("onDeviceOpenedAlready(cameraId: " + cameraId
+                mLogger.w("onDeviceOpenedAlready(id: " + cameraId
                       + ", info: " + info + ")");
                 mOpenListener.onDeviceOpenException(new CameraOpenException(-1));
             }
@@ -230,9 +222,20 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
         @Override
         public void onReconnectionFailure(CameraAgent mgr, String info) {
             if (!called()) {
-                mLogger.d("onReconnectionFailure: " + info);
+                mLogger.w("onReconnectionFailure(info: " + info + ")");
                 mOpenListener.onDeviceOpenException(new CameraOpenException(-1));
             }
+        }
+
+        private boolean called() {
+            boolean result = mHasBeenCalled;
+            if (!mHasBeenCalled) {
+                mHasBeenCalled = true;
+            } else {
+                mLogger.v("Callback was re-executed.");
+            }
+
+            return result;
         }
     }
 }
