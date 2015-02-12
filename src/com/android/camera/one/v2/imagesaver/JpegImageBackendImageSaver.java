@@ -50,6 +50,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class JpegImageBackendImageSaver implements ImageSaver.Builder {
     private static Log.Tag TAG = new Log.Tag("JpegImgBESaver");
 
+    /** Factor to downsample full-size JPEG image for use in thumbnail bitmap. */
+    private static final int JPEG_DOWNSAMPLE_FOR_FAST_INDICATOR = 4;
+
     @ParametersAreNonnullByDefault
     private static class ImageSaverImpl implements SingleImageSaver {
         private final MainThread mExecutor;
@@ -120,8 +123,13 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
                 TaskImageContainer.CompressedPayload payload) {
             if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
                 // Just start the thumbnail now, since there's no earlier event.
+
+                // Downsample and convert the JPEG payload to a reasonably-sized Bitmap
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = JPEG_DOWNSAMPLE_FOR_FAST_INDICATOR;
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(payload.data, 0,
-                        payload.data.length);
+                        payload.data.length, options);
+
                 // If the rotation is implemented as an EXIF flag, we need to
                 // pass this information onto the UI call, since the rotation is
                 // NOT applied to the bitmap directly.

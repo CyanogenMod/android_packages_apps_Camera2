@@ -23,7 +23,6 @@ import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
-import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
@@ -68,11 +67,11 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
     /**
      * Wraps static call to Exif for testability.
-     * @param jpegData  Binary data of the JPEG with EXIF flags
      *
+     * @param jpegData Binary data of the JPEG with EXIF flags
      * @return Degrees of rotation of the EXIF flag
      */
-    public int exifGetOrientation(byte [] jpegData) {
+    public int exifGetOrientation(byte[] jpegData) {
         return Exif.getOrientation(jpegData);
     }
 
@@ -99,7 +98,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     // doesn't work on direct buffers. So, we make a local
                     // copy in a non-direct buffer.
                     ByteBuffer origBuffer = img.proxy.getPlanes().get(0).getBuffer();
-                    compressedData = ByteBuffer.allocate(origBuffer.capacity());
+                    compressedData = ByteBuffer.allocate(origBuffer.limit());
                     origBuffer.rewind();
                     compressedData.put(origBuffer);
                     origBuffer.rewind();
@@ -124,7 +123,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
                 onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
 
-                numBytes = compressedData.capacity();
+                numBytes = compressedData.limit();
                 break;
             case ImageFormat.YUV_420_888:
                 try {
@@ -210,8 +209,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      */
     protected ExifInterface createExif(TaskImage image) {
         ExifInterface exif = new ExifInterface();
-        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_X_DIMENSION, image.width));
-        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_Y_DIMENSION, image.height));
+        exif.setTag(exif.buildTag(ExifInterface.TAG_IMAGE_WIDTH, image.width));
+        exif.setTag(exif.buildTag(ExifInterface.TAG_IMAGE_LENGTH, image.height));
         exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.getOrientationValueForRotation(image.orientation.getDegrees())));
         return exif;
