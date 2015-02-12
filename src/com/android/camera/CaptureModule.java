@@ -395,7 +395,9 @@ public class CaptureModule extends CameraModule implements
         updateCameraCharacteristics();
         mUI = new CaptureModuleUI(activity, mAppController.getModuleLayoutRoot(), mUIListener);
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
-
+        synchronized (mSurfaceTextureLock) {
+            mPreviewSurfaceTexture = mAppController.getCameraAppUI().getSurfaceTexture();
+        }
         mSoundPlayer = new SoundPlayer(mContext);
 
         FocusSound focusSound = new FocusSound(mSoundPlayer, R.raw.material_camera_focus);
