@@ -26,6 +26,7 @@ import com.android.camera.burst.BurstConfiguration;
 import com.android.camera.burst.ResultsAccessor;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.Size;
 
 import java.io.File;
@@ -212,27 +213,24 @@ public interface OneCamera {
     public static interface FocusDistanceListener {
         /**
          * Called when physical lens distance on the camera changes.
-         *
-         * @param diopter the lens diopter from the last known position.
-         * @param isActive whether the lens is moving.
          */
-        public void onFocusDistance(float diopter, boolean isActive);
+        public void onFocusDistance(float distance, LinearScale lensRange);
     }
 
     /**
      * Single instance of the current camera AF state.
      */
     public static class FocusState {
-        public final float diopter;
+        public final float lensDistance;
         public final boolean isActive;
 
         /**
-         * @param diopter The current focal distance.
+         * @param lensDistance The current focal distance.
          * @param isActive Whether the lens is moving, e.g. because of either an
          *            "active scan" or a "passive scan".
          */
-        public FocusState(float diopter, boolean isActive) {
-            this.diopter = diopter;
+        public FocusState(float lensDistance, boolean isActive) {
+            this.lensDistance = lensDistance;
             this.isActive = isActive;
         }
 
@@ -245,7 +243,7 @@ public interface OneCamera {
 
             FocusState that = (FocusState) o;
 
-            if (Float.compare(that.diopter, diopter) != 0)
+            if (Float.compare(that.lensDistance, lensDistance) != 0)
                 return false;
             if (isActive != that.isActive)
                 return false;
@@ -255,7 +253,7 @@ public interface OneCamera {
 
         @Override
         public int hashCode() {
-            int result = (diopter != +0.0f ? Float.floatToIntBits(diopter) : 0);
+            int result = (lensDistance != +0.0f ? Float.floatToIntBits(lensDistance) : 0);
             result = 31 * result + (isActive ? 1 : 0);
             return result;
         }

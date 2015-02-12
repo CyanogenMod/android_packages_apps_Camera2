@@ -49,6 +49,16 @@ public final class LinearScale {
     }
 
     /**
+     * Returns true if the value is within the domain.
+     */
+    public boolean isInDomain(float domainValue) {
+        if (mDomainA > mDomainB) {
+            return domainValue >= mDomainA && domainValue <= mDomainB;
+        }
+        return domainValue >= mDomainB && domainValue <= mDomainA;
+    }
+
+    /**
      * Linearly scale a given domain value into the output range.
      */
     public float scale(float domainValue) {

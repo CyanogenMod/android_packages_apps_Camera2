@@ -33,6 +33,7 @@ import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.photo.PictureTaker;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.Size;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -73,7 +74,7 @@ public class InitializedOneCameraFactory {
             final Lifetime lifetime, final CameraStarter cameraStarter, CameraDeviceProxy device,
             List<Surface> outputSurfaces, Executor mainThreadExecutor,
             HandlerFactory handlerFactory, float maxZoom, List<Size> supportedPreviewSizes,
-            OneCamera.Facing direction) {
+            LinearScale lensRange, OneCamera.Facing direction) {
         // Assembles and returns a OneCamera based on the CameraStarter.
 
         // Create/wrap required threads.
@@ -151,7 +152,7 @@ public class InitializedOneCameraFactory {
 
         PreviewSizeSelector previewSizeSelector = new PreviewSizeSelector(supportedPreviewSizes);
 
-        mOneCamera = new GenericOneCameraImpl(lifetime, pictureTaker, manualAutoFocus,
+        mOneCamera = new GenericOneCameraImpl(lifetime, pictureTaker, manualAutoFocus, lensRange,
                 mainThreadExecutor, afStateListenable, focusStateListenable, readyStateListenable,
                 maxZoom, zoomState, direction, previewSizeSelector, mPreviewStarter);
     }

@@ -21,6 +21,8 @@ import android.hardware.Camera;
 
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.ui.focus.LensRangeCalculator;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -102,5 +104,11 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     @Override
     public SupportedHardwareLevel getSupportedHardwareLevel() {
         throw new RuntimeException("Not implemented yet.");
+    }
+
+    @Override
+    public LinearScale getLensFocusRange() {
+        // Diopter range is not supported on legacy camera devices.
+        return LensRangeCalculator.getNoOp();
     }
 }

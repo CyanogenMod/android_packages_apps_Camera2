@@ -19,7 +19,6 @@ package com.android.camera.one.v2.initialization;
 import android.content.Context;
 import android.view.Surface;
 
-import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Listenable;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.async.Updatable;
@@ -28,6 +27,7 @@ import com.android.camera.one.v2.AutoFocusHelper;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.Callback;
 import com.android.camera.util.Size;
 import com.google.common.util.concurrent.FutureCallback;
@@ -35,7 +35,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 
 import javax.annotation.Nonnull;
 
@@ -54,6 +53,7 @@ class GenericOneCameraImpl implements OneCamera {
     private final SafeCloseable mCloseListener;
     private final PictureTaker mPictureTaker;
     private final ManualAutoFocus mManualAutoFocus;
+    private final LinearScale mLensRange;
     private final Executor mMainExecutor;
     private final Listenable<Integer> mAFStateListenable;
     private final Listenable<FocusState> mFocusStateListenable;
@@ -65,7 +65,7 @@ class GenericOneCameraImpl implements OneCamera {
     private final PreviewStarter mPreviewStarter;
 
     public GenericOneCameraImpl(SafeCloseable closeListener, PictureTaker pictureTaker,
-            ManualAutoFocus manualAutoFocus, Executor mainExecutor,
+            ManualAutoFocus manualAutoFocus, LinearScale lensRange, Executor mainExecutor,
             Listenable<Integer> afStateProvider, Listenable<FocusState> focusStateProvider,
             Listenable<Boolean> readyStateListenable, float maxZoom, Updatable<Float> zoom,
             Facing direction, PreviewSizeSelector previewSizeSelector,
@@ -77,6 +77,7 @@ class GenericOneCameraImpl implements OneCamera {
         mPreviewSizeSelector = previewSizeSelector;
         mPictureTaker = pictureTaker;
         mManualAutoFocus = manualAutoFocus;
+        mLensRange = lensRange;
         mAFStateListenable = afStateProvider;
         mFocusStateListenable = focusStateProvider;
         mReadyStateListenable = readyStateListenable;
@@ -108,7 +109,7 @@ class GenericOneCameraImpl implements OneCamera {
     public void setFocusStateListener(final FocusStateListener listener) {
         mAFStateListenable.setCallback(new Callback<Integer>() {
             @Override
-            public void onCallback(Integer afState) {
+            public void onCallback(@Nonnull Integer afState) {
                 // TODO delete frameNumber from FocusStateListener callback. It
                 // is optional and never actually used.
                 long frameNumber = -1;
@@ -122,8 +123,10 @@ class GenericOneCameraImpl implements OneCamera {
     public void setFocusDistanceListener(final FocusDistanceListener listener) {
         mFocusStateListenable.setCallback(new Callback<FocusState>() {
             @Override
-            public void onCallback(FocusState focusState) {
-                listener.onFocusDistance(focusState.diopter, focusState.isActive);
+            public void onCallback(@Nonnull FocusState focusState) {
+                if (focusState.isActive) {
+                    listener.onFocusDistance(focusState.lensDistance, mLensRange);
+                }
             }
         });
     }

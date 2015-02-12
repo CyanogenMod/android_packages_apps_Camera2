@@ -16,6 +16,8 @@
 
 package com.android.camera.one.v2;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
@@ -23,12 +25,12 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.ui.focus.LensRangeCalculator;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Describes a OneCamera device which is on top of camera2 API. This is
@@ -110,5 +112,11 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
             default:
                 throw new IllegalStateException("Invalid value for INFO_SUPPORTED_HARDWARE_LEVEL");
         }
+    }
+
+    @Override
+    public LinearScale getLensFocusRange() {
+        return LensRangeCalculator
+              .getDiopterToRatioCalculator(mCameraCharacteristics);
     }
 }

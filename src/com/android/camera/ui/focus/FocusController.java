@@ -28,22 +28,15 @@ import com.android.camera.ui.motion.LinearScale;
  */
 public class FocusController implements FocusDistanceListener {
     private static final Tag TAG = new Tag("FocusController");
-    // A Diopter of 0.0f ish is infinity.
-    // A Diopter of about 15f or so is focused "as close as possible"
-    // Diopter max is computed from device testing
-    private static final float DIOPTER_MIN = 0.0f;
-    private static final float DIOPTER_MAX = 15.0f;
 
     private final FocusRing mFocusRing;
     private final FocusSound mFocusSound;
     private final MainThread mMainThread;
-    private final LinearScale mDiopterToRatio;
 
     public FocusController(FocusRing focusRing, FocusSound focusSound, MainThread mainThread) {
         mFocusRing = focusRing;
         mFocusSound = focusSound;
         mMainThread = mainThread;
-        mDiopterToRatio = new LinearScale(DIOPTER_MIN, DIOPTER_MAX, 0, 1);
     }
 
     /**
@@ -127,7 +120,8 @@ public class FocusController implements FocusDistanceListener {
     }
 
     /**
-     * Set the physical radius of the focus ring in pixels.
+     * Set the radius of the focus ring as a radius between 0 and 1.
+     * This will map to the min and max values computed for the UI.
      */
     public void setFocusRatio(final float ratio) {
         mMainThread.execute(new Runnable() {
@@ -142,15 +136,9 @@ public class FocusController implements FocusDistanceListener {
     }
 
     @Override
-    public void onFocusDistance(final float diopter, final boolean isActive) {
-        mMainThread.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (isActive || mFocusRing.isPassiveFocusRunning() ||
-                    mFocusRing.isActiveFocusRunning()) {
-                    mFocusRing.setRadiusRatio(mDiopterToRatio.scale(diopter));
-                }
-            }
-        });
+    public void onFocusDistance(float lensDistance, LinearScale lensRange) {
+        if (lensRange.isInDomain(lensDistance)) {
+            setFocusRatio(lensRange.scale(lensDistance));
+        }
     }
 }
