@@ -30,7 +30,7 @@ import com.android.camera.ui.motion.UnitCurves;
  * Base class for defining the focus ring states, enter and exit durations, and
  * positioning logic.
  */
-public abstract class FocusRingRenderer implements DynamicAnimation {
+abstract class FocusRingRenderer implements DynamicAnimation {
     private static final Tag TAG = new Tag("FocusRingRenderer");
 
     /**
@@ -218,7 +218,6 @@ public abstract class FocusRingRenderer implements DynamicAnimation {
         // equals the computed exit curve animation position.
         return tMillis - (long) (exitT * exitDuration);
     }
-
 
     private long computeEnterStartTimeMillis(long tMillis, float enterDuration) {
         if (mExitStartMillis + mExitDurationMillis <= tMillis) {

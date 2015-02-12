@@ -186,6 +186,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     public void setPreviewRect(Rect previewRect) {
         if (!mPreviewRect.equals(previewRect)) {
             mPreviewRect.set(previewRect);
+            mFocusRing.configurePreviewDimensions(CameraUtil.rectToRectF(mPreviewRect));
             resetCoordinateTransformer();
             mInitialized = true;
         }
@@ -319,6 +320,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         if (moving && !mPreviousMoving) {
             // Auto focus at the center of the preview.
             mFocusRing.startPassiveFocus();
+            mFocusRing.centerFocusLocation();
         } else if (!moving && mFocusRing.isPassiveFocusRunning()) {
             mFocusRing.stopFocusAnimations();
         }
