@@ -25,15 +25,22 @@ import com.android.camera.debug.Log;
 import javax.annotation.Nullable;
 
 /**
- * Workaround for secure-lockscreen double-onResume() bug:
+ * Workaround for lockscreen double-onResume() bug:
  * <p>
- * If started from the secure-lockscreen, the activity may be quickly started,
+ * We track 3 startup situations:
+ * <ul>
+ * <li>Normal startup -- e.g. from GEL.</li>
+ * <li>Secure lock screen startup -- e.g. with a keycode.</li>
+ * <li>Non-secure lock screen startup -- e.g. with just a swipe.</li>
+ * </ul>
+ * The KeyguardManager service can be queried to determine which state we are in.
+ * If started from the lock screen, the activity may be quickly started,
  * resumed, paused, stopped, and then started and resumed again. This is
- * problematic for launch time from the secure-lockscreen because we typically open the
+ * problematic for launch time from the lock screen because we typically open the
  * camera in onResume() and close it in onPause(). These camera operations take
  * a long time to complete. To workaround it, this class filters out
- * high-frequency onResume()->onPause() sequences if the current intent
- * indicates that we have started from the secure-lockscreen.
+ * high-frequency onResume()->onPause() sequences if the KeyguardManager
+ * indicates that we have started from the lock screen.
  * </p>
  * <p>
  * Subclasses should override the appropriate on[Create|Start...]Tasks() method
@@ -41,27 +48,26 @@ import javax.annotation.Nullable;
  * </p>
  * <p>
  * Sequences of onResume() followed quickly by onPause(), when the activity is
- * started from a secure-lockscreen will result in a quick no-op.<br>
+ * started from a lockscreen will result in a quick no-op.<br>
  * </p>
  */
 public abstract class QuickActivity extends Activity {
     private static final Log.Tag TAG = new Log.Tag("QuickActivity");
 
-    /**
-     * The amount of time to wait before running onResumeTasks when started from
-     * the lockscreen.
-     */
-    private static final long ON_RESUME_DELAY_MILLIS = 20;
+    /** onResume tasks delay from secure lockscreen. */
+    private static final long ON_RESUME_DELAY_SECURE_MILLIS = 30;
+    /** onResume tasks delay from non-secure lockscreen. */
+    private static final long ON_RESUME_DELAY_NON_SECURE_MILLIS = 15;
+
     /** A reference to the main handler on which to run lifecycle methods. */
     private Handler mMainHandler;
-    private boolean mPaused;
+
     /**
-     * True if the last call to onResume() resulted in a delayed call to
-     * mOnResumeTasks which was then canceled due to an immediate onPause().
-     * This allows optimizing the common case in which the subsequent
-     * call to onResume() should execute onResumeTasks() immediately.
+     * True if onResume tasks have been skipped, and made false again once they
+     * are executed within the onResume() method or from a delayed Runnable.
      */
-    private boolean mCanceledResumeTasks = false;
+    private boolean mSkippedFirstOnResume = false;
+
     /** Handle to Keyguard service. */
     @Nullable
     private KeyguardManager mKeyguardManager = null;
@@ -72,13 +78,12 @@ public abstract class QuickActivity extends Activity {
     private final Runnable mOnResumeTasks = new Runnable() {
             @Override
         public void run() {
-            logLifecycle("onResumeTasks", true);
-            if (mPaused) {
+            if (mSkippedFirstOnResume) {
+                Log.v(TAG, "delayed Runnable --> onResumeTasks()");
+                // Doing the tasks, can set to false.
+                mSkippedFirstOnResume = false;
                 onResumeTasks();
-                mPaused = false;
-                mCanceledResumeTasks = false;
             }
-            logLifecycle("onResumeTasks", false);
         }
     };
 
@@ -95,15 +100,9 @@ public abstract class QuickActivity extends Activity {
     @Override
     protected final void onCreate(Bundle bundle) {
         logLifecycle("onCreate", true);
-        Log.v(TAG, "Intent Action = " + getIntent().getAction());
         super.onCreate(bundle);
-
         mMainHandler = new Handler(getMainLooper());
-
         onCreateTasks(bundle);
-
-        mPaused = true;
-
         logLifecycle("onCreate", false);
     }
 
@@ -118,17 +117,30 @@ public abstract class QuickActivity extends Activity {
     @Override
     protected final void onResume() {
         logLifecycle("onResume", true);
-        Log.v(TAG, "Intent Action = " + getIntent().getAction());
 
+        // For lockscreen launch, there are two possible flows:
+        // 1. onPause() does not occur before mOnResumeTasks is executed:
+        //      Runnable mOnResumeTasks sets mSkippedFirstOnResume to false
+        // 2. onPause() occurs within ON_RESUME_DELAY_*_MILLIS:
+        //     a. Runnable mOnResumeTasks is removed
+        //     b. onPauseTasks() is skipped, mSkippedFirstOnResume remains true
+        //     c. next onResume() will immediately execute onResumeTasks()
+        //        and set mSkippedFirstOnResume to false
+
+        Log.v(TAG, "onResume(): isKeyguardLocked() = " + isKeyguardLocked());
         mMainHandler.removeCallbacks(mOnResumeTasks);
-        if (delayOnResumeOnStart() && !mCanceledResumeTasks) {
-            mMainHandler.postDelayed(mOnResumeTasks, ON_RESUME_DELAY_MILLIS);
+        if (isKeyguardLocked() && mSkippedFirstOnResume == false) {
+            // Skipping onResumeTasks; set to true.
+            mSkippedFirstOnResume = true;
+            long delay = isKeyguardSecure() ? ON_RESUME_DELAY_SECURE_MILLIS :
+                    ON_RESUME_DELAY_NON_SECURE_MILLIS;
+            Log.v(TAG, "onResume() --> postDelayed(mOnResumeTasks," + delay + ")");
+            mMainHandler.postDelayed(mOnResumeTasks, delay);
         } else {
-            if (mPaused) {
-                onResumeTasks();
-                mPaused = false;
-                mCanceledResumeTasks = false;
-            }
+            Log.v(TAG, "onResume --> onResumeTasks()");
+            // Doing the tasks, can set to false.
+            mSkippedFirstOnResume = false;
+            onResumeTasks();
         }
         super.onResume();
         logLifecycle("onResume", false);
@@ -138,11 +150,13 @@ public abstract class QuickActivity extends Activity {
     protected final void onPause() {
         logLifecycle("onPause", true);
         mMainHandler.removeCallbacks(mOnResumeTasks);
-        if (!mPaused) {
+        // Only run onPauseTasks if we have not skipped onResumeTasks in a
+        // first call to onResume.  If we did skip onResumeTasks (note: we
+        // just killed any delayed Runnable), we also skip onPauseTasks to
+        // adhere to lifecycle state machine.
+        if (mSkippedFirstOnResume == false) {
+            Log.v(TAG, "onPause --> onPauseTasks()");
             onPauseTasks();
-            mPaused = true;
-        } else {
-            mCanceledResumeTasks = true;
         }
         super.onPause();
         logLifecycle("onPause", false);
@@ -180,12 +194,22 @@ public abstract class QuickActivity extends Activity {
         Log.v(TAG, prefix + " " + methodName + ": Activity = " + toString());
     }
 
-    private boolean delayOnResumeOnStart() {
+    private boolean isKeyguardLocked() {
         if (mKeyguardManager == null) {
             mKeyguardManager = AndroidServices.instance().provideKeyguardManager();
         }
         if (mKeyguardManager != null) {
             return mKeyguardManager.isKeyguardLocked();
+        }
+        return false;
+    }
+
+    private boolean isKeyguardSecure() {
+        if (mKeyguardManager == null) {
+            mKeyguardManager = AndroidServices.instance().provideKeyguardManager();
+        }
+        if (mKeyguardManager != null) {
+            return mKeyguardManager.isKeyguardSecure();
         }
         return false;
     }
