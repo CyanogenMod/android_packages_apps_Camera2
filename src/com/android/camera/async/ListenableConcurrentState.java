@@ -59,6 +59,7 @@ public class ListenableConcurrentState<T> implements Listenable<T> {
                 }
             }, mExecutor);
         }
+        callback.onCallback(mState.get());
     }
 
     @Override
