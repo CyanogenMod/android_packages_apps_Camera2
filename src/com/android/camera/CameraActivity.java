@@ -42,7 +42,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -245,9 +244,6 @@ public class CameraActivity extends QuickActivity
     private CameraController mCameraController;
     private boolean mPaused;
     private CameraAppUI mCameraAppUI;
-
-    private PeekAnimationHandler mPeekAnimationHandler;
-    private HandlerThread mPeekAnimationThread;
 
     private Intent mGalleryIntent;
     private long mOnCreateTime;
@@ -941,20 +937,15 @@ public class CameraActivity extends QuickActivity
                 }
 
                 @Override
-                public void onSessionUpdated(Uri uri) {
-                    Log.v(TAG, "onSessionUpdated: " + uri);
-                    mDataAdapter.refresh(uri);
-                }
-
-                @Override
-                public void onSessionPreviewAvailable(Uri uri) {
-                    Log.v(TAG, "onSessionPreviewAvailable: " + uri);
-                    mDataAdapter.refresh(uri);
-                    int index = mDataAdapter.findByContentUri(uri);
-                    if (index != -1) {
-                        startPeekAnimation(mDataAdapter.getItemAt(index),
-                                mCurrentModule.getPeekAccessibilityString());
+                public void onSessionCaptureIndicatorUpdate(Bitmap indicator, int rotationDegrees) {
+                    // Don't show capture indicator in Photo Sphere.
+                    final int photosphereModuleId = getApplicationContext().getResources()
+                            .getInteger(
+                                    R.integer.camera_mode_photosphere);
+                    if (mCurrentModeIndex == photosphereModuleId) {
+                        return;
                     }
+                    indicateCapture(indicator, rotationDegrees);
                 }
 
                 @Override
@@ -1172,19 +1163,10 @@ public class CameraActivity extends QuickActivity
     }
 
     /**
-     * Starts the filmstrip peek animation if the filmstrip is not visible.
-     *
-     * @param data The data to peek.
-     * @param accessibilityString Accessibility string to announce on peek animation.
+     * If not in filmstrip, this shows the capture indicator.
      */
-    private void startPeekAnimation(final FilmstripItem data, final String accessibilityString) {
-        if (mFilmstripVisible || mPeekAnimationHandler == null) {
-            return;
-        }
-
-        if (!data.getAttributes().isImage() &&
-              !data.getAttributes().isVideo() &&
-              !data.getAttributes().isRendering()) {
+    private void indicateCapture(final Bitmap indicator, final int rotationDegrees) {
+        if (mFilmstripVisible) {
             return;
         }
 
@@ -1195,11 +1177,13 @@ public class CameraActivity extends QuickActivity
         if (mCurrentModeIndex == photosphereModuleId) {
             return;
         }
-        mPeekAnimationHandler.startDecodingJob(data, new Callback<Bitmap>() {
+
+        mMainHandler.post(new Runnable() {
             @Override
-            public void onCallback(Bitmap result) {
-                mCameraAppUI.startCaptureIndicatorRevealAnimation(accessibilityString);
-                mCameraAppUI.updateCaptureIndicatorThumbnail(result, 0);
+            public void run() {
+                mCameraAppUI.startCaptureIndicatorRevealAnimation(mCurrentModule
+                        .getPeekAccessibilityString());
+                mCameraAppUI.updateCaptureIndicatorThumbnail(indicator, rotationDegrees);
             }
         });
     }
@@ -1243,10 +1227,26 @@ public class CameraActivity extends QuickActivity
             }
 
             @Override
-            protected void onPostExecute(FilmstripItem data) {
+            protected void onPostExecute(final FilmstripItem data) {
                 // TODO: Figure out why sometimes the data is aleady there.
                 mDataAdapter.addOrUpdate(data);
-                startPeekAnimation(data, mCurrentModule.getPeekAccessibilityString());
+
+                // Legacy modules don't use CaptureSession, so we show the capture indicator when
+                // the item was safed.
+                if (mCurrentModule instanceof PhotoModule ||
+                        mCurrentModule instanceof VideoModule) {
+                    AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            final Optional<Bitmap> bitmap = data.generateThumbnail(
+                                    mAboveFilmstripControlLayout.getWidth(),
+                                    mAboveFilmstripControlLayout.getMeasuredHeight());
+                            if (bitmap.isPresent()) {
+                                indicateCapture(bitmap.get(), 0);
+                            }
+                        }
+                    });
+                }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, newData);
     }
@@ -1749,11 +1749,6 @@ public class CameraActivity extends QuickActivity
         }
 
         mPaused = true;
-        if (mPeekAnimationHandler != null) {
-            mPeekAnimationHandler = null;
-            mPeekAnimationThread.quitSafely();
-            mPeekAnimationThread = null;
-        }
         mCameraAppUI.hideCaptureIndicator();
         mFirstRunDialog.dismiss();
 
@@ -1864,10 +1859,6 @@ public class CameraActivity extends QuickActivity
         }
 
         mOrientationManager.resume();
-        mPeekAnimationThread = new HandlerThread("Peek animation");
-        mPeekAnimationThread.start();
-        mPeekAnimationHandler = new PeekAnimationHandler(mPeekAnimationThread.getLooper(),
-                mMainHandler, mAboveFilmstripControlLayout);
 
         mCurrentModule.hardResetSettings(mSettingsManager);
         mCurrentModule.resume();
@@ -2726,7 +2717,7 @@ public class CameraActivity extends QuickActivity
                 .getCaptureSessionManager();
 
         if (sessionManager.hasErrorMessage(contentUri)) {
-            showProcessError(sessionManager.getErrorMesage(contentUri));
+            showProcessError(sessionManager.getErrorMessage(contentUri));
         } else {
             filmstripBottomPanel.hideProgressError();
             CaptureSession session = sessionManager.getSession(contentUri);
@@ -2761,66 +2752,6 @@ public class CameraActivity extends QuickActivity
         filmstripBottomPanel.setTinyPlanetEnabled(
                 currentData.getMetadata().isPanorama360());
         filmstripBottomPanel.setViewerButtonVisibility(viewButtonVisibility);
-    }
-
-    private static class PeekAnimationHandler extends Handler {
-        private class DataAndCallback {
-            FilmstripItem mData;
-            com.android.camera.util.Callback<Bitmap> mCallback;
-
-            public DataAndCallback(FilmstripItem data, com.android.camera.util.Callback<Bitmap>
-                    callback) {
-                mData = data;
-                mCallback = callback;
-            }
-        }
-
-        private final Handler mMainHandler;
-        private final FrameLayout mAboveFilmstripControlLayout;
-
-        public PeekAnimationHandler(Looper looper, Handler mainHandler,
-                FrameLayout aboveFilmstripControlLayout) {
-            super(looper);
-            mMainHandler = mainHandler;
-            mAboveFilmstripControlLayout = aboveFilmstripControlLayout;
-        }
-
-        /**
-         * Starts the animation decoding job and posts a {@code Runnable} back
-         * when when the decoding is done.
-         *
-         * @param data The data item to decode the thumbnail for.
-         * @param callback {@link com.android.camera.util.Callback} after the
-         *                 decoding is done.
-         */
-        public void startDecodingJob(final FilmstripItem data,
-                final com.android.camera.util.Callback<Bitmap> callback) {
-            PeekAnimationHandler.this.obtainMessage(0 /** dummy integer **/,
-                    new DataAndCallback(data, callback)).sendToTarget();
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            final FilmstripItem data = ((DataAndCallback) msg.obj).mData;
-            final com.android.camera.util.Callback<Bitmap> callback =
-                    ((DataAndCallback) msg.obj).mCallback;
-            if (data == null || callback == null) {
-                return;
-            }
-
-            final Optional<Bitmap> bitmap = data.generateThumbnail(
-                  mAboveFilmstripControlLayout.getWidth(),
-                  mAboveFilmstripControlLayout.getMeasuredHeight());
-
-            if (bitmap.isPresent()) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onCallback(bitmap.get());
-                    }
-                });
-            }
-        }
     }
 
     private void showDetailsDialog(int index) {

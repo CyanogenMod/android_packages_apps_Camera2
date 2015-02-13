@@ -89,6 +89,15 @@ public interface CaptureSession {
     public void updateThumbnail(Bitmap bitmap);
 
     /**
+     * For an ongoing session, this updates the capture indicator thumbnail.
+     *
+     * @param bitmap the thumbnail to be shown while the session is in progress.
+     *            update the capture indicator
+     * @param rotationDegrees the rotation of the thumbnail in degrees
+     */
+    public void updateCaptureIndicatorThumbnail(Bitmap bitmap, int rotationDegrees);
+
+    /**
      * Starts an empty session with the given placeholder size.
      *
      * @param mPictureSize the size, in pixels of the empty placeholder.
@@ -175,7 +184,7 @@ public interface CaptureSession {
      * Updates the preview from the file created from
      * {@link #getTempOutputFile()}.
      */
-    public void updatePreview();
+    public void updatePreviewAndIndicator();
 
     /**
      * Adds a progress listener to this session.

@@ -16,6 +16,7 @@
 
 package com.android.camera.session;
 
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 
@@ -37,16 +38,13 @@ public interface CaptureSessionManager {
         public void onSessionQueued(Uri mediaUri);
 
         /**
-         * Called when the media underlying the session with the given Uri has
-         * been updated.
+         * Called when the capture indicator for the given session has changed
+         * and should be updated.
+         *
+         * @param bitmap the capture indicator bitmap
+         * @param rotationDegrees the rotation of the updated preview
          */
-        public void onSessionUpdated(Uri mediaUri);
-
-        /**
-         * Called when the preview of the media underlying the session with the
-         * given Uri has been updated.
-         */
-        public void onSessionPreviewAvailable(Uri mediaUri);
+        public void onSessionCaptureIndicatorUpdate(Bitmap bitmap, int rotationDegrees);
 
         /** Called when the session with the given Uri finished. */
         public void onSessionDone(Uri mediaUri);
@@ -120,7 +118,7 @@ public interface CaptureSessionManager {
      * @return If existant, returns the error message for the session with the
      *         given URI.
      */
-    public CharSequence getErrorMesage(Uri uri);
+    public CharSequence getErrorMessage(Uri uri);
 
     /**
      * Removes any existing error messages for the session with the given URI.
