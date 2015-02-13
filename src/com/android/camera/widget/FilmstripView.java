@@ -404,7 +404,9 @@ public class FilmstripView extends ViewGroup {
                 mFilmstrip.addView(mView);
             }
 
-            setVisibility(View.VISIBLE);
+            // all new views added should not display until layout positions
+            // them and sets them visible
+            setVisibility(View.INVISIBLE);
             setAlpha(1f);
             setTranslationX(0);
             setTranslationY(0);
@@ -1193,6 +1195,7 @@ public class FilmstripView extends ViewGroup {
             // photo to the bottom of the camera preview. Simply place the
             // photo on the right of the preview.
             final ViewItem currItem = mViewItems[BUFFER_CENTER];
+            currItem.setVisibility(View.VISIBLE);
             currItem.layoutWithTranslationX(mDrawArea, mCenterX, mScale);
             currItem.setTranslationX(0f);
             currItem.setAlpha(1f);
@@ -1214,6 +1217,7 @@ public class FilmstripView extends ViewGroup {
             }
         } else {
             final ViewItem currItem = mViewItems[BUFFER_CENTER];
+            currItem.setVisibility(View.VISIBLE);
             // The normal filmstrip has no translation for the current item. If
             // it has translation before, gradually set it to zero.
             currItem.setTranslationX(currItem.getTranslationX() * scaleFraction);
