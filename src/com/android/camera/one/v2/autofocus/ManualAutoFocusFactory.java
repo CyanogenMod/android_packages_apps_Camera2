@@ -75,7 +75,6 @@ public class ManualAutoFocusFactory {
         RequestTemplate afRequestBuilder = new RequestTemplate(rootBuilder);
         afRequestBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, mAEMeteringRegion);
         afRequestBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, mAFMeteringRegion);
-        afRequestBuilder.setParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
 
         CameraCommand afScanCommand = new FullAFScanCommand(frameServer, afRequestBuilder,
                 templateType);
