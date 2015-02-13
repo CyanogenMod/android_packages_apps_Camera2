@@ -23,6 +23,7 @@ import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
@@ -30,6 +31,8 @@ import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
@@ -66,13 +69,25 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     }
 
     /**
-     * Wraps static call to Exif for testability.
+     * Encapsulates the required EXIF Tag parse for Image processing.
      *
      * @param jpegData Binary data of the JPEG with EXIF flags
-     * @return Degrees of rotation of the EXIF flag
+     * @return A Minimal Map from ExifInterface.Tag value to values required for Image processing
      */
-    public int exifGetOrientation(byte[] jpegData) {
-        return Exif.getOrientation(jpegData);
+    public Map<Integer, Integer> exifGetMinimalTags(byte[] jpegData) {
+        if (jpegData == null) {
+            return null;
+        }
+
+        ExifInterface exif = Exif.getExif(jpegData);
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        map.put(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.getRotationForOrientationValue((short) Exif.getOrientation(exif)));
+        map.put(ExifInterface.TAG_PIXEL_X_DIMENSION, exif.getTagIntValue(
+                ExifInterface.TAG_PIXEL_X_DIMENSION));
+        map.put(ExifInterface.TAG_PIXEL_Y_DIMENSION, exif.getTagIntValue(
+                ExifInterface.TAG_PIXEL_Y_DIMENSION));
+        return map;
     }
 
     @Override
@@ -83,7 +98,6 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         // orientation.
 
         TaskImage inputImage, resultImage;
-
         byte[] writeOut;
         int numBytes;
         ByteBuffer compressedData;
@@ -104,14 +118,44 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     origBuffer.rewind();
                     compressedData.rewind();
 
-                    // For JPEG, always use the EXIF orientation as ground truth.
-                    int exifDerivedRotation = exifGetOrientation(compressedData.array());
+                    // For JPEG, always use the EXIF orientation as ground
+                    // truth on orientation, width and height.
+                    Map<Integer, Integer> minimalExifTags = exifGetMinimalTags(compressedData
+                            .array());
 
-                    // Ignore the passed-in rotation and use the EXIF from byte[] payload
+                    Integer exifOrientation = minimalExifTags.get(ExifInterface.TAG_ORIENTATION);
+                    Integer exifPixelXDimension = minimalExifTags
+                            .get(ExifInterface.TAG_PIXEL_X_DIMENSION);
+                    Integer exifPixelYDimension = minimalExifTags
+                            .get(ExifInterface.TAG_PIXEL_Y_DIMENSION);
+
+                    final DeviceOrientation exifDerivedRotation;
+                    if (exifOrientation == null) {
+                        // No existing rotation value is assumed to be 0
+                        // rotation.
+                        exifDerivedRotation = DeviceOrientation.CLOCKWISE_0;
+                    } else {
+                        exifDerivedRotation = OrientationManager.DeviceOrientation
+                                .from(exifOrientation);
+                    }
+
+                    final int imageWidth;
+                    final int imageHeight;
+                    if (exifPixelXDimension == null || exifPixelYDimension == null) {
+                        Log.w(TAG, "Cannot parse EXIF for image dimensions, passing 0x0 dimensions");
+                        imageHeight = 0;
+                        imageWidth = 0;
+                    } else {
+                        imageWidth = exifPixelXDimension;
+                        imageHeight = exifPixelYDimension;
+                    }
+
+                    // Ignore the device rotation on ImageToProcess and use the EXIF from
+                    // byte[] payload
                     inputImage = new TaskImage(
-                            OrientationManager.DeviceOrientation.from(exifDerivedRotation),
-                            img.proxy.getWidth(),
-                            img.proxy.getHeight(),
+                            exifDerivedRotation,
+                            imageWidth,
+                            imageHeight,
                             img.proxy.getFormat());
                     resultImage = inputImage; // Pass through
                 } finally {
@@ -141,6 +185,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                             DeviceOrientation.CLOCKWISE_0, resultSize.getWidth(),
                             resultSize.getHeight(),
                             ImageFormat.JPEG);
+                    // Image rotation is already encoded into the bytes.
+
                     onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
 
                     compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
@@ -180,6 +226,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         // EXIF tags are rewritten so that output from this task is normalized.
         final TaskImage finalInput = inputImage;
         final TaskImage finalResult = resultImage;
+
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
                 resultImage.orientation.getDegrees(), createExif(resultImage),
                 new MediaSaver.OnMediaSavedListener() {
@@ -209,6 +256,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      */
     protected ExifInterface createExif(TaskImage image) {
         ExifInterface exif = new ExifInterface();
+        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_X_DIMENSION, image.width));
+        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_Y_DIMENSION, image.height));
         exif.setTag(exif.buildTag(ExifInterface.TAG_IMAGE_WIDTH, image.width));
         exif.setTag(exif.buildTag(ExifInterface.TAG_IMAGE_LENGTH, image.height));
         exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
