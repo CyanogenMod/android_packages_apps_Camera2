@@ -108,7 +108,7 @@ public class BasicCameraFactory {
 
         ManualAutoFocusFactory manualAutoFocusFactory = new ManualAutoFocusFactory(new
                 Lifetime(lifetime), frameServer, threadPool, cropRegion,
-                sensorOrientation, mPreviewStarter, rootBuilder,
+                sensorOrientation, mPreviewStarter, previewBuilder,
                 templateType);
         mManualAutoFocus = manualAutoFocusFactory.provideManualAutoFocus();
         Supplier<MeteringRectangle[]> aeRegions =
