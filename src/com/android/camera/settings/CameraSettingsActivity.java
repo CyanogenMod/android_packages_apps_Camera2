@@ -45,7 +45,6 @@ import com.android.camera.one.OneCameraModule;
 import com.android.camera.settings.PictureSizeLoader.PictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
-import com.android.camera.util.GoogleHelpHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
@@ -139,7 +138,6 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         public static final String PREF_CATEGORY_RESOLUTION = "pref_category_resolution";
         public static final String PREF_CATEGORY_ADVANCED = "pref_category_advanced";
-        public static final String PREF_LAUNCH_HELP = "pref_launch_help";
         private static final Log.Tag TAG = new Log.Tag("SettingsFragment");
         private static DecimalFormat sMegaPixelFormat = new DecimalFormat("##0.0");
         private String[] mCamcorderProfileNames;
@@ -217,15 +215,6 @@ public class CameraSettingsActivity extends FragmentActivity {
                 setPreferenceScreenIntent(advancedScreen);
             }
 
-            Preference helpPref = findPreference(PREF_LAUNCH_HELP);
-            helpPref.setOnPreferenceClickListener(
-                    new OnPreferenceClickListener() {
-                        @Override
-                        public boolean onPreferenceClick(Preference preference) {
-                            new GoogleHelpHelper(activity).launchGoogleHelp();
-                            return true;
-                        }
-                    });
             getPreferenceScreen().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(this);
         }
