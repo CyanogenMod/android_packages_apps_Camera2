@@ -38,6 +38,12 @@ public interface CaptureSessionManager {
         public void onSessionQueued(Uri mediaUri);
 
         /**
+         * Called when the media underlying the session with the given Uri has
+         * been updated.
+         */
+        public void onSessionUpdated(Uri mediaUri);
+
+        /**
          * Called when the capture indicator for the given session has changed
          * and should be updated.
          *

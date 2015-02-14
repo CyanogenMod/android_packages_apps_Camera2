@@ -184,7 +184,7 @@ public interface CaptureSession {
      * Updates the preview from the file created from
      * {@link #getTempOutputFile()}.
      */
-    public void updatePreviewAndIndicator();
+    public void updatePreview();
 
     /**
      * Adds a progress listener to this session.

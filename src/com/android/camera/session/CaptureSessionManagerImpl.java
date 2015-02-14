@@ -274,6 +274,23 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     /**
+     * Notifies all task listeners that the media associated with the task has
+     * been updated.
+     */
+    void notifySessionUpdated(final Uri uri) {
+        mMainHandler.execute(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mTaskListeners) {
+                    for (SessionListener listener : mTaskListeners) {
+                        listener.onSessionUpdated(uri);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Notifies all task listeners that the task with the given URI has updated
      * its media.
      *

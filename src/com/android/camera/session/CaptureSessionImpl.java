@@ -151,7 +151,7 @@ public class CaptureSessionImpl implements CaptureSession {
     @Override
     public void updateThumbnail(Bitmap bitmap) {
         mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, bitmap);
-        mSessionManager.notifyTaskQueued(mUri);
+        mSessionManager.notifySessionUpdated(mUri);
     }
 
     @Override
@@ -299,7 +299,7 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public void updatePreviewAndIndicator() {
+    public void updatePreview() {
         final File path;
         if (mTempOutputFile.isUsable()) {
             path = mTempOutputFile.getFile();
@@ -322,7 +322,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 Bitmap placeholder = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length,
                         options);
                 mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, placeholder);
-                onCaptureIndicatorUpdate(placeholder, 0 /* rotation */);
+                mSessionManager.notifySessionUpdated(mUri);
             }
         });
     }
