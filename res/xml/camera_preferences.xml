@@ -81,9 +81,4 @@
         android:title="@string/pref_camera_max_brightness_title" />
   </PreferenceScreen>
 
-  <!-- Google Help and feedback launcher -->
-  <Preference
-      android:key="pref_launch_help"
-      android:title="@string/setting_google_help_and_feedback" />
-
 </PreferenceScreen>
