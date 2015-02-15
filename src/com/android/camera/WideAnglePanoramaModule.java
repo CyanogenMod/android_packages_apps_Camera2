@@ -541,6 +541,10 @@ public class WideAnglePanoramaModule
                 } else {
                     float panningRateXInDegree = panningRateX * mHorizontalViewAngle;
                     float panningRateYInDegree = panningRateY * mVerticalViewAngle;
+                    if (mDeviceOrientation == 180 || mDeviceOrientation == 90) {
+                        accumulatedHorizontalAngle = -accumulatedHorizontalAngle;
+                        accumulatedVerticalAngle = -accumulatedVerticalAngle;
+                    }
                     mUI.updateCaptureProgress(panningRateXInDegree, panningRateYInDegree,
                             accumulatedHorizontalAngle, accumulatedVerticalAngle,
                             PANNING_SPEED_THRESHOLD);
