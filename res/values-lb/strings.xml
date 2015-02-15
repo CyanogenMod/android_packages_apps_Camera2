@@ -110,7 +110,7 @@
   <string name="pref_video_quality_entry_low">Niddreg</string>
   <string name="pref_video_time_lapse_frame_interval_title">Zäitraffer</string>
   <string name="pref_camera_settings_category">Kameraastellungen</string>
-  <string name="pref_camcorder_settings_category">Camcorderastellungen</string>
+  <string name="pref_camcorder_settings_category">Kameraastellungen</string>
   <string name="pref_camera_picturesize_title">Fotogréisst</string>
   <string name="pref_camera_picturesize_entry_13mp">13M Pixelen</string>
   <string name="pref_camera_picturesize_entry_8mp">8M Pixelen</string>

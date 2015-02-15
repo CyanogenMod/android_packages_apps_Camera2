@@ -102,7 +102,7 @@
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Point rouge-jaune</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Cartooniser</string>
   <string name="pref_camera_burst_title">Mode rafale</string>
-  <string name="pref_camera_burst_entry_off">Désactiver</string>
+  <string name="pref_camera_burst_entry_off">Désactivé</string>
   <string name="pref_camera_burst_entry_5">5 photos</string>
   <string name="pref_camera_burst_entry_10">10 photos</string>
   <string name="pref_camera_burst_entry_15">15 photos</string>
@@ -118,7 +118,7 @@
   <string name="pref_camera_flashmode_label_redeye">YEUX ROUGES</string>
   <string name="pref_camera_beauty_mode_title">Mode beauté</string>
   <string name="pref_camera_slow_shutter_title">Obturation lente</string>
-  <string name="pref_camera_slow_shutter_entry_off">Désactiver</string>
+  <string name="pref_camera_slow_shutter_entry_off">Désactivé</string>
   <string name="pref_camera_slow_shutter_entry_auto">Auto</string>
   <string name="pref_camera_slow_shutter_entry_half_second">0,5 seconde</string>
   <string name="pref_camera_slow_shutter_entry_1s">1 seconde</string>
