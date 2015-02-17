@@ -59,6 +59,8 @@ import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.ui.focus.LensRangeCalculator;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.ListenerCombiner;
@@ -147,6 +149,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
     /** The characteristics of this camera. */
     private final CameraCharacteristics mCharacteristics;
+    /** Converts focus distance units into ratio values */
+    private final LinearScale mLensRange;
     /** The underlying Camera2 API camera device. */
     private final CameraDevice mDevice;
     private final CameraDirectionProvider mDirection;
@@ -288,6 +292,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
         mDevice = device;
         mCharacteristics = characteristics;
+        mLensRange = LensRangeCalculator
+              .getDiopterToRatioCalculator(characteristics);
         mDirection = new CameraDirectionProvider(mCharacteristics);
         mFullSizeAspectRatio = calculateFullSizeAspectRatio(characteristics);
 
@@ -360,10 +366,13 @@ public class OneCameraZslImpl extends AbstractOneCamera {
                             Object newValue,
                             CaptureResult result) {
                           Integer state = result.get(CaptureResult.LENS_STATE);
-                          if (newValue != null && state != null) {
-                              mFocusDistanceListener.onFocusDistance((float) newValue, state == 1);
-                          } else if (newValue != null) {
-                              mFocusDistanceListener.onFocusDistance((float) newValue, true);
+
+                          // Forward changes if we have a new value and the camera
+                          // A) Doesn't support lens state or B) lens state is
+                          // reported and it is reported as moving.
+                          if (newValue != null &&
+                                (state == null || state == CameraMetadata.LENS_STATE_MOVING)) {
+                              mFocusDistanceListener.onFocusDistance((float) newValue, mLensRange);
                           }
                       }
                   });

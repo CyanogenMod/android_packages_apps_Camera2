@@ -20,6 +20,7 @@ import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
 
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.Size;
 
 import java.util.List;
@@ -75,4 +76,9 @@ public interface OneCameraCharacteristics {
      * @return The supported hardware level.
      */
     public SupportedHardwareLevel getSupportedHardwareLevel();
+
+    /**
+     * A converter from the physical focus range of the camera to a ratio.
+     */
+    public LinearScale getLensFocusRange();
 }

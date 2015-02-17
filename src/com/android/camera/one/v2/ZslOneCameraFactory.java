@@ -244,6 +244,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
         OneCamera.Facing direction = characteristics.getCameraDirection();
         return new InitializedOneCameraFactory(lifetime, cameraStarter, device,
                 outputSurfaces, mainThread, new HandlerFactory(), maxZoom,
-                supportedPreviewSizes, direction).provideOneCamera();
+                supportedPreviewSizes, characteristics.getLensFocusRange(),
+                direction).provideOneCamera();
     }
 }

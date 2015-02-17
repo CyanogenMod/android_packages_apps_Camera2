@@ -226,7 +226,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
         OneCamera.Facing direction = characteristics.getCameraDirection();
 
         return new InitializedOneCameraFactory(lifetime, cameraStarter, device, outputSurfaces,
-                mainExecutor, new HandlerFactory(), maxZoom, supportedPreviewSizes, direction)
+                mainExecutor, new HandlerFactory(), maxZoom, supportedPreviewSizes,
+                characteristics.getLensFocusRange(), direction)
                 .provideOneCamera();
     }
 }

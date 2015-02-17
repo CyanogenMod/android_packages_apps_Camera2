@@ -57,6 +57,8 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.ui.focus.LensRangeCalculator;
+import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.CaptureDataSerializer;
 import com.android.camera.util.JpegUtilNative;
@@ -226,7 +228,7 @@ public class OneCameraImpl extends AbstractOneCamera {
 
                     Float diopter = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
                     if(diopter != null && mFocusDistanceListener != null) {
-                        mFocusDistanceListener.onFocusDistance(diopter, true);
+                        mFocusDistanceListener.onFocusDistance(diopter, mLensRange);
                     }
 
                     if (request.getTag() == RequestTag.CAPTURE) {
@@ -253,6 +255,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     private final Handler mCameraHandler;
     /** The characteristics of this camera. */
     private final CameraCharacteristics mCharacteristics;
+    private final LinearScale mLensRange;
     /** The underlying Camera2 API camera device. */
     private final CameraDevice mDevice;
     private final CameraDirectionProvider mDirectionProvider;
@@ -307,6 +310,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     OneCameraImpl(CameraDevice device, CameraCharacteristics characteristics, Size pictureSize) {
         mDevice = device;
         mCharacteristics = characteristics;
+        mLensRange = LensRangeCalculator.getDiopterToRatioCalculator(characteristics);
         mDirectionProvider = new CameraDirectionProvider(characteristics);
         mFullSizeAspectRatio = calculateFullSizeAspectRatio(characteristics);
 
