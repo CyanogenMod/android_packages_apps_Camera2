@@ -22,6 +22,8 @@ import com.android.camera.MediaSaverImpl;
 import com.android.camera.Storage;
 import com.android.camera.async.MainThread;
 import com.android.camera.remote.RemoteShutterListener;
+import com.android.camera.session.CaptureSessionFactory;
+import com.android.camera.session.CaptureSessionFactoryImpl;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.PlaceholderManager;
@@ -65,8 +67,10 @@ public class CameraServicesImpl implements CameraServices {
 
         StackSaverFactory mStackSaverFactory = new StackSaverFactory(Storage.DIRECTORY,
               context.getContentResolver());
-        mSessionManager = new CaptureSessionManagerImpl(mMediaSaver, mPlaceHolderManager,
-                mSessionStorageManager, mStackSaverFactory, MainThread.create());
+        CaptureSessionFactory captureSessionFactory = new CaptureSessionFactoryImpl(
+                mMediaSaver, mPlaceHolderManager, mSessionStorageManager, mStackSaverFactory);
+        mSessionManager = new CaptureSessionManagerImpl(
+                captureSessionFactory, mSessionStorageManager, MainThread.create());
         mMemoryManager = MemoryManagerImpl.create(context, mMediaSaver);
         mRemoteShutterListener = RemoteShutterHelper.create(context);
         mSettingsManager = new SettingsManager(context);

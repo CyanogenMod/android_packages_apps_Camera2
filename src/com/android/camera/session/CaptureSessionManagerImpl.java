@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 
-import com.android.camera.app.MediaSaver;
 import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
 
@@ -61,13 +60,9 @@ import java.util.Map;
  */
 public class CaptureSessionManagerImpl implements CaptureSessionManager {
     private static final Log.Tag TAG = new Log.Tag("CaptureSessMgrImpl");
-    /** Sub-directory for storing temporary session files. */
-    private static final String TEMP_SESSIONS = "TEMP_SESSIONS";
 
-    private final MediaSaver mMediaSaver;
-    private final PlaceholderManager mPlaceholderManager;
+    private final CaptureSessionFactory mSessionFactory;
     private final SessionStorageManager mSessionStorageManager;
-    private final StackSaverFactory mStackSaverFactory;
 
     /** Failed session messages. Uri -> message. */
     private final HashMap<Uri, CharSequence> mFailedSessionMessages = new HashMap<>();
@@ -86,30 +81,25 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     /**
      * Initializes a new {@link CaptureSessionManager} implementation.
      *
-     * @param mediaSaver used to store the resulting media item
-     * @param placeholderManager used to manage placeholders in the filmstrip
-     *            before the final result is ready
+     * @param sessionFactory used to create new capture session objects.
      * @param sessionStorageManager used to tell modules where to store
      *            temporary session data
+     * @param mainHandler the main handler which listener callback is executed on.
      */
-    public CaptureSessionManagerImpl(MediaSaver mediaSaver, PlaceholderManager placeholderManager,
-            SessionStorageManager sessionStorageManager, StackSaverFactory stackSaverProvider,
+    public CaptureSessionManagerImpl(
+            CaptureSessionFactory sessionFactory,
+            SessionStorageManager sessionStorageManager,
             MainThread mainHandler) {
+        mSessionFactory = sessionFactory;
         mSessions = new HashMap<>();
-        mMediaSaver = mediaSaver;
-        mPlaceholderManager = placeholderManager;
         mSessionStorageManager = sessionStorageManager;
-        mStackSaverFactory = stackSaverProvider;
         mMainHandler = mainHandler;
     }
 
-    @Override
-    public CaptureSession createNewSession(String title, long sessionStartTime, Location location) {
-        TemporarySessionFile temporarySessionFile = new TemporarySessionFile(
-                mSessionStorageManager, TEMP_SESSIONS, title);
-        return new CaptureSessionImpl(title, sessionStartTime, location, temporarySessionFile,
-                this, mPlaceholderManager, mMediaSaver, mStackSaverFactory.create(title, location));
+    public CaptureSession createNewSession(String title, long sessionStartMillis, Location location) {
+        return mSessionFactory.createNewSession(this, title, sessionStartMillis, location);
     }
+
 
     @Override
     public void putSession(Uri sessionUri, CaptureSession session) {
