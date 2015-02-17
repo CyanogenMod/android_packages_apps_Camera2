@@ -876,6 +876,12 @@ public class CameraActivity extends QuickActivity
                 }
 
                 @Override
+                public void onSessionUpdated(Uri uri) {
+                    Log.v(TAG, "onSessionUpdated: " + uri);
+                    mDataAdapter.refresh(uri);
+                }
+
+                @Override
                 public void onSessionDone(final Uri sessionUri) {
                     Log.v(TAG, "onSessionDone:" + sessionUri);
                     Uri contentUri = Storage.getContentUriForSessionUri(sessionUri);
