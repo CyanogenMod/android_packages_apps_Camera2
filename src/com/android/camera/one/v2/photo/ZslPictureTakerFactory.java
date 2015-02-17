@@ -49,28 +49,26 @@ public class ZslPictureTakerFactory {
             BufferQueue<ImageProxy> ringBuffer,
             MetadataPool metadataPool,
             Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode) {
-        // The fallback command is used whenever no acceptable ZSL images are
-        // available for capture.
-        // This command will perform a full AF & AE sequence.
-        ImageCaptureCommand fallbackCommand = new ConvergedImageCaptureCommand(
-                sharedImageReader, frameServer, rootRequestBuilder,
-                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
-                Arrays.asList(rootRequestBuilder));
-
         // When flash is ON, always use the ConvergedImageCaptureCommand which
         // performs the AF & AE precapture sequence.
-        ImageCaptureCommand flashOnCommand =
-                fallbackCommand;
+        ImageCaptureCommand flashOnCommand = new ConvergedImageCaptureCommand(
+                sharedImageReader, frameServer, rootRequestBuilder,
+                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder), true, true);
         // When flash is OFF, use ZSL and filter images to require AF
         // convergence, but not AE convergence (AE can take a long time to
         // converge, making capture feel slow).
+        ImageCaptureCommand flashOffFallback = new ConvergedImageCaptureCommand(
+                sharedImageReader, frameServer, rootRequestBuilder,
+                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder), /* ae */false, /* af */true);
         ImageCaptureCommand flashOffCommand =
-                new ZslImageCaptureCommand(ringBuffer, metadataPool, fallbackCommand,
+                new ZslImageCaptureCommand(ringBuffer, metadataPool, flashOffFallback,
                         new AcceptableZslImageFilter(true, false));
         // When flash is Auto, use ZSL and filter images to require AF
         // convergence, and AE convergence.
         ImageCaptureCommand flashAutoCommand =
-                new ZslImageCaptureCommand(ringBuffer, metadataPool, fallbackCommand,
+                new ZslImageCaptureCommand(ringBuffer, metadataPool, flashOnCommand,
                         new AcceptableZslImageFilter(true, true));
 
         ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(flashMode,

@@ -59,6 +59,9 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
     private final int mStillCaptureRequestTemplate;
     private final List<RequestBuilder.Factory> mBurst;
 
+    private final boolean mWaitForAEConvergence;
+    private final boolean mWaitForAFConvergence;
+
     /**
      * Transforms a request template by resetting focus and exposure modes.
      */
@@ -83,21 +86,23 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
      *            capture is complete.
      * @param repeatingRequestTemplate The template type to use for repeating
      *            requests.
-     * @param repeatingRequestTemplate The template type to use for capture
-     *            requests.
      * @param burst Creates request builders to use for each image captured from
-     *            the burst.
+     * @param waitForAEConvergence
+     * @param waitForAFConvergence
      */
     public ConvergedImageCaptureCommand(ManagedImageReader imageReader, FrameServer frameServer,
             RequestBuilder.Factory repeatingRequestBuilder,
             int repeatingRequestTemplate, int stillCaptureRequestTemplate,
-            List<RequestBuilder.Factory> burst) {
+            List<RequestBuilder.Factory> burst, boolean waitForAEConvergence,
+            boolean waitForAFConvergence) {
         mImageReader = imageReader;
         mFrameServer = frameServer;
         mRepeatingRequestBuilder = repeatingRequestBuilder;
         mRepeatingRequestTemplate = repeatingRequestTemplate;
         mStillCaptureRequestTemplate = stillCaptureRequestTemplate;
         mBurst = burst;
+        mWaitForAEConvergence = waitForAEConvergence;
+        mWaitForAFConvergence = waitForAFConvergence;
 
         mScanRequestTemplate = resetFocusExposureModes(repeatingRequestBuilder);
     }
@@ -111,8 +116,12 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
             ResourceAcquisitionFailedException {
         try (FrameServer.Session session = mFrameServer.createExclusiveSession()) {
             try (ImageStream imageStream = mImageReader.createPreallocatedStream(mBurst.size())) {
-                waitForAFConvergence(session);
-                waitForAEConvergence(session);
+                if (mWaitForAFConvergence) {
+                    waitForAFConvergence(session);
+                }
+                if (mWaitForAEConvergence) {
+                    waitForAEConvergence(session);
+                }
                 captureBurst(session, imageStream, imageExposureUpdatable, imageSaver);
             } finally {
                 // Always reset the repeating stream to ensure AF/AE are not

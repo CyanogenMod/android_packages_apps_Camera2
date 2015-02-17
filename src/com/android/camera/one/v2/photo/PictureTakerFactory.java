@@ -19,11 +19,13 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CameraDevice;
 
 import com.android.camera.async.MainThread;
+import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
+import com.google.common.base.Supplier;
 
 import java.util.Arrays;
 
@@ -35,12 +37,35 @@ public final class PictureTakerFactory {
             ImageSaver.Builder imageSaverBuilder,
             FrameServer frameServer,
             RequestBuilder.Factory rootRequestBuilder,
-            ManagedImageReader sharedImageReader) {
-        ImageCaptureCommand captureCommand = new ConvergedImageCaptureCommand(sharedImageReader,
-                frameServer, rootRequestBuilder, CameraDevice.TEMPLATE_PREVIEW,
-                CameraDevice.TEMPLATE_STILL_CAPTURE, Arrays.asList(rootRequestBuilder));
+            ManagedImageReader sharedImageReader,
+            Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode) {
+        // When flash is ON, always use the ConvergedImageCaptureCommand which
+        // performs the AF & AE precapture sequence.
+        ImageCaptureCommand flashOnCommand = new ConvergedImageCaptureCommand(
+                sharedImageReader, frameServer, rootRequestBuilder,
+                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder), true /* ae */, true /* af */);
+
+        // When flash is OFF, wait for AF convergence, but not AE convergence
+        // (which can be very
+        // slow).
+        ImageCaptureCommand flashOffCommand = new ConvergedImageCaptureCommand(
+                sharedImageReader, frameServer, rootRequestBuilder,
+                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder), false /* ae */, true /* af */);
+
+        // When flash is AUTO, wait for AF & AE.
+        // TODO OPTIMIZE If the last converged-AE state indicates that flash is
+        // not necessary, then this could skip waiting for AE convergence.
+        ImageCaptureCommand flashAutoCommand = new ConvergedImageCaptureCommand(
+                sharedImageReader, frameServer, rootRequestBuilder,
+                CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
+                Arrays.asList(rootRequestBuilder), true /* ae */, true /* af */);
+
+        ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(flashMode,
+                flashOnCommand, flashAutoCommand, flashOffCommand);
         mPictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor, imageSaverBuilder,
-                captureCommand);
+                flashBasedCommand);
     }
 
     public PictureTaker providePictureTaker() {
