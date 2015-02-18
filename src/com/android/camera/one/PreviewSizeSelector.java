@@ -23,5 +23,8 @@ import com.android.camera.util.Size;
  */
 public interface PreviewSizeSelector {
 
+    /**
+     * Given an image capture resolution, pick a preview size.
+     */
     public Size pickPreviewSize(Size imageResolution);
 }
