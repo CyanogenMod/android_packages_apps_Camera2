@@ -59,21 +59,159 @@ import java.util.Map;
  * </p>
  */
 public class CaptureSessionManagerImpl implements CaptureSessionManager {
+
+    private final class SessionNotifierImpl implements SessionNotifier {
+        @Override
+        public void removeSession(String sessionUri) {
+            synchronized (mSessions) {
+                mSessions.remove(sessionUri);
+            }
+        }
+
+        /**
+         * Notifies all task listeners that the task with the given URI has been
+         * queued.
+         */
+        @Override
+        public void notifyTaskQueued(final Uri uri) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionQueued(uri);
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Notifies all task listeners that the task with the given URI has been
+         * finished.
+         */
+        @Override
+        public void notifyTaskDone(final Uri uri) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionDone(uri);
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Notifies all task listeners that the task with the given URI has been
+         * failed to process.
+         */
+        @Override
+        public void notifyTaskFailed(final Uri uri, final CharSequence reason) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionFailed(uri, reason);
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Notifies all task listeners that the task with the given URI has
+         * progressed to the given state.
+         */
+        @Override
+        public void notifyTaskProgress(final Uri uri, final int progressPercent) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionProgress(uri, progressPercent);
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Notifies all task listeners that the task with the given URI has
+         * changed its progress message.
+         */
+        @Override
+        public void notifyTaskProgressText(final Uri uri, final CharSequence message) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionProgressText(uri, message);
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Notifies all task listeners that the media associated with the task
+         * has been updated.
+         */
+        @Override
+        public void notifySessionUpdated(final Uri uri) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionUpdated(uri);
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Notifies all task listeners that the task with the given URI has
+         * updated its media.
+         *
+         * @param indicator the bitmap that should be used for the capture
+         *            indicator
+         * @param rotationDegrees the rotation of the updated preview
+         */
+        @Override
+        public void notifySessionCaptureIndicatorAvailable(final Bitmap indicator, final int
+                rotationDegrees) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionCaptureIndicatorUpdate(indicator, rotationDegrees);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     private static final Log.Tag TAG = new Log.Tag("CaptureSessMgrImpl");
-
-    private final CaptureSessionFactory mSessionFactory;
-    private final SessionStorageManager mSessionStorageManager;
-
-    /** Failed session messages. Uri -> message. */
-    private final HashMap<Uri, CharSequence> mFailedSessionMessages = new HashMap<>();
-
-    /**
-     * We use this to fire events to the session listeners from the main thread.
-     */
-    private final MainThread mMainHandler;
 
     /** Sessions in progress, keyed by URI. */
     private final Map<String, CaptureSession> mSessions;
+    private final SessionNotifier mSessionNotifier;
+    private final CaptureSessionFactory mSessionFactory;
+    private final SessionStorageManager mSessionStorageManager;
+    /** Used to fire events to the session listeners from the main thread. */
+    private final MainThread mMainHandler;
+
+    /** Failed session messages. Uri -> message. */
+    private final HashMap<Uri, CharSequence> mFailedSessionMessages = new HashMap<>();
 
     /** Listeners interested in task update events. */
     private final LinkedList<SessionListener> mTaskListeners = new LinkedList<SessionListener>();
@@ -92,14 +230,15 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             MainThread mainHandler) {
         mSessionFactory = sessionFactory;
         mSessions = new HashMap<>();
+        mSessionNotifier = new SessionNotifierImpl();
         mSessionStorageManager = sessionStorageManager;
         mMainHandler = mainHandler;
     }
 
     public CaptureSession createNewSession(String title, long sessionStartMillis, Location location) {
-        return mSessionFactory.createNewSession(this, title, sessionStartMillis, location);
+        return mSessionFactory.createNewSession(this, mSessionNotifier, title, sessionStartMillis,
+                location);
     }
-
 
     @Override
     public void putSession(Uri sessionUri, CaptureSession session) {
@@ -149,7 +288,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         mFailedSessionMessages.remove(uri);
     }
 
-    protected void putErrorMessage(Uri uri, CharSequence reason) {
+    @Override
+    public void putErrorMessage(Uri uri, CharSequence reason) {
         mFailedSessionMessages.put(uri, reason);
     }
 
@@ -169,135 +309,5 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 }
             }
         });
-    }
-
-
-    void removeSession(String sessionUri) {
-        synchronized (mSessions) {
-            mSessions.remove(sessionUri);
-        }
-    }
-
-    /**
-     * Notifies all task listeners that the task with the given URI has been
-     * queued.
-     */
-    void notifyTaskQueued(final Uri uri) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionQueued(uri);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Notifies all task listeners that the task with the given URI has been
-     * finished.
-     */
-    void notifyTaskDone(final Uri uri) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionDone(uri);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Notifies all task listeners that the task with the given URI has been
-     * failed to process.
-     */
-    void notifyTaskFailed(final Uri uri, final CharSequence reason) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionFailed(uri, reason);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Notifies all task listeners that the task with the given URI has
-     * progressed to the given state.
-     */
-    void notifyTaskProgress(final Uri uri, final int progressPercent) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionProgress(uri, progressPercent);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Notifies all task listeners that the task with the given URI has changed
-     * its progress message.
-     */
-    void notifyTaskProgressText(final Uri uri, final CharSequence message) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionProgressText(uri, message);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Notifies all task listeners that the media associated with the task has
-     * been updated.
-     */
-    void notifySessionUpdated(final Uri uri) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionUpdated(uri);
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Notifies all task listeners that the task with the given URI has updated
-     * its media.
-     *
-     * @param uri the URI of the session whose preview has been updated
-     * @param rotationDegrees the rotation of the updated preview
-     */
-    void notifySessionCaptureIndicatorAvailable(final Bitmap indicator, final int rotationDegrees) {
-        mMainHandler.execute(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (mTaskListeners) {
-                    for (SessionListener listener : mTaskListeners) {
-                        listener.onSessionCaptureIndicatorUpdate(indicator, rotationDegrees);
-                    }
-                }
-            }
-        });
-
     }
 }

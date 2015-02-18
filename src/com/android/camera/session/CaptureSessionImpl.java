@@ -42,7 +42,9 @@ public class CaptureSessionImpl implements CaptureSession {
     private static final Log.Tag TAG = new Log.Tag("CaptureSessionImpl");
 
     /** The capture session manager responsible for this session. */
-    private final CaptureSessionManagerImpl mSessionManager;
+    private final CaptureSessionManager mSessionManager;
+    /** Used to inform about session status updates. */
+    private final SessionNotifier mSessionNotifier;
     /** Used for adding/removing/updating placeholders for in-progress sessions. */
     private final PlaceholderManager mPlaceholderManager;
     /** Used to store images on disk and to add them to the media store. */
@@ -92,13 +94,14 @@ public class CaptureSessionImpl implements CaptureSession {
      */
     /* package */CaptureSessionImpl(String title,
             long sessionStartMillis, Location location, TemporarySessionFile temporarySessionFile,
-            CaptureSessionManagerImpl captureSessionManager, PlaceholderManager placeholderManager,
-            MediaSaver mediaSaver, StackSaver stackSaver) {
+            CaptureSessionManager captureSessionManager, SessionNotifier sessionNotifier,
+            PlaceholderManager placeholderManager, MediaSaver mediaSaver, StackSaver stackSaver) {
         mTitle = title;
         mSessionStartMillis = sessionStartMillis;
         mLocation = location;
         mTempOutputFile = temporarySessionFile;
         mSessionManager = captureSessionManager;
+        mSessionNotifier = sessionNotifier;
         mPlaceholderManager = placeholderManager;
         mMediaSaver = mediaSaver;
         mStackSaver = stackSaver;
@@ -128,7 +131,7 @@ public class CaptureSessionImpl implements CaptureSession {
     @Override
     public synchronized void setProgress(int percent) {
         mProgressPercent = percent;
-        mSessionManager.notifyTaskProgress(mUri, mProgressPercent);
+        mSessionNotifier.notifyTaskProgress(mUri, mProgressPercent);
         for (ProgressListener listener : mProgressListeners) {
             listener.onProgressChanged(percent);
         }
@@ -142,7 +145,7 @@ public class CaptureSessionImpl implements CaptureSession {
     @Override
     public synchronized void setProgressMessage(CharSequence message) {
         mProgressMessage = message;
-        mSessionManager.notifyTaskProgressText(mUri, message);
+        mSessionNotifier.notifyTaskProgressText(mUri, message);
         for (ProgressListener listener : mProgressListeners) {
             listener.onStatusMessageChanged(message);
         }
@@ -151,7 +154,7 @@ public class CaptureSessionImpl implements CaptureSession {
     @Override
     public void updateThumbnail(Bitmap bitmap) {
         mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, bitmap);
-        mSessionManager.notifySessionUpdated(mUri);
+        mSessionNotifier.notifySessionUpdated(mUri);
     }
 
     @Override
@@ -170,7 +173,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 mSessionStartMillis);
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
-        mSessionManager.notifyTaskQueued(mUri);
+        mSessionNotifier.notifyTaskQueued(mUri);
     }
 
     @Override
@@ -184,7 +187,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 mSessionStartMillis);
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
-        mSessionManager.notifyTaskQueued(mUri);
+        mSessionNotifier.notifyTaskQueued(mUri);
         onCaptureIndicatorUpdate(placeholder, 0);
     }
 
@@ -200,7 +203,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 mSessionStartMillis);
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
-        mSessionManager.notifyTaskQueued(mUri);
+        mSessionNotifier.notifyTaskQueued(mUri);
         Bitmap placeholderBitmap = Storage.getPlacerHolderForSession(mUri);
         onCaptureIndicatorUpdate(placeholderBitmap, 0);
     }
@@ -212,13 +215,13 @@ public class CaptureSessionImpl implements CaptureSession {
         mPlaceHolderSession = mPlaceholderManager.convertToPlaceholder(uri);
 
         mSessionManager.putSession(mUri, this);
-        mSessionManager.notifyTaskQueued(mUri);
+        mSessionNotifier.notifyTaskQueued(mUri);
     }
 
     @Override
     public synchronized void cancel() {
         if (isStarted()) {
-            mSessionManager.removeSession(mUri.toString());
+            mSessionNotifier.removeSession(mUri.toString());
         }
     }
 
@@ -235,8 +238,8 @@ public class CaptureSessionImpl implements CaptureSession {
         mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
                 orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
 
-        mSessionManager.removeSession(mUri.toString());
-        mSessionManager.notifyTaskDone(mPlaceHolderSession.outputUri);
+        mSessionNotifier.removeSession(mUri.toString());
+        mSessionNotifier.notifyTaskDone(mPlaceHolderSession.outputUri);
     }
 
     @Override
@@ -322,7 +325,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 Bitmap placeholder = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length,
                         options);
                 mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, placeholder);
-                mSessionManager.notifySessionUpdated(mUri);
+                mSessionNotifier.notifySessionUpdated(mUri);
             }
         });
     }
@@ -334,9 +337,9 @@ public class CaptureSessionImpl implements CaptureSession {
                     "Cannot call finish without calling startSession first.");
         }
         mProgressMessage = reason;
-        mSessionManager.removeSession(mUri.toString());
+        mSessionNotifier.removeSession(mUri.toString());
         mSessionManager.putErrorMessage(mPlaceHolderSession.outputUri, reason);
-        mSessionManager.notifyTaskFailed(mPlaceHolderSession.outputUri, reason);
+        mSessionNotifier.notifyTaskFailed(mPlaceHolderSession.outputUri, reason);
     }
 
     @Override
@@ -353,7 +356,7 @@ public class CaptureSessionImpl implements CaptureSession {
 
 
     private void onCaptureIndicatorUpdate(Bitmap indicator, int rotationDegrees) {
-        mSessionManager.notifySessionCaptureIndicatorAvailable(indicator, rotationDegrees);
+        mSessionNotifier.notifySessionCaptureIndicatorAvailable(indicator, rotationDegrees);
     }
 
     private boolean isStarted() {

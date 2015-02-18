@@ -130,4 +130,7 @@ public interface CaptureSessionManager {
      * Removes any existing error messages for the session with the given URI.
      */
     public void removeErrorMessage(Uri uri);
+
+    /** Sets the error message for the session with the given URI. */
+    public void putErrorMessage(Uri uri, CharSequence reason);
 }

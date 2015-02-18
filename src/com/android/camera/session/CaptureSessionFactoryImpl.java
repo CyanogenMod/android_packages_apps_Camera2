@@ -16,9 +16,9 @@
 
 package com.android.camera.session;
 
-import com.android.camera.app.MediaSaver;
-
 import android.location.Location;
+
+import com.android.camera.app.MediaSaver;
 
 public class CaptureSessionFactoryImpl implements CaptureSessionFactory {
     /** Sub-directory for storing temporary session files. */
@@ -38,12 +38,13 @@ public class CaptureSessionFactoryImpl implements CaptureSessionFactory {
     }
 
     @Override
-    public CaptureSession createNewSession(CaptureSessionManager sessionManager, String title,
-            long sessionStartTime, Location location) {
+    public CaptureSession createNewSession(CaptureSessionManager sessionManager,
+            SessionNotifier sessionNotifier, String title, long sessionStartTime,
+            Location location) {
         TemporarySessionFile temporarySessionFile = new TemporarySessionFile(
                 mSessionStorageManager, TEMP_SESSIONS, title);
         return new CaptureSessionImpl(title, sessionStartTime, location, temporarySessionFile,
-                (CaptureSessionManagerImpl) sessionManager, mPlaceholderManager, mMediaSaver,
+                sessionManager, sessionNotifier, mPlaceholderManager, mMediaSaver,
                 mStackSaverFactory.create(title, location));
     }
 }
