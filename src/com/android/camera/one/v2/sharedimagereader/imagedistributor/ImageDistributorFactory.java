@@ -41,6 +41,7 @@ public class ImageDistributorFactory {
             HandlerFactory handlerFactory) {
         ConcurrentBufferQueue<Long> globalTimestampStream = new ConcurrentBufferQueue<>();
         mTimestampStream = globalTimestampStream;
+        lifetime.add(globalTimestampStream);
         mImageDistributor = new ImageDistributorImpl(globalTimestampStream);
 
         Handler imageReaderHandler = handlerFactory.create(lifetime, "ImageDistributor");
