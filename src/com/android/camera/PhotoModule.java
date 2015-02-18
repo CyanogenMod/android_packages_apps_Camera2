@@ -1959,7 +1959,7 @@ public class PhotoModule
         // Set a preview size that is closest to the viewfinder height and has
         // the right aspect ratio.
         List<Size> sizes = Size.convert(mCameraCapabilities.getSupportedPreviewSizes());
-        Size optimalSize = CameraUtil.getOptimalPreviewSize(mActivity, sizes,
+        Size optimalSize = CameraUtil.getOptimalPreviewSize(sizes,
                 (double) pictureSize.width() / pictureSize.height());
         Size original = new Size(mCameraSettings.getCurrentPreviewSize());
         if (!optimalSize.equals(original)) {

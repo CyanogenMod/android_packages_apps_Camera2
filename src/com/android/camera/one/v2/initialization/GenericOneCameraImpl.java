@@ -23,6 +23,7 @@ import com.android.camera.async.Listenable;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.PreviewSizeSelector;
 import com.android.camera.one.v2.AutoFocusHelper;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.photo.PictureTaker;
@@ -171,6 +172,6 @@ class GenericOneCameraImpl implements OneCamera {
 
     @Override
     public Size pickPreviewSize(Size pictureSize, Context context) {
-        return mPreviewSizeSelector.pickPreviewSize(pictureSize, context);
+        return mPreviewSizeSelector.pickPreviewSize(pictureSize);
     }
 }

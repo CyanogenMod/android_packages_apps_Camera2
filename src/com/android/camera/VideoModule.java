@@ -771,8 +771,8 @@ public class VideoModule extends CameraModule
         }
 
         mCameraSettings = mCameraDevice.getSettings();
-        Point desiredPreviewSize = getDesiredPreviewSize(mAppController.getAndroidContext(),
-                mCameraSettings, mCameraCapabilities, mProfile, mUI.getPreviewScreenSize());
+        Point desiredPreviewSize = getDesiredPreviewSize(
+              mCameraCapabilities, mProfile, mUI.getPreviewScreenSize());
         mDesiredPreviewWidth = desiredPreviewSize.x;
         mDesiredPreviewHeight = desiredPreviewSize.y;
         mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
@@ -795,8 +795,8 @@ public class VideoModule extends CameraModule
      * @return The preferred preview size or {@code null} if the camera is not
      *         opened yet.
      */
-    private static Point getDesiredPreviewSize(Context context, CameraSettings settings,
-            CameraCapabilities capabilities, CamcorderProfile profile, Point previewScreenSize) {
+    private static Point getDesiredPreviewSize(CameraCapabilities capabilities,
+          CamcorderProfile profile, Point previewScreenSize) {
         if (capabilities.getSupportedVideoSizes() == null) {
             // Driver doesn't support separate outputs for preview and video.
             return new Point(profile.videoFrameWidth, profile.videoFrameHeight);
@@ -833,7 +833,7 @@ public class VideoModule extends CameraModule
             }
         }
 
-        Size optimalSize = CameraUtil.getOptimalPreviewSize(context, sizes,
+        Size optimalSize = CameraUtil.getOptimalPreviewSize(sizes,
                 (double) profile.videoFrameWidth / profile.videoFrameHeight);
         return new Point(optimalSize.width(), optimalSize.height());
     }

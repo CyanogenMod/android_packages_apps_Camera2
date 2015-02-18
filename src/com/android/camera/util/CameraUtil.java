@@ -38,7 +38,6 @@ import android.hardware.camera2.CameraMetadata;
 import android.location.Location;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -466,9 +465,8 @@ public class CameraUtil {
         return new Size(res);
     }
 
-    public static Size getOptimalPreviewSize(
-            Context context, List<Size> sizes, double targetRatio) {
-        int optimalPickIndex = getOptimalPreviewSizeIndex(context, sizes, targetRatio);
+    public static Size getOptimalPreviewSize(List<Size> sizes, double targetRatio) {
+        int optimalPickIndex = getOptimalPreviewSizeIndex(sizes, targetRatio);
         if (optimalPickIndex == -1) {
             return null;
         } else {
@@ -482,32 +480,27 @@ public class CameraUtil {
      * <p>
      * This is using a default aspect ratio tolerance. If the tolerance is to be
      * given you should call
-     * {@link #getOptimalPreviewSizeIndex(Context, List, double, Double)}
+     * {@link #getOptimalPreviewSizeIndex(List, double, Double)}
      *
-     * @param context used to get the screen dimensions. TODO: Refactor to take
-     *            in screen dimensions directly
-     * @param previewSizes the available preview sizes
+     * @param sizes the available preview sizes
      * @param targetRatio the target aspect ratio, typically the aspect ratio of
      *            the picture size
      * @return The index into 'previewSizes' for the optimal size, or -1, if no
      *         matching size was found.
      */
-    public static int getOptimalPreviewSizeIndex(Context context,
-            List<Size> sizes, double targetRatio) {
+    public static int getOptimalPreviewSizeIndex(List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match. HTC 4:3
         // ratios is over .01 from true 4:3, so this value must be above .01,
         // see b/18241645.
         final double aspectRatioTolerance = 0.02;
 
-        return getOptimalPreviewSizeIndex(context, sizes, targetRatio, aspectRatioTolerance);
+        return getOptimalPreviewSizeIndex(sizes, targetRatio, aspectRatioTolerance);
     }
 
     /**
      * Returns the index into 'sizes' that is most optimal given the current
      * screen, target aspect ratio and tolerance.
      *
-     * @param context used to get the screen dimensions. TODO: Refactor to take
-     *            in screen dimensions directly
      * @param previewSizes the available preview sizes
      * @param targetRatio the target aspect ratio, typically the aspect ratio of
      *            the picture size
@@ -517,7 +510,7 @@ public class CameraUtil {
      * @return The index into 'previewSizes' for the optimal size, or -1, if no
      *         matching size was found.
      */
-    public static int getOptimalPreviewSizeIndex(Context context,
+    public static int getOptimalPreviewSizeIndex(
             List<Size> previewSizes, double targetRatio, Double aspectRatioTolerance) {
         if (previewSizes == null) {
             return -1;
@@ -526,7 +519,7 @@ public class CameraUtil {
         // If no particular aspect ratio tolerance is set, use the default
         // value.
         if (aspectRatioTolerance == null) {
-            return getOptimalPreviewSizeIndex(context, previewSizes, targetRatio);
+            return getOptimalPreviewSizeIndex(previewSizes, targetRatio);
         }
 
         int optimalSizeIndex = -1;
