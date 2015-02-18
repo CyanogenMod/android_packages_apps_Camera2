@@ -51,4 +51,10 @@
         <item name="android:scaleType">centerInside</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
+    <style name="DialogCheckBox">
+        <item name="android:textColor">@color/dialog_text_color</item>
+        <item name="android:buttonTint">@color/dialog_text_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">1.9sp</item>
+    </style>
 </resources>
