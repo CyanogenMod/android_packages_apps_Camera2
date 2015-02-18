@@ -29,6 +29,7 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.async.Listenable;
 import com.android.camera.async.ListenableConcurrentState;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.PreviewSizeSelector;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
@@ -150,7 +151,8 @@ public class InitializedOneCameraFactory {
                     }
                 });
 
-        PreviewSizeSelector previewSizeSelector = new PreviewSizeSelector(supportedPreviewSizes);
+        PreviewSizeSelector previewSizeSelector =
+              new Camera2PreviewSizeSelector(supportedPreviewSizes);
 
         mOneCamera = new GenericOneCameraImpl(lifetime, pictureTaker, manualAutoFocus, lensRange,
                 mainThreadExecutor, afStateListenable, focusStateListenable, readyStateListenable,

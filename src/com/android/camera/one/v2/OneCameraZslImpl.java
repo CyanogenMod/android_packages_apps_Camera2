@@ -39,7 +39,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.support.v4.util.Pools;
-import android.util.Pair;
 import android.view.Surface;
 
 import com.android.camera.CaptureModuleUtil;
@@ -57,7 +56,6 @@ import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
@@ -73,12 +71,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * {@link OneCamera} implementation directly on top of the Camera2 API with zero
@@ -1084,8 +1079,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             pictureSize = getDefaultPictureSize();
         }
         float pictureAspectRatio = pictureSize.getWidth() / (float) pictureSize.getHeight();
-        return CaptureModuleUtil.getOptimalPreviewSize(context, getSupportedPreviewSizes(),
-                pictureAspectRatio);
+        return CaptureModuleUtil.getOptimalPreviewSize(getSupportedPreviewSizes(),
+              pictureAspectRatio);
     }
 
     @Override

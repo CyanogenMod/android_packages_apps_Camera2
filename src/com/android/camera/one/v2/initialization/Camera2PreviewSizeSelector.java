@@ -16,9 +16,8 @@
 
 package com.android.camera.one.v2.initialization;
 
-import android.content.Context;
-
 import com.android.camera.CaptureModuleUtil;
+import com.android.camera.one.PreviewSizeSelector;
 import com.android.camera.util.Size;
 
 import java.util.ArrayList;
@@ -30,14 +29,14 @@ import java.util.List;
  * Picks a preview size. TODO Remove dependency on static CaptureModuleUtil
  * function and write tests.
  */
-class PreviewSizeSelector {
+class Camera2PreviewSizeSelector implements PreviewSizeSelector {
     private final List<Size> mSupportedPreviewSizes;
 
-    public PreviewSizeSelector(List<Size> supportedPreviewSizes) {
+    public Camera2PreviewSizeSelector(List<Size> supportedPreviewSizes) {
         mSupportedPreviewSizes = new ArrayList<>(supportedPreviewSizes);
     }
 
-    public Size pickPreviewSize(Size pictureSize, Context context) {
+    public Size pickPreviewSize(Size pictureSize) {
         if (pictureSize == null) {
             // TODO The default should be selected by the caller, and
             // pictureSize should never be null.
@@ -45,7 +44,7 @@ class PreviewSizeSelector {
         }
         float pictureAspectRatio = pictureSize.getWidth() / (float) pictureSize.getHeight();
 
-        Size size = CaptureModuleUtil.getOptimalPreviewSize(context,
+        Size size = CaptureModuleUtil.getOptimalPreviewSize(
                 (Size[]) mSupportedPreviewSizes.toArray(new Size[mSupportedPreviewSizes.size()]),
                 pictureAspectRatio, null);
         return size;

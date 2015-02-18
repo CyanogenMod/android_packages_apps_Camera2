@@ -49,12 +49,11 @@ public class CaptureModuleUtil {
 
     /**
      * Equivalent to the
-     * {@link CameraUtil#getOptimalPreviewSize(android.content.Context, java.util.List, double)}
+     * {@link CameraUtil#getOptimalPreviewSize(java.util.List, double)}
      * method for the camera1 api.
      */
-    public static Size getOptimalPreviewSize(Context context, Size[] sizes,
-            double targetRatio) {
-        return getOptimalPreviewSize(context, sizes, targetRatio, null );
+    public static Size getOptimalPreviewSize(Size[] sizes,double targetRatio) {
+        return getOptimalPreviewSize(sizes, targetRatio, null);
     }
 
     /**
@@ -63,7 +62,7 @@ public class CaptureModuleUtil {
      * aspect ratio of the picture to be taken) as well as a maximum allowed
      * tolerance. If tolerance is 'null', a default tolerance will be used.
      */
-    public static Size getOptimalPreviewSize(Context context, Size[] sizes,
+    public static Size getOptimalPreviewSize(Size[] sizes,
             double targetRatio, Double aspectRatioTolerance) {
         // TODO(andyhuibers): Don't hardcode this but use device's measurements.
         final int MAX_ASPECT_HEIGHT = 1080;
@@ -85,7 +84,7 @@ public class CaptureModuleUtil {
         }
 
         int optimalIndex = CameraUtil
-                .getOptimalPreviewSizeIndex(context, camera1Sizes, targetRatio,
+                .getOptimalPreviewSizeIndex(camera1Sizes, targetRatio,
                         aspectRatioTolerance);
 
         if (optimalIndex == -1) {
@@ -121,7 +120,7 @@ public class CaptureModuleUtil {
             bestAspect = 1 / bestAspect;
         }
 
-        Size pick = CaptureModuleUtil.getOptimalPreviewSize(context, supportedPreviewSizes,
+        Size pick = CaptureModuleUtil.getOptimalPreviewSize(supportedPreviewSizes,
                 bestPreviewAspectRatio, null);
         Log.d(TAG, "Picked buffer size: " + pick.toString());
         return pick;

@@ -711,7 +711,7 @@ public class OneCameraImpl extends AbstractOneCamera {
         // Since devices only have one raw resolution we need to be more
         // flexible for selecting a matching preview resolution.
         Double aspectRatioTolerance = sCaptureImageFormat == ImageFormat.RAW_SENSOR ? 10d : null;
-        Size size = CaptureModuleUtil.getOptimalPreviewSize(context, supportedSizes,
+        Size size = CaptureModuleUtil.getOptimalPreviewSize(supportedSizes,
                 pictureAspectRatio, aspectRatioTolerance);
         Log.d(TAG, "Selected preview size: " + size);
         return size;
