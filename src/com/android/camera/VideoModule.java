@@ -1380,8 +1380,14 @@ public class VideoModule extends CameraModule
                         return;
                     }
                     // Make sure we stop playing sounds and disable the
-                    // vibrations during video recording.
-                    silenceSoundsAndVibrations();
+                    // vibrations during video recording. Post delayed to avoid
+                    // silencing the recording start sound.
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            silenceSoundsAndVibrations();
+                        }
+                    }, 250);
 
                     mAppController.getCameraAppUI().setSwipeEnabled(false);
 
@@ -1456,6 +1462,10 @@ public class VideoModule extends CameraModule
         }
         Log.v(TAG, "stopVideoRecording");
 
+        // Re-enable sound as early as possible to avoid interfering with stop
+        // recording sound.
+        restoreRingerMode();
+
         mUI.setSwipingEnabled(true);
         mUI.showPassiveFocusIndicator();
         mUI.showVideoRecordingHints(true);
@@ -1479,7 +1489,6 @@ public class VideoModule extends CameraModule
                 }
                 fail = true;
             }
-            restoreRingerMode();
             mMediaRecorderRecording = false;
             mActivity.unlockOrientation();
 
