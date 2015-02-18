@@ -16,6 +16,5 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_power_shutter_title">電源シャッター</string>
-  <string name="pref_camera_max_brightness_title">明るい画面</string>
+  <string name="pref_camera_power_shutter_title">Scatta tasto On/Off</string>
 </resources>
