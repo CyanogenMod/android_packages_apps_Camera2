@@ -34,7 +34,8 @@ public final class LinearScale {
         mRangeB = rangeB;
 
         // Precomputed ratio between input domain and output range.
-        mScale = (mRangeB - mRangeA) / (mDomainB - mDomainA);
+        float scale = (mRangeB - mRangeA) / (mDomainB - mDomainA);
+        mScale = Float.isNaN(scale) ? 0.0f : scale;
     }
 
     /**
