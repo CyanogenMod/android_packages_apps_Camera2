@@ -36,6 +36,8 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.core.ResponseListener;
+import com.android.camera.one.v2.imagesaver.MetadataImage;
+import com.android.camera.one.v2.photo.MetadataFuture;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 import com.android.camera.util.ApiHelper;
@@ -107,13 +109,13 @@ public class BurstCaptureCommand implements CameraCommand {
     @Override
     public void run() throws InterruptedException, CameraAccessException,
             CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
-        List<ImageProxy> capturedImages = new ArrayList<>();
+        List<MetadataImage> capturedImages = new ArrayList<>();
         try (FrameServer.Session session = mFrameServer.createExclusiveSession()) {
             // Create a ring buffer and with the passed burst eviction
             // handler and insert images in it from the image stream.
             // The ring buffer size is one less than the image count.
             int ringBufferSize = mMaxImageCount - 1;
-            try (RingBuffer ringBuffer = new RingBuffer(ringBufferSize,
+            try (RingBuffer<MetadataImage> ringBuffer = new RingBuffer(ringBufferSize,
                     mBurstEvictionHandler)) {
                 try (ImageStream imageStream =
                         mManagedImageReader.createStream(mMaxImageCount)) {
@@ -151,8 +153,11 @@ public class BurstCaptureCommand implements CameraCommand {
 
                     try {
                         while (!imageStream.isClosed()) {
-                            ringBuffer.insertImage(
-                                    imageStream.getNext());
+                            // metadata
+                            MetadataFuture metadataFuture = new MetadataFuture();
+                            photoRequest.addResponseListener(metadataFuture);
+
+                            ringBuffer.insertImage(new MetadataImage(imageStream.getNext(), metadataFuture.getMetadata()));
                         }
                     } catch (BufferQueueClosedException e) {
                         // This is normal. the image stream was closed.

@@ -81,7 +81,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE);
 
             try {
-                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, mCrop),
+                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, metadata, mCrop),
                         mExecutor, taskFlagsSet, mSession);
             } catch (InterruptedException e) {
                 // Impossible exception because receiveImage is nonblocking

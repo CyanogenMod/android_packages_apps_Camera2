@@ -56,13 +56,17 @@ import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
+import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
+import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.CameraUtil;
+import com.android.camera.util.ExifUtil;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.ListenerCombiner;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 import java.nio.ByteBuffer;
 import java.security.InvalidParameterException;
@@ -269,7 +273,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
 
             mReadyStateManager.setInput(ReadyStateRequirement.CAPTURE_NOT_IN_PROGRESS, true);
 
-            savePicture(image, mParams, mSession);
+            savePicture(image, mParams, mSession, captureResult);
             mParams.callback.onPictureTaken(mSession);
             Log.v(TAG, "Image saved.  Frame number = " + captureResult.getFrameNumber());
         }
@@ -593,19 +597,18 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         return mFullSizeAspectRatio;
     }
 
+    @Override
     public Facing getDirection() {
         return mDirection.getDirection();
    }
 
 
     private void savePicture(Image image, final PhotoCaptureParameters captureParams,
-            CaptureSession session) {
+            CaptureSession session, CaptureResult result) {
         int heading = captureParams.heading;
         int degrees = CameraUtil.getJpegRotation(captureParams.orientation, mCharacteristics);
 
-        ExifInterface exif = null;
-
-        exif = new ExifInterface();
+        ExifInterface exif = new ExifInterface();
         // TODO: Add more exif tags here.
 
         Size size = getImageSizeForOrientation(image.getWidth(), image.getHeight(),
@@ -626,6 +629,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             exif.setTag(directionRefTag);
             exif.setTag(directionTag);
         }
+        new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
+                Optional.of(new CaptureResultProxy(result)));
         session.saveAndFinish(acquireJpegBytes(image, degrees),
                 size.getWidth(), size.getHeight(), 0, exif, new OnMediaSavedListener() {
                         @Override

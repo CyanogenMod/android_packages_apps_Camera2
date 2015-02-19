@@ -17,6 +17,7 @@ package com.android.camera.burst;
 import android.graphics.SurfaceTexture;
 
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.imagesaver.MetadataImage;
 import com.android.camera.session.CaptureSession;
 
 import java.util.List;
@@ -111,5 +112,5 @@ interface BurstController {
      * @param capturedImages list of images captured from the burst. Implementations should
      *                        close the images as soon as possible.
      */
-    public void processBurstResults(List<ImageProxy> capturedImages);
+    public void processBurstResults(List<MetadataImage> capturedImages);
 }

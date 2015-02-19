@@ -27,14 +27,20 @@ import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.util.ExifUtil;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
 /**
@@ -227,7 +233,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         final TaskImage finalResult = resultImage;
 
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
-                resultImage.orientation.getDegrees(), createExif(resultImage),
+                resultImage.orientation.getDegrees(), createExif(resultImage, img.metadata),
                 new MediaSaver.OnMediaSavedListener() {
                     @Override
                     public void onMediaSaved(Uri uri) {
@@ -253,14 +259,18 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      * @param image Metadata for a jpeg image to create EXIF Interface
      * @return the created Exif Interface
      */
-    protected ExifInterface createExif(TaskImage image) {
+    protected ExifInterface createExif(TaskImage image,
+                                       ListenableFuture<TotalCaptureResultProxy> totalCaptureResultProxyFuture) {
         ExifInterface exif = new ExifInterface();
-        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_X_DIMENSION, image.width));
-        exif.setTag(exif.buildTag(ExifInterface.TAG_PIXEL_Y_DIMENSION, image.height));
-        exif.setTag(exif.buildTag(ExifInterface.TAG_IMAGE_WIDTH, image.width));
-        exif.setTag(exif.buildTag(ExifInterface.TAG_IMAGE_LENGTH, image.height));
-        exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.getOrientationValueForRotation(image.orientation.getDegrees())));
+
+        try {
+            new ExifUtil(exif).populateExif(Optional.of(image),
+                    Optional.<CaptureResultProxy>of(totalCaptureResultProxyFuture.get()));
+        } catch (InterruptedException | ExecutionException e) {
+            new ExifUtil(exif).populateExif(Optional.of(image),
+                    Optional.<CaptureResultProxy>absent());
+        }
+
         return exif;
     }
 

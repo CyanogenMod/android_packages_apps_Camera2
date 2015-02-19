@@ -33,8 +33,10 @@ import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+import com.google.common.primitives.Floats;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -139,6 +141,11 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     @Override
     public LinearScale getLensFocusRange() {
         return LensRangeCalculator.getDiopterToRatioCalculator(mCameraCharacteristics);
+    }
+
+    @Override
+    public List<Float> getAvailableFocalLengths() {
+        return Floats.asList(mCameraCharacteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS));
     }
 
     @Override

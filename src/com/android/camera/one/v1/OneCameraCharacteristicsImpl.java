@@ -120,6 +120,13 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     }
 
     @Override
+    public List<Float> getAvailableFocalLengths() {
+        List<Float> list = new ArrayList<>(1);
+        list.add(mCameraParameters.getFocalLength());
+        return list;
+    }
+
+    @Override
     public boolean isExposureCompensationSupported() {
         // Turn off exposure compensation for Nexus 6 on L (API level 21)
         // because the bug in framework b/19219128.

@@ -19,7 +19,6 @@ package com.android.camera.burst;
 import android.support.v4.util.LongSparseArray;
 
 import com.android.camera.async.SafeCloseable;
-import com.android.camera.burst.EvictionHandler;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 import java.util.ArrayList;
@@ -30,10 +29,10 @@ import java.util.List;
  * {@link EvictionHandler} instance and uses it to evict frames when the ring
  * buffer runs out of capacity.
  */
-class RingBuffer implements SafeCloseable {
+class RingBuffer<T extends ImageProxy> implements SafeCloseable {
     private final int mMaxCapacity;
     private final EvictionHandler mEvictionHandler;
-    private final LongSparseArray<ImageProxy> mImages = new LongSparseArray<>();
+    private final LongSparseArray<T> mImages = new LongSparseArray<>();
 
     /**
      * Create a new ring buffer instance.
@@ -51,7 +50,7 @@ class RingBuffer implements SafeCloseable {
      *
      * @param image the image to be inserted.
      */
-    public synchronized void insertImage(ImageProxy image) {
+    public synchronized void insertImage(T image) {
         long timestamp = image.getTimestamp();
         if (mImages.get(timestamp) != null) {
             image.close();
@@ -71,8 +70,8 @@ class RingBuffer implements SafeCloseable {
     /**
      * Returns all images present in the ring buffer.
      */
-    public synchronized List<ImageProxy> getAndRemoveAllImages() {
-        List<ImageProxy> allImages = new ArrayList<ImageProxy>(mImages.size());
+    public synchronized List<T> getAndRemoveAllImages() {
+        List<T> allImages = new ArrayList<>(mImages.size());
         for (int i = 0; i < mImages.size(); i++) {
             allImages.add(mImages.valueAt(i));
         }
@@ -92,12 +91,11 @@ class RingBuffer implements SafeCloseable {
     }
 
     private synchronized void removeAndCloseImage(long timestampNs) {
-        ImageProxy imageProxy = mImages.get(timestampNs);
-        imageProxy.close();
+        mImages.get(timestampNs).close();
         mImages.remove(timestampNs);
     }
 
-    private synchronized void addImage(ImageProxy image) {
+    private synchronized void addImage(T image) {
         mImages.put(image.getTimestamp(), image);
     }
 }

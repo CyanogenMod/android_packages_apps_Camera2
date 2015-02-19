@@ -188,7 +188,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
             InterruptedException, ResourceAcquisitionFailedException,
             CameraCaptureSessionClosedException {
         List<Request> burstRequest = new ArrayList<>(mBurst.size());
-        List<ListenableFuture<TotalCaptureResultProxy>> mMetadata = new ArrayList<>(mBurst.size());
+        List<ListenableFuture<TotalCaptureResultProxy>> metadata = new ArrayList<>(mBurst.size());
         boolean first = true;
         for (RequestBuilder.Factory builderTemplate : mBurst) {
             RequestBuilder builder = builderTemplate.create(mStillCaptureRequestTemplate);
@@ -205,7 +205,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
 
             MetadataFuture metadataFuture = new MetadataFuture();
             builder.addResponseListener(metadataFuture);
-            mMetadata.add(metadataFuture.getMetadata());
+            metadata.add(metadataFuture.getMetadata());
 
             builder.addStream(imageStream);
 
@@ -217,7 +217,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         for (int i = 0; i < mBurst.size(); i++) {
             try {
                 ImageProxy image = imageStream.getNext();
-                imageSaver.addFullSizeImage(image, mMetadata.get(i));
+                imageSaver.addFullSizeImage(image, metadata.get(i));
             } catch (BufferQueue.BufferQueueClosedException e) {
                 // No more images will be available, so just quit.
                 return;

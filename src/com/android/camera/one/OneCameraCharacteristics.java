@@ -88,6 +88,11 @@ public interface OneCameraCharacteristics {
     public LinearScale getLensFocusRange();
 
     /**
+     * @return A List of available focal lengths for this camera.
+     */
+    public List<Float> getAvailableFocalLengths();
+
+    /**
      * Whether exposure compensation is supported for this camera.
      *
      * @return true if exposure compensation is supported for this camera.

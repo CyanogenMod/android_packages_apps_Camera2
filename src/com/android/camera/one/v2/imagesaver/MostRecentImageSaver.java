@@ -16,7 +16,6 @@
 
 package com.android.camera.one.v2.imagesaver;
 
-import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.google.common.base.Optional;
@@ -24,10 +23,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -37,20 +34,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public class MostRecentImageSaver implements ImageSaver {
-    private class MetadataImage extends ForwardingImageProxy {
-        private final ListenableFuture<TotalCaptureResultProxy> mMetadata;
-
-        private MetadataImage(ImageProxy image, ListenableFuture<TotalCaptureResultProxy>
-                metadata) {
-            super(image);
-            mMetadata = metadata;
-        }
-
-        public ListenableFuture<TotalCaptureResultProxy> getMetadata() {
-            return mMetadata;
-        }
-    }
-
     private final SingleImageSaver mSingleImageSaver;
     private final Map<Long, ImageProxy> mThumbnails;
     private final Map<Long, MetadataImage> mFullSizeImages;

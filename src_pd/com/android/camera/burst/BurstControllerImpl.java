@@ -22,6 +22,7 @@ import com.android.camera.burst.BurstResultsListener;
 import com.android.camera.burst.EvictionHandler;
 import com.android.camera.burst.BurstController.ImageStreamProperties;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.imagesaver.MetadataImage;
 import com.android.camera.session.CaptureSession;
 
 import java.util.List;
@@ -48,7 +49,7 @@ class BurstControllerImpl implements BurstController {
     }
 
     @Override
-    public void processBurstResults(List<ImageProxy> capturedImages) {
+    public void processBurstResults(List<MetadataImage> capturedImages) {
         // no op
     }
 }

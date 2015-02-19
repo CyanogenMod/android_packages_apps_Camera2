@@ -56,13 +56,17 @@ import com.android.camera.one.CameraDirectionProvider;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
+import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
+import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.CaptureDataSerializer;
+import com.android.camera.util.ExifUtil;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -456,7 +460,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     private void saveJpegPicture(byte[] jpegData, final PhotoCaptureParameters captureParams,
-            CaptureSession session) {
+            CaptureSession session, CaptureResult result) {
         int heading = captureParams.heading;
         int width = 0;
         int height = 0;
@@ -485,6 +489,8 @@ public class OneCameraImpl extends AbstractOneCamera {
                 exif.setTag(directionRefTag);
                 exif.setTag(directionTag);
             }
+            new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
+                    Optional.of(new CaptureResultProxy(result)));
         } catch (IOException e) {
             Log.w(TAG, "Could not read exif from gcam jpeg", e);
             exif = null;
@@ -760,7 +766,7 @@ public class OneCameraImpl extends AbstractOneCamera {
             // Since this is not an HDR+ session, we will just save the
             // result.
             byte[] imageBytes = acquireJpegBytesAndClose(capture.image);
-            saveJpegPicture(imageBytes, capture.parameters, capture.session);
+            saveJpegPicture(imageBytes, capture.parameters, capture.session, capture.totalCaptureResult);
         }
         broadcastReadyState(true);
         capture.parameters.callback.onPictureTaken(capture.session);

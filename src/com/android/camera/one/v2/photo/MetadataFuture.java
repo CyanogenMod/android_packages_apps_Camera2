@@ -28,10 +28,10 @@ import com.google.common.util.concurrent.SettableFuture;
  * A ResponseListener which puts the result in a Future. Each instance is only
  * good for a single (non-repeating) request.
  */
-final class MetadataFuture extends ResponseListener {
+public final class MetadataFuture extends ResponseListener {
     private final SettableFuture<TotalCaptureResultProxy> mMetadata;
 
-    MetadataFuture() {
+    public MetadataFuture() {
         mMetadata = SettableFuture.create();
     }
 
