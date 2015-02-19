@@ -81,7 +81,6 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
-import com.google.android.gms.internal.id;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
