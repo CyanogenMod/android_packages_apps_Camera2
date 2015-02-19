@@ -83,9 +83,9 @@ public class SessionItem implements FilmstripItem {
             imageView.setTag(R.id.mediadata_tag_viewtype, getItemViewType().ordinal());
         }
 
-        Bitmap placeholder = Storage.getPlacerHolderForSession(mData.getUri());
-        if (placeholder != null) {
-            imageView.setImageBitmap(placeholder);
+        Optional<Bitmap> placeholder = Storage.getPlaceholderForSession(mData.getUri());
+        if (placeholder.isPresent()) {
+            imageView.setImageBitmap(placeholder.get());
         } else {
             imageView.setImageResource(GlideFilmstripManager.DEFAULT_PLACEHOLDER_RESOURCE);
         }
@@ -149,7 +149,7 @@ public class SessionItem implements FilmstripItem {
 
     @Override
     public Optional<Bitmap> generateThumbnail(int boundingWidthPx, int boundingHeightPx) {
-        return Optional.fromNullable(Storage.getPlacerHolderForSession(mUri));
+        return Storage.getPlaceholderForSession(mUri);
     }
 
     @Override

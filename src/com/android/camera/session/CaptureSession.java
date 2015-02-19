@@ -158,14 +158,23 @@ public interface CaptureSession {
     public StackSaver getStackSaver();
 
     /**
-     * Finishes the session.
+     * Finishes the session. Resources may be held during notification of
+     * finished state, {@link #finalize()} must be called to fully complete
+     * the session.
      */
     public void finish();
 
     /**
-     * Finish the session and indicate it failed.
+     * Finish the session and indicate it failed. Resources may be held during
+     * notification of finished state, {@link #finalize()} must be called to
+     * fully complete the session.
      */
     public void finishWithFailure(CharSequence reason);
+
+    /**
+     * All processing complete, finalize the session and remove any resources.
+     */
+    public void finalize();
 
     /**
      * Returns the file to where the final output of this session should be

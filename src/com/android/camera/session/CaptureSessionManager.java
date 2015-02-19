@@ -97,6 +97,13 @@ public interface CaptureSessionManager {
     public void putSession(Uri sessionUri, CaptureSession session);
 
     /**
+     * Removes the session with the given uri from the manager. This may not
+     * remove temporary in memory resources from the session itself, see
+     * {@link CaptureSession#finalize()} to complete session removal.
+     */
+    public CaptureSession removeSession(Uri sessionUri);
+
+    /**
      * Removes a previously added listener from receiving further capture
      * session updates.
      */

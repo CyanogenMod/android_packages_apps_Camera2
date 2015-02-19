@@ -27,12 +27,14 @@ import android.os.StatFs;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
+import android.util.LruCache;
 
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,7 +63,14 @@ public class Storage {
     private static final String GOOGLE_COM = "google.com";
     private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<>();
     private static HashMap<Uri, Uri> sContentUrisToSessions = new HashMap<>();
-    private static HashMap<Uri, Bitmap> sSessionsToPlaceholderBitmap = new HashMap<>();
+    private static LruCache<Uri, Bitmap> sSessionsToPlaceholderBitmap =
+            // 20MB cache as an upper bound for session bitmap storage
+            new LruCache<Uri, Bitmap>(20 * 1024 * 1024) {
+                @Override
+                protected int sizeOf(Uri key, Bitmap value) {
+                    return value.getByteCount();
+                }
+            };
     private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<>();
     private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions = new HashMap<>();
 
@@ -201,6 +210,15 @@ public class Storage {
     }
 
     /**
+     * Remove a placeholder from in memory storage.
+     */
+    public static void removePlaceholder(Uri uri) {
+        sSessionsToSizes.remove(uri);
+        sSessionsToPlaceholderBitmap.remove(uri);
+        sSessionsToPlaceholderVersions.remove(uri);
+    }
+
+    /**
      * Add or replace placeholder for a new image that does not exist yet.
      *
      * @param uri the uri of the placeholder to replace, or null if this is a
@@ -209,6 +227,7 @@ public class Storage {
      * @return A URI used to reference this placeholder
      */
     public static void replacePlaceholder(Uri uri, Bitmap placeholder) {
+        Log.v(TAG, "session bitmap cache size: " + sSessionsToPlaceholderBitmap.size());
         Point size = new Point(placeholder.getWidth(), placeholder.getHeight());
         sSessionsToSizes.put(uri, size);
         sSessionsToPlaceholderBitmap.put(uri, placeholder);
@@ -226,7 +245,7 @@ public class Storage {
     public static Uri addEmptyPlaceholder(@Nonnull Size size) {
         Uri uri = generateUniquePlaceholderUri();
         sSessionsToSizes.put(uri, new Point(size.getWidth(), size.getHeight()));
-        sSessionsToPlaceholderBitmap.put(uri, null /* Bitmap */);
+        sSessionsToPlaceholderBitmap.remove(uri);
         Integer currentVersion = sSessionsToPlaceholderVersions.get(uri);
         sSessionsToPlaceholderVersions.put(uri, currentVersion == null ? 0 : currentVersion + 1);
         return uri;
@@ -394,10 +413,10 @@ public class Storage {
      * Returns the jpeg bytes for a placeholder session
      *
      * @param uri the session uri to look up
-     * @return The jpeg bytes or null
+     * @return The bitmap or null
      */
-    public static Bitmap getPlacerHolderForSession(Uri uri) {
-        return sSessionsToPlaceholderBitmap.get(uri);
+    public static Optional<Bitmap> getPlaceholderForSession(Uri uri) {
+        return Optional.fromNullable(sSessionsToPlaceholderBitmap.get(uri));
     }
 
     /**
@@ -407,7 +426,7 @@ public class Storage {
      * @param uri the session uri to look up.
      * @return the current version int.
      */
-    public static int getPlacerHolderVersionForSession(Uri uri) {
+    public static int getPlaceholderVersionForSession(Uri uri) {
         return sSessionsToPlaceholderVersions.get(uri);
     }
 
