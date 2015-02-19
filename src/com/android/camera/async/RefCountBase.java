@@ -31,6 +31,10 @@ public class RefCountBase<T extends SafeCloseable> implements SafeCloseable {
         mRefCount = initialReferenceCount;
     }
 
+    public RefCountBase(T object) {
+        this(object, 1);
+    }
+
     public void addRef() {
         synchronized (mLock) {
             if (mRefCount <= 0) {

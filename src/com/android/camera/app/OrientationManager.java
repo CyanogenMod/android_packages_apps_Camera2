@@ -1,9 +1,21 @@
 package com.android.camera.app;
 
+import android.content.res.Configuration;
+
 /**
  * An interface which defines the orientation manager.
  */
 public interface OrientationManager {
+    public static enum DeviceNaturalOrientation {
+        PORTRAIT(Configuration.ORIENTATION_PORTRAIT),
+        LANDSCAPE(Configuration.ORIENTATION_LANDSCAPE);
+
+        private final int mOrientation;
+        private DeviceNaturalOrientation(int orientation) {
+            mOrientation = orientation;
+        }
+    }
+
     public static enum DeviceOrientation {
         CLOCKWISE_0(0),
         CLOCKWISE_90(90),
@@ -80,9 +92,19 @@ public interface OrientationManager {
     public void removeOnOrientationChangeListener(OnOrientationChangeListener listener);
 
     /**
+     * Returns the device natural orientation.
+     */
+    public DeviceNaturalOrientation getDeviceNaturalOrientation();
+
+    /**
      * Returns the current rounded device orientation.
      */
     public DeviceOrientation getDeviceOrientation();
+
+    /**
+     * Returns the current display rotation.
+     */
+    public DeviceOrientation getDisplayRotation();
 
     /**
      * Returns whether the device is in landscape based on the natural orientation

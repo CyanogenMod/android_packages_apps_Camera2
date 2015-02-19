@@ -32,6 +32,7 @@ import android.view.WindowManager;
 import com.android.camera.debug.Log;
 import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.CameraUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,8 +96,19 @@ public class OrientationManagerImpl implements OrientationManager {
     }
 
     @Override
+    public DeviceNaturalOrientation getDeviceNaturalOrientation() {
+        return mIsDefaultToPortrait ? DeviceNaturalOrientation.PORTRAIT :
+                DeviceNaturalOrientation.LANDSCAPE;
+    }
+
+    @Override
     public DeviceOrientation getDeviceOrientation() {
         return mLastDeviceOrientation;
+    }
+
+    @Override
+    public DeviceOrientation getDisplayRotation() {
+        return DeviceOrientation.from((360 - CameraUtil.getDisplayRotation()) % 360);
     }
 
     @Override
