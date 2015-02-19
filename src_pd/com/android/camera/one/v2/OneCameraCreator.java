@@ -25,11 +25,13 @@ import com.android.camera.app.AppController;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
 
 public class OneCameraCreator {
-    public static OneCamera create(AppController context, boolean useHdr, CameraDevice device,
+    public static OneCamera create(AppController context, boolean useHdr,
+            OneCameraFeatureConfig featureConfig, CameraDevice device,
             CameraCharacteristics characteristics, Size pictureSize,
             int maxMemoryMB,
             DisplayMetrics displayMetrics, SoundPlayer soundPlayer,

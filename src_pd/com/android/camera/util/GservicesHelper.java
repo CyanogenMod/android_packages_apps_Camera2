@@ -16,15 +16,33 @@
 
 package com.android.camera.util;
 
+import android.content.ContentResolver;
 import android.content.Context;
 
 public class GservicesHelper {
-    public static int getMaxAllowedNativeMemoryMb(Context context) {
+
+    public static boolean isCaptureModuleDisabled(ContentResolver contentResolver) {
+        return false;
+    }
+
+    public static int getCaptureSupportLevelOverrideBack(ContentResolver contentResolver) {
         return -1;
     }
 
-    public static boolean useCamera2ApiThroughPortabilityLayer(Context context) {
+    public static int getCaptureSupportLevelOverrideFront(ContentResolver contentResolver) {
+        return -1;
+    }
+
+    public static int getMaxAllowedNativeMemoryMb(ContentResolver contentResolver) {
+        return -1;
+    }
+
+    public static boolean useCamera2ApiThroughPortabilityLayer(ContentResolver contentResolver) {
         // Use the camera2 API by default. This only affects PhotoModule on L.
         return true;
+    }
+
+    public static boolean isGcamEnabled(ContentResolver contentResolver) {
+        return false;
     }
 }

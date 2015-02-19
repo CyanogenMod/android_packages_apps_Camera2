@@ -697,7 +697,7 @@ public class CaptureModule extends CameraModule implements
 
             @Override
             public boolean isHdrPlusSupported() {
-                return GcamHelper.hasGcamCapture();
+                return GcamHelper.hasGcamCapture(mAppController.getCameraFeatureConfig());
             }
 
             @Override
@@ -1002,7 +1002,7 @@ public class CaptureModule extends CameraModule implements
                     }
 
                     // Only reload the camera if we are toggling HDR+.
-                    if (GcamHelper.hasGcamCapture()) {
+                    if (GcamHelper.hasGcamCapture(mAppController.getCameraFeatureConfig())) {
                         mHdrPlusEnabled = hdrEnabled == 1;
                         switchCamera();
                     } else {

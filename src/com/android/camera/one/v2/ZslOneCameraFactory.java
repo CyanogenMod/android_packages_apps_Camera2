@@ -35,6 +35,8 @@ import com.android.camera.debug.Logger;
 import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.config.OneCameraFeatureConfig;
+import com.android.camera.one.config.OneCameraFeatureConfig.CaptureSupportLevel;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
@@ -101,6 +103,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
     @Override
     public OneCamera createOneCamera(final CameraDeviceProxy device,
             final OneCameraCharacteristics characteristics,
+            CaptureSupportLevel featureConfig,
             final MainThread mainThread,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,

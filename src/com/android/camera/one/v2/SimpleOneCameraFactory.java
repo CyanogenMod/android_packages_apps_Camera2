@@ -34,6 +34,7 @@ import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
@@ -91,7 +92,9 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
 
     @Override
     public OneCamera createOneCamera(final CameraDeviceProxy device,
-            final OneCameraCharacteristics characteristics, final MainThread mainExecutor,
+            final OneCameraCharacteristics characteristics,
+            final OneCameraFeatureConfig.CaptureSupportLevel supportLevel,
+            final MainThread mainExecutor,
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             final Observable<Integer> exposureSetting,
@@ -169,22 +172,21 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 rootBuilder.setParam(CaptureRequest.JPEG_ORIENTATION,
                         mImageRotationCalculator.getSupplier());
 
-                RequestBuilder.Factory meteredZooomedRequestBuilder =
+                RequestBuilder.Factory meteredZoomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
 
                 // Create the picture-taker.
                 PictureTaker pictureTaker;
-                if (characteristics.getSupportedHardwareLevel() == OneCameraCharacteristics
-                .SupportedHardwareLevel.LEGACY) {
+                if (supportLevel == OneCameraFeatureConfig.CaptureSupportLevel.LEGACY_JPEG) {
                     pictureTaker = new LegacyPictureTakerFactory(imageSaverBuilder,
                             cameraCommandExecutor, mainExecutor,
                             frameServerComponent.provideFrameServer(),
-                            meteredZooomedRequestBuilder, managedImageReader).providePictureTaker();
+                            meteredZoomedRequestBuilder, managedImageReader).providePictureTaker();
                 } else {
                     pictureTaker = new PictureTakerFactory(mainExecutor,
                             cameraCommandExecutor, imageSaverBuilder,
                             frameServerComponent.provideFrameServer(),
-                            meteredZooomedRequestBuilder, managedImageReader, flashSetting)
+                            meteredZoomedRequestBuilder, managedImageReader, flashSetting)
                             .providePictureTaker();
                 }
 

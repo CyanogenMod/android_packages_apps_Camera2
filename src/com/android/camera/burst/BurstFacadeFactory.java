@@ -82,7 +82,7 @@ public class BurstFacadeFactory {
     public static BurstFacade create(Context appContext,
             OrientationLockController orientationController,
             BurstReadyStateChangeListener readyStateListener) {
-        if (BurstControllerImpl.isBurstModeSupported(appContext)) {
+        if (BurstControllerImpl.isBurstModeSupported(appContext.getContentResolver())) {
             BurstFacade burstController = new BurstFacadeImpl(appContext, orientationController,
                     readyStateListener);
             ToastingBurstFacadeDecorator.BurstToaster toaster =

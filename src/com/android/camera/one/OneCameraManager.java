@@ -25,6 +25,7 @@ import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
@@ -86,9 +87,9 @@ public abstract class OneCameraManager {
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
      */
-    public static OneCameraManager get(CameraActivity activity, DisplayMetrics displayMetrics)
-            throws OneCameraException {
-        return create(activity, displayMetrics);
+    public static OneCameraManager get(CameraActivity activity, DisplayMetrics displayMetrics,
+            OneCameraFeatureConfig featureConfig) throws OneCameraException {
+        return create(activity, displayMetrics, featureConfig);
     }
 
     /**
@@ -97,10 +98,11 @@ public abstract class OneCameraManager {
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
      */
-    private static OneCameraManager create(CameraActivity activity, DisplayMetrics displayMetrics)
-            throws OneCameraException {
+    private static OneCameraManager create(CameraActivity activity, DisplayMetrics displayMetrics,
+             OneCameraFeatureConfig featureConfig) throws OneCameraException {
         Optional<OneCameraManager> manager =
-                com.android.camera.one.v2.OneCameraManagerImpl.create(activity, displayMetrics);
+                com.android.camera.one.v2.OneCameraManagerImpl.create(activity, displayMetrics,
+                        featureConfig);
         if (!manager.isPresent()) {
             manager = com.android.camera.one.v1.OneCameraManagerImpl.create(activity);
         }

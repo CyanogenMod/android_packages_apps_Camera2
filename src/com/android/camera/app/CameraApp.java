@@ -21,9 +21,9 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Debug;
 
+import com.android.camera.stats.UsageStatistics;
 import com.android.camera.stats.profiler.Profile;
 import com.android.camera.stats.profiler.Profilers;
-import com.android.camera.stats.UsageStatistics;
 import com.android.camera.util.AndroidContext;
 import com.android.camera.util.AndroidServices;
 

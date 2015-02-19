@@ -14,6 +14,7 @@
 
 package com.android.camera.burst;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 
@@ -33,7 +34,7 @@ class BurstControllerImpl implements BurstController {
     /**
      * Returns true if burst mode is supported by camera.
      */
-    public static boolean isBurstModeSupported(Context context) {
+    public static boolean isBurstModeSupported(ContentResolver contentResolver) {
         return false;
     }
 

@@ -56,6 +56,7 @@ import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.CameraPictureSizesCacher;
 import com.android.camera.settings.Keys;
@@ -494,7 +495,8 @@ public class PhotoModule
     private void requestCameraOpen() {
         Log.v(TAG, "requestCameraOpen");
         mActivity.getCameraProvider().requestCamera(mCameraId,
-                GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity));
+                        GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity
+                                .getContentResolver()));
     }
 
     private final ButtonManager.ButtonCallback mCameraCallback =
@@ -535,7 +537,8 @@ public class PhotoModule
                 @Override
                 public void onStateChanged(int state) {
                     SettingsManager settingsManager = mActivity.getSettingsManager();
-                    if (GcamHelper.hasGcamAsSeparateModule()) {
+                    if (GcamHelper.hasGcamAsSeparateModule(
+                            mAppController.getCameraFeatureConfig())) {
                         // Set the camera setting to default backfacing.
                         settingsManager.setToDefault(mAppController.getModuleScope(),
                                                      Keys.KEY_CAMERA_ID);
@@ -586,7 +589,7 @@ public class PhotoModule
         // PhotoModule should hard reset HDR+ to off,
         // and HDR to off if HDR+ is supported.
         settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, false);
-        if (GcamHelper.hasGcamAsSeparateModule()) {
+        if (GcamHelper.hasGcamAsSeparateModule(mAppController.getCameraFeatureConfig())) {
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR, false);
         }
     }
@@ -594,7 +597,8 @@ public class PhotoModule
     @Override
     public HardwareSpec getHardwareSpec() {
         return (mCameraSettings != null ?
-                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities) : null);
+                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
+                        mAppController.getCameraFeatureConfig()) : null);
     }
 
     @Override
@@ -1783,7 +1787,7 @@ public class PhotoModule
                     }
                 }
             };
-        if (GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity)) {
+        if (GservicesHelper.useCamera2ApiThroughPortabilityLayer(mActivity.getContentResolver())) {
             mCameraDevice.startPreview();
             startPreviewCallback.onPreviewStarted();
         } else {

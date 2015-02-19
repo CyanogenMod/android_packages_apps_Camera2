@@ -229,7 +229,8 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             // No camera yet.
             checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
         } else if (mCameraProxy.getCameraId() != id || mUsingNewApi != useNewApi) {
-            boolean syncClose = GservicesHelper.useCamera2ApiThroughPortabilityLayer(mContext);
+            boolean syncClose = GservicesHelper.useCamera2ApiThroughPortabilityLayer(mContext
+                    .getContentResolver());
             Log.v(TAG, "different camera already opened, closing then reopening");
             // Already has camera opened, and is switching cameras and/or APIs.
             if (mUsingNewApi) {

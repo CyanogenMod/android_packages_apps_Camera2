@@ -105,7 +105,6 @@ public class ApiHelper {
     }
 
     public static boolean isLMr1OrHigher() {
-        // TODO: Add proper version code once we can access it.
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP;
     }
 }

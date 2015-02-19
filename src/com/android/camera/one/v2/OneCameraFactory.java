@@ -21,6 +21,8 @@ import com.android.camera.async.Observable;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.config.OneCameraFeatureConfig;
+import com.android.camera.one.config.OneCameraFeatureConfig.CaptureSupportLevel;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.util.Size;
@@ -28,6 +30,7 @@ import com.android.camera.util.Size;
 public interface OneCameraFactory {
     OneCamera createOneCamera(CameraDeviceProxy cameraDevice,
             OneCameraCharacteristics characteristics,
+            CaptureSupportLevel supportLevel,
             MainThread mainThread,
             Size pictureSize,
             ImageSaver.Builder imageSaverBuilder,

@@ -32,6 +32,7 @@ import com.android.camera.ButtonManager;
 import com.android.camera.SoundPlayer;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.AbstractTutorialOverlay;
@@ -71,6 +72,9 @@ public interface AppController {
      * @return the {@link android.content.Context} being used.
      */
     public Context getAndroidContext();
+
+    /** @return the camera feature configuration for the device. */
+    public OneCameraFeatureConfig getCameraFeatureConfig();
 
     /**
      * Creates a new dialog which can be shown in the app.

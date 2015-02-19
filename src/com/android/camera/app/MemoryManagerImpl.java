@@ -149,7 +149,8 @@ public class MemoryManagerImpl implements MemoryManager, QueueListener, Componen
     /** Helper to determine max allowed native memory allocation (in megabytes). */
     private static int getMaxAllowedNativeMemory(Context context) {
         // First check whether we have a system override.
-        int maxAllowedOverrideMb = GservicesHelper.getMaxAllowedNativeMemoryMb(context);
+        int maxAllowedOverrideMb = GservicesHelper.getMaxAllowedNativeMemoryMb(context
+                .getContentResolver());
         if (maxAllowedOverrideMb > 0) {
             Log.d(TAG, "Max native memory overridden: " + maxAllowedOverrideMb);
             return maxAllowedOverrideMb;

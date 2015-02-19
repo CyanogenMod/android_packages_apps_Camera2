@@ -551,7 +551,8 @@ public class VideoModule extends CameraModule
     @Override
     public HardwareSpec getHardwareSpec() {
         return (mCameraSettings != null ?
-                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities) : null);
+                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
+                        mAppController.getCameraFeatureConfig()) : null);
     }
 
     @Override

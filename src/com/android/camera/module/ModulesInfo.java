@@ -26,7 +26,8 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.captureintent.CaptureIntentModule;
 import com.android.camera.debug.Log;
-import com.android.camera.util.ApiHelper;
+import com.android.camera.one.config.OneCameraFeatureConfig;
+import com.android.camera.one.config.OneCameraFeatureConfig.HdrPlusSupportLevel;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.PhotoSphereHelper;
 import com.android.camera.util.RefocusHelper;
@@ -39,14 +40,10 @@ import com.android.camera2.R;
 public class ModulesInfo {
     private static final Log.Tag TAG = new Log.Tag("ModulesInfo");
 
-    /** Selects CaptureModule if true, PhotoModule if false. */
-    private static final boolean ENABLE_CAPTURE_MODULE = ApiHelper.HAS_CAMERA_2_API
-            && (ApiHelper.IS_NEXUS_4 || ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6
-            || ApiHelper.IS_NEXUS_9);
-
-    public static void setupModules(Context context, ModuleManager moduleManager) {
+    public static void setupModules(Context context, ModuleManager moduleManager,
+            OneCameraFeatureConfig config) {
         int photoModuleId = context.getResources().getInteger(R.integer.camera_mode_photo);
-        registerPhotoModule(moduleManager, photoModuleId);
+        registerPhotoModule(moduleManager, photoModuleId, config.isUsingCaptureModule());
         moduleManager.setDefaultModuleIndex(photoModuleId);
         registerVideoModule(moduleManager, context.getResources()
                 .getInteger(R.integer.camera_mode_video));
@@ -60,17 +57,20 @@ public class ModulesInfo {
             registerRefocusModule(moduleManager, context.getResources()
                     .getInteger(R.integer.camera_mode_refocus));
         }
-        if (GcamHelper.hasGcamAsSeparateModule()) {
+        if (GcamHelper.hasGcamAsSeparateModule(config)) {
             registerGcamModule(moduleManager, context.getResources()
-                    .getInteger(R.integer.camera_mode_gcam));
+                    .getInteger(R.integer.camera_mode_gcam), config.getHdrPlusSupportLevel());
         }
         int imageCaptureIntentModuleId = context.getResources().getInteger(
                 R.integer.camera_mode_capture_intent);
-        registerCaptureIntentModule(moduleManager, imageCaptureIntentModuleId);
+        registerCaptureIntentModule(moduleManager, imageCaptureIntentModuleId,
+                config.isUsingCaptureModule());
     }
 
-    private static void registerPhotoModule(ModuleManager moduleManager, final int moduleId) {
+    private static void registerPhotoModule(ModuleManager moduleManager, final int moduleId,
+            final boolean enableCaptureModule) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
+
             @Override
             public int getModuleId() {
                 return moduleId;
@@ -82,13 +82,13 @@ public class ModulesInfo {
                 // capture module is using OneCamera. At some point we'll
                 // refactor all modules to use OneCamera, then the new module
                 // doesn't have to manage it itself.
-                return !ENABLE_CAPTURE_MODULE;
+                return !enableCaptureModule;
             }
 
             @Override
             public ModuleController createModule(AppController app, Intent intent) {
-                Log.v(TAG, "EnableCaptureModule = " + ENABLE_CAPTURE_MODULE);
-                return ENABLE_CAPTURE_MODULE ? new CaptureModule(app) : new PhotoModule(app);
+                Log.v(TAG, "EnableCaptureModule = " + enableCaptureModule);
+                return enableCaptureModule ? new CaptureModule(app) : new PhotoModule(app);
             }
         });
     }
@@ -169,7 +169,8 @@ public class ModulesInfo {
         });
     }
 
-    private static void registerGcamModule(ModuleManager moduleManager, final int moduleId) {
+    private static void registerGcamModule(ModuleManager moduleManager, final int moduleId,
+            final HdrPlusSupportLevel hdrPlusSupportLevel) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
@@ -183,12 +184,13 @@ public class ModulesInfo {
 
             @Override
             public ModuleController createModule(AppController app, Intent intent) {
-                return GcamHelper.createGcamModule(app);
+                return GcamHelper.createGcamModule(app, hdrPlusSupportLevel);
             }
         });
     }
 
-    private static void registerCaptureIntentModule(ModuleManager moduleManager, final int moduleId) {
+    private static void registerCaptureIntentModule(ModuleManager moduleManager, final int moduleId,
+                                                    final boolean enableCaptureModule) {
         moduleManager.registerModule(new ModuleManager.ModuleAgent() {
             @Override
             public int getModuleId() {
@@ -197,12 +199,12 @@ public class ModulesInfo {
 
             @Override
             public boolean requestAppForCamera() {
-                return !ENABLE_CAPTURE_MODULE;
+                return !enableCaptureModule;
             }
 
             @Override
             public ModuleController createModule(AppController app, Intent intent) {
-                return ENABLE_CAPTURE_MODULE ? new CaptureIntentModule(app, intent) :
+                return enableCaptureModule ? new CaptureIntentModule(app, intent) :
                         new PhotoModule(app);
             }
         });

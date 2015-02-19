@@ -24,8 +24,6 @@ public class DebugPropertyHelper {
 
     private static final String PREFIX = "persist.camera";
 
-    /** Switch between PhotoModule and the new CaptureModule. */
-    private static final String PROP_ENABLE_CAPTURE_MODULE = PREFIX + ".newcapture";
     /** Enable frame-by-frame focus logging. */
     private static final String PROP_FRAME_LOG = PREFIX + ".frame_log";
     /**
@@ -43,14 +41,6 @@ public class DebugPropertyHelper {
 
     private static boolean isPropertyOn(String property) {
         return ON_VALUE.equals(SystemProperties.get(property, OFF_VALUE));
-    }
-
-    public static boolean isCaptureModuleEnabled() {
-        return isPropertyOn(PROP_ENABLE_CAPTURE_MODULE);
-    }
-
-    public static boolean forceLegacyOneCamera() {
-        return isPropertyOn(PROP_FORCE_LEGACY_ONE_CAMERA);
     }
 
     public static boolean showFrameDebugLog() {

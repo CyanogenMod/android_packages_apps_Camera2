@@ -107,6 +107,8 @@ import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.config.OneCameraFeatureConfig;
+import com.android.camera.one.config.OneCameraFeatureConfigCreator;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManager.SessionListener;
@@ -258,6 +260,9 @@ public class CameraActivity extends QuickActivity
 
     /** Can be used to play custom sounds. */
     private SoundPlayer mSoundPlayer;
+
+    /** Holds configuration for various OneCamera features. */
+    private OneCameraFeatureConfig mFeatureConfig;
 
     private static final int LIGHTS_OUT_DELAY_MS = 4000;
     private final int BASE_SYS_UI_VISIBILITY =
@@ -982,6 +987,11 @@ public class CameraActivity extends QuickActivity
     }
 
     @Override
+    public OneCameraFeatureConfig getCameraFeatureConfig() {
+        return mFeatureConfig;
+    }
+
+    @Override
     public Dialog createDialog() {
         return new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
     }
@@ -1393,6 +1403,7 @@ public class CameraActivity extends QuickActivity
         mOrientationManager = new OrientationManagerImpl(this, mMainHandler);
         mSettingsManager = getServices().getSettingsManager();
         mSoundPlayer = new SoundPlayer(mAppContext);
+        mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver());
 
         profile.mark();
         if (!Glide.isSetup()) {
@@ -1420,10 +1431,9 @@ public class CameraActivity extends QuickActivity
                       GlideFilmstripManager.MEDIASTORE_THUMB_HEIGHT));
         }
         profile.mark("Glide.setup");
-
-        profile.mark();
         try {
-            mCameraManager = OneCameraManager.get(this, ResolutionUtil.getDisplayMetrics(this));
+            mCameraManager = OneCameraManager.get(this, ResolutionUtil.getDisplayMetrics(this),
+                    mFeatureConfig);
         } catch (OneCameraException e) {
             // Log error and continue. Modules requiring OneCamera should check
             // and handle if null by showing error dialog or other treatment.
@@ -1443,8 +1453,7 @@ public class CameraActivity extends QuickActivity
         // possible so we can call module.init() at the earliest time.
         mModuleManager = new ModuleManagerImpl();
 
-        GcamHelper.init(getContentResolver());
-        ModulesInfo.setupModules(mAppContext, mModuleManager);
+        ModulesInfo.setupModules(mAppContext, mModuleManager, mFeatureConfig);
 
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
@@ -1655,7 +1664,7 @@ public class CameraActivity extends QuickActivity
      * Get the current mode index from the Intent or from persistent
      * settings.
      */
-    public int getModeIndex() {
+    private int getModeIndex() {
         int modeIndex = -1;
         int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
         int videoIndex = getResources().getInteger(R.integer.camera_mode_video);
@@ -1690,7 +1699,7 @@ public class CameraActivity extends QuickActivity
             modeIndex = mSettingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
                                                     Keys.KEY_STARTUP_MODULE_INDEX);
             if ((modeIndex == gcamIndex &&
-                    !GcamHelper.hasGcamAsSeparateModule()) || modeIndex < 0) {
+                    !GcamHelper.hasGcamAsSeparateModule(mFeatureConfig)) || modeIndex < 0) {
                 modeIndex = photoIndex;
             }
         }
@@ -2277,7 +2286,7 @@ public class CameraActivity extends QuickActivity
     public int getPreferredChildModeIndex(int modeIndex) {
         if (modeIndex == getResources().getInteger(R.integer.camera_mode_photo)) {
             boolean hdrPlusOn = Keys.isHdrPlusOn(mSettingsManager);
-            if (hdrPlusOn && GcamHelper.hasGcamAsSeparateModule()) {
+            if (hdrPlusOn && GcamHelper.hasGcamAsSeparateModule(mFeatureConfig)) {
                 modeIndex = getResources().getInteger(R.integer.camera_mode_gcam);
             }
         }
