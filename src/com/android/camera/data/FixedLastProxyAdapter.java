@@ -149,18 +149,6 @@ public class FixedLastProxyAdapter extends FilmstripDataAdapterProxy {
     }
 
     @Override
-    public boolean canSwipeInFullScreen(int item) {
-        int totalNumber = mAdapter.getTotalNumber();
-
-        if (item < totalNumber) {
-            return mAdapter.canSwipeInFullScreen(item);
-        } else if (item == totalNumber) {
-            return mLastData.getAttributes().canSwipeInFullScreen();
-        }
-        return false;
-    }
-
-    @Override
     public AsyncTask updateMetadataAt(int index) {
         if (index < mAdapter.getTotalNumber()) {
             return mAdapter.updateMetadataAt(index);

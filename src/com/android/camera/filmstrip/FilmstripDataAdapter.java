@@ -121,13 +121,4 @@ public interface FilmstripDataAdapter {
      * @param listener The listener to use.
      */
     public void setListener(Listener listener);
-
-    /**
-     * Returns whether the view of the data can be moved by swipe
-     * gesture when in full-screen.
-     *
-     * @param item The ID of the data.
-     * @return Whether the view can be moved.
-     */
-    public boolean canSwipeInFullScreen(int item);
 }

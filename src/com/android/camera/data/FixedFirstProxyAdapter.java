@@ -147,14 +147,6 @@ public class FixedFirstProxyAdapter extends FilmstripDataAdapterProxy
     }
 
     @Override
-    public boolean canSwipeInFullScreen(int item) {
-        if (item == 0) {
-            return mFirstData.getAttributes().canSwipeInFullScreen();
-        }
-        return mAdapter.canSwipeInFullScreen(item - 1);
-    }
-
-    @Override
     public void onFilmstripItemLoaded() {
         if (mListener == null) {
             return;

@@ -152,14 +152,6 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
     }
 
     @Override
-    public boolean canSwipeInFullScreen(int item) {
-        if (item < mFilmstripItems.size() && item > 0) {
-            return mFilmstripItems.get(item).getAttributes().canSwipeInFullScreen();
-        }
-        return true;
-    }
-
-    @Override
     public void removeAt(int index) {
         FilmstripItem d = mFilmstripItems.remove(index);
         if (d == null) {

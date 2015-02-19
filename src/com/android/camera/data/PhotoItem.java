@@ -23,7 +23,6 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -57,7 +56,6 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
               .with(Attributes.CAN_EDIT)
               .with(Attributes.CAN_DELETE)
               .with(Attributes.CAN_SWIPE_AWAY)
-              .with(Attributes.CAN_SWIPE_IN_FULL_SCREEN)
               .with(Attributes.CAN_ZOOM_IN_PLACE)
               .with(Attributes.HAS_DETAILED_CAPTURE_INFO)
               .with(Attributes.IS_IMAGE)
