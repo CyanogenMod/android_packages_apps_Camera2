@@ -1673,12 +1673,6 @@ public class FilmstripView extends ViewGroup {
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mCheckToIntercept = true;
             mDown = MotionEvent.obtain(ev);
-            ViewItem viewItem = mViewItems[BUFFER_CENTER];
-            // Do not intercept touch if swipe is not enabled
-            if (viewItem != null &&
-                  !mDataAdapter.canSwipeInFullScreen(viewItem.getAdapterIndex())) {
-                mCheckToIntercept = false;
-            }
             return false;
         } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
             // Do not intercept touch once child is in zoom mode
@@ -2256,6 +2250,7 @@ public class FilmstripView extends ViewGroup {
             // Estimation of possible length on the right. Likewise, exaggerate
             // the possible maximum too.
             int maxX = estimateMaxX(item.getAdapterIndex(), item.getLeftPosition(), w);
+
             mScrollGesture.fling(mCenterX, 0, (int) -velocityX, 0, minX, maxX, 0, 0);
         }
 
@@ -2354,6 +2349,7 @@ public class FilmstripView extends ViewGroup {
             } else if (!mCanStopScroll && !forced) {
                 return false;
             }
+
             mScrollGesture.forceFinished(true);
             return true;
         }
@@ -2834,9 +2830,7 @@ public class FilmstripView extends ViewGroup {
             if (currItem == null) {
                 return false;
             }
-            if (inFullScreen() && !mDataAdapter.canSwipeInFullScreen(currItem.getAdapterIndex())) {
-                return false;
-            }
+
             hideZoomView();
             // When image is zoomed in to be bigger than the screen
             if (inZoomView()) {
@@ -2944,9 +2938,7 @@ public class FilmstripView extends ViewGroup {
             if (currItem == null) {
                 return false;
             }
-            if (!mDataAdapter.canSwipeInFullScreen(currItem.getAdapterIndex())) {
-                return false;
-            }
+
             if (inZoomView()) {
                 // Fling within the zoomed image
                 mController.flingInsideZoomView(velocityX, velocityY);
@@ -2997,6 +2989,7 @@ public class FilmstripView extends ViewGroup {
                     }
                 }
             }
+
 
             if (mScale == FILM_STRIP_SCALE) {
                 mController.fling(velocityX);

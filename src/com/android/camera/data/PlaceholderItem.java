@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
 
-import com.android.camera.data.FilmstripItemAttributes.Attributes;
 import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
@@ -39,7 +38,6 @@ public class PlaceholderItem implements FilmstripItem {
 
     private static final FilmstripItemAttributes PLACEHOLDER_ITEM_ATTRIBUTES =
           new FilmstripItemAttributes.Builder()
-                .with(Attributes.CAN_SWIPE_IN_FULL_SCREEN)
                 .build();
 
     private final View mView;

@@ -55,7 +55,6 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
                 .with(Attributes.CAN_PLAY)
                 .with(Attributes.CAN_DELETE)
                 .with(Attributes.CAN_SWIPE_AWAY)
-                .with(Attributes.CAN_SWIPE_IN_FULL_SCREEN)
                 .with(Attributes.HAS_DETAILED_CAPTURE_INFO)
                 .with(Attributes.IS_VIDEO)
                 .build();

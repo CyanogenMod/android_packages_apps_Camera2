@@ -30,7 +30,6 @@ public class FilmstripItemAttributes {
         CAN_PLAY,
         CAN_OPEN_VIEWER,
         CAN_SWIPE_AWAY,
-        CAN_SWIPE_IN_FULL_SCREEN,
         CAN_ZOOM_IN_PLACE,
         IS_RENDERING,
         IS_IMAGE,
@@ -68,10 +67,6 @@ public class FilmstripItemAttributes {
 
     public boolean canSwipeAway() {
         return mAttributes.contains(Attributes.CAN_SWIPE_AWAY);
-    }
-
-    public boolean canSwipeInFullScreen() {
-        return mAttributes.contains(Attributes.CAN_SWIPE_IN_FULL_SCREEN);
     }
 
     public boolean canZoomInPlace() {
