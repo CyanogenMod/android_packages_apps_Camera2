@@ -115,7 +115,7 @@ public class AndroidCameraCaptureSessionProxy implements CameraCaptureSessionPro
 
     @Override
     public CameraDeviceProxy getDevice() {
-        return new CameraDeviceProxy(mSession.getDevice());
+        return new AndroidCameraDeviceProxy(mSession.getDevice());
     }
 
     @Override

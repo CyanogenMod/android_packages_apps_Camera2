@@ -82,13 +82,17 @@ public class TagDispatchCaptureSession {
 
         @Override
         public void onCaptureSequenceAborted(CameraCaptureSessionProxy session, int sequenceId) {
-            // Ignored
+            for (ResponseListener listener : mListeners.values()) {
+                listener.onSequenceAborted(sequenceId);
+            }
         }
 
         @Override
         public void onCaptureSequenceCompleted(CameraCaptureSessionProxy session, int sequenceId,
                 long frameNumber) {
-            // Ignored
+            for (ResponseListener listener : mListeners.values()) {
+                listener.onSequenceCompleted(sequenceId, frameNumber);
+            }
         }
     }
 

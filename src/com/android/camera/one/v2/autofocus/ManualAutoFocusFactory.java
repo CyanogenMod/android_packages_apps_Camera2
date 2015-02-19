@@ -31,7 +31,7 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.google.common.base.Supplier;
 
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,8 +49,8 @@ public class ManualAutoFocusFactory {
     /**
      * @param lifetime The Lifetime for all created objects.
      * @param frameServer The FrameServer on which to perform manual AF scans.
-     * @param threadPool A dynamic (not fixed-size!) thread pool on which to run
-     *            AF tasks.
+     * @param commandExecutor The command executor on which to interact with the
+     *            camera.
      * @param cropRegion The latest crop region.
      * @param sensorOrientation The sensor orientation.
      * @param previewRunner A runnable to restart the preview.
@@ -58,13 +58,10 @@ public class ManualAutoFocusFactory {
      *            to the FrameServer.
      */
     public ManualAutoFocusFactory(Lifetime lifetime, FrameServer frameServer,
-            ScheduledExecutorService threadPool, Supplier<Rect> cropRegion,
+            CameraCommandExecutor commandExecutor, Supplier<Rect> cropRegion,
             int sensorOrientation,
             Runnable previewRunner, RequestBuilder.Factory rootBuilder,
             int templateType) {
-        CameraCommandExecutor commandExecutor = new CameraCommandExecutor(threadPool);
-        lifetime.add(commandExecutor);
-
         ConcurrentState<MeteringParameters> currentMeteringParameters = new ConcurrentState<>(
                 MeteringParameters.createGlobal());
         mAEMeteringRegion = new AEMeteringRegion(currentMeteringParameters, cropRegion,
@@ -79,7 +76,8 @@ public class ManualAutoFocusFactory {
         CameraCommand afScanCommand = new FullAFScanCommand(frameServer, afRequestBuilder,
                 templateType);
 
-        ResettingDelayedExecutor afHoldDelayedExecutor = new ResettingDelayedExecutor(threadPool,
+        ResettingDelayedExecutor afHoldDelayedExecutor = new ResettingDelayedExecutor(
+                Executors.newScheduledThreadPool(1),
                 AF_HOLD_SEC, TimeUnit.SECONDS);
         lifetime.add(afHoldDelayedExecutor);
 

@@ -48,24 +48,24 @@ import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResponseListeners;
+import com.android.camera.one.v2.errorhandling.RepeatFailureDetector;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
 import com.google.common.base.Function;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 public class ZslOneCameraFactory implements OneCameraFactory {
     private static Tag TAG = new Tag("ZslOneCamFactory");
 
@@ -148,8 +148,14 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime),
                                 imageReader, new HandlerFactory());
 
-                // Create a thread pool on which to execute camera operations.
-                ScheduledExecutorService miscThreadPool = Executors.newScheduledThreadPool(1);
+                CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
+                        Loggers.tagFactory(),
+                        new Provider<ExecutorService>() {
+                            @Override
+                            public ExecutorService get() {
+                                return Executors.newScheduledThreadPool(1);
+                            }
+                        });
 
                 // Create the request builder used by all camera operations.
                 // Streams, ResponseListeners, and Parameters added to
@@ -174,17 +180,15 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(
                         new Lifetime(cameraLifetime), characteristics,
                         ephemeralFrameServer, rootBuilder,
-                        miscThreadPool, flashSetting, exposureSetting, zoomState,
+                        cameraCommandExecutor, flashSetting, exposureSetting, zoomState,
                         CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
 
-                CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
-                        miscThreadPool);
                 lifetime.add(cameraCommandExecutor);
 
                 // Create the picture-taker.
                 ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(
                         mainThread,
-                        new CameraCommandExecutor(miscThreadPool),
+                        cameraCommandExecutor,
                         imageSaverBuilder,
                         frameServer,
                         basicCameraFactory.provideMeteredZoomedRequestBuilder(),
@@ -200,7 +204,13 @@ public class ZslOneCameraFactory implements OneCameraFactory {
 
                 burstFacade.setBurstTaker(burstTaker);
 
-                basicCameraFactory.providePreviewStarter().run();
+                if (isBackCamera && ApiHelper.IS_NEXUS_5) {
+                    // Workaround for bug: 19061883
+                    RepeatFailureDetector failureDetector = new RepeatFailureDetector(Loggers.tagFactory(),
+                            cameraCaptureSession, cameraCommandExecutor, basicCameraFactory
+                            .providePreviewStarter(), 10);
+                    rootBuilder.addResponseListener(failureDetector);
+                }
 
                 // Wire-together ready-state.
                 Observable<Boolean> atLeastOneImageAvailable = Observables.transform(
@@ -233,6 +243,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         andFunc);
 
                 lifetime.add(Observables.addThreadSafeCallback(ready, readyState));
+
+                basicCameraFactory.providePreviewStarter().run();
 
                 return new CameraControls(
                         pictureTakerFactory.providePictureTaker(),

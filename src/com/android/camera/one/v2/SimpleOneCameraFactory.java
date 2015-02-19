@@ -55,15 +55,15 @@ import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
+import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
-
 import com.google.common.base.Function;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Creates a camera which takes jpeg images using the hardware encoder with
@@ -125,8 +125,14 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 FrameServerFactory frameServerComponent = new FrameServerFactory(
                         new Lifetime(cameraLifetime), cameraCaptureSession, new HandlerFactory());
 
-                // Create a thread pool on which to execute camera operations.
-                ScheduledExecutorService miscThreadPool = Executors.newScheduledThreadPool(1);
+                CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
+                        Loggers.tagFactory(),
+                        new Provider<ExecutorService>() {
+                            @Override
+                            public ExecutorService get() {
+                                return Executors.newScheduledThreadPool(1);
+                            }
+                        });
 
                 // Create the shared image reader.
                 SharedImageReaderFactory sharedImageReaderFactory =
@@ -154,8 +160,8 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
                         (cameraLifetime), characteristics,
                         frameServerComponent.provideEphemeralFrameServer(), rootBuilder,
-                        miscThreadPool, flashSetting, exposureSetting, zoomState, CameraDevice
-                        .TEMPLATE_PREVIEW);
+                        cameraCommandExecutor, flashSetting, exposureSetting, zoomState,
+                        CameraDevice.TEMPLATE_PREVIEW);
 
                 // Register the dynamic updater via orientation supplier
                 rootBuilder.setParam(CaptureRequest.JPEG_ORIENTATION,
@@ -165,12 +171,9 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
 
                 // Create the picture-taker.
-                CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
-                        miscThreadPool);
-
                 PictureTaker pictureTaker;
                 if (characteristics.getSupportedHardwareLevel() == OneCameraCharacteristics
-                        .SupportedHardwareLevel.LEGACY) {
+                .SupportedHardwareLevel.LEGACY) {
                     pictureTaker = new LegacyPictureTakerFactory(imageSaverBuilder,
                             cameraCommandExecutor, mainExecutor,
                             frameServerComponent.provideFrameServer(),

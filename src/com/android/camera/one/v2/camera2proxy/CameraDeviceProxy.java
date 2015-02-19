@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,76 +16,28 @@
 
 package com.android.camera.one.v2.camera2proxy;
 
-import java.util.List;
-
 import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Handler;
 import android.view.Surface;
 
 import com.android.camera.async.SafeCloseable;
 
-public class CameraDeviceProxy implements SafeCloseable {
-    private static class AndroidCaptureSessionStateCallback extends
-            CameraCaptureSession.StateCallback {
-        private final CameraCaptureSessionProxy.StateCallback mStateCallback;
+import java.util.List;
 
-        private AndroidCaptureSessionStateCallback(
-                CameraCaptureSessionProxy.StateCallback stateCallback) {
-            mStateCallback = stateCallback;
-        }
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-        @Override
-        public void onConfigured(CameraCaptureSession session) {
-            mStateCallback.onConfigured(new AndroidCameraCaptureSessionProxy(session));
-        }
-
-        @Override
-        public void onConfigureFailed(CameraCaptureSession session) {
-            mStateCallback.onConfigureFailed(new AndroidCameraCaptureSessionProxy(session));
-        }
-
-        @Override
-        public void onReady(CameraCaptureSession session) {
-            mStateCallback.onReady(new AndroidCameraCaptureSessionProxy(session));
-        }
-
-        @Override
-        public void onActive(CameraCaptureSession session) {
-            mStateCallback.onActive(new AndroidCameraCaptureSessionProxy(session));
-        }
-
-        @Override
-        public void onClosed(CameraCaptureSession session) {
-            mStateCallback.onClosed(new AndroidCameraCaptureSessionProxy(session));
-        }
-    }
-
-    private final CameraDevice mCameraDevice;
-
-    public CameraDeviceProxy(CameraDevice cameraDevice) {
-        mCameraDevice = cameraDevice;
-    }
-
-    public String getId() {
-        return mCameraDevice.getId();
-    }
+@ParametersAreNonnullByDefault
+public interface CameraDeviceProxy extends SafeCloseable {
+    public String getId();
 
     public void createCaptureSession(List<Surface> list,
-            CameraCaptureSessionProxy.StateCallback stateCallback, Handler handler)
-            throws CameraAccessException {
-        mCameraDevice.createCaptureSession(list, new AndroidCaptureSessionStateCallback(
-                stateCallback), handler);
-    }
+            CameraCaptureSessionProxy.StateCallback stateCallback, @Nullable Handler handler)
+            throws CameraAccessException;
 
-    public CaptureRequest.Builder createCaptureRequest(int i) throws CameraAccessException {
-        return mCameraDevice.createCaptureRequest(i);
-    }
+    public CaptureRequest.Builder createCaptureRequest(int i) throws CameraAccessException;
 
     @Override
-    public void close() {
-        mCameraDevice.close();
-    }
+    public void close();
 }
