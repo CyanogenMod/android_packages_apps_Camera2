@@ -52,16 +52,14 @@
             android:layout_gravity="center_vertical">
             <CheckBox
                 android:id="@+id/check_box"
+                style="@style/DialogCheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="72dp"
                 android:gravity="top"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="@string/remember_location_prompt"
-                android:textColor="@color/dialog_text_color"
-                android:textSize="16sp"
-                android:lineSpacingExtra="1.9sp" />
+                android:text="@string/remember_location_prompt" />
             <Button
                 android:id="@+id/confirm_button"
                 style="@style/BlueButton"

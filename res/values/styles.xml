@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Camera resources below -->
     <style name="Theme.ProxyLauncher" parent="@android:Theme.Translucent.NoTitleBar">
     </style>
@@ -233,5 +233,10 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">@color/blue_button_text_color</item>
         <item name="android:padding">12dp</item>
+    </style>
+    <style name="DialogCheckBox">
+        <item name="android:textColor">@color/dialog_text_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">1.9sp</item>
     </style>
 </resources>
