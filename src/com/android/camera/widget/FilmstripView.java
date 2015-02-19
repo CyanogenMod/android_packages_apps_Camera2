@@ -20,14 +20,12 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -49,7 +47,6 @@ import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.filmstrip.FilmstripDataAdapter;
 import com.android.camera.ui.FilmstripGestureRecognizer;
 import com.android.camera.ui.ZoomView;
-import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
@@ -170,6 +167,8 @@ public class FilmstripView extends ViewGroup {
         private ValueAnimator mTranslationYAnimator;
         private ValueAnimator mAlphaAnimator;
 
+        private boolean mLockAtFullOpacity;
+
         /**
          * Constructor.
          *
@@ -186,6 +185,7 @@ public class FilmstripView extends ViewGroup {
             mData = data;
             mLeftPosition = -1;
             mRenderSize = RenderSize.TINY;
+            mLockAtFullOpacity = false;
 
             mView.setPivotX(0f);
             mView.setPivotY(0f);
@@ -222,6 +222,17 @@ public class FilmstripView extends ViewGroup {
                 Log.i(TAG, "[ViewItem:" + mIndex + "] mData.renderFullRes()");
                 mData.renderFullRes(mView);
             }
+        }
+
+        public void lockAtFullOpacity() {
+            if (!mLockAtFullOpacity) {
+                mLockAtFullOpacity = true;
+                mView.setAlpha(1.0f);
+            }
+        }
+
+        public void unlockOpacity() {
+            mLockAtFullOpacity = false;
         }
 
         /**
@@ -272,7 +283,9 @@ public class FilmstripView extends ViewGroup {
 
         /** Forwarding of {@link android.view.View#setAlpha(float)}. */
         public void setAlpha(float alpha) {
-            mView.setAlpha(alpha);
+            if (!mLockAtFullOpacity) {
+                mView.setAlpha(alpha);
+            }
         }
 
         /** Forwarding of {@link android.view.View#getAlpha()}. */
@@ -1121,6 +1134,7 @@ public class FilmstripView extends ViewGroup {
                 ((float) mCenterX - prevCenterX) / (currCenterX - prevCenterX);
         item.layoutWithTranslationX(mDrawArea, currCenterX,
               FILM_STRIP_SCALE + (1f - FILM_STRIP_SCALE) * fadeDownFraction);
+
         item.setAlpha(fadeDownFraction);
         item.setTranslationX(0);
         item.setVisibility(VISIBLE);
@@ -2665,6 +2679,8 @@ public class FilmstripView extends ViewGroup {
         private long mLastDownTime;
         private float mLastDownY;
 
+        private ViewItem mCurrentlyScalingItem;
+
         @Override
         public boolean onSingleTapUp(float x, float y) {
             ViewItem centerItem = mViewItems[BUFFER_CENTER];
@@ -2993,8 +3009,15 @@ public class FilmstripView extends ViewGroup {
             if (inCameraFullscreen()) {
                 return false;
             }
-
             hideZoomView();
+
+            // This ensures that the item currently being manipulated
+            // is locked at full opacity.
+            mCurrentlyScalingItem = mViewItems[BUFFER_CENTER];
+            if (mCurrentlyScalingItem != null) {
+                mCurrentlyScalingItem.lockAtFullOpacity();
+            }
+
             mScaleTrend = 1f;
             // If the image is smaller than screen size, we should allow to zoom
             // in to full screen size
@@ -3079,6 +3102,12 @@ public class FilmstripView extends ViewGroup {
 
         @Override
         public void onScaleEnd() {
+            // Once the item is no longer under direct manipulation, unlock
+            // the opacity so it can be set by other parts of the layout code.
+            if (mCurrentlyScalingItem != null) {
+                mCurrentlyScalingItem.unlockOpacity();
+            }
+
             zoomAtIndexChanged();
             if (mScale > FULL_SCREEN_SCALE + TOLERANCE) {
                 return;
