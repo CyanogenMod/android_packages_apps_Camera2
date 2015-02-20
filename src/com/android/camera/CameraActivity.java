@@ -1387,6 +1387,11 @@ public class CameraActivity extends QuickActivity
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_START);
         mOnCreateTime = System.currentTimeMillis();
         mAppContext = getApplicationContext();
+        mMainHandler = new MainHandler(this, getMainLooper());
+        mLocationManager = new LocationManager(mAppContext);
+        mOrientationManager = new OrientationManagerImpl(this, mMainHandler);
+        mSettingsManager = getServices().getSettingsManager();
+        mSoundPlayer = new SoundPlayer(mAppContext);
 
         profile.mark();
         if (!Glide.isSetup()) {
@@ -1415,8 +1420,6 @@ public class CameraActivity extends QuickActivity
         }
         profile.mark("Glide.setup");
 
-        mSoundPlayer = new SoundPlayer(mAppContext);
-
         profile.mark();
         try {
             mCameraManager = OneCameraManager.get(this, ResolutionUtil.getDisplayMetrics(this));
@@ -1427,6 +1430,13 @@ public class CameraActivity extends QuickActivity
             CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
         }
         profile.mark("OneCameraManager.get");
+        mCameraController = new CameraController(mAppContext, this, mMainHandler,
+                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
+                        CameraAgentFactory.CameraApi.API_1),
+                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
+                        CameraAgentFactory.CameraApi.AUTO));
+        mCameraController.setCameraExceptionHandler(
+                new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
@@ -1434,8 +1444,6 @@ public class CameraActivity extends QuickActivity
 
         GcamHelper.init(getContentResolver());
         ModulesInfo.setupModules(mAppContext, mModuleManager);
-
-        mSettingsManager = getServices().getSettingsManager();
 
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
@@ -1471,15 +1479,6 @@ public class CameraActivity extends QuickActivity
         } else {
             mActionBar.setBackgroundDrawable(new ColorDrawable(0x80000000));
         }
-
-        mMainHandler = new MainHandler(this, getMainLooper());
-        mCameraController = new CameraController(mAppContext, this, mMainHandler,
-                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
-                        CameraAgentFactory.CameraApi.API_1),
-                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
-                        CameraAgentFactory.CameraApi.AUTO));
-        mCameraController.setCameraExceptionHandler(
-                new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
 
         mModeListView = (ModeListView) findViewById(R.id.mode_list_layout);
         mModeListView.init(mModuleManager.getSupportedModeIndexList());
@@ -1563,9 +1562,6 @@ public class CameraActivity extends QuickActivity
                                         Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
             mCameraAppUI.setupClingForViewer(CameraAppUI.BottomPanel.VIEWER_REFOCUS);
         }
-
-        mLocationManager = new LocationManager(mAppContext);
-        mOrientationManager = new OrientationManagerImpl(this, mMainHandler);
 
         setModuleFromModeIndex(getModeIndex());
 
