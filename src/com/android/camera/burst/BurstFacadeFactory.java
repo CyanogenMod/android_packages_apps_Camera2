@@ -38,7 +38,7 @@ public class BurstFacadeFactory {
      * It keeps a hold of the current surface texture so it can be used when
      * burst is not enabled.
      */
-    private static class BurstFacadeStub implements BurstFacade {
+    public static class BurstFacadeStub implements BurstFacade {
         @Override
         public void startBurst(CaptureSession captureSession,
                 DeviceOrientation deviceOrientation, Facing cameraFacing,

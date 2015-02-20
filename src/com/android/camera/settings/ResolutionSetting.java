@@ -105,4 +105,17 @@ public class ResolutionSetting {
         return SettingsUtil.sizeFromSettingString(
                 mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL, pictureSizeSettingKey));
     }
+
+    /**
+     * Obtains the preferred picture aspect ratio in terms of the picture size setting.
+     *
+     * @param cameraFacing The specified direction that the camera is facing.
+     * @return The preferred picture aspect ratio.
+     * @throws OneCameraAccessException
+     */
+    public Rational getPictureAspectRatio(OneCamera.Facing cameraFacing)
+            throws OneCameraAccessException {
+        Size pictureSize = getPictureSize(cameraFacing);
+        return new Rational(pictureSize.getWidth(), pictureSize.getHeight());
+    }
 }

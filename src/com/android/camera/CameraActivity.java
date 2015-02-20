@@ -19,6 +19,7 @@ package com.android.camera;
 
 import android.animation.Animator;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -2655,6 +2656,22 @@ public class CameraActivity extends QuickActivity
         CameraUtil.showErrorAndFinish(this, messageId);
     }
 
+    @Override
+    public void finishActivityWithIntentCompleted(Intent resultIntent) {
+        finishActivityWithIntentResult(Activity.RESULT_OK, resultIntent);
+    }
+
+    @Override
+    public void finishActivityWithIntentCanceled() {
+        finishActivityWithIntentResult(Activity.RESULT_CANCELED, new Intent());
+    }
+
+    private void finishActivityWithIntentResult(int resultCode, Intent resultIntent) {
+        mResultCodeForTesting = resultCode;
+        mResultDataForTesting = resultIntent;
+        setResult(resultCode, resultIntent);
+        finish();
+    }
 
     private void keepScreenOnForAWhile() {
         if (mKeepScreenOn) {

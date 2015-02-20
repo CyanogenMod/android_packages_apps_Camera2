@@ -412,4 +412,16 @@ public interface AppController {
      * @param messageId the ID of the message to show on screen before exiting.
      */
     public void showErrorAndFinish(int messageId);
+
+    /**
+     * Finishes the activity since the intent is completed successfully.
+     *
+     * @param resultIntent The intent that carries the result.
+     */
+    public void finishActivityWithIntentCompleted(Intent resultIntent);
+
+    /**
+     * Finishes the activity since the intent got canceled.
+     */
+    public void finishActivityWithIntentCanceled();
 }
