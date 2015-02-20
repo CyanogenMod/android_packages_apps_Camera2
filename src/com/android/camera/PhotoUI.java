@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.android.camera.captureintent.PictureDecoder;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.ui.CountDownView;
@@ -171,18 +172,7 @@ public class PhotoUI implements PreviewStatusListener,
         @Override
         protected Bitmap doInBackground(Void... params) {
             // Decode image in background.
-            Bitmap bitmap = CameraUtil.downSample(mData, DOWN_SAMPLE_FACTOR);
-            if (mOrientation != 0 || mMirror) {
-                Matrix m = new Matrix();
-                if (mMirror) {
-                    // Flip horizontally
-                    m.setScale(-1f, 1f);
-                }
-                m.preRotate(mOrientation);
-                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m,
-                        false);
-            }
-            return bitmap;
+            return PictureDecoder.decode(mData, DOWN_SAMPLE_FACTOR, mOrientation, mMirror);
         }
     }
 
