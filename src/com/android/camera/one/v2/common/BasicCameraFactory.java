@@ -17,7 +17,6 @@
 package com.android.camera.one.v2.common;
 
 import android.graphics.Rect;
-import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 
@@ -36,8 +35,7 @@ import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.google.common.base.Supplier;
-
-import java.util.concurrent.ScheduledExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Wires together functionality common to all cameras:
@@ -64,16 +62,16 @@ public class BasicCameraFactory {
      *            resources.
      * @param cameraCharacteristics
      * @param rootBuilder Provides preconfigured request builders to be used for
- *            all requests to mFrameServer.
-     * @param threadPool A dynamically-sized thread pool on which to interact
-     * @param templateType The template (e.g. CameraDevice.TEMPLATE_PREVIEW) to use for repeating
-     *                     requests.
+     *            all requests to mFrameServer.
+     * @param cameraCommandExecutor The
+     * @param templateType The template (e.g. CameraDevice.TEMPLATE_PREVIEW) to
+     *            use for repeating requests.
      */
     public BasicCameraFactory(Lifetime lifetime,
                               OneCameraCharacteristics cameraCharacteristics,
                               FrameServer frameServer,
                               RequestBuilder.Factory rootBuilder,
-                              ScheduledExecutorService threadPool,
+                              CameraCommandExecutor cameraCommandExecutor,
                               Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
                               Observable<Integer> exposure,
                               Observable<Float> zoom, int templateType) {
@@ -89,8 +87,6 @@ public class BasicCameraFactory {
                 cameraCharacteristics.getSensorInfoActiveArraySize(), zoom);
         previewBuilder.setParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
 
-        CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(threadPool);
-        lifetime.add(cameraCommandExecutor);
         PreviewCommand previewCommand = new PreviewCommand(frameServer, previewBuilder,
                 templateType);
 
@@ -101,18 +97,20 @@ public class BasicCameraFactory {
         // changes to apply the new setting.
         // Also, de-register these callbacks when the camera is closed (to
         // not leak memory).
-        SafeCloseable zoomCallback = zoom.addCallback(mPreviewStarter, threadPool);
+        SafeCloseable zoomCallback = zoom.addCallback(mPreviewStarter, MoreExecutors
+                .sameThreadExecutor());
         lifetime.add(zoomCallback);
-        SafeCloseable flashCallback = flash.addCallback(mPreviewStarter, threadPool);
+        SafeCloseable flashCallback = flash.addCallback(mPreviewStarter, MoreExecutors
+                .sameThreadExecutor());
         lifetime.add(flashCallback);
-        SafeCloseable exposureCallback = exposure.addCallback(mPreviewStarter, threadPool);
+        SafeCloseable exposureCallback = exposure.addCallback(mPreviewStarter, MoreExecutors
+                .sameThreadExecutor());
         lifetime.add(exposureCallback);
 
-        int sensorOrientation =
-                cameraCharacteristics.getSensorOrientation();
+        int sensorOrientation = cameraCharacteristics.getSensorOrientation();
 
         ManualAutoFocusFactory manualAutoFocusFactory = new ManualAutoFocusFactory(new
-                Lifetime(lifetime), frameServer, threadPool, cropRegion,
+                Lifetime(lifetime), frameServer, cameraCommandExecutor, cropRegion,
                 sensorOrientation, mPreviewStarter, previewBuilder,
                 templateType);
         mManualAutoFocus = manualAutoFocusFactory.provideManualAutoFocus();

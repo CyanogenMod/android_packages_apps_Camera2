@@ -16,15 +16,22 @@
 
 package com.android.camera.one.v2.commands;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
+import static com.google.android.common.base.Preconditions.checkNotNull;
 
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.debug.Log;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.android.camera.util.Provider;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * Executes camera commands on a thread pool.
@@ -40,9 +47,9 @@ public class CameraCommandExecutor implements SafeCloseable {
         @Override
         public void run() {
             try {
-                Log.d(TAG, "Executing command: " + mCommand + " START");
+                mLog.d("Executing command: " + mCommand + " START");
                 mCommand.run();
-                Log.d(TAG, "Executing command: " + mCommand + " END");
+                mLog.d("Executing command: " + mCommand + " END");
             } catch (ResourceAcquisitionFailedException e) {
                 // This may indicate that the command would have otherwise
                 // deadlocked waiting for resources which can never be acquired,
@@ -52,35 +59,65 @@ public class CameraCommandExecutor implements SafeCloseable {
             } catch (InterruptedException e) {
                 // If interrupted, just return because the system is shutting
                 // down.
-                Log.d(TAG, "Interrupted while executing command: " + mCommand);
+                mLog.d("Interrupted while executing command: " + mCommand);
             } catch (CameraAccessException e) {
                 // If the camera was closed and the command failed, just return.
-                Log.d(TAG, "Unable to connect to camera while executing command: " + mCommand);
+                mLog.d("Unable to connect to camera while executing command: " + mCommand);
             } catch (CameraCaptureSessionClosedException e) {
                 // If the session was closed and the command failed, just
                 // return.
-                Log.d(TAG, "Unable to connect to capture session while executing command: " +
+                mLog.d("Unable to connect to capture session while executing command: " +
                         mCommand);
             } catch (Exception e) {
-                Log.e(TAG, "Exception when executing command: " + mCommand, e);
+                mLog.e("Exception when executing command: " + mCommand, e);
             }
         }
     }
 
-    private static final Log.Tag TAG = new Log.Tag("CameraCommandExecutor");
+    private final Logger mLog;
+    private final Provider<ExecutorService> mExecutorProvider;
+    private final Object mLock;
+    @Nullable
+    @GuardedBy("mLock")
+    private ExecutorService mExecutor;
+    @GuardedBy("mLock")
+    private boolean mClosed;
 
-    private final ExecutorService mExecutor;
+    public CameraCommandExecutor(Logger.Factory loggerFactory,
+            Provider<ExecutorService> threadPoolExecutor) {
+        mLog = loggerFactory.create(new Log.Tag("CameraCommandExecutor"));
 
-    public CameraCommandExecutor(ExecutorService threadPoolExecutor) {
-        mExecutor = threadPoolExecutor;
+        mLock = new Object();
+        mExecutorProvider = threadPoolExecutor;
+        mClosed = false;
     }
 
     public void execute(CameraCommand command) {
-        try {
+        if (mClosed) {
+            return;
+        }
+        synchronized (mLock) {
+            if (mExecutor == null) {
+                // Create a new executor, if necessary.
+                mExecutor = mExecutorProvider.get();
+            }
+            checkNotNull(mExecutor);
             mExecutor.execute(new CommandRunnable(command));
-        } catch (RejectedExecutionException e) {
-            // If the executor is shut down, the command will not be executed.
-            // So, we can ignore this exception.
+        }
+    }
+
+    /**
+     * Cancels any pending, or currently-executing commands.
+     * <p>
+     * Like {@link #close} but allows reusing the object.
+     */
+    public void flush() {
+        synchronized (mLock) {
+            if (mExecutor != null) {
+                mExecutor.shutdownNow();
+            }
+
+            mExecutor = null;
         }
     }
 
@@ -90,6 +127,13 @@ public class CameraCommandExecutor implements SafeCloseable {
         // commands. Sending an interrupt is critical since commands may be
         // waiting for results from the camera device which will never arrive,
         // or for resources which may no longer be acquired.
-        mExecutor.shutdownNow();
+        synchronized (mLock) {
+            if (mExecutor != null) {
+                mExecutor.shutdownNow();
+            }
+
+            mExecutor = null;
+            mClosed = true;
+        }
     }
 }

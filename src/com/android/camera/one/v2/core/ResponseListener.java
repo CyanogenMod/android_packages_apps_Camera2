@@ -66,4 +66,24 @@ public abstract class ResponseListener {
      */
     public void onFailed(CaptureFailure failure) {
     }
+
+    /**
+     * Note that this is typically invoked on the camera thread and at high
+     * frequency, so implementations must execute quickly and not make
+     * assumptions regarding the thread they are on.
+     *
+     * @See {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback#onCaptureSequenceAborted}
+     */
+    public void onSequenceAborted(int sequenceId) {
+    }
+
+    /**
+     * Note that this is typically invoked on the camera thread and at high
+     * frequency, so implementations must execute quickly and not make
+     * assumptions regarding the thread they are on.
+     *
+     * @See {@link android.hardware.camera2.CameraCaptureSession.CaptureCallback#onCaptureSequenceCompleted}
+     */
+    public void onSequenceCompleted(int sequenceId, long frameNumber) {
+    }
 }
