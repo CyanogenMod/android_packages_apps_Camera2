@@ -30,6 +30,7 @@ import com.android.camera.one.v2.autofocus.AETriggerResult;
 import com.android.camera.one.v2.autofocus.AFTriggerResult;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.Request;
 import com.android.camera.one.v2.core.RequestBuilder;
@@ -38,6 +39,7 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,18 +188,27 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
             InterruptedException, ResourceAcquisitionFailedException,
             CameraCaptureSessionClosedException {
         List<Request> burstRequest = new ArrayList<>(mBurst.size());
+        List<ListenableFuture<TotalCaptureResultProxy>> mMetadata = new ArrayList<>(mBurst.size());
         boolean first = true;
         for (RequestBuilder.Factory builderTemplate : mBurst) {
             RequestBuilder builder = builderTemplate.create(mStillCaptureRequestTemplate);
+
             builder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
                     .CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             builder.setParam(CaptureRequest.CONTROL_CAPTURE_INTENT,
                     CaptureRequest.CONTROL_CAPTURE_INTENT_STILL_CAPTURE);
+
             if (first) {
                 first = false;
                 builder.addResponseListener(forFrameExposure(imageExposureUpdatable));
             }
+
+            MetadataFuture metadataFuture = new MetadataFuture();
+            builder.addResponseListener(metadataFuture);
+            mMetadata.add(metadataFuture.getMetadata());
+
             builder.addStream(imageStream);
+
             burstRequest.add(builder.build());
         }
 
@@ -206,7 +217,7 @@ class ConvergedImageCaptureCommand implements ImageCaptureCommand {
         for (int i = 0; i < mBurst.size(); i++) {
             try {
                 ImageProxy image = imageStream.getNext();
-                imageSaver.addFullSizeImage(image);
+                imageSaver.addFullSizeImage(image, mMetadata.get(i));
             } catch (BufferQueue.BufferQueueClosedException e) {
                 // No more images will be available, so just quit.
                 return;

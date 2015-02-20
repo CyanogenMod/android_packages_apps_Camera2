@@ -20,7 +20,9 @@ import com.android.camera.app.OrientationManager;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.session.CaptureSession;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -67,20 +69,20 @@ public interface ImageSaver extends SafeCloseable {
      * <p>
      * Implementations must eventually close the image and must tolerate
      * duplicate and out-of-order images.
-     *
-     * @param imageProxy
      */
     public void addThumbnail(ImageProxy imageProxy);
 
     /**
-     * Adds a full-size image to be processed.
+     * Adds a full-size image to be processed along with a future to its
+     * metadata. Note that the metadata future may be cancelled or result in an
+     * exception if the camera system is being closed or the hardware reports an
+     * error.
      * <p>
      * Implementations must eventually close the image and must tolerate
      * duplicate and out-of-order images.
-     *
-     * @param imageProxy
      */
-    public void addFullSizeImage(ImageProxy imageProxy);
+    public void addFullSizeImage(ImageProxy imageProxy, ListenableFuture<TotalCaptureResultProxy>
+            metadata);
 
     /**
      * Indicates that no more images will be added.

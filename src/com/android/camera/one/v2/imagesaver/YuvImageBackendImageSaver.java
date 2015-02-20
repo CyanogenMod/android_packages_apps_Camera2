@@ -24,6 +24,7 @@ import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.processing.imagebackend.ImageBackend;
 import com.android.camera.processing.imagebackend.ImageConsumer;
@@ -32,8 +33,8 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
-
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -64,7 +65,8 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         }
 
         @Override
-        public void saveAndCloseImage(ImageProxy image, Optional<ImageProxy> thumbnail) {
+        public void saveAndCloseImage(ImageProxy image, Optional<ImageProxy> thumbnail,
+                ListenableFuture<TotalCaptureResultProxy> metadata) {
             // TODO Use thumbnail to speedup RGB thumbnail creation whenever
             // possible.
             if (thumbnail.isPresent()) {

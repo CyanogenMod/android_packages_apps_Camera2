@@ -16,47 +16,68 @@
 
 package com.android.camera.one.v2.imagesaver;
 
+import com.android.camera.one.v2.camera2proxy.ForwardingImageProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Saves the last image in a burst.
  */
+@ParametersAreNonnullByDefault
 public class MostRecentImageSaver implements ImageSaver {
+    private class MetadataImage extends ForwardingImageProxy {
+        private final ListenableFuture<TotalCaptureResultProxy> mMetadata;
+
+        private MetadataImage(ImageProxy image, ListenableFuture<TotalCaptureResultProxy>
+                metadata) {
+            super(image);
+            mMetadata = metadata;
+        }
+
+        public ListenableFuture<TotalCaptureResultProxy> getMetadata() {
+            return mMetadata;
+        }
+    }
+
     private final SingleImageSaver mSingleImageSaver;
     private final Map<Long, ImageProxy> mThumbnails;
-    private final Map<Long, ImageProxy> mFullSizeImages;
+    private final Map<Long, MetadataImage> mFullSizeImages;
 
-    public MostRecentImageSaver(@Nonnull SingleImageSaver singleImageSaver) {
+    public MostRecentImageSaver(SingleImageSaver singleImageSaver) {
         mSingleImageSaver = singleImageSaver;
         mThumbnails = new HashMap<>();
         mFullSizeImages = new HashMap<>();
     }
 
     @Override
-    public void addThumbnail(@Nonnull ImageProxy imageProxy) {
+    public void addThumbnail(ImageProxy imageProxy) {
         mThumbnails.put(imageProxy.getTimestamp(), imageProxy);
         closeOlderImages();
     }
 
     @Override
-    public void addFullSizeImage(@Nonnull ImageProxy imageProxy) {
-        mFullSizeImages.put(imageProxy.getTimestamp(), imageProxy);
+    public void addFullSizeImage(ImageProxy imageProxy,
+            ListenableFuture<TotalCaptureResultProxy> metadata) {
+        mFullSizeImages.put(imageProxy.getTimestamp(), new MetadataImage(imageProxy, metadata));
         closeOlderImages();
     }
 
     @Override
     public void close() {
         try {
-            ImageProxy fullSize = getLastImage();
+            MetadataImage fullSize = getLastImage();
             if (fullSize != null) {
                 // Pop the image out of the map so that closeAllImages() does
                 // not close it.
@@ -72,7 +93,8 @@ public class MostRecentImageSaver implements ImageSaver {
                 mThumbnails.remove(thumbnail.getTimestamp());
             }
 
-            mSingleImageSaver.saveAndCloseImage(fullSize, Optional.fromNullable(thumbnail));
+            mSingleImageSaver.saveAndCloseImage(fullSize, Optional.fromNullable(thumbnail),
+                    fullSize.getMetadata());
         } finally {
             closeAllImages();
         }
@@ -88,7 +110,7 @@ public class MostRecentImageSaver implements ImageSaver {
         }
     }
 
-    private void closeOlderImages(long threshold, Map<Long, ImageProxy> imageMap) {
+    private void closeOlderImages(long threshold, Map<Long, ? extends ImageProxy> imageMap) {
         List<Long> toRemove = new ArrayList<>();
         for (long imageTimestamp : imageMap.keySet()) {
             if (imageTimestamp < threshold) {
@@ -129,26 +151,13 @@ public class MostRecentImageSaver implements ImageSaver {
         }
     }
 
-    /**
-     * @return Whether there is a full-size image with a matching thumbnail with
-     *         a more-recent timestamp than the one provided.
-     */
-    private boolean existsMoreRecentFullSizeImage(long timestamp) {
-        Optional<Long> bestPairTimestamp = getMostRecentFullSizeImageTimestamp();
-        if (bestPairTimestamp.isPresent()) {
-            return bestPairTimestamp.get() > timestamp;
-        } else {
-            return false;
-        }
-    }
-
     @Nullable
-    private ImageProxy getLastImage() {
+    private MetadataImage getLastImage() {
         if (mFullSizeImages.isEmpty()) {
             return null;
         }
-        ImageProxy lastImage = null;
-        for (ImageProxy image : mFullSizeImages.values()) {
+        MetadataImage lastImage = null;
+        for (MetadataImage image : mFullSizeImages.values()) {
             if (lastImage == null || image.getTimestamp() > lastImage.getTimestamp()) {
                 lastImage = image;
             }

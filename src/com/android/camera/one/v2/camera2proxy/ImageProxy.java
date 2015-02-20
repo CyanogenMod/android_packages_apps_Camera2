@@ -26,16 +26,24 @@ import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * Wraps {@link android.media.Image} with a mockable interface.
- * <p>
- * Implementations must be thread-safe.
+ * An interface for {@link android.media.Image} with two convenient differences:
+ * <ul>
+ * <li>Implementations must be thread-safe.</li>
+ * <li>Methods will never throw a RuntimeException, even if the underlying Image
+ * has been closed.</li>
+ * </ul>
  */
 @ThreadSafe
 public interface ImageProxy extends SafeCloseable {
 
     /**
-     * Wraps the inner class {@link android.media.Image} with a mockable
-     * interface.
+     * An interface for {@link android.media.Image.Plane} with two convenient
+     * differences:
+     * <ul>
+     * <li>Implementations must be thread-safe.</li>
+     * <li>Getters must never throw, even if the underlying Image has been
+     * closed.</li>
+     * </ul>
      */
     public interface Plane {
 
