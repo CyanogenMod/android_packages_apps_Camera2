@@ -73,6 +73,11 @@ public interface OneCameraCharacteristics {
     public boolean isFlashSupported();
 
     /**
+     * @return If Scene-mode HDR is supported.
+     */
+    public boolean isHdrSceneSupported();
+
+    /**
      * @return The supported hardware level.
      */
     public SupportedHardwareLevel getSupportedHardwareLevel();

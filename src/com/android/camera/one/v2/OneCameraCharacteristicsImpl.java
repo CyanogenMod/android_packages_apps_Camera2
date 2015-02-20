@@ -44,6 +44,8 @@ import java.util.List;
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
+    private static final int CONTROL_SCENE_MODE_HDR = 0x12;
+
     private final CameraCharacteristics mCameraCharacteristics;
 
     public OneCameraCharacteristicsImpl(CameraCharacteristics cameraCharacteristics) {
@@ -100,6 +102,20 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     @Override
     public boolean isFlashSupported() {
         return mCameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+    }
+
+    @Override
+    public boolean isHdrSceneSupported() {
+        // API 21 omitted this constant officially, but kept it around as a hidden constant
+        // MR1 brings it back officially as the same int value.
+        int[] availableSceneModes = mCameraCharacteristics.get(
+              CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
+        for (int availableSceneMode : availableSceneModes) {
+            if (availableSceneMode == CONTROL_SCENE_MODE_HDR) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

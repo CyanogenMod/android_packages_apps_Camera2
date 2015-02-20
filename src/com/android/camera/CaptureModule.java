@@ -139,8 +139,9 @@ public class CaptureModule extends CameraModule implements
     private final Semaphore mCameraOpenCloseLock = new Semaphore(1);
     /** The direction the currently opened camera is facing to. */
     private Facing mCameraFacing;
-    /** Whether HDR is currently enabled. */
-    private boolean mHdrEnabled = false;
+    /** Whether HDR Scene mode is currently enabled. */
+    private boolean mHdrSceneEnabled = false;
+    private boolean mHdrPlusEnabled = false;
     private final Object mSurfaceTextureLock = new Object();
 
     private FocusController mFocusController;
@@ -605,13 +606,16 @@ public class CaptureModule extends CameraModule implements
         mAppController.getCameraAppUI().enableModeOptions();
         mAppController.setShutterEnabled(true);
 
-        mHdrEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
+        mHdrPlusEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS) == 1;
+
+        mHdrSceneEnabled = !mStickyGcamCamera && mAppController.getSettingsManager().getBoolean(
+              SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR);
 
         // The lock only exists for HDR and causes trouble for non-HDR
         // OneCameras.
         // TODO: Fix for removing the locks completely is tracked at b/17985028
-        if (!mHdrEnabled) {
+        if (!mHdrPlusEnabled) {
             mCameraOpenCloseLock.release();
         }
 
@@ -688,8 +692,7 @@ public class CaptureModule extends CameraModule implements
 
             @Override
             public boolean isHdrSupported() {
-                // TODO: Check if the device has HDR and not HDR+.
-                return false;
+                return mCameraCharacteristics.isHdrSceneSupported();
             }
 
             @Override
@@ -706,20 +709,31 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public BottomBarUISpec getBottomBarSpec() {
+        HardwareSpec hardwareSpec = getHardwareSpec();
         BottomBarUISpec bottomBarSpec = new BottomBarUISpec();
         bottomBarSpec.enableGridLines = true;
         bottomBarSpec.enableCamera = true;
         bottomBarSpec.cameraCallback = getCameraCallback();
-        bottomBarSpec.enableHdr = GcamHelper.hasGcamCapture();
+        bottomBarSpec.enableHdr = hardwareSpec.isHdrSupported() || hardwareSpec.isHdrPlusSupported();
         bottomBarSpec.hdrCallback = getHdrButtonCallback();
         bottomBarSpec.enableSelfTimer = true;
         bottomBarSpec.showSelfTimer = true;
-        if (!mHdrEnabled) {
-            bottomBarSpec.enableFlash = true;
-        }
-        // Added to handle case of CaptureModule being used only for Gcam.
-        if (mStickyGcamCamera) {
+
+        // We must read the key from the settings because the button callback
+        // is not executed until after this method is called.
+        if ((hardwareSpec.isHdrPlusSupported() &&
+                mAppController.getSettingsManager().getBoolean(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS)) ||
+              ( hardwareSpec.isHdrSupported() &&
+                mAppController.getSettingsManager().getBoolean(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR))) {
+            // Disable flash if this is a sticky gcam camera, or if
+            // HDR is enabled.
             bottomBarSpec.enableFlash = false;
+        } else {
+            // If we are not in HDR / GCAM mode, fallback on the
+            // flash supported property for this camera.
+            bottomBarSpec.enableFlash = mCameraCharacteristics.isFlashSupported();
         }
 
         bottomBarSpec.enableExposureCompensation =
@@ -986,9 +1000,14 @@ public class CaptureModule extends CameraModule implements
                     if (mPaused) {
                         return;
                     }
-                    Log.d(TAG, "HDR enabled =" + hdrEnabled);
-                    mHdrEnabled = hdrEnabled == 1;
-                    switchCamera();
+
+                    // Only reload the camera if we are toggling HDR+.
+                    if (GcamHelper.hasGcamCapture()) {
+                        mHdrPlusEnabled = hdrEnabled == 1;
+                        switchCamera();
+                    } else {
+                        mHdrSceneEnabled = hdrEnabled == 1;
+                    }
                 }
             };
         }
@@ -1241,8 +1260,8 @@ public class CaptureModule extends CameraModule implements
         ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
                 .from(mAppController.getOrientationManager(), mCameraCharacteristics);
 
-        // Only enable HDR on the back camera
-        boolean useHdr = mHdrEnabled && mCameraFacing == Facing.BACK;
+        // Only enable GCam on the back camera
+        boolean useHdr = mHdrPlusEnabled && mCameraFacing == Facing.BACK;
 
         // Read the preferred picture size from the setting.
         try {

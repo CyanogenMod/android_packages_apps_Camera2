@@ -27,12 +27,12 @@ import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.async.Observables;
 import com.android.camera.async.Updatable;
-import com.android.camera.debug.Log.Tag;
-import com.android.camera.debug.Logger;
-import com.android.camera.debug.Loggers;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstTaker;
 import com.android.camera.burst.BurstTakerImpl;
+import com.android.camera.debug.Log.Tag;
+import com.android.camera.debug.Logger;
+import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
@@ -64,7 +64,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class ZslOneCameraFactory implements OneCameraFactory {
     private static Tag TAG = new Tag("ZslOneCamFactory");
@@ -106,6 +105,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             final Observable<Integer> exposureSetting,
+            final Observable<Boolean> hdrSceneSetting,
             final BurstFacade burstFacade) {
         final Lifetime lifetime = new Lifetime();
 
@@ -181,7 +181,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         new Lifetime(cameraLifetime), characteristics,
                         ephemeralFrameServer, rootBuilder,
                         cameraCommandExecutor, flashSetting, exposureSetting, zoomState,
-                        CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
+                        hdrSceneSetting, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
 
                 lifetime.add(cameraCommandExecutor);
 
