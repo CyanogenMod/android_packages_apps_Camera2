@@ -16,7 +16,7 @@
 
 package com.android.camera.one.v2.commands;
 
-import static com.google.android.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.hardware.camera2.CameraAccessException;
 
@@ -28,7 +28,6 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.util.Provider;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
