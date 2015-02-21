@@ -23,26 +23,32 @@ import android.net.Uri;
  * Internal interface that e.g. a capture session can use to update about the
  * status of session.
  */
-interface SessionNotifier {
+public interface SessionNotifier {
     /** A new task has been queued. */
-    void notifyTaskQueued(final Uri uri);
+    public void notifyTaskQueued(final Uri uri);
 
     /** A task has finished processing. */
-    void notifyTaskDone(final Uri uri);
+    public void notifyTaskDone(final Uri uri);
 
     /** A task has failed to process. */
-    void notifyTaskFailed(final Uri uri, final CharSequence reason);
+    public void notifyTaskFailed(final Uri uri, final CharSequence reason);
 
     /** A task has progressed. */
-    void notifyTaskProgress(final Uri uri, final int progressPercent);
+    public void notifyTaskProgress(final Uri uri, final int progressPercent);
 
     /** A task's current progress message has changed. */
-    void notifyTaskProgressText(final Uri uri, final CharSequence message);
+    public void notifyTaskProgressText(final Uri uri, final CharSequence message);
 
     /** The underlying session data has been updated. */
-    void notifySessionUpdated(final Uri uri);
+    public void notifySessionUpdated(final Uri uri);
 
     /** The capture indicator should be updated. */
-    void notifySessionCaptureIndicatorAvailable(final Bitmap indicator,
+    public void notifySessionCaptureIndicatorAvailable(final Bitmap indicator,
             final int rotationDegrees);
+
+    /** Notify that the full size thumbnail is available. */
+    public void notifySessionThumbnailAvailable(final Bitmap thumbnail);
+
+    /** Notify that the compressed picture data is available. */
+    public void notifySessionPictureDataAvailable(final byte[] pictureData, final int orientation);
 }

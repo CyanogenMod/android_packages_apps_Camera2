@@ -978,6 +978,14 @@ public class CameraActivity extends QuickActivity
                     // HERE
                     mDataAdapter.refresh(uri);
                 }
+
+                @Override
+                public void onSessionThumbnailUpdate(Bitmap bitmap) {
+                }
+
+                @Override
+                public void onSessionPictureDataUpdate(byte[] pictureData, int orientation) {
+                }
             };
 
     @Override

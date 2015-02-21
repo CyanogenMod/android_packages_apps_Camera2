@@ -41,6 +41,9 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
+import com.android.camera.session.CaptureSessionManagerImpl;
+import com.android.camera.session.SessionStorageManager;
+import com.android.camera.session.SessionStorageManagerImpl;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
@@ -67,7 +70,7 @@ import android.view.View;
  * The camera module that handles image capture intent.
  */
 public class CaptureIntentModule extends CameraModule {
-    private static final Log.Tag TAG = new Log.Tag("ImgCapIntModule");
+    private static final Log.Tag TAG = new Log.Tag("CapIntModule");
 
     /** The module UI. */
     private final CaptureIntentModuleUI mModuleUI;
@@ -112,7 +115,10 @@ public class CaptureIntentModule extends CameraModule {
         mSettingsManager = appController.getSettingsManager();
         mLocationManager = appController.getLocationManager();
         mSoundPlayer = new SoundPlayer(mContext);
-        mCaptureSessionManager = getServices().getCaptureSessionManager();
+        mCaptureSessionManager = new CaptureSessionManagerImpl(
+                new CaptureIntentSessionFactory(),
+                SessionStorageManagerImpl.create(mContext),
+                MainThread.create());
         mStateMachine = new StateMachine();
         mAppController = appController;
 
@@ -514,17 +520,6 @@ public class CaptureIntentModule extends CameraModule {
                 @Override
                 public void onRemoteThumbnailAvailable(byte[] jpegImage) {
                 }
-
-                // TODO: Use session manager to get this thumbnail bitmap.
-//                @Override
-//                public void onReviewThumbnailAvailable(final Bitmap thumbnailBitmap) {
-//                    mStateMachine.processEvent(new Event() {
-//                        @Override
-//                        public Optional<State> apply(State state) {
-//                            return state.processOnPictureBitmapAvailable(thumbnailBitmap);
-//                        }
-//                    });
-//                }
             };
 
     private final OneCamera.PictureCallback mPictureCallback = new OneCamera.PictureCallback() {
@@ -573,6 +568,27 @@ public class CaptureIntentModule extends CameraModule {
 
     private final CaptureSessionManager.SessionListener mCaptureSessionListener =
             new CaptureSessionManager.SessionListener() {
+                @Override
+                public void onSessionThumbnailUpdate(final Bitmap thumbnailBitmap) {
+                    mStateMachine.processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnPictureBitmapAvailable(thumbnailBitmap);
+                        }
+                    });
+                }
+
+                @Override
+                public void onSessionPictureDataUpdate(
+                        final byte[] pictureData, final int orientation) {
+                    mStateMachine.processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnPictureCompressed(pictureData, orientation);
+                        }
+                    });
+                }
+
                 public void onSessionQueued(Uri sessionUri) {
                 }
 
@@ -581,18 +597,6 @@ public class CaptureIntentModule extends CameraModule {
 
                 public void onSessionCaptureIndicatorUpdate(Bitmap bitmap, int rotationDegrees) {
                 }
-
-                // TODO: Remove this callback once we have custom capture session.
-//                @Override
-//                public void onSessionDataCompressed(
-//                        Uri mediaUri, final byte[] data, Size dataSize, final int dataOrientation) {
-//                    mStateMachine.processEvent(new Event() {
-//                        @Override
-//                        public Optional<State> apply(State state) {
-//                            return state.processOnPictureCompressed(data, dataOrientation);
-//                        }
-//                    });
-//                }
 
                 public void onSessionDone(Uri sessionUri) {
                 }

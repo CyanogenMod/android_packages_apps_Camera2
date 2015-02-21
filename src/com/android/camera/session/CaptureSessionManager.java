@@ -63,6 +63,24 @@ public interface CaptureSessionManager {
 
         /** Called when the session with the given Uri has changed its progress text. */
         public void onSessionProgressText(Uri mediaUri, CharSequence message);
+
+        /**
+         * Called when the thumbnail for the given session has changed and
+         * should be updated. This is only used by @{link CaptureIntentModule}.
+         * Filmstrip uses onSessionUpdated to refresh the thumbnail.
+         *
+         * @param bitmap the thumbnail bitmap
+         */
+        public void onSessionThumbnailUpdate(Bitmap bitmap);
+
+        /**
+         * Called when the compressed picture data for the given session has
+         * changed and should be updated.
+         *
+         * @param pictureData the picture JPEG byte array.
+         * @param orientation the picture orientation.
+         */
+        public void onSessionPictureDataUpdate(byte[] pictureData, int orientation);
     }
 
     /**

@@ -193,6 +193,35 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 }
             });
         }
+
+        @Override
+        public void notifySessionThumbnailAvailable(final Bitmap thumbnail) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionThumbnailUpdate(thumbnail);
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void notifySessionPictureDataAvailable(
+                final byte[] pictureData, final int orientation) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionPictureDataUpdate(pictureData, orientation);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private static final Log.Tag TAG = new Log.Tag("CaptureSessMgrImpl");
