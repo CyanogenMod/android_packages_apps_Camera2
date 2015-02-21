@@ -61,13 +61,6 @@ import java.util.Map;
 public class CaptureSessionManagerImpl implements CaptureSessionManager {
 
     private final class SessionNotifierImpl implements SessionNotifier {
-        @Override
-        public void removeSession(String sessionUri) {
-            synchronized (mSessions) {
-                mSessions.remove(sessionUri);
-            }
-        }
-
         /**
          * Notifies all task listeners that the task with the given URI has been
          * queued.
@@ -100,6 +93,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                             listener.onSessionDone(uri);
                         }
                     }
+                    finalizeSession(uri);
                 }
             });
         }
@@ -118,6 +112,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                             listener.onSessionFailed(uri, reason);
                         }
                     }
+                    finalizeSession(uri);
                 }
             });
         }
@@ -235,6 +230,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
         mMainHandler = mainHandler;
     }
 
+    @Override
     public CaptureSession createNewSession(String title, long sessionStartMillis, Location location) {
         return mSessionFactory.createNewSession(this, mSessionNotifier, title, sessionStartMillis,
                 location);
@@ -251,6 +247,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     public CaptureSession getSession(Uri sessionUri) {
         synchronized (mSessions) {
             return mSessions.get(sessionUri.toString());
+        }
+    }
+
+    @Override
+    public CaptureSession removeSession(Uri sessionUri) {
+        synchronized (mSessions) {
+            return mSessions.remove(sessionUri.toString());
         }
     }
 
@@ -309,5 +312,20 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                 }
             }
         });
+    }
+
+    /**
+     * When done with a session, remove it from internal map and finalize it.
+     *
+     * @param uri Uri of the session to remove and finalize
+     */
+    private void finalizeSession(Uri uri) {
+        CaptureSession session;
+        synchronized (mSessions) {
+            session = removeSession(uri);
+        }
+        if (session != null) {
+            session.finalize();
+        }
     }
 }

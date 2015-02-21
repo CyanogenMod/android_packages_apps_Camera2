@@ -22,13 +22,13 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.android.camera.Storage;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.FileUtil;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 import java.io.File;
 import java.io.IOException;
@@ -204,8 +204,11 @@ public class CaptureSessionImpl implements CaptureSession {
         mUri = mPlaceHolderSession.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionNotifier.notifyTaskQueued(mUri);
-        Bitmap placeholderBitmap = Storage.getPlacerHolderForSession(mUri);
-        onCaptureIndicatorUpdate(placeholderBitmap, 0);
+        Optional<Bitmap> placeholderBitmap =
+                mPlaceholderManager.getPlaceholder(mPlaceHolderSession);
+        if (placeholderBitmap.isPresent()) {
+            onCaptureIndicatorUpdate(placeholderBitmap.get(), 0);
+        }
     }
 
     @Override
@@ -221,7 +224,7 @@ public class CaptureSessionImpl implements CaptureSession {
     @Override
     public synchronized void cancel() {
         if (isStarted()) {
-            mSessionNotifier.removeSession(mUri.toString());
+            mSessionManager.removeSession(mUri);
         }
     }
 
@@ -238,8 +241,7 @@ public class CaptureSessionImpl implements CaptureSession {
         mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
                 orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
 
-        mSessionNotifier.removeSession(mUri.toString());
-        mSessionNotifier.notifyTaskDone(mPlaceHolderSession.outputUri);
+        mSessionNotifier.notifyTaskDone(mUri);
     }
 
     @Override
@@ -337,9 +339,8 @@ public class CaptureSessionImpl implements CaptureSession {
                     "Cannot call finish without calling startSession first.");
         }
         mProgressMessage = reason;
-        mSessionNotifier.removeSession(mUri.toString());
-        mSessionManager.putErrorMessage(mPlaceHolderSession.outputUri, reason);
-        mSessionNotifier.notifyTaskFailed(mPlaceHolderSession.outputUri, reason);
+        mSessionManager.putErrorMessage(mUri, reason);
+        mSessionNotifier.notifyTaskFailed(mUri, reason);
     }
 
     @Override
@@ -354,6 +355,10 @@ public class CaptureSessionImpl implements CaptureSession {
         mProgressListeners.remove(listener);
     }
 
+    @Override
+    public void finalize() {
+        mPlaceholderManager.removePlaceholder(mPlaceHolderSession);
+    }
 
     private void onCaptureIndicatorUpdate(Bitmap indicator, int rotationDegrees) {
         mSessionNotifier.notifySessionCaptureIndicatorAvailable(indicator, rotationDegrees);

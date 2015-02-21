@@ -24,9 +24,6 @@ import android.net.Uri;
  * status of session.
  */
 interface SessionNotifier {
-    /** Removes the session since it's either done or cancelled. */
-    void removeSession(String sessionUri);
-
     /** A new task has been queued. */
     void notifyTaskQueued(final Uri uri);
 

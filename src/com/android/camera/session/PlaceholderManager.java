@@ -30,6 +30,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 /**
  * Handles placeholders in filmstrip that show up temporarily while a final
@@ -132,8 +133,8 @@ public class PlaceholderManager {
     public Uri finishPlaceholder(Session session, Location location, int orientation,
             ExifInterface exif, byte[] jpeg, int width, int height, String mimeType) {
         Uri resultUri = Storage.updateImage(session.outputUri, mContext.getContentResolver(),
-                session.outputTitle,
-                session.time, location, orientation, exif, jpeg, width, height, mimeType);
+                session.outputTitle, session.time, location, orientation, exif, jpeg, width,
+                height, mimeType);
         CameraUtil.broadcastNewPicture(mContext, resultUri);
         return resultUri;
     }
@@ -147,6 +148,25 @@ public class PlaceholderManager {
     public void replacePlaceholder(Session session, Bitmap placeholder) {
         Storage.replacePlaceholder(session.outputUri, placeholder);
         CameraUtil.broadcastNewPicture(mContext, session.outputUri);
+    }
+
+    /**
+     * Retrieve the placeholder for a given session.
+     *
+     * @param session the session for which to retrieve bitmap placeholder
+     */
+    public Optional<Bitmap> getPlaceholder(Session session) {
+        return Storage.getPlaceholderForSession(session.outputUri);
+    }
+
+
+    /**
+     * Remove the placeholder for a given session.
+     *
+     * @param session the session for which to remove the bitmap placeholder.
+     */
+    public void removePlaceholder(Session session) {
+        Storage.removePlaceholder(session.outputUri);
     }
 
     /**

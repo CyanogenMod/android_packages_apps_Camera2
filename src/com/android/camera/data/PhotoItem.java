@@ -63,7 +63,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
     private final PhotoItemFactory mPhotoItemFactory;
 
-    private Bitmap mSessionPlaceholderBitmap;
+    private Optional<Bitmap> mSessionPlaceholderBitmap = Optional.absent();
 
     public PhotoItem(Context context, GlideFilmstripManager manager, FilmstripItemData data,
           PhotoItemFactory photoItemFactory) {
@@ -78,7 +78,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
      *
      * @param sessionPlaceholderBitmap a Bitmap to set as a placeholder
      */
-    public void setSessionPlaceholderBitmap(Bitmap sessionPlaceholderBitmap) {
+    public void setSessionPlaceholderBitmap(Optional<Bitmap> sessionPlaceholderBitmap) {
         mSessionPlaceholderBitmap = sessionPlaceholderBitmap;
     }
 
@@ -153,7 +153,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
     @Override
     public void recycle(@Nonnull View view) {
         Glide.clear(view);
-        mSessionPlaceholderBitmap = null;
+        mSessionPlaceholderBitmap = Optional.absent();
     }
 
     @Override
@@ -199,9 +199,9 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
         // If we have a non-null placeholder, use that and do NOT ever render a
         // tiny thumbnail to prevent un-intended "flash of low resolution image"
-        if (mSessionPlaceholderBitmap != null) {
+        if (mSessionPlaceholderBitmap.isPresent()) {
             return request.placeholder(new BitmapDrawable(mContext.getResources(),
-                  mSessionPlaceholderBitmap));
+                  mSessionPlaceholderBitmap.get()));
         }
 
         // If we do not have a placeholder bitmap, render a thumbnail with
@@ -223,7 +223,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
         final Bitmap bitmap;
 
         if (getAttributes().isRendering()) {
-            bitmap = Storage.getPlacerHolderForSession(data.getUri());
+            return Storage.getPlaceholderForSession(data.getUri());
         } else {
 
             FileInputStream stream;
@@ -259,8 +259,8 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
                         data.getDimensions().getHeight(),
                         (int) (dim.x * 0.7f), (int) (dim.y * 0.7),
                         data.getOrientation(), MAX_PEEK_BITMAP_PIXELS);
-        }
 
-        return Optional.fromNullable(bitmap);
+            return Optional.fromNullable(bitmap);
+        }
     }
 }
