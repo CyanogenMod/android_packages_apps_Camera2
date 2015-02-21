@@ -61,7 +61,7 @@ public class CaptureModuleUI implements PreviewStatusListener.PreviewAreaChanged
     private float mMaxZoom = 1f;
 
     /** Set up listener to receive zoom changes from View and send to module. */
-    private final OnZoomChangedListener mZoomChancedListener  = new OnZoomChangedListener() {
+    private final OnZoomChangedListener mZoomChangedListener = new OnZoomChangedListener() {
         @Override
         public void onZoomValueChanged(float ratio) {
             mListener.onZoomRatioChanged(ratio);
@@ -173,7 +173,7 @@ public class CaptureModuleUI implements PreviewStatusListener.PreviewAreaChanged
      */
     public void initializeZoom(float maxZoom) {
         mMaxZoom = maxZoom;
-        mPreviewOverlay.setupZoom(mMaxZoom, 0, mZoomChancedListener);
+        mPreviewOverlay.setupZoom(mMaxZoom, 0, mZoomChangedListener);
     }
 
     @Override

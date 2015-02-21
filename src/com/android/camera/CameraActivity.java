@@ -61,6 +61,7 @@ import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
@@ -2503,6 +2504,8 @@ public class CameraActivity extends QuickActivity
     private void openModule(CameraModule module) {
         module.init(this, isSecureCamera(), isCaptureIntent());
         module.hardResetSettings(mSettingsManager);
+        // Hide accessibility zoom UI by default. Modules will enable it themselves if required.
+        getCameraAppUI().hideAccessibilityZoomUI();
         if (!mPaused) {
             module.resume();
             UsageStatistics.instance().changeScreen(currentUserInterfaceMode(),

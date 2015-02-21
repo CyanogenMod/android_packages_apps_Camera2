@@ -16,11 +16,9 @@
 
 package com.android.camera.app;
 
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -33,9 +31,9 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
 
+import com.android.camera.AccessibilityUtil;
 import com.android.camera.AnimationManager;
 import com.android.camera.ButtonManager;
 import com.android.camera.CaptureLayoutHelper;
@@ -52,7 +50,6 @@ import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.GridLines;
 import com.android.camera.ui.MainActivityLayout;
-import com.android.camera.ui.MarginDrawable;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
@@ -71,8 +68,6 @@ import com.android.camera.widget.IndicatorIconController;
 import com.android.camera.widget.ModeOptionsOverlay;
 import com.android.camera.widget.RoundedThumbnailView;
 import com.android.camera2.R;
-
-import java.util.List;
 
 /**
  * CameraAppUI centralizes control of views shared across modules. Whereas module
@@ -546,8 +541,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private View mModeOptionsToggle;
     private final RoundedThumbnailView mRoundedThumbnailView;
     private final CaptureLayoutHelper mCaptureLayoutHelper;
-    private boolean mAccessibilityEnabled;
     private final View mAccessibilityAffordances;
+    private AccessibilityUtil mAccessibilityUtil;
 
     private boolean mDisableAllUserInteractions;
     /** Whether to prevent capture indicator from being triggered. */
@@ -998,21 +993,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         // Show UI that is meant to only be used when spoken feedback is
         // enabled.
-        mAccessibilityEnabled = isSpokenFeedbackAccessibilityEnabled();
         mAccessibilityAffordances.setVisibility(
-                (!mIsCaptureIntent && mAccessibilityEnabled) ? View.VISIBLE : View.GONE);
-    }
-
-    /**
-     * @return Whether any spoken feedback accessibility feature is currently
-     *         enabled.
-     */
-    private boolean isSpokenFeedbackAccessibilityEnabled() {
-        AccessibilityManager accessibilityManager = AndroidServices.instance()
-              .provideAccessibilityManager();
-        List<AccessibilityServiceInfo> infos = accessibilityManager
-                .getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN);
-        return infos != null && !infos.isEmpty();
+                (!mIsCaptureIntent && mAccessibilityUtil.isAccessibilityEnabled()) ? View.VISIBLE
+                        : View.GONE);
     }
 
     /**
@@ -1022,6 +1005,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void openModeList() {
         mModeOptionsOverlay.closeModeOptions();
         mModeListView.onMenuPressed();
+    }
+
+    public void showAccessibilityZoomUI(float maxZoom) {
+        mAccessibilityUtil.showZoomUI(maxZoom);
+    }
+
+    public void hideAccessibilityZoomUI() {
+        mAccessibilityUtil.hideZoomUI();
     }
 
     /**
@@ -1071,7 +1062,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mAccessibilityAffordances.setVisibility(View.GONE);
         } else {
             setIndicatorBottomBarWrapperVisible(true);
-            if (!mIsCaptureIntent && mAccessibilityEnabled) {
+            if (!mIsCaptureIntent && mAccessibilityUtil.isAccessibilityEnabled()) {
                 mAccessibilityAffordances.setVisibility(View.VISIBLE);
             } else {
                 mAccessibilityAffordances.setVisibility(View.GONE);
@@ -1255,6 +1246,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mPreviewOverlay = (PreviewOverlay) mCameraRootView.findViewById(R.id.preview_overlay);
         mPreviewOverlay.setOnTouchListener(new MyTouchListener());
         mPreviewOverlay.setOnPreviewTouchedListener(mModeOptionsOverlay);
+        mAccessibilityUtil = new AccessibilityUtil(mPreviewOverlay, mAccessibilityAffordances);
 
         mCaptureOverlay = (CaptureAnimationOverlay)
                 mCameraRootView.findViewById(R.id.capture_overlay);

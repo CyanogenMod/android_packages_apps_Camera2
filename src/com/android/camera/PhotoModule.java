@@ -56,7 +56,6 @@ import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
-import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.CameraPictureSizesCacher;
 import com.android.camera.settings.Keys;
@@ -1410,6 +1409,8 @@ public class PhotoModule
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
         mAppController.addPreviewAreaSizeChangedListener(mUI);
+        mAppController.getCameraAppUI().showAccessibilityZoomUI(
+                mCameraCapabilities.getMaxZoomRatio());
 
         CameraProvider camProvider = mActivity.getCameraProvider();
         if (camProvider == null) {

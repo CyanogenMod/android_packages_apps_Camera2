@@ -579,6 +579,8 @@ public class VideoModule extends CameraModule
         }
         mCameraDevice = cameraProxy;
         mCameraCapabilities = mCameraDevice.getCapabilities();
+        mAppController.getCameraAppUI().showAccessibilityZoomUI(
+                mCameraCapabilities.getMaxZoomRatio());
         mCameraSettings = mCameraDevice.getSettings();
         mFocusAreaSupported = mCameraCapabilities.supports(CameraCapabilities.Feature.FOCUS_AREA);
         mMeteringAreaSupported =
