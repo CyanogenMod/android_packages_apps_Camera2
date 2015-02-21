@@ -17,12 +17,14 @@
 package com.android.camera.module;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.android.camera.CaptureModule;
 import com.android.camera.PhotoModule;
 import com.android.camera.VideoModule;
 import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
+import com.android.camera.captureintent.CaptureIntentModule;
 import com.android.camera.debug.Log;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.GcamHelper;
@@ -62,6 +64,9 @@ public class ModulesInfo {
             registerGcamModule(moduleManager, context.getResources()
                     .getInteger(R.integer.camera_mode_gcam));
         }
+        int imageCaptureIntentModuleId = context.getResources().getInteger(
+                R.integer.camera_mode_capture_intent);
+        registerCaptureIntentModule(moduleManager, imageCaptureIntentModuleId);
     }
 
     private static void registerPhotoModule(ModuleManager moduleManager, final int moduleId) {
@@ -81,7 +86,7 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule(AppController app) {
+            public ModuleController createModule(AppController app, Intent intent) {
                 Log.v(TAG, "EnableCaptureModule = " + ENABLE_CAPTURE_MODULE);
                 return ENABLE_CAPTURE_MODULE ? new CaptureModule(app) : new PhotoModule(app);
             }
@@ -101,7 +106,7 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule(AppController app) {
+            public ModuleController createModule(AppController app, Intent intent) {
                 return new VideoModule(app);
             }
         });
@@ -120,7 +125,7 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule(AppController app) {
+            public ModuleController createModule(AppController app, Intent intent) {
                 return PhotoSphereHelper.createWideAnglePanoramaModule(app);
             }
         });
@@ -139,7 +144,7 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule(AppController app) {
+            public ModuleController createModule(AppController app, Intent intent) {
                 return PhotoSphereHelper.createPanoramaModule(app);
             }
         });
@@ -158,7 +163,7 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule(AppController app) {
+            public ModuleController createModule(AppController app, Intent intent) {
                 return RefocusHelper.createRefocusModule(app);
             }
         });
@@ -177,8 +182,28 @@ public class ModulesInfo {
             }
 
             @Override
-            public ModuleController createModule(AppController app) {
+            public ModuleController createModule(AppController app, Intent intent) {
                 return GcamHelper.createGcamModule(app);
+            }
+        });
+    }
+
+    private static void registerCaptureIntentModule(ModuleManager moduleManager, final int moduleId) {
+        moduleManager.registerModule(new ModuleManager.ModuleAgent() {
+            @Override
+            public int getModuleId() {
+                return moduleId;
+            }
+
+            @Override
+            public boolean requestAppForCamera() {
+                return !ENABLE_CAPTURE_MODULE;
+            }
+
+            @Override
+            public ModuleController createModule(AppController app, Intent intent) {
+                return ENABLE_CAPTURE_MODULE ? new CaptureIntentModule(app, intent) :
+                        new PhotoModule(app);
             }
         });
     }
