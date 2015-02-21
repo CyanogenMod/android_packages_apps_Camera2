@@ -33,6 +33,7 @@ public abstract class State {
     public final static Optional<State> NO_CHANGE = Optional.absent();
 
     public static enum ID {
+        Uninitialized,
         Background,
         Fatal,
         Foreground,
