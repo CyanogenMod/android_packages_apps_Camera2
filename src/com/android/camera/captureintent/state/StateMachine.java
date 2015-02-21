@@ -40,6 +40,7 @@ public class StateMachine {
     public StateMachine() {
         mStateLock = new ReentrantLock();
         mStateChangedCondition = mStateLock.newCondition();
+        mState = new StateUninitialized(this);
     }
 
     /**
@@ -80,7 +81,7 @@ public class StateMachine {
      * This method is thread-safe so it could be called on different threads.
      * Only one event could be processed at a time.
      *
-     * @param stateEvent
+     * @param stateEvent The event to be processed.
      */
     public void processEvent(Event stateEvent) {
         mStateLock.lock();
@@ -93,6 +94,15 @@ public class StateMachine {
             Log.e(TAG, "Failed to process event: " + ex);
         } finally {
             mStateLock.unlock();
+        }
+    }
+
+    /**
+     * The initial state of the state machine.
+     */
+    private static class StateUninitialized extends State {
+        public StateUninitialized(StateMachine stateMachine) {
+            super(ID.Uninitialized, stateMachine);
         }
     }
 }
