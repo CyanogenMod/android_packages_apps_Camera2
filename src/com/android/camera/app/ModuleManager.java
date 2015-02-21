@@ -17,6 +17,7 @@
 package com.android.camera.app;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.android.camera.module.ModuleController;
 import com.android.camera.settings.SettingsManager;
@@ -51,9 +52,10 @@ public interface ModuleManager {
          *
          * @param app The {@link com.android.camera.app.AppController} which
          *            creates this module.
+         * @param intent The {@link android.content.Intent} which starts the activity.
          * @return The module.
          */
-        public ModuleController createModule(AppController app);
+        public ModuleController createModule(AppController app, Intent intent);
     }
 
     /**

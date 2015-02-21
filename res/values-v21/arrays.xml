@@ -23,5 +23,6 @@
         <item>@drawable/shutter_button_background_photosphere</item>
         <item>@drawable/shutter_button_background_panorama</item>
         <item>@drawable/shutter_button_background_camera</item>
+        <item>@drawable/shutter_button_background_camera</item>
     </array>
 </resources>

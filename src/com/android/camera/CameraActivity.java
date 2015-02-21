@@ -1660,16 +1660,19 @@ public class CameraActivity extends QuickActivity
         int photoIndex = getResources().getInteger(R.integer.camera_mode_photo);
         int videoIndex = getResources().getInteger(R.integer.camera_mode_video);
         int gcamIndex = getResources().getInteger(R.integer.camera_mode_gcam);
-        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
-                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
+        int captureIntentIndex =
+                getResources().getInteger(R.integer.camera_mode_capture_intent);
+        String intentAction = getIntent().getAction();
+        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(intentAction)
+                || MediaStore.ACTION_VIDEO_CAPTURE.equals(intentAction)) {
             modeIndex = videoIndex;
-        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(getIntent().getAction())) {
+        } else if (MediaStore.ACTION_IMAGE_CAPTURE.equals(intentAction)
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(intentAction)) {
             // Capture intent.
-            modeIndex = photoIndex;
-        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(getIntent().getAction())
-                ||MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(getIntent()
-                        .getAction())
-                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(getIntent().getAction())) {
+            modeIndex = captureIntentIndex;
+        } else if (MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(intentAction)
+                ||MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(intentAction)
+                || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(intentAction)) {
             modeIndex = mSettingsManager.getInteger(SettingsManager.SCOPE_GLOBAL,
                 Keys.KEY_CAMERA_MODULE_LAST_USED);
 
@@ -2349,7 +2352,7 @@ public class CameraActivity extends QuickActivity
             mCameraController.closeCamera(true);
         }
         mCurrentModeIndex = agent.getModuleId();
-        mCurrentModule = (CameraModule) agent.createModule(this);
+        mCurrentModule = (CameraModule) agent.createModule(this, getIntent());
     }
 
     @Override

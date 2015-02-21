@@ -401,6 +401,7 @@
     <integer name="camera_mode_photosphere">3</integer>
     <integer name="camera_mode_panorama">4</integer>
     <integer name="camera_mode_gcam">5</integer>
+    <integer name="camera_mode_capture_intent">6</integer>
 
 
     <!-- Ordered list of all camera modes. -->
@@ -411,6 +412,7 @@
         <item>@integer/camera_mode_photosphere</item>
         <item>@integer/camera_mode_panorama</item>
         <item>@integer/camera_mode_gcam</item>
+        <item>@integer/camera_mode_capture_intent</item>
     </integer-array>
 
     <!-- An array of camera mode indices in the sequence of their appearance
@@ -444,6 +446,7 @@
         <item>@color/refocus_mode_color</item>
         <item>@color/photosphere_mode_color</item>
         <item>@color/panorama_mode_color</item>
+        <item>@color/camera_mode_color</item>
         <item>@color/camera_mode_color</item>
     </array>
 
@@ -484,6 +487,7 @@
         <item>@drawable/ic_photosphere_normal</item>
         <item>@drawable/ic_panorama_normal</item>
         <item>@drawable/ic_camera_normal</item>
+        <item>@drawable/ic_camera_normal</item>
     </array>
 
     <array name="camera_mode_shutter_icon">
@@ -492,6 +496,7 @@
         <item>@drawable/ic_capture_refocus</item>
         <item>@null</item>
         <item>@drawable/ic_capture_panorama</item>
+        <item>@drawable/ic_capture_camera</item>
         <item>@drawable/ic_capture_camera</item>
     </array>
 
@@ -517,6 +522,7 @@
         <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_video</item>
         <item>@drawable/shutter_button_background_refocus</item>
+        <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_still</item>
         <item>@drawable/shutter_button_background_still</item>

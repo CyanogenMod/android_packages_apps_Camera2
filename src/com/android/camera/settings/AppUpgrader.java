@@ -415,7 +415,7 @@ public class AppUpgrader extends SettingsUpgrader {
             if (agent == null) {
                 continue;
             }
-            ModuleController module = agent.createModule(app);
+            ModuleController module = agent.createModule(app, null);
             SharedPreferences newModulePreferences =
                     settingsManager.openPreferences(CameraActivity.MODULE_SCOPE_PREFIX
                             + module.getModuleStringIdentifier());
