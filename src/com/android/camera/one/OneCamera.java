@@ -17,7 +17,6 @@
 package com.android.camera.one;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.view.Surface;
@@ -382,7 +381,7 @@ public interface OneCamera {
     /**
      * Starts a preview stream and renders it to the given surface.
      *
-     * @param Surface the surface on which to render preview frames
+     * @param surface the surface on which to render preview frames
      * @param listener
      */
     public void startPreview(Surface surface, CaptureReadyCallback listener);

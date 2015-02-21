@@ -23,6 +23,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
 import android.view.Surface;
 
+import com.android.camera.CaptureModule;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
@@ -94,6 +95,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             final Observable<Integer> exposureSetting,
+            final Observable<Boolean> hdrSceneSetting,
             final BurstFacade burstFacade) {
         final Lifetime lifetime = new Lifetime();
 
@@ -161,7 +163,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                         (cameraLifetime), characteristics,
                         frameServerComponent.provideEphemeralFrameServer(), rootBuilder,
                         cameraCommandExecutor, flashSetting, exposureSetting, zoomState,
-                        CameraDevice.TEMPLATE_PREVIEW);
+                        hdrSceneSetting, CameraDevice.TEMPLATE_PREVIEW);
 
                 // Register the dynamic updater via orientation supplier
                 rootBuilder.setParam(CaptureRequest.JPEG_ORIENTATION,

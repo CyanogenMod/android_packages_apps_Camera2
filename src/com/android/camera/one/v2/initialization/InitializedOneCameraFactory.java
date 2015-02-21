@@ -40,8 +40,6 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Simplifies the construction of OneCamera instances which use the camera2 API
@@ -66,7 +64,6 @@ public class InitializedOneCameraFactory {
     /**
      * @param cameraStarter Starts the camera, after initialization of the
      *            preview stream and capture session is complete.
-     * @param device
      * @param outputSurfaces The set of output Surfaces (excluding the
      *            not-yet-available preview Surface) to use when configuring the
      *            capture session.
@@ -80,8 +77,6 @@ public class InitializedOneCameraFactory {
 
         // Create/wrap required threads.
         final Handler cameraHandler = handlerFactory.create(lifetime, "CameraHandler");
-
-        final ExecutorService miscThreadPool = Executors.newCachedThreadPool();
 
         // Since we cannot create an actual PictureTaker and ManualAutoFocus
         // until the CaptureSession is available, so create ones which defer to

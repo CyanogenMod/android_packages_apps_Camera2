@@ -16,8 +16,6 @@
 
 package com.android.camera.one;
 
-import com.android.camera.session.CaptureSession;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;

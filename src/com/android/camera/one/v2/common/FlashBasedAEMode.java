@@ -26,13 +26,22 @@ import com.google.common.base.Supplier;
  */
 public class FlashBasedAEMode implements Supplier<Integer> {
     private final Supplier<OneCamera.PhotoCaptureParameters.Flash> mFlash;
+    private final Supplier<Boolean> mHdrSceneMode;
 
-    public FlashBasedAEMode(Supplier<OneCamera.PhotoCaptureParameters.Flash> flash) {
+    public FlashBasedAEMode(
+          Supplier<OneCamera.PhotoCaptureParameters.Flash> flash,
+          Supplier<Boolean> hdrSceneMode) {
         mFlash = flash;
+        mHdrSceneMode = hdrSceneMode;
     }
 
     @Override
     public Integer get() {
+        // In the case that hdr scene mode is on, disable flash.
+        if (mHdrSceneMode.get()) {
+            return CaptureRequest.CONTROL_AE_MODE_ON;
+        }
+
         switch (mFlash.get()) {
             case AUTO:
                 return CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;

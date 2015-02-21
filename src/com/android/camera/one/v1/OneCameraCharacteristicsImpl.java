@@ -103,6 +103,12 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     }
 
     @Override
+    public boolean isHdrSceneSupported() {
+        return mCameraParameters.getSupportedSceneModes().contains(
+              Camera.Parameters.SCENE_MODE_HDR);
+    }
+
+    @Override
     public SupportedHardwareLevel getSupportedHardwareLevel() {
         throw new RuntimeException("Not implemented yet.");
     }

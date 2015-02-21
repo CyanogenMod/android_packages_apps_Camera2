@@ -74,14 +74,18 @@ public class BasicCameraFactory {
                               CameraCommandExecutor cameraCommandExecutor,
                               Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
                               Observable<Integer> exposure,
-                              Observable<Float> zoom, int templateType) {
+                              Observable<Float> zoom,
+                              Observable<Boolean> hdrSceneSetting,
+                              int templateType) {
         RequestTemplate previewBuilder = new RequestTemplate(rootBuilder);
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
         previewBuilder.setParam(
-                CaptureRequest.CONTROL_AE_MODE, new FlashBasedAEMode(flash));
+                CaptureRequest.CONTROL_AE_MODE, new FlashBasedAEMode(flash, hdrSceneSetting));
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, exposure);
+        previewBuilder.setParam(
+                CaptureRequest.CONTROL_SCENE_MODE, new HdrSettingBasedSceneMode(hdrSceneSetting));
 
         Supplier<Rect> cropRegion = new ZoomedCropRegion(
                 cameraCharacteristics.getSensorInfoActiveArraySize(), zoom);
@@ -106,6 +110,9 @@ public class BasicCameraFactory {
         SafeCloseable exposureCallback = exposure.addCallback(mPreviewStarter, MoreExecutors
                 .sameThreadExecutor());
         lifetime.add(exposureCallback);
+        SafeCloseable hdrCallback = hdrSceneSetting.addCallback(mPreviewStarter, MoreExecutors
+              .sameThreadExecutor());
+        lifetime.add(hdrCallback);
 
         int sensorOrientation = cameraCharacteristics.getSensorOrientation();
 
