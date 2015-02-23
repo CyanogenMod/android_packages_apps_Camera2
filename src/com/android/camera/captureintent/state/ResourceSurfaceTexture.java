@@ -17,6 +17,7 @@
 package com.android.camera.captureintent.state;
 
 import com.android.camera.app.AppController;
+import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.Log;
@@ -49,7 +50,22 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     // TODO: Hope one day we could get rid of AppController.
     private final AppController mAppController;
 
-    public ResourceSurfaceTexture(
+    /**
+     * Creates a reference counted {@link ResourceSurfaceTexture} object that the
+     * initial ref count is 0. Must call addRef() before using it or the
+     * resource will be leaked.
+     */
+    public static RefCountBase<ResourceSurfaceTexture> create(
+            SurfaceTexture surfaceTexture,
+            PreviewTransformCalculator previewTransformCalculator,
+            OneCamera.OpenCallback cameraOpenCallback,
+            AppController appController) {
+        ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTexture(
+                surfaceTexture, previewTransformCalculator, cameraOpenCallback, appController);
+        return new RefCountBase<>(resourceSurfaceTexture);
+    }
+
+    private ResourceSurfaceTexture(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
             OneCamera.OpenCallback cameraOpenCallback,

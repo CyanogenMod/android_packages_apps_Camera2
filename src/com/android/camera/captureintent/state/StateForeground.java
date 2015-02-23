@@ -42,7 +42,7 @@ public final class StateForeground extends State {
             RefCountBase<ResourceConstructed> resourceConstructed) {
         super(ID.Foreground, background);
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
+        mResourceConstructed.addRef();  // Will be balanced in onLeave().
     }
 
     @Override

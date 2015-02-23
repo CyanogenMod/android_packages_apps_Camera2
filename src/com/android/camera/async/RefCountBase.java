@@ -16,6 +16,8 @@
 
 package com.android.camera.async;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Wraps an object with reference counting. When the reference count goes to 0
  * for the first time, the object is closed.
@@ -24,22 +26,25 @@ public class RefCountBase<T extends SafeCloseable> implements SafeCloseable {
     private final Object mLock;
     private final T mObject;
     private int mRefCount;
-
-    public RefCountBase(T object, int initialReferenceCount) {
-        mLock = new Object();
-        mObject = object;
-        mRefCount = initialReferenceCount;
-    }
+    private boolean mObjectClosed;
 
     public RefCountBase(T object) {
         this(object, 1);
     }
 
+    public RefCountBase(T object, int initialReferenceCount) {
+        Preconditions.checkState(
+                initialReferenceCount > 0, "initialReferenceCount is not greater than 0.");
+        mLock = new Object();
+        mObject = object;
+        mRefCount = initialReferenceCount;
+        mObjectClosed = false;
+    }
+
     public void addRef() {
         synchronized (mLock) {
-            if (mRefCount <= 0) {
-                return;
-            }
+            Preconditions.checkState(!mObjectClosed,
+                    "addRef on an object which has been closed.");
             mRefCount++;
         }
     }
@@ -51,13 +56,15 @@ public class RefCountBase<T extends SafeCloseable> implements SafeCloseable {
     @Override
     public void close() {
         synchronized (mLock) {
-            if (mRefCount <= 0) {
+            // A SafeCloseable must tolerate multiple calls to close().
+            if (mObjectClosed) {
                 return;
             }
             mRefCount--;
             if (mRefCount > 0) {
                 return;
             }
+            mObjectClosed = true;
         }
         // Do this outside of the mLock critical section for speed and to avoid
         // deadlock.

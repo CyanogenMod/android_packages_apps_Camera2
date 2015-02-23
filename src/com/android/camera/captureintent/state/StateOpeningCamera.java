@@ -76,9 +76,9 @@ public final class StateOpeningCamera extends State {
             OneCameraCharacteristics cameraCharacteristics) {
         super(ID.OpeningCamera, previousState);
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
+        mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
-        mResourceSurfaceTexture.addRef();
+        mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
         mCameraFacing = cameraFacing;
         mCameraCharacteristics = cameraCharacteristics;
         mIsPaused = false;

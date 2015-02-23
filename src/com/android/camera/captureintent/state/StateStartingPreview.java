@@ -45,24 +45,33 @@ public final class StateStartingPreview extends State {
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize,
             OneCamera.CaptureReadyCallback captureReadyCallback) {
-        ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCamera(
-                camera, cameraFacing, cameraCharacteristics, pictureSize, captureReadyCallback);
-        return new StateStartingPreview(openingCamera, resourceConstructed, resourceSurfaceTexture,
-                new RefCountBase<>(resourceOpenedCamera));
+        return new StateStartingPreview(
+                openingCamera,
+                resourceConstructed,
+                resourceSurfaceTexture,
+                camera,
+                cameraFacing,
+                cameraCharacteristics,
+                pictureSize,
+                captureReadyCallback);
     }
 
     private StateStartingPreview(
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
-            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera) {
+            OneCamera camera,
+            OneCamera.Facing cameraFacing,
+            OneCameraCharacteristics cameraCharacteristics,
+            Size pictureSize,
+            OneCamera.CaptureReadyCallback captureReadyCallback) {
         super(ID.StartingPreview, previousState);
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
+        mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
-        mResourceSurfaceTexture.addRef();
-        mResourceOpenedCamera = resourceOpenedCamera;
-        mResourceOpenedCamera.addRef();
+        mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
+        mResourceOpenedCamera = ResourceOpenedCamera.create(
+                camera, cameraFacing, cameraCharacteristics, pictureSize, captureReadyCallback);
     }
 
     @Override
