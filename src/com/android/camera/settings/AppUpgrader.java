@@ -410,17 +410,19 @@ public class AppUpgrader extends SettingsUpgrader {
                     settingsManager.openPreferences(
                             OLD_MODULE_PREFERENCES_PREFIX + moduleId);
 
-            ModuleManagerImpl.ModuleAgent agent =
-                    app.getModuleManager().getModuleAgent(moduleIds[i]);
-            if (agent == null) {
-                continue;
-            }
-            ModuleController module = agent.createModule(app, null);
-            SharedPreferences newModulePreferences =
-                    settingsManager.openPreferences(CameraActivity.MODULE_SCOPE_PREFIX
-                            + module.getModuleStringIdentifier());
+            if (oldModulePreferences != null && oldModulePreferences.getAll().size() > 0) {
+                ModuleManagerImpl.ModuleAgent agent =
+                        app.getModuleManager().getModuleAgent(moduleIds[i]);
+                if (agent == null) {
+                    continue;
+                }
+                ModuleController module = agent.createModule(app, null);
+                SharedPreferences newModulePreferences =
+                        settingsManager.openPreferences(CameraActivity.MODULE_SCOPE_PREFIX
+                                + module.getModuleStringIdentifier());
 
-            copyPreferences(oldModulePreferences, newModulePreferences);
+                copyPreferences(oldModulePreferences, newModulePreferences);
+            }
         }
     }
 
