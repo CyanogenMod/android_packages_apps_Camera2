@@ -62,7 +62,7 @@ public final class RepeatFailureDetector extends ResponseListener {
             CameraCommandExecutor commandExecutor, Runnable previewStarter,
             int consecutiveFailureThreshold) {
         mConsecutiveFailureThreshold = consecutiveFailureThreshold;
-        mLog = logFactory.create(new Log.Tag("RepeatFailureDetector"));
+        mLog = logFactory.create(new Log.Tag("RepeatFailureDtctr"));
         mCaptureSession = captureSession;
         mCommandExecutor = commandExecutor;
         mPreviewStarter = previewStarter;

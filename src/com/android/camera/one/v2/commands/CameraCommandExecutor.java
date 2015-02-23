@@ -84,7 +84,7 @@ public class CameraCommandExecutor implements SafeCloseable {
 
     public CameraCommandExecutor(Logger.Factory loggerFactory,
             Provider<ExecutorService> threadPoolExecutor) {
-        mLog = loggerFactory.create(new Log.Tag("CameraCommandExecutor"));
+        mLog = loggerFactory.create(new Log.Tag("CommandExecutor"));
 
         mLock = new Object();
         mExecutorProvider = threadPoolExecutor;
