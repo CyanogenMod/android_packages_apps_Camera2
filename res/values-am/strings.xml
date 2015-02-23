@@ -36,7 +36,7 @@
     <string name="crop_action" msgid="6933589718464132714">"ከርክም"</string>
     <string name="trim_action" msgid="4736803320203951827">"አሳጥር"</string>
     <string name="set_as" msgid="5469055085024870081">"አዘጋጀው እንደ"</string>
-    <string name="video_err" msgid="1562566029875081552">"ቪዲዮ ማጫወት አልተቻለም።"</string>
+    <string name="video_err" msgid="1562566029875081552">"ቪድዮ ማጫወት አልተቻለም።"</string>
     <string name="title" msgid="8061744305671964703">"ርዕስ"</string>
     <string name="description" msgid="8193138501982849808">"መግለጫ"</string>
     <string name="time" msgid="5248213506417024287">"ሰዓት"</string>
@@ -84,7 +84,7 @@
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"ወደታች በሚቆጠርበት ጊዜ ድምጽ አሰማ"</string>
     <string name="setting_off" msgid="6782191065550276632">"ጠፍቷል"</string>
     <string name="setting_on" msgid="9086728135773197891">"በርቷል"</string>
-    <string name="pref_video_quality_title" msgid="5887153490982738588">"ቪዲዮ ጥራት"</string>
+    <string name="pref_video_quality_title" msgid="5887153490982738588">"ቪድዮ ጥራት"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"አላፊ ጊዜ"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"የካሜራ ቅንብሮች"</string>
     <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"የካምኮርደር ቅንብሮች"</string>
@@ -176,7 +176,7 @@
     <string name="effect_goofy_face_small_eyes" msgid="558042211252573238">"ትናንሽ ዓይኖች"</string>
     <string name="effect_backdropper_space" msgid="9133825395915767627">"ጠፈር ላይ"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"ፀሀይ ስትጠልቅ"</string>
-    <string name="effect_backdropper_gallery" msgid="2333888391153564920">"የእርስዎ ቪዲዮ"</string>
+    <string name="effect_backdropper_gallery" msgid="2333888391153564920">"የእርስዎ ቪድዮ"</string>
     <string name="video_snapshot_hint" msgid="2707403607250082339">"እየቀረጹ ሳሉ ፎቶ ለማንሳት ይንኩ።"</string>
     <string name="video_recording_started" msgid="3374878415050991030">"የቪዲዮ ቀረጻ ተጀምሯል።"</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"የቪዲዮ ቀረጻ ቆሟል።"</string>
@@ -188,7 +188,7 @@
     <string name="accessibility_menu_button" msgid="7692103503958544723">"የምናሌ አዝራር"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s አመልካች ሳጥን"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"ወደ ፎቶ ቀይር"</string>
-    <string name="accessibility_switch_to_video" msgid="8174781871592793967">"ወደ ቪዲዮ ቀይር"</string>
+    <string name="accessibility_switch_to_video" msgid="8174781871592793967">"ወደ ቪድዮ ቀይር"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"ወደ ፓኖራማ ቀይር"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"ወደ ሉል ገጽታ ፎቶ ቀይር"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"ወደ ከፍተኛ ጥራት ቀይር"</string>
@@ -201,11 +201,11 @@
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"የሁነታ ዝርዝር ክፍት ነው"</string>
     <string name="media_accessibility_peek" msgid="234540330161031946">"ቀረጻ ተወስዷል"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"ፎቶ ተነስቷል"</string>
-    <string name="video_accessibility_peek" msgid="7845916149291383132">"ቪዲዮ ተቀርጹዋል"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"ቪድዮ ተቀርጹዋል"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"ወደ ካሜራ ይክፈቱ"</string>
     <string name="media_date_content_description" msgid="2155634843596817141">"በ%s ላይ የተወሰደ ማህደረመረጃ"</string>
     <string name="photo_date_content_description" msgid="5705865897898465619">"በ%s ላይ የተነሳ ፎቶ"</string>
-    <string name="video_date_content_description" msgid="2151884014634284456">"በ%s ላይ የተቀረጸ ቪዲዮ"</string>
+    <string name="video_date_content_description" msgid="2151884014634284456">"በ%s ላይ የተቀረጸ ቪድዮ"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"በ%s ላይ የተነሳ ፓኖራማ"</string>
     <string name="photosphere_date_content_description" msgid="4183741743409007876">"በ%s ላይ የተነሳ የሉል ገጽታ ፎቶ"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"በ%s ላይ የተነሳ የምስሪት ድብዘዛ"</string>
@@ -216,7 +216,7 @@
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"ድርድር ፊልም"</string>
     <string name="capital_on" msgid="1118214824959797269">"በርቷል"</string>
     <string name="capital_off" msgid="3020696135020167263">"ጠፍቷል"</string>
-    <string name="video_control_play" msgid="6895236811408921715">"ቪዲዮ ያጫውቱ"</string>
+    <string name="video_control_play" msgid="6895236811408921715">"ቪድዮ ያጫውቱ"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"ጠፍቷል"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 ሰከንዶች"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 ስከንድ"</string>
@@ -282,14 +282,14 @@
     <string name="setting_wallpaper" msgid="2397759659347872725">"ልጣፍ  በማዘጋጀት ላይ"</string>
     <string name="mode_settings" msgid="2021937261522670921">"ቅንብሮች"</string>
     <string name="mode_camera" msgid="279763925715250603">"ካሜራ"</string>
-    <string name="mode_video" msgid="8633929034048169139">"ቪዲዮ"</string>
+    <string name="mode_video" msgid="8633929034048169139">"ቪድዮ"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"የሉል ገጽታ ፎቶ"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"አላፊ ጊዜ"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"ሰፊ አንግል"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"ፓኖራማ"</string>
     <string name="mode_refocus" msgid="172192967119469061">"የካሜራ መስታወት ድብዘዛ"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"ወደ ካሜራ ሁነታ ቀይር"</string>
-    <string name="mode_video_desc" msgid="4058407412929464689">"ወደ ቪዲዮ ካሜራ ቀይር"</string>
+    <string name="mode_video_desc" msgid="4058407412929464689">"ወደ ቪድዮ ካሜራ ቀይር"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"ወደ ሉል ገጽታ ፎቶ ሁነታ ቀይር"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"ወደ ፓኖራማ ሁነታ ቀይር"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"ወደ የካሜራ መስታወት ድብዘዛ ሁነታ ቀይር"</string>
@@ -332,9 +332,9 @@
     <string name="button_change_announcement" msgid="3759686152778772111">"አዝራር አሁን %s ነው"</string>
     <string name="setting_location" msgid="4459859689227893838">"አካባቢ"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"የኋላ ካሜራ ፎቶ"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"የኋላ ካሜራ ቪዲዮ"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"የኋላ ካሜራ ቪድዮ"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"የፊት ካሜራ ፎቶ"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"የፊት ካሜራ ቪዲዮ"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"የፊት ካሜራ ቪድዮ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ነባሪ ካሜራ"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"እገዛ እና ግብረመልስ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ በማስኬድ ላይ …"</string>
