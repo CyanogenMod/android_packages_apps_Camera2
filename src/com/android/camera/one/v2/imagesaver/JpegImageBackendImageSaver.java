@@ -26,6 +26,7 @@ import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.processing.imagebackend.ImageBackend;
 import com.android.camera.processing.imagebackend.ImageConsumer;
@@ -35,6 +36,7 @@ import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,11 +50,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * and just routes this image artifact as the thumbnail and to remote devices.
  */
 public class JpegImageBackendImageSaver implements ImageSaver.Builder {
-    private static Log.Tag TAG = new Log.Tag("JpegImgBESaver");
-
-    /** Factor to downsample full-size JPEG image for use in thumbnail bitmap. */
-    private static final int JPEG_DOWNSAMPLE_FOR_FAST_INDICATOR = 4;
-
     @ParametersAreNonnullByDefault
     private static class ImageSaverImpl implements SingleImageSaver {
         private final MainThread mExecutor;
@@ -72,7 +69,8 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
         }
 
         @Override
-        public void saveAndCloseImage(ImageProxy image, Optional<ImageProxy> thumbnail) {
+        public void saveAndCloseImage(ImageProxy image, Optional<ImageProxy> thumbnail,
+                ListenableFuture<TotalCaptureResultProxy> metadata) {
             // TODO: Use thumbnail to speed up RGB thumbnail creation whenever
             // possible. For now, just close it.
             if (thumbnail.isPresent()) {
@@ -124,7 +122,8 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
             if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
                 // Just start the thumbnail now, since there's no earlier event.
 
-                // Downsample and convert the JPEG payload to a reasonably-sized Bitmap
+                // Downsample and convert the JPEG payload to a reasonably-sized
+                // Bitmap
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = JPEG_DOWNSAMPLE_FOR_FAST_INDICATOR;
                 final Bitmap bitmap = BitmapFactory.decodeByteArray(payload.data, 0,
@@ -153,7 +152,9 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
             mListenerProxy.unregisterListener(this);
         }
     }
-
+    /** Factor to downsample full-size JPEG image for use in thumbnail bitmap. */
+    private static final int JPEG_DOWNSAMPLE_FOR_FAST_INDICATOR = 4;
+    private static Log.Tag TAG = new Log.Tag("JpegImgBESaver");
     private final MainThread mExecutor;
     private final ImageRotationCalculator mImageRotationCalculator;
     private final ImageBackend mImageBackend;

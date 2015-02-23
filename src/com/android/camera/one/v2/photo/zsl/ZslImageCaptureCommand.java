@@ -17,6 +17,7 @@
 package com.android.camera.one.v2.photo.zsl;
 
 import android.hardware.camera2.CameraAccessException;
+import android.support.v4.util.Pair;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Updatable;
@@ -28,6 +29,7 @@ import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.ImageCaptureCommand;
 import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.MetadataPool;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.Futures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,10 +92,11 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
     }
 
     @Nullable
-    private ImageProxy tryGetZslImage() throws InterruptedException,
+    private Pair<ImageProxy, TotalCaptureResultProxy> tryGetZslImage() throws InterruptedException,
             BufferQueue.BufferQueueClosedException {
         List<ImageProxy> images = getAllAvailableImages();
         ImageProxy imageToSave = null;
+        TotalCaptureResultProxy metadata = null;
         try {
             for (ImageProxy image : images) {
                 Future<TotalCaptureResultProxy> metadataFuture =
@@ -101,6 +104,7 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
                 try {
                     if (mMetadataFilter.apply(metadataFuture.get())) {
                         imageToSave = image;
+                        metadata = metadataFuture.get();
                     }
                 } catch (ExecutionException | CancellationException e) {
                     // If we cannot get metadata for an image, for whatever
@@ -119,7 +123,11 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
                 }
             }
         }
-        return imageToSave;
+        if (imageToSave == null) {
+            return null;
+        } else {
+            return new Pair<>(imageToSave, metadata);
+        }
     }
 
     @Override
@@ -128,10 +136,10 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
             CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
         boolean mustCloseImageSaver = true;
         try {
-            ImageProxy image = tryGetZslImage();
+            Pair<ImageProxy, TotalCaptureResultProxy> image = tryGetZslImage();
             if (image != null) {
                 imageExposeCallback.update(null);
-                imageSaver.addFullSizeImage(image);
+                imageSaver.addFullSizeImage(image.first, Futures.immediateFuture(image.second));
             } else {
                 mustCloseImageSaver = false;
                 mFallbackCommand.run(imageExposeCallback, imageSaver);

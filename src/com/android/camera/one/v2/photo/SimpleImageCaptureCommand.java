@@ -64,12 +64,14 @@ class SimpleImageCaptureCommand implements ImageCaptureCommand {
             RequestBuilder photoRequest = mBuilderFactory.create(CameraDevice
                     .TEMPLATE_STILL_CAPTURE);
             photoRequest.addStream(imageStream);
+            MetadataFuture metadataFuture = new MetadataFuture();
+            photoRequest.addResponseListener(metadataFuture);
             photoRequest.addResponseListener(forFrameExposure(imageExposureUpdatable));
             session.submitRequest(Arrays.asList(photoRequest.build()),
                     FrameServer.RequestType.NON_REPEATING);
 
             ImageProxy image = imageStream.getNext();
-            imageSaver.addFullSizeImage(image);
+            imageSaver.addFullSizeImage(image, metadataFuture.getMetadata());
         } catch (BufferQueue.BufferQueueClosedException e) {
             // If we get here, the request was submitted, but the image
             // never arrived.

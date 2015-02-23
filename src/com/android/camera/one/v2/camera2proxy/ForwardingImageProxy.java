@@ -17,6 +17,9 @@
 package com.android.camera.one.v2.camera2proxy;
 
 import android.graphics.Rect;
+import android.media.Image;
+
+import com.google.common.base.Objects;
 
 import java.util.List;
 
@@ -99,6 +102,30 @@ public abstract class ForwardingImageProxy implements ImageProxy {
 
     @Override
     public String toString() {
-        return mImpl.toString();
+        return Objects.toStringHelper(this)
+                .add("timestamp", getTimestamp())
+                .add("width", getWidth())
+                .add("height", getHeight())
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof ImageProxy)) {
+            return false;
+        }
+        ImageProxy otherImage = (ImageProxy) other;
+        return otherImage.getFormat() == getFormat() &&
+                otherImage.getWidth() == getWidth() &&
+                otherImage.getHeight() == getHeight() &&
+                otherImage.getTimestamp() == getTimestamp();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFormat(), getWidth(), getHeight(), getTimestamp());
     }
 }

@@ -17,11 +17,20 @@
 package com.android.camera.one.v2.imagesaver;
 
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 interface SingleImageSaver {
-    public void saveAndCloseImage(ImageProxy fullSize, Optional<ImageProxy> thumbnail);
+    /**
+     * Implementations should save and close the image and thumbnail (if
+     * present). Note that the metadata future may be cancelled or result in an
+     * exception if the camera system is being closed or the hardware reports an
+     * error.
+     */
+    public void saveAndCloseImage(ImageProxy fullSize, Optional<ImageProxy> thumbnail,
+            ListenableFuture<TotalCaptureResultProxy> metadata);
 }

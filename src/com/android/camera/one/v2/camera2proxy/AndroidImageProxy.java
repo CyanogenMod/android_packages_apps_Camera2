@@ -20,6 +20,7 @@ import android.graphics.Rect;
 import android.media.Image;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -39,16 +40,18 @@ public class AndroidImageProxy implements ImageProxy {
      * {@link android.media.Image.Plane}.
      */
     public class Plane implements ImageProxy.Plane {
-        /**
-         * {@link android.media.Image} is not thread-safe, and the resulting
-         * {@link Image.Plane} objects are not-necessarily thread-safe either,
-         * so all interaction must be guarded by {@link #mLock}.
-         */
-        @GuardedBy("mLock")
-        private final Image.Plane mPlane;
+        private final int mPixelStride;
+        private final int mRowStride;
+        private final ByteBuffer mBuffer;
 
         public Plane(Image.Plane imagePlane) {
-            mPlane = imagePlane;
+            // Copying out the contents of the Image.Plane means that this Plane
+            // implementation can be thread-safe (without requiring any locking)
+            // and can have getters which do not throw a RuntimeException if
+            // the underlying Image is closed.
+            mPixelStride = imagePlane.getPixelStride();
+            mRowStride = imagePlane.getRowStride();
+            mBuffer = imagePlane.getBuffer();
         }
 
         /**
@@ -56,9 +59,7 @@ public class AndroidImageProxy implements ImageProxy {
          */
         @Override
         public int getRowStride() {
-            synchronized (mLock) {
-                return mPlane.getRowStride();
-            }
+            return mRowStride;
         }
 
         /**
@@ -66,9 +67,7 @@ public class AndroidImageProxy implements ImageProxy {
          */
         @Override
         public int getPixelStride() {
-            synchronized (mLock) {
-                return mPlane.getPixelStride();
-            }
+            return mPixelStride;
         }
 
         /**
@@ -76,11 +75,8 @@ public class AndroidImageProxy implements ImageProxy {
          */
         @Override
         public ByteBuffer getBuffer() {
-            synchronized (mLock) {
-                return mPlane.getBuffer();
-            }
+            return mBuffer;
         }
-
     }
 
     private final Object mLock;
@@ -90,10 +86,38 @@ public class AndroidImageProxy implements ImageProxy {
      */
     @GuardedBy("mLock")
     private final android.media.Image mImage;
+    private final int mFormat;
+    private final int mWidth;
+    private final int mHeight;
+    private final long mTimestamp;
+    private final ImmutableList<ImageProxy.Plane> mPlanes;
+    @GuardedBy("mLock")
+    private Rect mCropRect;
 
     public AndroidImageProxy(android.media.Image image) {
         mLock = new Object();
+
         mImage = image;
+        // Copying out the contents of the Image means that this Image
+        // implementation can be thread-safe (without requiring any locking)
+        // and can have getters which do not throw a RuntimeException if
+        // the underlying Image is closed.
+        mFormat = mImage.getFormat();
+        mWidth = mImage.getWidth();
+        mHeight = mImage.getHeight();
+        mTimestamp = mImage.getTimestamp();
+
+        Image.Plane[] planes;
+        planes = mImage.getPlanes();
+        if (planes == null) {
+            mPlanes = ImmutableList.of();
+        } else {
+            List<ImageProxy.Plane> wrappedPlanes = new ArrayList<>(planes.length);
+            for (int i = 0; i < planes.length; i++) {
+                wrappedPlanes.add(new Plane(planes[i]));
+            }
+            mPlanes = ImmutableList.copyOf(wrappedPlanes);
+        }
     }
 
     /**
@@ -102,7 +126,13 @@ public class AndroidImageProxy implements ImageProxy {
     @Override
     public Rect getCropRect() {
         synchronized (mLock) {
-            return mImage.getCropRect();
+            try {
+                mCropRect = mImage.getCropRect();
+            } catch (IllegalStateException imageClosedException) {
+                // If the image is closed, then just return the cached CropRect.
+                return mCropRect;
+            }
+            return mCropRect;
         }
     }
 
@@ -112,7 +142,12 @@ public class AndroidImageProxy implements ImageProxy {
     @Override
     public void setCropRect(Rect cropRect) {
         synchronized (mLock) {
-            mImage.setCropRect(cropRect);
+            mCropRect = cropRect;
+            try {
+                mImage.setCropRect(cropRect);
+            } catch (IllegalStateException imageClosedException) {
+                // Ignore.
+            }
         }
     }
 
@@ -121,9 +156,7 @@ public class AndroidImageProxy implements ImageProxy {
      */
     @Override
     public int getFormat() {
-        synchronized (mLock) {
-            return mImage.getFormat();
-        }
+        return mFormat;
     }
 
     /**
@@ -131,40 +164,15 @@ public class AndroidImageProxy implements ImageProxy {
      */
     @Override
     public int getHeight() {
-        synchronized (mLock) {
-            return mImage.getHeight();
-        }
+        return mHeight;
     }
 
     /**
-     * <p>
-     * NOTE:This wrapper is functionally correct, but has some performance
-     * implications: it dynamically allocates a small array (usually 1-3
-     * elements) and iteratively constructs each element of this array every
-     * time it is called. This function definitely should <b>NOT</b> be called
-     * within an tight inner loop, as it may litter the GC with lots of little
-     * allocations. However, a proper caching of this object needs to be tied to
-     * the Android Image updates, which would be a little more complex than this
-     * object needs to be. So, just consider the performance when using this
-     * function wrapper.
-     * </p>
-     *
      * @see {@link android.media.Image#getPlanes}
      */
     @Override
     public List<ImageProxy.Plane> getPlanes() {
-        Image.Plane[] planes;
-
-        synchronized (mLock) {
-            planes = mImage.getPlanes();
-        }
-
-        List<ImageProxy.Plane> wrappedPlanes = new ArrayList<>(planes.length);
-
-        for (int i = 0; i < planes.length; i++) {
-            wrappedPlanes.add(new Plane(planes[i]));
-        }
-        return wrappedPlanes;
+        return mPlanes;
     }
 
     /**
@@ -172,9 +180,7 @@ public class AndroidImageProxy implements ImageProxy {
      */
     @Override
     public long getTimestamp() {
-        synchronized (mLock) {
-            return mImage.getTimestamp();
-        }
+        return mTimestamp;
     }
 
     /**
@@ -182,9 +188,7 @@ public class AndroidImageProxy implements ImageProxy {
      */
     @Override
     public int getWidth() {
-        synchronized (mLock) {
-            return mImage.getWidth();
-        }
+        return mWidth;
     }
 
     /**
@@ -199,12 +203,31 @@ public class AndroidImageProxy implements ImageProxy {
 
     @Override
     public String toString() {
-        Objects.ToStringHelper tsh;
-
-        synchronized (mImage) {
-            tsh = Objects.toStringHelper(mImage);
-        }
-        return tsh.add("timestamp", getTimestamp())
+        return Objects.toStringHelper(this)
+                .add("format", getFormat())
+                .add("timestamp", getTimestamp())
+                .add("width", getWidth())
+                .add("height", getHeight())
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof ImageProxy)) {
+            return false;
+        }
+        ImageProxy otherImage = (ImageProxy) other;
+        return otherImage.getFormat() == getFormat() &&
+                otherImage.getWidth() == getWidth() &&
+                otherImage.getHeight() == getHeight() &&
+                otherImage.getTimestamp() == getTimestamp();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getFormat(), getWidth(), getHeight(), getTimestamp());
     }
 }
