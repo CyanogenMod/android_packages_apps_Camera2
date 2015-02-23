@@ -17,7 +17,6 @@
 package com.android.camera;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -44,6 +43,7 @@ import com.android.camera.burst.BurstFacade;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.burst.BurstReadyStateChangeListener;
 import com.android.camera.burst.OrientationLockController;
+import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
@@ -146,6 +146,7 @@ public class CaptureModule extends CameraModule implements
 
     private FocusController mFocusController;
     private OneCameraCharacteristics mCameraCharacteristics;
+    final private PreviewTransformCalculator mPreviewTransformCalculator;
 
     /** The listener to listen events from the CaptureModuleUI. */
     private final CaptureModuleUI.CaptureModuleUIListener mUIListener =
@@ -313,8 +314,6 @@ public class CaptureModule extends CameraModule implements
     /** Area used by preview. */
     RectF mPreviewArea;
 
-    /** The current preview transformation matrix. */
-    private Matrix mPreviewTranformationMatrix = new Matrix();
     /** The surface texture for the preview. */
     private SurfaceTexture mPreviewSurfaceTexture;
 
@@ -339,6 +338,8 @@ public class CaptureModule extends CameraModule implements
         mSettingsManager = mAppController.getSettingsManager();
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
+        mPreviewTransformCalculator = new PreviewTransformCalculator(
+                mAppController.getOrientationManager());
 
         mBurstController = BurstFacadeFactory.create(mContext,
                 new OrientationLockController() {
@@ -1125,11 +1126,6 @@ public class CaptureModule extends CameraModule implements
             mScreenHeight = incomingHeight;
             updatePreviewBufferDimension();
 
-            mPreviewTranformationMatrix = mAppController.getCameraAppUI().getPreviewTransform(
-                    mPreviewTranformationMatrix);
-            int width = mScreenWidth;
-            int height = mScreenHeight;
-
             // Assumptions:
             // - Aspect ratio for the sensor buffers is in landscape
             // orientation,
@@ -1140,65 +1136,11 @@ public class CaptureModule extends CameraModule implements
             // - Surface scales the buffer to fit the current view bounds.
 
             // Get natural orientation and buffer dimensions
-            int naturalOrientation = CaptureModuleUtil
-                    .getDeviceNaturalOrientation(mContext);
-            int effectiveWidth = mPreviewBufferWidth;
-            int effectiveHeight = mPreviewBufferHeight;
 
-            if (DEBUG) {
-                Log.v(TAG, "Rotation: " + mDisplayRotation);
-                Log.v(TAG, "Screen Width: " + mScreenWidth);
-                Log.v(TAG, "Screen Height: " + mScreenHeight);
-                Log.v(TAG, "Buffer width: " + mPreviewBufferWidth);
-                Log.v(TAG, "Buffer height: " + mPreviewBufferHeight);
-                Log.v(TAG, "Natural orientation: " + naturalOrientation);
-            }
-
-            // If natural orientation is portrait, rotate the buffer
-            // dimensions
-            if (naturalOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                int temp = effectiveWidth;
-                effectiveWidth = effectiveHeight;
-                effectiveHeight = temp;
-            }
-
-            // Find and center view rect and buffer rect
-            RectF viewRect = new RectF(0, 0, width, height);
-            RectF bufRect = new RectF(0, 0, effectiveWidth, effectiveHeight);
-            float centerX = viewRect.centerX();
-            float centerY = viewRect.centerY();
-            bufRect.offset(centerX - bufRect.centerX(), centerY - bufRect.centerY());
-
-            // Undo ScaleToFit.FILL done by the surface
-            mPreviewTranformationMatrix.setRectToRect(viewRect, bufRect, Matrix.ScaleToFit.FILL);
-
-            // Rotate buffer contents to proper orientation
-            mPreviewTranformationMatrix.postRotate(getPreviewOrientation(mDisplayRotation),
-                    centerX, centerY);
-
-            // TODO: This is probably only working for the N5. Need to test
-            // on a device like N10 with different sensor orientation.
-            if ((mDisplayRotation % 180) == 90) {
-                int temp = effectiveWidth;
-                effectiveWidth = effectiveHeight;
-                effectiveHeight = temp;
-            }
-
-            // Scale to fit view, cropping the longest dimension
-            float scale =
-                    Math.min(width / (float) effectiveWidth, height
-                            / (float) effectiveHeight);
-            mPreviewTranformationMatrix.postScale(scale, scale, centerX, centerY);
-
-            // TODO: Take these quantities from mPreviewArea.
-            float previewWidth = effectiveWidth * scale;
-            float previewHeight = effectiveHeight * scale;
-            float previewCenterX = previewWidth / 2;
-            float previewCenterY = previewHeight / 2;
-            mPreviewTranformationMatrix.postTranslate(previewCenterX - centerX, previewCenterY
-                    - centerY);
-
-            mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
+            Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
+                    new Size(mScreenWidth, mScreenHeight),
+                    new Size(mPreviewBufferWidth, mPreviewBufferHeight));
+            mAppController.updatePreviewTransform(transformMatrix);
         }
     }
 
