@@ -38,6 +38,11 @@ import java.util.Arrays;
  * Wires together a PictureTaker with zero shutter lag.
  */
 public class ZslPictureTakerFactory {
+    /**
+     * The maximum amount of time (in nanoseconds) to look-back in the zsl
+     * ring-buffer for an image with AE and/or AF convergence.
+     */
+    private static final long MAX_LOOKBACK_NANOS = 100000000; // 100 ms
     private final PictureTakerImpl mPictureTaker;
 
     public ZslPictureTakerFactory(MainThread mainExecutor,
@@ -64,12 +69,12 @@ public class ZslPictureTakerFactory {
                 Arrays.asList(rootRequestBuilder), /* ae */false, /* af */true);
         ImageCaptureCommand flashOffCommand =
                 new ZslImageCaptureCommand(ringBuffer, metadataPool, flashOffFallback,
-                        new AcceptableZslImageFilter(true, false));
+                        new AcceptableZslImageFilter(true, false), MAX_LOOKBACK_NANOS);
         // When flash is Auto, use ZSL and filter images to require AF
         // convergence, and AE convergence.
         ImageCaptureCommand flashAutoCommand =
                 new ZslImageCaptureCommand(ringBuffer, metadataPool, flashOnCommand,
-                        new AcceptableZslImageFilter(true, true));
+                        new AcceptableZslImageFilter(true, true), MAX_LOOKBACK_NANOS);
 
         ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(flashMode,
                 flashOnCommand, flashAutoCommand, flashOffCommand);

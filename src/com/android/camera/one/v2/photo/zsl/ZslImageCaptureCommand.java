@@ -32,6 +32,7 @@ import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.Futures;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -53,14 +54,16 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
     private final MetadataPool mZslMetadataPool;
     private final ImageCaptureCommand mFallbackCommand;
     private final Predicate<TotalCaptureResultProxy> mMetadataFilter;
+    private final long mMaxLookBackNanos;
 
     public ZslImageCaptureCommand(BufferQueue<ImageProxy> zslRingBuffer, MetadataPool
             zslMetadataPool, ImageCaptureCommand fallbackCommand,
-            Predicate<TotalCaptureResultProxy> metadataFilter) {
+            Predicate<TotalCaptureResultProxy> metadataFilter, long maxLookBackNanos) {
         mZslRingBuffer = zslRingBuffer;
         mZslMetadataPool = zslMetadataPool;
         mFallbackCommand = fallbackCommand;
         mMetadataFilter = metadataFilter;
+        mMaxLookBackNanos = maxLookBackNanos;
     }
 
     /**
@@ -91,10 +94,27 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
         return images;
     }
 
+    private List<ImageProxy> filterImagesWithinMaxLookBack(List<ImageProxy> images) {
+        if (images.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<ImageProxy> filtered = new ArrayList<>();
+        long mostRecentTimestamp = images.get(images.size() - 1).getTimestamp();
+        long timestampThreshold = mostRecentTimestamp - mMaxLookBackNanos;
+        for (ImageProxy image : images) {
+            if (image.getTimestamp() > timestampThreshold) {
+                filtered.add(image);
+            } else {
+                image.close();
+            }
+        }
+        return filtered;
+    }
+
     @Nullable
     private Pair<ImageProxy, TotalCaptureResultProxy> tryGetZslImage() throws InterruptedException,
             BufferQueue.BufferQueueClosedException {
-        List<ImageProxy> images = getAllAvailableImages();
+        List<ImageProxy> images = filterImagesWithinMaxLookBack(getAllAvailableImages());
         ImageProxy imageToSave = null;
         TotalCaptureResultProxy metadata = null;
         try {
