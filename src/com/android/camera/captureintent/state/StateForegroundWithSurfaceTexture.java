@@ -32,6 +32,9 @@ import android.graphics.SurfaceTexture;
 
 import java.util.List;
 
+/**
+ * Represents a state that the surface texture is available to the module.
+ */
 public final class StateForegroundWithSurfaceTexture extends State {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
@@ -80,18 +83,6 @@ public final class StateForegroundWithSurfaceTexture extends State {
             final OneCameraCharacteristics characteristics =
                     mResourceConstructed.get().getCameraManager().getCameraCharacteristics(
                             cameraFacing);
-            final List<Size> supportedPreviewSizes = characteristics.getSupportedPreviewSizes();
-            final Rational pictureAspectRatio =
-                    mResourceConstructed.get().getResolutionSetting().getPictureAspectRatio(
-                            cameraFacing);
-            Size previewSize = CaptureModuleUtil.getOptimalPreviewSize(
-                    supportedPreviewSizes.toArray(new Size[(supportedPreviewSizes.size())]),
-                    pictureAspectRatio.toDouble(),
-                    null);
-            if (previewSize == null) {
-                return Optional.of((State) StateFatal.from(this, mResourceConstructed));
-            }
-            mResourceSurfaceTexture.get().setPreviewSize(previewSize);
             return Optional.of((State) StateOpeningCamera.from(this, mResourceConstructed,
                     mResourceSurfaceTexture, cameraFacing, characteristics));
         } catch (OneCameraAccessException ex) {

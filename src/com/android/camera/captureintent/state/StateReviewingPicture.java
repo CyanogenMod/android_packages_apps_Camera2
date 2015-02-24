@@ -86,10 +86,8 @@ public class StateReviewingPicture extends State {
 
     @Override
     public final Optional<State> processOnTextureViewLayoutChanged(Size layoutSize) {
-        ResourceSurfaceTexture resourceSurfaceTexture =
-                mResourceCaptureTools.get().getResourceSurfaceTexture().get();
-        resourceSurfaceTexture.setPreviewLayoutSize(layoutSize);
-        resourceSurfaceTexture.updatePreviewTransform();
+        mResourceCaptureTools.get().getResourceSurfaceTexture().get()
+                .setPreviewLayoutSize(layoutSize);
         return NO_CHANGE;
     }
 

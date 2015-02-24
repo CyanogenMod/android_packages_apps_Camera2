@@ -47,9 +47,7 @@ public final class ResourceConstructed implements SafeCloseable {
     private final AppController mAppController;
 
     /**
-     * Creates a reference counted {@link ResourceConstructed} object that the
-     * initial ref count is 0. Must call addRef() before using it or the
-     * resource will be leaked.
+     * Creates a reference counted {@link ResourceConstructed} object.
      */
     public static RefCountBase<ResourceConstructed> create(
             Intent intent,

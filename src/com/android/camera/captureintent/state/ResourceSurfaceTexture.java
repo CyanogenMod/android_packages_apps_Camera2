@@ -17,6 +17,7 @@
 package com.android.camera.captureintent.state;
 
 import com.android.camera.app.AppController;
+import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.PreviewTransformCalculator;
@@ -51,9 +52,7 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     private final AppController mAppController;
 
     /**
-     * Creates a reference counted {@link ResourceSurfaceTexture} object that the
-     * initial ref count is 0. Must call addRef() before using it or the
-     * resource will be leaked.
+     * Creates a reference counted {@link ResourceSurfaceTexture} object.
      */
     public static RefCountBase<ResourceSurfaceTexture> create(
             SurfaceTexture surfaceTexture,
@@ -95,18 +94,25 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     }
 
     public void setPreviewSize(@Nonnull Size previewSize) {
+        MainThread.checkMainThread();
+        // Update preview transform when preview stream size is changed.
         mPreviewSize = previewSize;
-    }
+        updatePreviewTransform();
 
-    public void setPreviewLayoutSize(@Nonnull Size previewLayoutSize) {
-        mPreviewLayoutSize = previewLayoutSize;
-    }
-
-    public void updateSurfaceTextureDefaultBufferSize() {
+        // Update surface texture's default buffer size. See b/17286155.
         mSurfaceTexture.setDefaultBufferSize(mPreviewSize.width(), mPreviewSize.height());
     }
 
-    public void updatePreviewTransform() {
+    public void setPreviewLayoutSize(@Nonnull Size previewLayoutSize) {
+        MainThread.checkMainThread();
+
+        // Update preview transform when preview layout size is changed.
+        mPreviewLayoutSize = previewLayoutSize;
+        updatePreviewTransform();
+    }
+
+    private void updatePreviewTransform() {
+        MainThread.checkMainThread();
         if (mPreviewLayoutSize.getWidth() == 0 || mPreviewLayoutSize.getHeight() == 0) {
             return;
         }

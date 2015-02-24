@@ -28,6 +28,9 @@ import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.util.Size;
 
+/**
+ * Represents a state that the module is waiting for a camera to be opened.
+ */
 public final class StateOpeningCamera extends State {
     private static final Log.Tag TAG = new Log.Tag("StateOpeningCamera");
 

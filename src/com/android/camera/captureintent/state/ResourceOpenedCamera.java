@@ -23,6 +23,8 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
 
+import android.view.Surface;
+
 public final class ResourceOpenedCamera implements SafeCloseable {
     private static final Log.Tag TAG = new Log.Tag("ResOpenedCam");
 
@@ -45,9 +47,7 @@ public final class ResourceOpenedCamera implements SafeCloseable {
     private float mZoomRatio;
 
     /**
-     * Creates a reference counted {@link ResourceOpenedCamera} object that the
-     * initial ref count is 0. Must call addRef() before using it or the
-     * resource will be leaked.
+     * Creates a reference counted {@link ResourceOpenedCamera} object.
      */
     public static RefCountBase<ResourceOpenedCamera> create(
             OneCamera camera,
@@ -85,6 +85,14 @@ public final class ResourceOpenedCamera implements SafeCloseable {
         return mCamera;
     }
 
+    public OneCamera.Facing getCameraFacing() {
+        return mCameraFacing;
+    }
+
+    public OneCameraCharacteristics getCameraCharacteristics() {
+        return mCameraCharacteristics;
+    }
+
     public Size getPictureSize() {
         return mPictureSize;
     }
@@ -97,7 +105,7 @@ public final class ResourceOpenedCamera implements SafeCloseable {
         mCamera.setZoom(zoomRatio);
     }
 
-    public OneCamera.CaptureReadyCallback getCaptureReadyCallback() {
-        return mCaptureReadyCallback;
+    public void startPreview(Surface previewSurface) {
+        mCamera.startPreview(previewSurface, mCaptureReadyCallback);
     }
 }

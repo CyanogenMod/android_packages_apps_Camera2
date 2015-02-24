@@ -18,17 +18,26 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
+import com.android.camera.CaptureModuleUtil;
 import com.android.camera.SoundPlayer;
 import com.android.camera.app.LocationManager;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.debug.Log;
+import com.android.camera.exif.Rational;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.util.Size;
 
+import java.util.List;
+
+/**
+ * Represents a state that the module is waiting for the preview video stream
+ * to be started.
+ */
 public final class StateStartingPreview extends State {
     private static final Log.Tag TAG = new Log.Tag("StateStartingPreview");
 
@@ -76,10 +85,32 @@ public final class StateStartingPreview extends State {
 
     @Override
     public Optional<State> onEnter() {
-        mResourceSurfaceTexture.get().updateSurfaceTextureDefaultBufferSize();
-        mResourceOpenedCamera.get().getCamera().startPreview(
-                mResourceSurfaceTexture.get().createPreviewSurface(),
-                mResourceOpenedCamera.get().getCaptureReadyCallback());
+        final Size previewSize;
+        try {
+            // Pick a preview size with the right aspect ratio.
+            final List<Size> supportedPreviewSizes = mResourceOpenedCamera.get()
+                    .getCameraCharacteristics().getSupportedPreviewSizes();
+            final Rational pictureAspectRatio =
+                    mResourceConstructed.get().getResolutionSetting().getPictureAspectRatio(
+                            mResourceOpenedCamera.get().getCameraFacing());
+            previewSize = CaptureModuleUtil.getOptimalPreviewSize(
+                    supportedPreviewSizes.toArray(new Size[(supportedPreviewSizes.size())]),
+                    pictureAspectRatio.toDouble(),
+                    null);
+            if (previewSize == null) {
+                return Optional.of((State) StateFatal.from(this, mResourceConstructed));
+            }
+        } catch (OneCameraAccessException ex) {
+            return Optional.of((State) StateFatal.from(this, mResourceConstructed));
+        }
+        mResourceConstructed.get().getMainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                mResourceSurfaceTexture.get().setPreviewSize(previewSize);
+                mResourceOpenedCamera.get().startPreview(
+                        mResourceSurfaceTexture.get().createPreviewSurface());
+            }
+        });
         return Optional.absent();
     }
 
@@ -93,6 +124,12 @@ public final class StateStartingPreview extends State {
     @Override
     public Optional<State> processPause() {
         return Optional.of((State) StateBackground.from(this, mResourceConstructed));
+    }
+
+    @Override
+    public final Optional<State> processOnTextureViewLayoutChanged(Size layoutSize) {
+        mResourceSurfaceTexture.get().setPreviewLayoutSize(layoutSize);
+        return NO_CHANGE;
     }
 
     @Override
@@ -111,10 +148,10 @@ public final class StateStartingPreview extends State {
         mResourceConstructed.get().getMainThread().execute(new Runnable() {
             @Override
             public void run() {
-                mResourceSurfaceTexture.get().updatePreviewTransform();
                 final CaptureIntentModuleUI moduleUI = mResourceConstructed.get().getModuleUI();
                 moduleUI.onPreviewStarted();
                 moduleUI.initializeZoom(camera.getMaxZoom());
+                moduleUI.showPictureCaptureUI();
             }
         });
         return Optional.of((State) StateReadyForCapture.from(

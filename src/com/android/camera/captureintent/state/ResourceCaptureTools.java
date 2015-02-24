@@ -49,9 +49,7 @@ public final class ResourceCaptureTools implements SafeCloseable {
     private final OneCamera.PictureSaverCallback mPictureSaverCallback;
 
     /**
-     * Creates a reference counted {@link ResourceConstructed} object that the
-     * initial ref count is 0. Must call addRef() before using it or the
-     * resource will be leaked.
+     * Creates a reference counted {@link ResourceCaptureTools} object.
      */
     public static RefCountBase<ResourceCaptureTools> create(
             RefCountBase<ResourceConstructed> resourceConstructed,
