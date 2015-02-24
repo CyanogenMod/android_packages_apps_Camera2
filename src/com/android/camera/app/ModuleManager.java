@@ -48,6 +48,12 @@ public interface ModuleManager {
         public boolean requestAppForCamera();
 
         /**
+         * @return A string which is used to get the namespace for settings in
+         * the module scope.
+         */
+        public String getScopeNamespace();
+
+        /**
          * Creates the module.
          *
          * @param app The {@link com.android.camera.app.AppController} which

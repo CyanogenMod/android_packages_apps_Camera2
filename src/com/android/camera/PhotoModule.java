@@ -105,9 +105,7 @@ public class PhotoModule
         RemoteCameraModule,
         CountDownView.OnCountDownStatusListener {
 
-    public static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
-
-    private static final Log.Tag TAG = new Log.Tag(PHOTO_MODULE_STRING_ID);
+    private static final Log.Tag TAG = new Log.Tag("PhotoModule");
 
     // We number the request code from 1000 to avoid collision with Gallery.
     private static final int REQUEST_CROP = 1000;
@@ -359,11 +357,6 @@ public class PhotoModule
     public String getPeekAccessibilityString() {
         return mAppController.getAndroidContext()
             .getResources().getString(R.string.photo_accessibility_peek);
-    }
-
-    @Override
-    public String getModuleStringIdentifier() {
-        return PHOTO_MODULE_STRING_ID;
     }
 
     @Override

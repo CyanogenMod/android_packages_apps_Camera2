@@ -102,7 +102,6 @@ public class CaptureModule extends CameraModule implements
         RemoteCameraModule {
 
     private static final Tag TAG = new Tag("CaptureModule");
-    private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
     /** Enable additional debug output. */
     private static final boolean DEBUG = true;
 
@@ -578,11 +577,6 @@ public class CaptureModule extends CameraModule implements
                         mPreviewBufferHeight);
             }
         }
-    }
-
-    @Override
-    public String getModuleStringIdentifier() {
-        return PHOTO_MODULE_STRING_ID;
     }
 
     @Override

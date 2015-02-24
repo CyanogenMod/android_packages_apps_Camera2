@@ -76,6 +76,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.app.MemoryManager;
 import com.android.camera.app.MemoryQuery;
 import com.android.camera.app.ModuleManager;
+import com.android.camera.app.ModuleManager.ModuleAgent;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.app.MotionManager;
 import com.android.camera.app.OrientationManager;
@@ -1024,7 +1025,8 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public String getModuleScope() {
-        return MODULE_SCOPE_PREFIX + mCurrentModule.getModuleStringIdentifier();
+        ModuleAgent agent = mModuleManager.getModuleAgent(mCurrentModeIndex);
+        return MODULE_SCOPE_PREFIX + agent.getScopeNamespace();
     }
 
     @Override
