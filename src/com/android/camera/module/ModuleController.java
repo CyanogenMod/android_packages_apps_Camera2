@@ -34,13 +34,6 @@ public interface ModuleController extends ShutterButton.OnShutterButtonListener 
     /** Preview is fully hidden, e.g. by the filmstrip. */
     public static final int VISIBILITY_HIDDEN = 2;
 
-    /**
-     * Returns a unique string which identifies this module.
-     * This string is used by the SettingsManager to scope settings
-     * specific to each module.
-     */
-    public String getModuleStringIdentifier();
-
     /********************** Life cycle management **********************/
 
     /**

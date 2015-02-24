@@ -17,7 +17,6 @@
 package com.android.camera.captureintent;
 
 import com.google.common.base.Optional;
-
 import com.android.camera.ButtonManager;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraModule;
@@ -99,11 +98,15 @@ public class CaptureIntentModule extends CameraModule {
     /** The module state machine. */
     private final StateMachine mStateMachine;
 
+    /** The setting scope namespace. */
+    private final String mSettingScopeNamespace;
+
     /** The app controller. */
     // TODO: Put this in the end and hope one day we can get rid of it.
     private final AppController mAppController;
 
-    public CaptureIntentModule(AppController appController, Intent intent) {
+    public CaptureIntentModule(AppController appController, Intent intent,
+            String settingScopeNamespace) {
         super(appController);
         mModuleUI = new CaptureIntentModuleUI(
                 appController.getCameraAppUI(),
@@ -120,11 +123,12 @@ public class CaptureIntentModule extends CameraModule {
                 SessionStorageManagerImpl.create(mContext),
                 MainThread.create());
         mStateMachine = new StateMachine();
+        mSettingScopeNamespace = settingScopeNamespace;
         mAppController = appController;
 
         // Set the initial state.
         final CameraFacingSetting cameraFacingSetting = new CameraFacingSetting(
-                mContext.getResources(), mSettingsManager, CaptureIntentConfig.SETTING_SCOPE);
+                mContext.getResources(), mSettingsManager, mSettingScopeNamespace);
         final ResolutionSetting resolutionSetting = new ResolutionSetting(
                 mSettingsManager, mCameraManager);
         final State initialState = StateBackground.create(
@@ -162,12 +166,6 @@ public class CaptureIntentModule extends CameraModule {
     @Override
     public void onShutterButtonLongPressed() {
         // Do nothing for capture intent.
-    }
-
-    @Override
-    public String getModuleStringIdentifier() {
-        // Reads the camera setting in photo module scope.
-        return CaptureIntentConfig.SETTING_SCOPE;
     }
 
     @Override
@@ -235,7 +233,7 @@ public class CaptureIntentModule extends CameraModule {
     @Override
     public HardwareSpec getHardwareSpec() {
         final CameraFacingSetting cameraFacingSetting = new CameraFacingSetting(
-                mContext.getResources(), mSettingsManager, getModuleStringIdentifier());
+                mContext.getResources(), mSettingsManager, mSettingScopeNamespace);
         final OneCameraCharacteristics characteristics;
         try {
             characteristics = mCameraManager.getCameraCharacteristics(
@@ -505,6 +503,7 @@ public class CaptureIntentModule extends CameraModule {
                  * Called when the camera is either ready or not ready to take a picture
                  * right now.
                  */
+                @Override
                 public void onReadyStateChanged(final boolean readyForCapture) {
                     mStateMachine.processEvent(new Event() {
                         @Override
@@ -589,24 +588,31 @@ public class CaptureIntentModule extends CameraModule {
                     });
                 }
 
+                @Override
                 public void onSessionQueued(Uri sessionUri) {
                 }
 
+                @Override
                 public void onSessionUpdated(Uri sessionUri) {
                 }
 
+                @Override
                 public void onSessionCaptureIndicatorUpdate(Bitmap bitmap, int rotationDegrees) {
                 }
 
+                @Override
                 public void onSessionDone(Uri sessionUri) {
                 }
 
+                @Override
                 public void onSessionFailed(Uri sessionUri, CharSequence reason) {
                 }
 
+                @Override
                 public void onSessionProgress(Uri sessionUri, int progress) {
                 }
 
+                @Override
                 public void onSessionProgressText(Uri sessionUri, CharSequence message) {
                 }
             };

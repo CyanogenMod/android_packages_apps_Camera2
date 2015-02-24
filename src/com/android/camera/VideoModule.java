@@ -92,9 +92,7 @@ public class VideoModule extends CameraModule
         MediaRecorder.OnInfoListener, MemoryListener,
         OrientationManager.OnOrientationChangeListener, VideoController {
 
-    private static final String VIDEO_MODULE_STRING_ID = "VideoModule";
-
-    private static final Log.Tag TAG = new Log.Tag(VIDEO_MODULE_STRING_ID);
+    private static final Log.Tag TAG = new Log.Tag("VideoModule");
 
     // Messages defined for the UI thread handler.
     private static final int MSG_CHECK_DISPLAY_ROTATION = 4;
@@ -325,11 +323,6 @@ public class VideoModule extends CameraModule
                 mActivity.getString(R.string.video_file_name_format));
 
         return dateFormat.format(date);
-    }
-
-    @Override
-    public String getModuleStringIdentifier() {
-        return VIDEO_MODULE_STRING_ID;
     }
 
     @Override

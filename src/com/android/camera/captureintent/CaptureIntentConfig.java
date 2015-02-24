@@ -17,7 +17,6 @@
 package com.android.camera.captureintent;
 
 public class CaptureIntentConfig {
-    public static final String SETTING_SCOPE = "PhotoModule";
     public static final int DOWN_SAMPLE_FACTOR = 4;
     public static final int INLINE_BITMAP_MAX_PIXEL_NUM = 50 * 1024;
 }
