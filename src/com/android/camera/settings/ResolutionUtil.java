@@ -51,7 +51,7 @@ public class ResolutionUtil {
 
     public static final String NEXUS_5_LARGE_16_BY_9 = "1836x3264";
     public static final float NEXUS_5_LARGE_16_BY_9_ASPECT_RATIO = 16f / 9f;
-    public static Size NEXUS_5_LARGE_16_BY_9_SIZE = new Size(1836, 3264);
+    public static Size NEXUS_5_LARGE_16_BY_9_SIZE = new Size(3264, 1836);
 
     /**
      * These are the preferred aspect ratios for the settings. We will take HAL

@@ -18,6 +18,7 @@ package com.android.camera.one.v2.imagesaver;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
@@ -33,7 +34,6 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
-
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -177,19 +177,23 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
     private final MainThread mExecutor;
     private final ImageRotationCalculator mImageRotationCalculator;
     private final ImageBackend mImageBackend;
-    
+    private final Rect mCrop;
+
     /**
      * Constructor
-     *
+     * 
      * @param executor Executor to run listener events on the ImageBackend
      * @param imageRotationCalculator the image rotation calculator to determine
+     * @param crop the crop to apply. Note that crop must be done *before* any
+     *            rotation of the images.
      */
     public YuvImageBackendImageSaver(MainThread executor,
             ImageRotationCalculator imageRotationCalculator,
-            ImageBackend imageBackend) {
+            ImageBackend imageBackend, Rect crop) {
         mExecutor = executor;
         mImageRotationCalculator = imageRotationCalculator;
         mImageBackend = imageBackend;
+        mCrop = crop;
     }
 
     /**
