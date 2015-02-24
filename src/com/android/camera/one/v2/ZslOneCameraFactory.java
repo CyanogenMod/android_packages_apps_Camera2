@@ -35,7 +35,6 @@ import com.android.camera.debug.Logger;
 import com.android.camera.debug.Loggers;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
-import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.config.OneCameraFeatureConfig.CaptureSupportLevel;
 import com.android.camera.one.v2.camera2proxy.AndroidImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
@@ -56,6 +55,7 @@ import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
+import com.android.camera.stats.UsageStatistics;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
@@ -209,7 +209,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
 
                 if (isBackCamera && ApiHelper.IS_NEXUS_5) {
                     // Workaround for bug: 19061883
-                    RepeatFailureDetector failureDetector = new RepeatFailureDetector(Loggers.tagFactory(),
+                    RepeatFailureDetector failureDetector = new RepeatFailureDetector(
+                            Loggers.tagFactory(), UsageStatistics.instance(),
                             cameraCaptureSession, cameraCommandExecutor, basicCameraFactory
                             .providePreviewStarter(), 10);
                     rootBuilder.addResponseListener(failureDetector);

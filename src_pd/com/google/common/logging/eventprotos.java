@@ -51,6 +51,7 @@ public class eventprotos {
 
     public class CameraFailure {
         public class FailureReason {
+            public static final int UNKNOWN_REASON = 10000;
             public static final int SECURITY = 10000;
             public static final int OPEN_FAILURE = 10000;
             public static final int RECONNECT_FAILURE = 10000;
