@@ -67,11 +67,11 @@ public final class StateReadyForCapture extends State {
                 resourceConstructed.get().getModuleUI().getFocusRing(),
                 focusSound,
                 resourceConstructed.get().getMainThread());
-        ResourceCaptureTools resourceCaptureTools = new ResourceCaptureTools(
-                resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
+        MediaActionSound mediaActionSound = new MediaActionSound();
+        return new StateReadyForCapture(
+                startingPreview, resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
                 captureSessionManager, focusController, locationManager, headingSensor, soundPlayer,
-                new MediaActionSound(), pictureCallback, pictureSaverCallback);
-        return new StateReadyForCapture(startingPreview, new RefCountBase<>(resourceCaptureTools));
+                mediaActionSound, pictureCallback, pictureSaverCallback);
     }
 
     public static StateReadyForCapture from(
@@ -82,10 +82,33 @@ public final class StateReadyForCapture extends State {
 
     private StateReadyForCapture(
             State startingPreview,
+            RefCountBase<ResourceConstructed> resourceConstructed,
+            RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
+            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
+            CaptureSessionManager captureSessionManager,
+            FocusController focusController,
+            LocationManager locationManager,
+            HeadingSensor headingSensor,
+            SoundPlayer soundPlayer,
+            MediaActionSound mediaActionSound,
+            OneCamera.PictureCallback pictureCallback,
+            OneCamera.PictureSaverCallback pictureSaverCallback) {
+        super(ID.ReadyForCapture, startingPreview);
+        mResourceCaptureTools = ResourceCaptureTools.create(
+                resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
+                captureSessionManager, focusController, locationManager, headingSensor,
+                soundPlayer, mediaActionSound, pictureCallback, pictureSaverCallback);
+        mIsCountingDown = false;
+        mIsTakingPicture = false;
+        mIsDecodingPicture = false;
+    }
+
+    private StateReadyForCapture(
+            State startingPreview,
             RefCountBase<ResourceCaptureTools> resourceCaptureTools) {
         super(ID.ReadyForCapture, startingPreview);
         mResourceCaptureTools = resourceCaptureTools;
-        mResourceCaptureTools.addRef();
+        mResourceCaptureTools.addRef();  // Will be balanced in onLeave().
         mIsCountingDown = false;
         mIsTakingPicture = false;
         mIsDecodingPicture = false;

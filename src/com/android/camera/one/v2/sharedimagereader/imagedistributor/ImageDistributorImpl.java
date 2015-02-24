@@ -144,8 +144,15 @@ class ImageDistributorImpl implements ImageDistributor {
             mDispatchTable.removeAll(deadRecords);
         }
 
+        int streamsToReceiveImageSize = streamsToReceiveImage.size();
+        // If nobody needs the image, just close the image.
+        if (streamsToReceiveImageSize == 0) {
+            image.close();
+            return;
+        }
+
         RefCountedImageProxy sharedImage = new RefCountedImageProxy(image,
-                streamsToReceiveImage.size());
+                streamsToReceiveImageSize);
         for (BufferQueueController<ImageProxy> outputStream : streamsToReceiveImage) {
             // Wrap shared image to ensure that *each* stream must close the
             // image before the underlying reference count is decremented,

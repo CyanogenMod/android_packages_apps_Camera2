@@ -16,12 +16,16 @@
 
 package com.android.camera.captureintent.state;
 
+import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
+import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
 
 public final class ResourceOpenedCamera implements SafeCloseable {
+    private static final Log.Tag TAG = new Log.Tag("ResOpenedCam");
+
     /** The camera object. */
     private final OneCamera mCamera;
 
@@ -40,7 +44,23 @@ public final class ResourceOpenedCamera implements SafeCloseable {
     /** The current zoom ratio. */
     private float mZoomRatio;
 
-    public ResourceOpenedCamera(
+    /**
+     * Creates a reference counted {@link ResourceOpenedCamera} object that the
+     * initial ref count is 0. Must call addRef() before using it or the
+     * resource will be leaked.
+     */
+    public static RefCountBase<ResourceOpenedCamera> create(
+            OneCamera camera,
+            OneCamera.Facing cameraFacing,
+            OneCameraCharacteristics cameraCharacteristics,
+            Size pictureSize,
+            OneCamera.CaptureReadyCallback captureReadyCallback) {
+        ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCamera(
+                camera, cameraFacing, cameraCharacteristics, pictureSize, captureReadyCallback);
+        return new RefCountBase<>(resourceOpenedCamera);
+    }
+
+    private ResourceOpenedCamera(
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
@@ -56,6 +76,7 @@ public final class ResourceOpenedCamera implements SafeCloseable {
 
     @Override
     public void close() {
+        Log.d(TAG, "close");
         mCamera.setFocusStateListener(null);
         mCamera.close();
     }

@@ -51,7 +51,7 @@ public class StateSavingPicture extends State {
             byte[] pictureData) {
         super(ID.SavingPicture, previousState);
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
+        mResourceConstructed.addRef();  // Will be balanced in onLeave().
         mPictureData = pictureData;
     }
 

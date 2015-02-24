@@ -22,6 +22,7 @@ import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
+import com.android.camera.debug.Log;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
@@ -32,6 +33,8 @@ import com.android.camera.util.CameraUtil;
 import android.media.MediaActionSound;
 
 public final class ResourceCaptureTools implements SafeCloseable {
+    private static final Log.Tag TAG = new Log.Tag("ResCapTools");
+
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
     private final RefCountBase<ResourceOpenedCamera> mResourceOpenedCamera;
@@ -45,7 +48,31 @@ public final class ResourceCaptureTools implements SafeCloseable {
     private final OneCamera.PictureCallback mPictureCallback;
     private final OneCamera.PictureSaverCallback mPictureSaverCallback;
 
-    public ResourceCaptureTools(
+    /**
+     * Creates a reference counted {@link ResourceConstructed} object that the
+     * initial ref count is 0. Must call addRef() before using it or the
+     * resource will be leaked.
+     */
+    public static RefCountBase<ResourceCaptureTools> create(
+            RefCountBase<ResourceConstructed> resourceConstructed,
+            RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
+            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
+            CaptureSessionManager captureSessionManager,
+            FocusController focusController,
+            LocationManager locationManager,
+            HeadingSensor headingSensor,
+            SoundPlayer soundPlayer,
+            MediaActionSound mediaActionSound,
+            OneCamera.PictureCallback pictureCallback,
+            OneCamera.PictureSaverCallback pictureSaverCallback) {
+        ResourceCaptureTools resourceCaptureTools = new ResourceCaptureTools(
+                resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
+                captureSessionManager, focusController, locationManager, headingSensor, soundPlayer,
+                mediaActionSound, pictureCallback, pictureSaverCallback);
+        return new RefCountBase<>(resourceCaptureTools);
+    }
+
+    private ResourceCaptureTools(
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
@@ -58,11 +85,11 @@ public final class ResourceCaptureTools implements SafeCloseable {
             OneCamera.PictureCallback pictureCallback,
             OneCamera.PictureSaverCallback pictureSaverCallback) {
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
+        mResourceConstructed.addRef();     // Will be balanced in close().
         mResourceSurfaceTexture = resourceSurfaceTexture;
-        mResourceSurfaceTexture.addRef();
+        mResourceSurfaceTexture.addRef();  // Will be balanced in close().
         mResourceOpenedCamera = resourceOpenedCamera;
-        mResourceOpenedCamera.addRef();
+        mResourceOpenedCamera.addRef();    // Will be balanced in close().
         mCaptureSessionManager = captureSessionManager;
         mLocationManager = locationManager;
         mHeadingSensor = headingSensor;
@@ -75,6 +102,7 @@ public final class ResourceCaptureTools implements SafeCloseable {
 
     @Override
     public void close() {
+        Log.d(TAG, "close");
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
         mResourceOpenedCamera.close();

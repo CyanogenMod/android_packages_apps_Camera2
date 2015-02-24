@@ -19,6 +19,7 @@ package com.android.camera.captureintent.state;
 import com.google.common.base.Optional;
 
 import com.android.camera.CaptureModuleUtil;
+import com.android.camera.app.AppController;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.exif.Rational;
@@ -41,24 +42,27 @@ public final class StateForegroundWithSurfaceTexture extends State {
             RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture,
             OneCamera.OpenCallback cameraOpenCallback) {
-        ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTexture(
+        return new StateForegroundWithSurfaceTexture(
+                foreground,
+                resourceConstructed,
                 surfaceTexture,
                 new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()),
                 cameraOpenCallback,
                 resourceConstructed.get().getAppController());
-        return new StateForegroundWithSurfaceTexture(foreground, resourceConstructed,
-                new RefCountBase<>(resourceSurfaceTexture));
     }
 
     private StateForegroundWithSurfaceTexture(
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
-            RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
+            SurfaceTexture surfaceTexture,
+            PreviewTransformCalculator previewTransformCalculator,
+            OneCamera.OpenCallback cameraOpenCallback,
+            AppController appController) {
         super(ID.ForegroundWithSurfaceTexture, previousState);
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
-        mResourceSurfaceTexture = resourceSurfaceTexture;
-        mResourceSurfaceTexture.addRef();
+        mResourceConstructed.addRef();     // Will be balanced in onLeave().
+        mResourceSurfaceTexture = ResourceSurfaceTexture.create(
+                surfaceTexture, previewTransformCalculator, cameraOpenCallback, appController);
     }
 
     @Override

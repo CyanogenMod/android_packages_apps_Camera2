@@ -36,12 +36,7 @@ class RefCountedImageProxy extends ForwardingImageProxy {
      */
     public RefCountedImageProxy(ImageProxy image, int refCount) {
         super(image);
-
         mRefCount = new RefCountBase<ImageProxy>(image, refCount);
-
-        if (refCount <= 0) {
-            image.close();
-        }
     }
 
     @Override

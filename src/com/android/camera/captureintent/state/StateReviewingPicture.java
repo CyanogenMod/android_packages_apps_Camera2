@@ -60,7 +60,7 @@ public class StateReviewingPicture extends State {
             Optional<byte[]> pictureData) {
         super(ID.ReviewingPicture, previousState);
         mResourceCaptureTools = resourceCaptureTools;
-        mResourceCaptureTools.addRef();
+        mResourceCaptureTools.addRef();  // Will be balanced in onLeave().
         mPictureBitmap = pictureBitmap;
         mPictureData = pictureData;
         mIsReviewingThumbnail = !pictureData.isPresent();

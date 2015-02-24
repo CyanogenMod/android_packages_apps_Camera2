@@ -19,6 +19,7 @@ package com.android.camera.captureintent.state;
 import com.android.camera.app.AppController;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
+import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.one.OneCameraManager;
@@ -45,7 +46,27 @@ public final class ResourceConstructed implements SafeCloseable {
     // TODO: Hope one day we could get rid of AppController.
     private final AppController mAppController;
 
-    public ResourceConstructed(
+    /**
+     * Creates a reference counted {@link ResourceConstructed} object that the
+     * initial ref count is 0. Must call addRef() before using it or the
+     * resource will be leaked.
+     */
+    public static RefCountBase<ResourceConstructed> create(
+            Intent intent,
+            CaptureIntentModuleUI moduleUI,
+            MainThread mainThread,
+            Context context,
+            OneCameraManager cameraManager,
+            OrientationManager orientationManager,
+            CameraFacingSetting cameraFacingSetting,
+            ResolutionSetting resolutionSetting,
+            AppController appController) {
+        return new RefCountBase<>(new ResourceConstructed(
+                intent, moduleUI, mainThread, context, cameraManager,
+                orientationManager, cameraFacingSetting, resolutionSetting, appController));
+    }
+
+    private ResourceConstructed(
             Intent intent,
             CaptureIntentModuleUI moduleUI,
             MainThread mainThread,

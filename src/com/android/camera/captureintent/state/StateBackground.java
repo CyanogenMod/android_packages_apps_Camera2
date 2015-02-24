@@ -48,7 +48,8 @@ public final class StateBackground extends State {
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController) {
-        return new StateBackground(intent, stateMachine, moduleUI, mainThread, context, cameraManager,
+        return new StateBackground(
+                stateMachine, intent, moduleUI, mainThread, context, cameraManager,
                 orientationManager, cameraFacingSetting, resolutionSetting, appController);
     }
 
@@ -59,8 +60,8 @@ public final class StateBackground extends State {
     }
 
     private StateBackground(
-            Intent intent,
             StateMachine stateMachine,
+            Intent intent,
             CaptureIntentModuleUI moduleUI,
             MainThread mainThread,
             Context context,
@@ -70,16 +71,16 @@ public final class StateBackground extends State {
             ResolutionSetting resolutionSetting,
             AppController appController) {
         super(ID.Background, stateMachine);
-        mResourceConstructed = new RefCountBase<>(new ResourceConstructed(
+        mResourceConstructed = ResourceConstructed.create(
                 intent, moduleUI, mainThread, context, cameraManager,
-                orientationManager, cameraFacingSetting, resolutionSetting, appController));
+                orientationManager, cameraFacingSetting, resolutionSetting, appController);
     }
 
     private StateBackground(State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed) {
         super(ID.Background, previousState);
         mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();
+        mResourceConstructed.addRef();  // Will be balanced in onLeave().
     }
 
     @Override
