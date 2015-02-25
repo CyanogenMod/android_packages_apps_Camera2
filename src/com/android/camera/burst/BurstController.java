@@ -17,6 +17,7 @@ package com.android.camera.burst;
 import android.graphics.SurfaceTexture;
 
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 import java.util.List;
 
@@ -32,9 +33,9 @@ import java.util.List;
  * processing on the results.
  * <p/>
  * Camera initializes the burst module by calling {@link #startBurst(SurfaceTexture,
- * ImageStreamProperties, BurstResultsListener)}. The returned eviction strategy
- * is used by the internal camera buffer to decide which frames to keep and
- * which to reject.
+ * ImageStreamProperties, BurstResultsListener, CaptureSession)}. The returned
+ * eviction strategy is used by the internal camera buffer to decide which
+ * frames to keep and which to reject.
  * <p/>
  * Once burst finishes, camera calls the {@link #processBurstResults(List)} to
  * let the burst module retrieve burst results from the internal buffer. Once
@@ -94,21 +95,21 @@ interface BurstController {
      *            This surface should not be attached to any GL context.
      * @param imageStreamProperties the properties of the low-res image stream.
      * @param burstResultsListener the listener for burst results.
+     * @param captureSession the capture session associated with the burst.
      * @return the configuration of burst that can be used to control the
      *         ongoing burst.
      */
     public EvictionHandler startBurst(SurfaceTexture surfaceTexture,
             ImageStreamProperties imageStreamProperties,
-            BurstResultsListener burstResultsListener);
+            BurstResultsListener burstResultsListener,
+            CaptureSession captureSession);
 
     /**
      * Stops the burst.
      * <p/>
      *
-     * @param capturedImages list of images captured from the burst. All images
-     *            are closed after this call completes. If implementations need
-     *            to access images after this call they need to make a copy of
-     *            images before returning.
+     * @param capturedImages list of images captured from the burst. Implementations should
+     *                        close the images as soon as possible.
      */
     public void processBurstResults(List<ImageProxy> capturedImages);
 }

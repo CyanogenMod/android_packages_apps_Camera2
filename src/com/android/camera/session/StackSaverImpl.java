@@ -22,10 +22,8 @@ import android.net.Uri;
 
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
-import com.android.camera.exif.ExifInterface;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Default implementation of the {@link StackSaver} interface. It creates a
@@ -53,33 +51,33 @@ public class StackSaverImpl implements StackSaver {
      *            store. TODO: Replace with a media storage storer that can be
      *            mocked out in tests.
      */
-    public StackSaverImpl(File stackDirectory, Location gpsLocation, ContentResolver contentResolver) {
+    public StackSaverImpl(File stackDirectory, Location gpsLocation,
+            ContentResolver contentResolver) {
         mStackDirectory = stackDirectory;
         mGpsLocation = gpsLocation;
         mContentResolver = contentResolver;
     }
 
     @Override
-    public Uri saveStackedImage(byte[] data, String title, int width, int height,
-            int imageOrientation, ExifInterface exif, long captureTimeEpoch, String mimeType)  {
-        if (exif != null) {
-            exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION, imageOrientation));
-        }
-
+    public Uri saveStackedImage(File inputImagePath, String title, int width, int height,
+            int imageOrientation, long captureTimeEpoch, String mimeType) {
         String filePath =
                 Storage.generateFilepath(mStackDirectory.getAbsolutePath(), title, mimeType);
         Log.d(TAG, "Saving using stack image saver: " + filePath);
+        File outputImagePath = new File(filePath);
 
-        long fileLength = 0;
-        try {
-            fileLength = Storage.writeFile(filePath, data, exif);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Storage.renameFile(inputImagePath, outputImagePath)) {
+            long fileLength = outputImagePath.length();
+            if (fileLength > 0) {
+                return Storage.addImageToMediaStore(mContentResolver, title, captureTimeEpoch,
+                        mGpsLocation, imageOrientation, fileLength, filePath, width, height,
+                        mimeType);
+            }
         }
-        if (fileLength >= 0) {
-            return Storage.addImageToMediaStore(mContentResolver, title, captureTimeEpoch,
-                    mGpsLocation, imageOrientation, fileLength, filePath, width, height, mimeType);
-        }
+
+        Log.e(TAG, String.format("Unable to rename file from %s to %s.",
+                inputImagePath.getPath(),
+                filePath));
         return null;
     }
 }

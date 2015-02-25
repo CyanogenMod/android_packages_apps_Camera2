@@ -22,6 +22,7 @@ import com.android.camera.burst.BurstResultsListener;
 import com.android.camera.burst.EvictionHandler;
 import com.android.camera.burst.BurstController.ImageStreamProperties;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
+import com.android.camera.session.CaptureSession;
 
 import java.util.List;
 
@@ -41,7 +42,8 @@ class BurstControllerImpl implements BurstController {
     @Override
     public EvictionHandler startBurst(SurfaceTexture surfaceTexture,
             ImageStreamProperties imageStreamProperties,
-            BurstResultsListener resultsListener) {
+            BurstResultsListener resultsListener,
+            CaptureSession captureSession) {
         return null;
     }
 

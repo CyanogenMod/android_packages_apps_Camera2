@@ -19,16 +19,13 @@ package com.android.camera.burst;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
-import com.android.camera.exif.ExifInterface;
 import com.android.camera.session.StackSaver;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 class BurstResultsSaver {
@@ -42,7 +39,6 @@ class BurstResultsSaver {
      * timestamp
      */
     private static final String MEDIA_ITEM_FILENAME_FORMAT_STRING = "Burst_%s_%d_%d_%d";
-    private static final TimeZone UTC_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     /**
      * Generates sequential timestamp with 1 second difference.
@@ -155,21 +151,12 @@ class BurstResultsSaver {
         final String title = String.format(MEDIA_ITEM_FILENAME_FORMAT_STRING,
                 artifactType, artifactIndex, index, mediaItem.getTimestamp());
         String mimeType = mediaItem.getMimeType();
-        ExifInterface exif = null;
-        if (FilmstripItemData.MIME_TYPE_JPEG.equals(mimeType)) {
-            exif = new ExifInterface();
-            exif.addDateTimeStampTag(
-                    ExifInterface.TAG_DATE_TIME,
-                    timestamp,
-                    UTC_TIMEZONE);
-        }
 
-        stackSaver.saveStackedImage(mediaItem.getData(),
+        stackSaver.saveStackedImage(mediaItem.getFilePath(),
                 title,
                 mediaItem.getWidth(),
                 mediaItem.getHeight(),
                 0, // Artifacts returned from burst have upright orientation.
-                exif,
                 timestamp,
                 mimeType);
     }

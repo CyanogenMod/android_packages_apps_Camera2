@@ -317,6 +317,33 @@ public class Storage {
     }
 
     /**
+     * Renames a file.
+     *
+     * <p/>
+     * Can only be used for regular files, not directories.
+     *
+     * @param inputPath the original path of the file
+     * @param newFilePath the new path of the file
+     * @return false if rename was not successful
+     */
+    public static boolean renameFile(File inputPath, File newFilePath) {
+        if (newFilePath.exists()) {
+            Log.e(TAG, "File path already exists: " + newFilePath.getAbsolutePath());
+            return false;
+        }
+        if (inputPath.isDirectory()) {
+            Log.e(TAG, "Input path is directory: " + inputPath.getAbsolutePath());
+            return false;
+        }
+        if (!createDirectoryIfNeeded(newFilePath.getAbsolutePath())) {
+            Log.e(TAG, "Failed to create parent directory for file: " +
+                    newFilePath.getAbsolutePath());
+            return false;
+        }
+        return inputPath.renameTo(newFilePath);
+    }
+
+    /**
      * Writes the data to a file.
      *
      * @param path The path to the target file.
