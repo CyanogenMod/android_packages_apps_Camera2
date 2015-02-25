@@ -23,6 +23,7 @@ import com.android.camera.app.LocationManager;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
+import com.android.camera.debug.Log;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSessionManager;
@@ -45,6 +46,8 @@ import android.media.MediaActionSound;
  * 3. switch between front and back camera.
  */
 public final class StateReadyForCapture extends State {
+    private static final Log.Tag TAG = new Log.Tag("StateReadyCap");
+
     private final RefCountBase<ResourceCaptureTools> mResourceCaptureTools;
 
     private boolean mIsCountingDown;
@@ -270,12 +273,14 @@ public final class StateReadyForCapture extends State {
 
     @Override
     public Optional<State> processOnPictureDecoded(Bitmap pictureBitmap, byte[] pictureData) {
+        Log.d(TAG, "processOnPictureDecoded");
         return Optional.of((State) StateReviewingPicture.from(
                 this, mResourceCaptureTools, pictureBitmap, Optional.of(pictureData)));
     }
 
     @Override
     public Optional<State> processOnPictureBitmapAvailable(Bitmap thumbnailBitmap) {
+        Log.d(TAG, "processOnPictureBitmapAvailable");
         if (mIsTakingPicture && !mIsDecodingPicture) {
             return Optional.of((State) StateReviewingPicture.from(
                     this, mResourceCaptureTools, thumbnailBitmap, Optional.<byte[]>absent()));

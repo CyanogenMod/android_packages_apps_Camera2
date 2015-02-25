@@ -176,6 +176,7 @@ public class CaptureIntentModule extends CameraModule {
 
     @Override
     public void resume() {
+        mModuleUI.onModuleResumed();
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
         mAppController.addPreviewAreaSizeChangedListener(mModuleUI);
         mCaptureSessionManager.addSessionListener(mCaptureSessionListener);
@@ -201,6 +202,7 @@ public class CaptureIntentModule extends CameraModule {
         mCaptureSessionManager.removeSessionListener(mCaptureSessionListener);
         mAppController.removePreviewAreaSizeChangedListener(mModuleUI);
         mAppController.setPreviewStatusListener(null);
+        mModuleUI.onModulePaused();
 
         mStateMachine.processEvent(new Event() {
             @Override

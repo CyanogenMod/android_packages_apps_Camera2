@@ -21,6 +21,7 @@ import com.google.common.base.Optional;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
+import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
 
 import android.graphics.Bitmap;
@@ -33,6 +34,8 @@ import android.graphics.Bitmap;
  * - OnDoneButtonClicked
  */
 public class StateReviewingPicture extends State {
+    private static final Log.Tag TAG = new Log.Tag("StateReviewPic");
+
     private final RefCountBase<ResourceCaptureTools> mResourceCaptureTools;
 
     /** The picture bitmap to be shown. */
@@ -118,6 +121,8 @@ public class StateReviewingPicture extends State {
     @Override
     public Optional<State> processOnPictureCompressed(
             final byte[] pictureData, final int pictureOrientation) {
+        Log.d(TAG, "processOnPictureCompressed");
+
         // Users have clicked the done button, save the data and finish now.
         if (mShouldFinishWhenReceivePictureData) {
             return Optional.of((State) StateSavingPicture.from(
@@ -151,6 +156,8 @@ public class StateReviewingPicture extends State {
 
     @Override
     public Optional<State> processOnPictureDecoded(Bitmap pictureBitmap, byte[] pictureData) {
+        Log.d(TAG, "processOnPictureDecoded");
+
         mPictureData = Optional.of(pictureData);
         showPicture(pictureBitmap);
         return NO_CHANGE;
