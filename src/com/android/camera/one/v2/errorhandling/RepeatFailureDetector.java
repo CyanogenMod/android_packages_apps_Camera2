@@ -27,6 +27,10 @@ import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedExceptio
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.ResponseListener;
+import com.android.camera.stats.UsageStatistics;
+import com.google.common.logging.eventprotos;
+
+import java.net.UnknownServiceException;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -40,6 +44,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class RepeatFailureDetector extends ResponseListener {
     private final Logger mLog;
+    private final UsageStatistics mUsageStats;
     private final CameraCaptureSessionProxy mCaptureSession;
     private final CameraCommandExecutor mCommandExecutor;
     private final Runnable mPreviewStarter;
@@ -49,6 +54,7 @@ public final class RepeatFailureDetector extends ResponseListener {
 
     /**
      * @param logFactory Used for logging.
+     * @param usageStats Used for logging.
      * @param captureSession The camera capture session to abort captures upon
      *            repeated failure.
      * @param commandExecutor The command executor to flush upon repeated
@@ -58,11 +64,12 @@ public final class RepeatFailureDetector extends ResponseListener {
      *            classify as a repeat-failure.
      */
     public RepeatFailureDetector(Logger.Factory logFactory,
-            CameraCaptureSessionProxy captureSession,
+            UsageStatistics usageStats, CameraCaptureSessionProxy captureSession,
             CameraCommandExecutor commandExecutor, Runnable previewStarter,
             int consecutiveFailureThreshold) {
         mConsecutiveFailureThreshold = consecutiveFailureThreshold;
         mLog = logFactory.create(new Log.Tag("RepeatFailureDtctr"));
+        mUsageStats = usageStats;
         mCaptureSession = captureSession;
         mCommandExecutor = commandExecutor;
         mPreviewStarter = previewStarter;
@@ -96,6 +103,9 @@ public final class RepeatFailureDetector extends ResponseListener {
             if (mConsecutiveErrorCount >= mConsecutiveFailureThreshold && !
                     mExecutedReset) {
                 mLog.e("onCaptureFailed() REASON_ERROR:  Running repeat error callback");
+                // TODO: Replace UNKNOWN_REASON with enum for this error.
+                mUsageStats.cameraFailure(eventprotos.CameraFailure.FailureReason.UNKNOWN_REASON,
+                        "api2_repeated_failure", UsageStatistics.NONE, UsageStatistics.NONE);
                 mExecutedReset = true;
                 reset();
             }
