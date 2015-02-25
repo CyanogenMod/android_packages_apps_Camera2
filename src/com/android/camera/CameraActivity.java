@@ -531,7 +531,7 @@ public class CameraActivity extends QuickActivity
                 eventprotos.CameraFailure.FailureReason.SECURITY, null,
                 UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera disabled: " + cameraId);
-        CameraUtil.showErrorAndFinish(this, R.string.camera_disabled);
+        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
     }
 
     @Override
@@ -540,13 +540,13 @@ public class CameraActivity extends QuickActivity
                 eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, info,
                 UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera open failure: " + info);
-        CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
     }
 
     @Override
     public void onDeviceOpenedAlready(int cameraId, String info) {
         Log.w(TAG, "Camera open already: " + cameraId + "," + info);
-        CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
     }
 
     @Override
@@ -555,7 +555,7 @@ public class CameraActivity extends QuickActivity
                 eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null,
                 UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera reconnection failure:" + info);
-        CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
     }
 
     private static class MainHandler extends Handler {
@@ -976,6 +976,12 @@ public class CameraActivity extends QuickActivity
                         updateSessionProgress(0);
                         showProcessError(reason);
                     }
+                    if (reason.equals("content")) {
+                        UsageStatistics.instance().storageWarning(Storage.ACCESS_FAILURE);
+                        CameraUtil.showError(CameraActivity.this, R.string.media_storage_failure,
+                                R.string.feedback_description_save_photo, false);
+                    }
+
                     // HERE
                     mDataAdapter.refresh(uri);
                 }
@@ -1390,8 +1396,8 @@ public class CameraActivity extends QuickActivity
                         Log.e(TAG, "Fatal error during onPause, call Activity.finish()");
                         finish();
                     } else {
-                        CameraUtil.showErrorAndFinish(CameraActivity.this,
-                                R.string.cannot_connect_camera);
+                        CameraUtil.showError(CameraActivity.this, R.string.camera_disabled,
+                                R.string.feedback_description_camera_access, true);
                     }
                 }
             };
@@ -1447,7 +1453,7 @@ public class CameraActivity extends QuickActivity
             // Log error and continue. Modules requiring OneCamera should check
             // and handle if null by showing error dialog or other treatment.
             Log.e(TAG, "Creating camera manager failed.", e);
-            CameraUtil.showErrorAndFinish(this, R.string.cannot_connect_camera);
+            CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
         }
         profile.mark("OneCameraManager.get");
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
@@ -1663,7 +1669,8 @@ public class CameraActivity extends QuickActivity
 
             @Override
             public void onCameraAccessException() {
-                CameraUtil.showErrorAndFinish(CameraActivity.this, R.string.cannot_connect_camera);
+                CameraUtil.showError(CameraActivity.this, R.string.camera_disabled,
+                        R.string.feedback_description_camera_access, true);
             }
         });
         profile.stop();
@@ -2674,7 +2681,7 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void showErrorAndFinish(int messageId) {
-        CameraUtil.showErrorAndFinish(this, messageId);
+        CameraUtil.showError(this, messageId, R.string.feedback_description_camera_access, true);
     }
 
     @Override

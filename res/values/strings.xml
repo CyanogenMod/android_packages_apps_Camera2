@@ -133,6 +133,12 @@
     <!-- message for the dialog showing the camera is disabled because of security policies. Camera cannot be used. -->
     <string name="camera_disabled">Camera has been disabled because of security policies.</string>
 
+    <!-- message for the dialog showing that the user's photo could not be saved [CHAR LIMIT=NONE] -->
+    <string name="media_storage_failure">There was a problem saving your photo or video.</string>
+
+    <!-- Reason used for session failure which is visible in UI [CHAR LIMIT=NONE] -->
+    <string name="reason_storage_failure">Photo storage failure.</string>
+
     <!-- alert to the user to wait for some operation to complete -->
     <string name="wait">Please wait\u2026</string>
 
@@ -147,6 +153,12 @@
 
     <!-- A label that overlays on top of the preview frame to indicate the camcorder is in time lapse mode [CHAR LIMIT=35] -->
     <string name="time_lapse_title">Time lapse recording</string>
+
+    <!-- Default feedback that is entered in the Feedback textview for issues related to camera access. [CHAR LIMIT=NONE] -->
+    <string name="feedback_description_camera_access">The app couldn\'t connect to the camera</string>
+
+    <!-- Default feedback that is entered in the Feedback textview for issues related to saving photos. [CHAR LIMIT=NONE] -->
+    <string name="feedback_description_save_photo">Photo or video did not save to the device.</string>
 
     <!-- Screen display message during image capture to indicate that the capture is in progress, like during HDR+. [CHAR LIMIT=20] -->
     <string name="capturing">Capturing</string>

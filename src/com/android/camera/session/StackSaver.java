@@ -17,7 +17,6 @@
 package com.android.camera.session;
 
 import android.net.Uri;
-
 import com.android.camera.exif.ExifInterface;
 
 /**

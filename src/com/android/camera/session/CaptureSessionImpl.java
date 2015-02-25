@@ -238,8 +238,15 @@ public class CaptureSessionImpl implements CaptureSession {
                     orientation, exif, listener);
             return;
         }
-        mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
-                orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
+        try {
+            mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
+                    orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
+        } catch (IOException e) {
+            Log.e(TAG, "IOException", e);
+            // TODO: Replace with a sensisble description
+            // Placeholder string R.string.reason_storage_failure
+            finishWithFailure("content");
+        }
 
         mSessionNotifier.notifyTaskDone(mUri);
     }

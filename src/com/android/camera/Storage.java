@@ -28,7 +28,6 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.LruCache;
-
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
@@ -36,13 +35,13 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
 
 public class Storage {
     public static final String DCIM =
@@ -57,6 +56,7 @@ public class Storage {
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
+    public static final long ACCESS_FAILURE = -4L;
     public static final long LOW_STORAGE_THRESHOLD_BYTES = 50000000;
     public static final String CAMERA_SESSION_SCHEME = "camera_session";
     private static final Log.Tag TAG = new Log.Tag("Storage");
@@ -91,7 +91,7 @@ public class Storage {
      */
     public static Uri addImage(ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] jpeg, int width,
-            int height) {
+            int height) throws IOException {
 
         return addImage(resolver, title, date, location, orientation, exif, jpeg, width, height,
               FilmstripItemData.MIME_TYPE_JPEG);
@@ -120,7 +120,7 @@ public class Storage {
      */
     public static Uri addImage(ContentResolver resolver, String title, long date,
             Location location, int orientation, ExifInterface exif, byte[] data, int width,
-            int height, String mimeType) {
+            int height, String mimeType) throws IOException {
 
         String path = generateFilepath(title, mimeType);
         long fileLength = writeFile(path, data, exif);
@@ -269,7 +269,7 @@ public class Storage {
      */
     public static Uri updateImage(Uri imageUri, ContentResolver resolver, String title, long date,
            Location location, int orientation, ExifInterface exif,
-           byte[] jpeg, int width, int height, String mimeType) {
+           byte[] jpeg, int width, int height, String mimeType) throws IOException {
         String path = generateFilepath(title, mimeType);
         writeFile(path, jpeg, exif);
         return updateImage(imageUri, resolver, title, date, location, orientation, jpeg.length, path,
@@ -301,23 +301,19 @@ public class Storage {
      *
      * @return The size of the file. -1 if failed.
      */
-    public static long writeFile(String path, byte[] jpeg, ExifInterface exif) {
+    public static long writeFile(String path, byte[] jpeg, ExifInterface exif) throws IOException {
         if (!createDirectoryIfNeeded(path)) {
             Log.e(TAG, "Failed to create parent directory for file: " + path);
             return -1;
         }
         if (exif != null) {
-            try {
                 exif.writeExif(jpeg, path);
                 File f = new File(path);
                 return f.length();
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to write data", e);
-            }
         } else {
             return writeFile(path, jpeg);
         }
-        return -1;
+//        return -1;
     }
 
     /**
