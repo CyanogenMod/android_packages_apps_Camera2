@@ -17,6 +17,7 @@
 package com.android.camera.captureintent;
 
 import com.android.camera.app.CameraAppUI;
+import com.android.camera.async.MainThread;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -30,6 +31,7 @@ import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 /**
@@ -51,6 +53,19 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     /** The image view to display the captured picture. */
     private final ImageView mIntentReviewImageView;
 
+    private final PreviewStatusListener.PreviewAreaChangedListener mPreviewAreaChangedListener =
+            new PreviewStatusListener.PreviewAreaChangedListener() {
+                @Override
+                public void onPreviewAreaChanged(RectF previewArea) {
+                    FrameLayout.LayoutParams params =
+                            (FrameLayout.LayoutParams) mIntentReviewImageView.getLayoutParams();
+                    params.width = (int) previewArea.width();
+                    params.height = (int) previewArea.height();
+                    params.setMargins((int) previewArea.left, (int) previewArea.top, 0, 0);
+                    mIntentReviewImageView.setLayoutParams(params);
+                }
+            };
+
     public CaptureIntentModuleUI(
             CameraAppUI appUI, View parent, Listener listener) {
 
@@ -71,7 +86,33 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
     }
 
+    /**
+     * Called when the module got resumed.
+     */
+    public void onModuleResumed() {
+        MainThread.checkMainThread();
+        // Listen to preview layout change event. Adjust review image view
+        // layout to match preview layout.
+        //
+        // Doing this here rather than in ctor is because TextureViewHelper
+        // doesn't exist until the module got initialized.
+        mAppUI.addPreviewAreaChangedListener(mPreviewAreaChangedListener);
+    }
+
+    /**
+     * Called when the module got paused.
+     */
+    public void onModulePaused() {
+        MainThread.checkMainThread();
+        mAppUI.removePreviewAreaChangedListener(mPreviewAreaChangedListener);
+    }
+
+    /**
+     * Called when the preview is started.
+     */
+
     public void onPreviewStarted() {
+        MainThread.checkMainThread();
         mAppUI.onPreviewStarted();
     }
 
@@ -82,6 +123,7 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
      * @param maxZoom maximum zoom value.
      */
     public void initializeZoom(float maxZoom) {
+        MainThread.checkMainThread();
         mPreviewOverlay.setupZoom(maxZoom, 0, mZoomChancedListener);
     }
 
@@ -90,10 +132,12 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     }
 
     public void setShutterButtonEnabled(boolean enabled) {
+        MainThread.checkMainThread();
         mAppUI.setShutterButtonEnabled(enabled);
     }
 
     public void startFlashAnimation(boolean shortFlash) {
+        MainThread.checkMainThread();
         mAppUI.startFlashAnimation(shortFlash);
     }
 
@@ -103,6 +147,7 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
      * @param sec seconds to countdown
      */
     public void startCountdown(int sec) {
+        MainThread.checkMainThread();
         mCountdownView.startCountDown(sec);
     }
 
@@ -119,6 +164,8 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
      * @param reviewPictureBitmap The picture bitmap to be shown.
      */
     public void showPictureReviewUI(Bitmap reviewPictureBitmap) {
+        MainThread.checkMainThread();
+
         mIntentReviewImageView.setImageBitmap(reviewPictureBitmap);
         mIntentReviewImageView.setVisibility(View.VISIBLE);
 
@@ -132,6 +179,8 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
      * Transition to the UI where users can take a photo.
      */
     public void showPictureCaptureUI() {
+        MainThread.checkMainThread();
+
         mIntentReviewImageView.setVisibility(View.INVISIBLE);
         mIntentReviewImageView.setImageBitmap(null);
 
@@ -142,6 +191,7 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     }
 
     public void freezeScreenUntilPreviewReady() {
+        MainThread.checkMainThread();
         mAppUI.freezeScreenUntilPreviewReady();
     }
 
