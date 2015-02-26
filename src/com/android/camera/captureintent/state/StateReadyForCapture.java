@@ -357,6 +357,12 @@ public final class StateReadyForCapture extends State {
             getStateMachine().processEvent(new Event() {
                 @Override
                 public Optional<State> apply(State state) {
+                    return state.processOnReadyStateChanged(false);
+                }
+            });
+            getStateMachine().processEvent(new Event() {
+                @Override
+                public Optional<State> apply(State state) {
                     return state.processOnQuickExpose();
                 }
             });
