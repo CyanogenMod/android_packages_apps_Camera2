@@ -19,6 +19,7 @@ package com.android.camera.captureintent.state;
 import com.google.common.base.Optional;
 
 import com.android.camera.app.AppController;
+import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
@@ -44,12 +45,13 @@ public final class StateBackground extends State {
             MainThread mainThread,
             Context context,
             OneCameraManager cameraManager,
+            LocationManager locationManager,
             OrientationManager orientationManager,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController) {
         return new StateBackground(
-                stateMachine, intent, moduleUI, mainThread, context, cameraManager,
+                stateMachine, intent, moduleUI, mainThread, context, cameraManager, locationManager,
                 orientationManager, cameraFacingSetting, resolutionSetting, appController);
     }
 
@@ -66,13 +68,14 @@ public final class StateBackground extends State {
             MainThread mainThread,
             Context context,
             OneCameraManager cameraManager,
+            LocationManager locationManager,
             OrientationManager orientationManager,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController) {
         super(ID.Background, stateMachine);
         mResourceConstructed = ResourceConstructed.create(
-                intent, moduleUI, mainThread, context, cameraManager,
+                intent, moduleUI, mainThread, context, cameraManager, locationManager,
                 orientationManager, cameraFacingSetting, resolutionSetting, appController);
     }
 

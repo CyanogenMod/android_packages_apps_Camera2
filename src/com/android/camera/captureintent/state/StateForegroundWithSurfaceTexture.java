@@ -43,14 +43,12 @@ public final class StateForegroundWithSurfaceTexture extends State {
     public static StateForegroundWithSurfaceTexture from(
             StateForeground foreground,
             RefCountBase<ResourceConstructed> resourceConstructed,
-            SurfaceTexture surfaceTexture,
-            OneCamera.OpenCallback cameraOpenCallback) {
+            SurfaceTexture surfaceTexture) {
         return new StateForegroundWithSurfaceTexture(
                 foreground,
                 resourceConstructed,
                 surfaceTexture,
                 new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()),
-                cameraOpenCallback,
                 resourceConstructed.get().getAppController());
     }
 
@@ -59,13 +57,12 @@ public final class StateForegroundWithSurfaceTexture extends State {
             RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
-            OneCamera.OpenCallback cameraOpenCallback,
             AppController appController) {
         super(ID.ForegroundWithSurfaceTexture, previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = ResourceSurfaceTexture.create(
-                surfaceTexture, previewTransformCalculator, cameraOpenCallback, appController);
+                surfaceTexture, previewTransformCalculator, appController);
     }
 
     @Override

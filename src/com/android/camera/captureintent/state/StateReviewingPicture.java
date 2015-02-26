@@ -21,10 +21,13 @@ import com.google.common.base.Optional;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
+import com.android.camera.captureintent.event.Event;
 import com.android.camera.debug.Log;
+import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.util.Size;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 /**
  * A state that shows the taken picture for review. The Cancel, Done or
@@ -72,6 +75,8 @@ public class StateReviewingPicture extends State {
 
     @Override
     public Optional<State> onEnter() {
+        mResourceCaptureTools.get().getCaptureSessionManager()
+                .addSessionListener(mCaptureSessionListener);  // Will be balanced in onLeave().
         showPicture(mPictureBitmap);
         return NO_CHANGE;
     }
@@ -79,6 +84,8 @@ public class StateReviewingPicture extends State {
     @Override
     public void onLeave() {
         mResourceCaptureTools.close();
+        mResourceCaptureTools.get().getCaptureSessionManager()
+                .removeSessionListener(mCaptureSessionListener);
     }
 
     @Override
@@ -173,4 +180,50 @@ public class StateReviewingPicture extends State {
         });
     }
 
+    private final CaptureSessionManager.SessionListener mCaptureSessionListener =
+            new CaptureSessionManager.SessionListener() {
+                @Override
+                public void onSessionThumbnailUpdate(final Bitmap thumbnailBitmap) {
+                    // Not waiting for thumbnail anymore.
+                }
+
+                @Override
+                public void onSessionPictureDataUpdate(
+                        final byte[] pictureData, final int orientation) {
+                    getStateMachine().processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnPictureCompressed(pictureData, orientation);
+                        }
+                    });
+                }
+
+                @Override
+                public void onSessionQueued(Uri sessionUri) {
+                }
+
+                @Override
+                public void onSessionUpdated(Uri sessionUri) {
+                }
+
+                @Override
+                public void onSessionCaptureIndicatorUpdate(Bitmap bitmap, int rotationDegrees) {
+                }
+
+                @Override
+                public void onSessionDone(Uri sessionUri) {
+                }
+
+                @Override
+                public void onSessionFailed(Uri sessionUri, CharSequence reason) {
+                }
+
+                @Override
+                public void onSessionProgress(Uri sessionUri, int progress) {
+                }
+
+                @Override
+                public void onSessionProgressText(Uri sessionUri, CharSequence message) {
+                }
+            };
 }

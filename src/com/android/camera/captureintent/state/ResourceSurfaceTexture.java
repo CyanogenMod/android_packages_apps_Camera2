@@ -43,9 +43,6 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     /** The preview layout size. */
     private Size mPreviewLayoutSize;
 
-    /** Holds the camera open callback since it's ready to open a camera. */
-    private final OneCamera.OpenCallback mCameraOpenCallback;
-
     private final PreviewTransformCalculator mPreviewTransformCalculator;
 
     // TODO: Hope one day we could get rid of AppController.
@@ -57,23 +54,20 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     public static RefCountBase<ResourceSurfaceTexture> create(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
-            OneCamera.OpenCallback cameraOpenCallback,
             AppController appController) {
         ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTexture(
-                surfaceTexture, previewTransformCalculator, cameraOpenCallback, appController);
+                surfaceTexture, previewTransformCalculator, appController);
         return new RefCountBase<>(resourceSurfaceTexture);
     }
 
     private ResourceSurfaceTexture(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
-            OneCamera.OpenCallback cameraOpenCallback,
             AppController appController) {
         mSurfaceTexture = surfaceTexture;
         mPreviewTransformCalculator = previewTransformCalculator;
         mPreviewSize = new Size(0, 0);
         mPreviewLayoutSize = new Size(0, 0);
-        mCameraOpenCallback = cameraOpenCallback;
         mAppController = appController;
     }
 
@@ -87,10 +81,6 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
 
     public Size getPreviewLayoutSize() {
         return mPreviewLayoutSize;
-    }
-
-    public OneCamera.OpenCallback getCameraOpenCallback() {
-        return mCameraOpenCallback;
     }
 
     public void setPreviewSize(@Nonnull Size previewSize) {

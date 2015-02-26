@@ -40,9 +40,6 @@ public final class ResourceOpenedCamera implements SafeCloseable {
     /** The desired picture size. */
     private final Size mPictureSize;
 
-    /** The camera ready callback. */
-    private final OneCamera.CaptureReadyCallback mCaptureReadyCallback;
-
     /** The current zoom ratio. */
     private float mZoomRatio;
 
@@ -53,10 +50,9 @@ public final class ResourceOpenedCamera implements SafeCloseable {
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize,
-            OneCamera.CaptureReadyCallback captureReadyCallback) {
+            Size pictureSize) {
         ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCamera(
-                camera, cameraFacing, cameraCharacteristics, pictureSize, captureReadyCallback);
+                camera, cameraFacing, cameraCharacteristics, pictureSize);
         return new RefCountBase<>(resourceOpenedCamera);
     }
 
@@ -64,14 +60,12 @@ public final class ResourceOpenedCamera implements SafeCloseable {
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize,
-            OneCamera.CaptureReadyCallback captureReadyCallback) {
+            Size pictureSize) {
         mCamera = camera;
         mCameraFacing = cameraFacing;
         mCameraCharacteristics = cameraCharacteristics;
         mPictureSize = pictureSize;
-        mCaptureReadyCallback = captureReadyCallback;
-        mZoomRatio = 1.0f;
+        mZoomRatio = mCamera.getMaxZoom();
     }
 
     @Override
@@ -102,10 +96,12 @@ public final class ResourceOpenedCamera implements SafeCloseable {
     }
 
     public void setZoomRatio(float zoomRatio) {
+        mZoomRatio = zoomRatio;
         mCamera.setZoom(zoomRatio);
     }
 
-    public void startPreview(Surface previewSurface) {
-        mCamera.startPreview(previewSurface, mCaptureReadyCallback);
+    public void startPreview(
+            Surface previewSurface, OneCamera.CaptureReadyCallback captureReadyCallback) {
+        mCamera.startPreview(previewSurface, captureReadyCallback);
     }
 }

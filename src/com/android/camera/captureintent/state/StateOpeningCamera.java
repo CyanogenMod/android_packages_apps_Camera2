@@ -20,6 +20,9 @@ import com.google.common.base.Optional;
 
 import com.android.camera.async.RefCountBase;
 import com.android.camera.burst.BurstFacadeFactory;
+import com.android.camera.captureintent.event.Event;
+import com.android.camera.captureintent.event.EventOnOpenCameraFailed;
+import com.android.camera.captureintent.event.EventOnOpenCameraSucceeded;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
@@ -44,6 +47,23 @@ public final class StateOpeningCamera extends State {
 
     /** Whether is paused in the middle of opening camera. */
     private boolean mIsPaused;
+
+    private OneCamera.OpenCallback mCameraOpenCallback = new OneCamera.OpenCallback() {
+        @Override
+        public void onFailure() {
+            getStateMachine().processEvent(new EventOnOpenCameraFailed());
+        }
+
+        @Override
+        public void onCameraClosed() {
+            // Not used anymore.
+        }
+
+        @Override
+        public void onCameraOpened(final OneCamera camera) {
+            getStateMachine().processEvent(new EventOnOpenCameraSucceeded(camera));
+        }
+    };
 
     public static StateOpeningCamera from(
             StateForegroundWithSurfaceTexture foregroundWithSurfaceTexture,
@@ -109,7 +129,7 @@ public final class StateOpeningCamera extends State {
                 mCameraFacing,
                 false,
                 mPictureSize,
-                mResourceSurfaceTexture.get().getCameraOpenCallback(),
+                mCameraOpenCallback,
                 mResourceConstructed.get().getCameraHandler(),
                 mResourceConstructed.get().getMainThread(),
                 imageRotationCalculator,
@@ -130,9 +150,7 @@ public final class StateOpeningCamera extends State {
     }
 
     @Override
-    public Optional<State> processOnCameraOpened(
-            OneCamera camera,
-            OneCamera.CaptureReadyCallback captureReadyCallback) {
+    public Optional<State> processOnCameraOpened(OneCamera camera) {
         if (mIsPaused) {
             // Just close the camera and finish.
             camera.close();
@@ -140,7 +158,7 @@ public final class StateOpeningCamera extends State {
         }
         return Optional.of((State) StateStartingPreview.from(
                 this, mResourceConstructed, mResourceSurfaceTexture, camera, mCameraFacing,
-                mCameraCharacteristics, mPictureSize, captureReadyCallback));
+                mCameraCharacteristics, mPictureSize));
     }
 
     @Override

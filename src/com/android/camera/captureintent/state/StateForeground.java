@@ -56,9 +56,8 @@ public final class StateForeground extends State {
     }
 
     @Override
-    public Optional<State> processOnSurfaceTextureAvailable(
-            SurfaceTexture surfaceTexture, OneCamera.OpenCallback cameraOpenCallback) {
+    public Optional<State> processOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
         return Optional.of((State) StateForegroundWithSurfaceTexture.from(
-                this, mResourceConstructed, surfaceTexture, cameraOpenCallback));
+                this, mResourceConstructed, surfaceTexture));
     }
 }
