@@ -24,7 +24,6 @@ public class EventZoomRatioChanged extends Event {
     private final float mZoomRatio;
 
     public EventZoomRatioChanged(float zoomRatio) {
-        super(zoomRatio);
         mZoomRatio = zoomRatio;
     }
 

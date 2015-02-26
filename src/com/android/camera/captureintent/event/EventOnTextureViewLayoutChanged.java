@@ -25,7 +25,6 @@ public class EventOnTextureViewLayoutChanged extends Event {
     private final Size mLayoutSize;
 
     public EventOnTextureViewLayoutChanged(Size layoutSize) {
-        super(layoutSize);
         mLayoutSize = layoutSize;
     }
 

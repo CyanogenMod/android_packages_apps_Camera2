@@ -26,7 +26,6 @@ public class EventOnSurfaceTextureAvailable extends Event {
     private final SurfaceTexture mSurfaceTexture;
 
     public EventOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
-        super(surfaceTexture);
         mSurfaceTexture = surfaceTexture;
     }
 

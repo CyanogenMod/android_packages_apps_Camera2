@@ -26,7 +26,6 @@ public class EventTapOnPreview extends Event {
     private final Point mTapPoint;
 
     public EventTapOnPreview(Point tapPoint) {
-        super(tapPoint);
         mTapPoint = tapPoint;
     }
 
