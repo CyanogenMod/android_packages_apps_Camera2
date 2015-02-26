@@ -16,13 +16,12 @@
 
 package com.android.camera.captureintent.event;
 
+import com.android.camera.captureintent.state.State;
 import com.google.common.base.Optional;
 
-import com.android.camera.captureintent.state.State;
-
-public class EventTapOnCancelIntentButton extends Event {
+public class EventTapOnCancelShutterButton extends Event {
     @Override
     public Optional<State> apply(State state) {
-        return state.processOnCancelIntentButtonClicked();
+        return state.processOnCancelShutterButtonClicked();
     }
 }

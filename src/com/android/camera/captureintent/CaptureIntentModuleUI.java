@@ -148,7 +148,15 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
      */
     public void startCountdown(int sec) {
         MainThread.checkMainThread();
+        mAppUI.transitionToCancel();
         mCountdownView.startCountDown(sec);
+    }
+
+    /**
+     * Cancels the on-going countdown, if any.
+     */
+    public void cancelCountDown() {
+        mCountdownView.cancelCountDown();
     }
 
     /**

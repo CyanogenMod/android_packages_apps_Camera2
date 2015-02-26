@@ -302,6 +302,20 @@ public final class StateReadyForCapture extends State {
         return NO_CHANGE;
     }
 
+    @Override
+    public Optional<State> processOnCancelShutterButtonClicked() {
+        // Cancel in this state means that the countdown was cancelled.
+        mIsCountingDown = false;
+        mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                mResourceCaptureTools.get().getModuleUI().cancelCountDown();
+                mResourceCaptureTools.get().getModuleUI().showPictureCaptureUI();
+            }
+        });
+        return NO_CHANGE;
+    }
+
     private final OneCamera.FocusStateListener mFocusStateListener =
             new OneCamera.FocusStateListener() {
                 @Override

@@ -16,23 +16,22 @@
 
 package com.android.camera.captureintent;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Point;
+import android.graphics.SurfaceTexture;
+import android.view.GestureDetector;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+
 import com.android.camera.ButtonManager;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraModule;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
-import com.android.camera.captureintent.event.EventPause;
-import com.android.camera.captureintent.event.EventResume;
-import com.android.camera.captureintent.event.EventTapOnCancelIntentButton;
-import com.android.camera.captureintent.event.EventTapOnConfirmPhotoButton;
-import com.android.camera.captureintent.event.EventTapOnPreview;
-import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
-import com.android.camera.captureintent.event.EventTapOnRetakePhotoButton;
-import com.android.camera.captureintent.event.EventTapOnShutterButton;
-import com.android.camera.captureintent.event.EventTapOnSwitchCameraButton;
-import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
-import com.android.camera.captureintent.event.EventZoomRatioChanged;
+import com.android.camera.captureintent.event.*;
 import com.android.camera.captureintent.state.State;
 import com.android.camera.captureintent.state.StateBackground;
 import com.android.camera.captureintent.state.StateMachine;
@@ -50,15 +49,6 @@ import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
-
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Point;
-import android.graphics.SurfaceTexture;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 
 /**
  * The camera module that handles image capture intent.
@@ -143,6 +133,16 @@ public class CaptureIntentModule extends CameraModule {
     public void init(
             final CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
+
+        // Issue cancel countdown event when the button is pressed.
+        // TODO: Make this part of the official API the way shutter button events are.
+        mAppController.getCameraAppUI().setCancelShutterButtonListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mStateMachine.processEvent(new EventTapOnCancelShutterButton());
+            }
+        });
+
     }
 
     @Override

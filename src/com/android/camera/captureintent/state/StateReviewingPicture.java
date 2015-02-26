@@ -102,7 +102,7 @@ public class StateReviewingPicture extends State {
     }
 
     @Override
-    public Optional<State> processOnCancelButtonClicked() {
+    public Optional<State> processOnCancelIntentButtonClicked() {
         return Optional.of((State) StateIntentCompleted.from(
                 this, mResourceCaptureTools.get().getResourceConstructed()));
     }

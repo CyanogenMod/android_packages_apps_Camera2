@@ -35,6 +35,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import com.android.camera.AnimationManager;
 import com.android.camera.ButtonManager;
@@ -513,6 +514,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
     private ShutterButton mShutterButton;
+    private ImageButton mCountdownCancelButton;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
     private IndicatorIconController mIndicatorIconController;
@@ -1277,6 +1279,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         mStickyBottomCaptureLayout = (StickyBottomCaptureLayout) mAppRootView
                 .findViewById(R.id.sticky_bottom_capture_layout);
         mStickyBottomCaptureLayout.setCaptureLayoutHelper(mCaptureLayoutHelper);
+        mCountdownCancelButton = (ImageButton) mStickyBottomCaptureLayout
+                .findViewById(R.id.shutter_cancel_button);
 
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mModeListView);
         mTextureViewHelper.addAspectRatioChangedListener(
@@ -1825,6 +1829,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void removeShutterListener(ShutterButton.OnShutterButtonListener listener) {
         mShutterButton.removeOnShutterButtonListener(listener);
+    }
+
+    /**
+     * Sets or replaces the "cancel shutter" button listener.
+     * <p>
+     * TODO: Make this part of the interface the same way shutter button
+     * listeners are.
+     */
+    public void setCancelShutterButtonListener(View.OnClickListener listener) {
+        mCountdownCancelButton.setOnClickListener(listener);
     }
 
     /**

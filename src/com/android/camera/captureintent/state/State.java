@@ -163,7 +163,10 @@ public abstract class State {
     public Optional<State> processOnSwitchButtonClicked() {
         return NO_CHANGE;
     }
-    public Optional<State> processOnCancelButtonClicked() {
+    public Optional<State> processOnCancelIntentButtonClicked() {
+        return NO_CHANGE;
+    }
+    public Optional<State> processOnCancelShutterButtonClicked() {
         return NO_CHANGE;
     }
     public Optional<State> processOnDoneButtonClicked() {
