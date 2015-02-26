@@ -117,6 +117,9 @@ class GenericOneCameraImpl implements OneCamera {
         mFocusStateListenable.setCallback(new Callback<FocusState>() {
             @Override
             public void onCallback(@Nonnull FocusState focusState) {
+                if (listener == null) {
+                    return;
+                }
                 if (focusState.isActive) {
                     listener.onFocusDistance(focusState.lensDistance, mLensRange);
                 }
@@ -129,6 +132,9 @@ class GenericOneCameraImpl implements OneCamera {
         mReadyStateListenable.setCallback(new Callback<Boolean>() {
             @Override
             public void onCallback(Boolean result) {
+                if (listener == null) {
+                    return;
+                }
                 listener.onReadyStateChanged(result);
             }
         });

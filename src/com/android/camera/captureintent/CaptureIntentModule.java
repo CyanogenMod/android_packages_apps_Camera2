@@ -239,8 +239,8 @@ public class CaptureIntentModule extends CameraModule {
         bottomBarSpec.enableSelfTimer = true;
         bottomBarSpec.showSelfTimer = true;
         /** Flash button UI spec. */
-        bottomBarSpec.enableFlash = false;
-        bottomBarSpec.hideFlash = true;
+        bottomBarSpec.enableFlash = true;
+        bottomBarSpec.hideFlash = false;
 
         /** Intent image review UI spec. */
         bottomBarSpec.showCancel = true;
