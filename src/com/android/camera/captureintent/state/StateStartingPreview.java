@@ -101,11 +101,13 @@ public final class StateStartingPreview extends State {
             @Override
             public void run() {
                 mResourceSurfaceTexture.get().setPreviewSize(previewSize);
-                mResourceOpenedCamera.get().startPreview(
-                        mResourceSurfaceTexture.get().createPreviewSurface(),
-                        mCaptureReadyCallback);
             }
         });
+        // Start preview right away. Don't dispatch it on other threads or it
+        // will cause race condition. b/19522251.
+        mResourceOpenedCamera.get().startPreview(
+                mResourceSurfaceTexture.get().createPreviewSurface(),
+                mCaptureReadyCallback);
         return Optional.absent();
     }
 
