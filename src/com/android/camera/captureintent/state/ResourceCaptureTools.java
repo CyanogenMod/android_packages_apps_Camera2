@@ -22,13 +22,19 @@ import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
+import com.android.camera.captureintent.CaptureIntentSessionFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
+import com.android.camera.session.CaptureSessionManagerImpl;
+import com.android.camera.session.SessionStorageManagerImpl;
 import com.android.camera.ui.focus.FocusController;
+import com.android.camera.ui.focus.FocusSound;
+import com.android.camera.util.AndroidServices;
 import com.android.camera.util.CameraUtil;
+import com.android.camera2.R;
 
 import android.media.MediaActionSound;
 
@@ -41,12 +47,9 @@ public final class ResourceCaptureTools implements SafeCloseable {
 
     private final CaptureSessionManager mCaptureSessionManager;
     private final FocusController mFocusController;
-    private final LocationManager mLocationManager;
     private final HeadingSensor mHeadingSensor;
     private final SoundPlayer mSoundPlayer;
     private final MediaActionSound mMediaActionSound;
-    private final OneCamera.PictureCallback mPictureCallback;
-    private final OneCamera.PictureSaverCallback mPictureSaverCallback;
 
     /**
      * Creates a reference counted {@link ResourceCaptureTools} object.
@@ -54,19 +57,24 @@ public final class ResourceCaptureTools implements SafeCloseable {
     public static RefCountBase<ResourceCaptureTools> create(
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
-            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
-            CaptureSessionManager captureSessionManager,
-            FocusController focusController,
-            LocationManager locationManager,
-            HeadingSensor headingSensor,
-            SoundPlayer soundPlayer,
-            MediaActionSound mediaActionSound,
-            OneCamera.PictureCallback pictureCallback,
-            OneCamera.PictureSaverCallback pictureSaverCallback) {
+            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera) {
+        CaptureSessionManager captureSessionManager = new CaptureSessionManagerImpl(
+                new CaptureIntentSessionFactory(),
+                SessionStorageManagerImpl.create(resourceConstructed.get().getContext()),
+                resourceConstructed.get().getMainThread());
+        HeadingSensor headingSensor =
+                new HeadingSensor(AndroidServices.instance().provideSensorManager());
+        SoundPlayer soundPlayer = new SoundPlayer(resourceConstructed.get().getContext());
+        FocusSound focusSound = new FocusSound(soundPlayer, R.raw.material_camera_focus);
+        FocusController focusController = new FocusController(
+                resourceConstructed.get().getModuleUI().getFocusRing(),
+                focusSound,
+                resourceConstructed.get().getMainThread());
+        MediaActionSound mediaActionSound = new MediaActionSound();
         ResourceCaptureTools resourceCaptureTools = new ResourceCaptureTools(
                 resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
-                captureSessionManager, focusController, locationManager, headingSensor, soundPlayer,
-                mediaActionSound, pictureCallback, pictureSaverCallback);
+                captureSessionManager, focusController, headingSensor, soundPlayer,
+                mediaActionSound);
         return new RefCountBase<>(resourceCaptureTools);
     }
 
@@ -76,12 +84,9 @@ public final class ResourceCaptureTools implements SafeCloseable {
             RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
             CaptureSessionManager captureSessionManager,
             FocusController focusController,
-            LocationManager locationManager,
             HeadingSensor headingSensor,
             SoundPlayer soundPlayer,
-            MediaActionSound mediaActionSound,
-            OneCamera.PictureCallback pictureCallback,
-            OneCamera.PictureSaverCallback pictureSaverCallback) {
+            MediaActionSound mediaActionSound) {
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in close().
         mResourceSurfaceTexture = resourceSurfaceTexture;
@@ -89,12 +94,12 @@ public final class ResourceCaptureTools implements SafeCloseable {
         mResourceOpenedCamera = resourceOpenedCamera;
         mResourceOpenedCamera.addRef();    // Will be balanced in close().
         mCaptureSessionManager = captureSessionManager;
-        mLocationManager = locationManager;
         mHeadingSensor = headingSensor;
+        mHeadingSensor.activate();  // Will be balanced in close().
         mSoundPlayer = soundPlayer;
+        mSoundPlayer.loadSound(R.raw.timer_final_second);  // Will be balanced in close().
+        mSoundPlayer.loadSound(R.raw.timer_increment);     // Will be balanced in close().
         mMediaActionSound = mediaActionSound;
-        mPictureCallback = pictureCallback;
-        mPictureSaverCallback = pictureSaverCallback;
         mFocusController = focusController;
     }
 
@@ -104,6 +109,9 @@ public final class ResourceCaptureTools implements SafeCloseable {
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
         mResourceOpenedCamera.close();
+        mHeadingSensor.deactivate();
+        mSoundPlayer.unloadSound(R.raw.timer_increment);
+        mSoundPlayer.unloadSound(R.raw.timer_final_second);
     }
 
     public RefCountBase<ResourceConstructed> getResourceConstructed() {
@@ -118,6 +126,10 @@ public final class ResourceCaptureTools implements SafeCloseable {
         return mResourceOpenedCamera;
     }
 
+    public CaptureSessionManager getCaptureSessionManager() {
+        return mCaptureSessionManager;
+    }
+
     public FocusController getFocusController() {
         return mFocusController;
     }
@@ -126,11 +138,12 @@ public final class ResourceCaptureTools implements SafeCloseable {
         return mMediaActionSound;
     }
 
-    public void takePictureNow() {
+    public void takePictureNow(OneCamera.PictureCallback pictureCallback) {
         // Create a new capture session.
         final long timestamp = System.currentTimeMillis();
         final String fileName = CameraUtil.instance().createJpegName(timestamp);
-        final android.location.Location location = mLocationManager.getCurrentLocation();
+        final android.location.Location location =
+                mResourceConstructed.get().getLocationManager().getCurrentLocation();
         final CaptureSession session =
                 mCaptureSessionManager.createNewSession(fileName, timestamp, location);
         session.startEmpty(mResourceOpenedCamera.get().getPictureSize());
@@ -140,12 +153,20 @@ public final class ResourceCaptureTools implements SafeCloseable {
                 mResourceConstructed.get().getOrientationManager().getDeviceOrientation().getDegrees(),
                 session.getLocation(),
                 mResourceConstructed.get().getContext().getExternalCacheDir(),
-                mPictureCallback,
+                pictureCallback,
                 mPictureSaverCallback,
                 mHeadingSensor.getCurrentHeading(),
                 mResourceOpenedCamera.get().getZoomRatio(),
                 0);
         mResourceOpenedCamera.get().getCamera().takePicture(params, session);
+    }
+
+    public void playCountDownSound(int remainingSeconds) {
+        if (remainingSeconds == 1) {
+            mSoundPlayer.play(R.raw.timer_final_second, 0.6f);
+        } else if (remainingSeconds == 2 || remainingSeconds == 3) {
+            mSoundPlayer.play(R.raw.timer_increment, 0.6f);
+        }
     }
 
     public MainThread getMainThread() {
@@ -159,4 +180,11 @@ public final class ResourceCaptureTools implements SafeCloseable {
     public OneCamera getCamera() {
         return mResourceOpenedCamera.get().getCamera();
     }
+
+    private final OneCamera.PictureSaverCallback mPictureSaverCallback =
+            new OneCamera.PictureSaverCallback() {
+                @Override
+                public void onRemoteThumbnailAvailable(byte[] jpegImage) {
+                }
+            };
 }

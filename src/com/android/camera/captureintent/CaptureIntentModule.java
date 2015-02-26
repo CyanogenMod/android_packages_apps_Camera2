@@ -16,50 +16,45 @@
 
 package com.android.camera.captureintent;
 
-import com.google.common.base.Optional;
 import com.android.camera.ButtonManager;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraModule;
-import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
-import com.android.camera.app.LocationManager;
 import com.android.camera.async.MainThread;
-import com.android.camera.captureintent.state.Event;
+import com.android.camera.captureintent.event.EventPause;
+import com.android.camera.captureintent.event.EventResume;
+import com.android.camera.captureintent.event.EventTapOnCancelIntentButton;
+import com.android.camera.captureintent.event.EventTapOnConfirmPhotoButton;
+import com.android.camera.captureintent.event.EventTapOnPreview;
+import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
+import com.android.camera.captureintent.event.EventTapOnRetakePhotoButton;
+import com.android.camera.captureintent.event.EventTapOnShutterButton;
+import com.android.camera.captureintent.event.EventTapOnSwitchCameraButton;
+import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
+import com.android.camera.captureintent.event.EventZoomRatioChanged;
 import com.android.camera.captureintent.state.State;
 import com.android.camera.captureintent.state.StateBackground;
 import com.android.camera.captureintent.state.StateMachine;
 import com.android.camera.debug.Log;
 import com.android.camera.hardware.HardwareSpec;
-import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
-import com.android.camera.one.OneCamera.AutoFocusState;
-import com.android.camera.one.OneCamera.FocusStateListener;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
-import com.android.camera.session.CaptureSession;
-import com.android.camera.session.CaptureSessionManager;
-import com.android.camera.session.CaptureSessionManagerImpl;
-import com.android.camera.session.SessionStorageManager;
-import com.android.camera.session.SessionStorageManagerImpl;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.ui.CountDownView.OnCountDownStatusListener;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
-import com.android.camera.util.AndroidServices;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
-import android.net.Uri;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -80,20 +75,8 @@ public class CaptureIntentModule extends CameraModule {
     /** The camera manager. */
     private final OneCameraManager mCameraManager;
 
-    /** The heading sensor. */
-    private final HeadingSensor mHeadingSensor;
-
     /** The app settings manager. */
     private final SettingsManager mSettingsManager;
-
-    /** The location manager. */
-    private final LocationManager mLocationManager;
-
-    /** The sound player. */
-    private final SoundPlayer mSoundPlayer;
-
-    /** The capture session manager. */
-    private final CaptureSessionManager mCaptureSessionManager;
 
     /** The module state machine. */
     private final StateMachine mStateMachine;
@@ -114,14 +97,7 @@ public class CaptureIntentModule extends CameraModule {
                 mUIListener);
         mContext = appController.getAndroidContext();
         mCameraManager = appController.getCameraManager();
-        mHeadingSensor = new HeadingSensor(AndroidServices.instance().provideSensorManager());
         mSettingsManager = appController.getSettingsManager();
-        mLocationManager = appController.getLocationManager();
-        mSoundPlayer = new SoundPlayer(mContext);
-        mCaptureSessionManager = new CaptureSessionManagerImpl(
-                new CaptureIntentSessionFactory(),
-                SessionStorageManagerImpl.create(mContext),
-                MainThread.create());
         mStateMachine = new StateMachine();
         mSettingScopeNamespace = settingScopeNamespace;
         mAppController = appController;
@@ -133,8 +109,8 @@ public class CaptureIntentModule extends CameraModule {
                 mSettingsManager, mCameraManager);
         final State initialState = StateBackground.create(
                 intent, mStateMachine, mModuleUI, MainThread.create(), mContext, mCameraManager,
-                appController.getOrientationManager(), cameraFacingSetting, resolutionSetting,
-                appController);
+                appController.getLocationManager(), appController.getOrientationManager(),
+                cameraFacingSetting, resolutionSetting, appController);
         mStateMachine.jumpToState(initialState);
     }
 
@@ -155,12 +131,7 @@ public class CaptureIntentModule extends CameraModule {
 
     @Override
     public void onShutterButtonClick() {
-        mStateMachine.processEvent(new Event() {
-            @Override
-            public Optional<State> apply(State state) {
-                return state.processOnShutterButtonClicked();
-            }
-        });
+        mStateMachine.processEvent(new EventTapOnShutterButton());
     }
 
     @Override
@@ -179,37 +150,16 @@ public class CaptureIntentModule extends CameraModule {
         mModuleUI.onModuleResumed();
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
         mAppController.addPreviewAreaSizeChangedListener(mModuleUI);
-        mCaptureSessionManager.addSessionListener(mCaptureSessionListener);
-        mHeadingSensor.activate();
-        mSoundPlayer.loadSound(R.raw.timer_final_second);
-        mSoundPlayer.loadSound(R.raw.timer_increment);
-        mModuleUI.setCountdownFinishedListener(mOnCountDownStatusListener);
-
-        mStateMachine.processEvent(new Event() {
-            @Override
-            public Optional<State> apply(State state) {
-                return state.processResume();
-            }
-        });
+        mStateMachine.processEvent(new EventResume());
     }
 
     @Override
     public void pause() {
         mModuleUI.setCountdownFinishedListener(null);
-        mSoundPlayer.unloadSound(R.raw.timer_increment);
-        mSoundPlayer.unloadSound(R.raw.timer_final_second);
-        mHeadingSensor.deactivate();
-        mCaptureSessionManager.removeSessionListener(mCaptureSessionListener);
         mAppController.removePreviewAreaSizeChangedListener(mModuleUI);
         mAppController.setPreviewStatusListener(null);
         mModuleUI.onModulePaused();
-
-        mStateMachine.processEvent(new Event() {
-            @Override
-            public Optional<State> apply(State state) {
-                return state.processPause();
-            }
-        });
+        mStateMachine.processEvent(new EventPause());
     }
 
     @Override
@@ -276,12 +226,7 @@ public class CaptureIntentModule extends CameraModule {
         bottomBarSpec.cameraCallback = new ButtonManager.ButtonCallback() {
             @Override
             public void onStateChanged(int cameraId) {
-                mStateMachine.processEvent(new Event() {
-                    @Override
-                    public Optional<State> apply(State state) {
-                        return state.processOnSwitchButtonClicked();
-                    }
-                });
+                mStateMachine.processEvent(new EventTapOnSwitchCameraButton());
             }
         };
         /** Grid lines button UI spec. */
@@ -302,36 +247,21 @@ public class CaptureIntentModule extends CameraModule {
         bottomBarSpec.cancelCallback = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStateMachine.processEvent(new Event() {
-                    @Override
-                    public Optional<State> apply(State state) {
-                        return state.processOnCancelButtonClicked();
-                    }
-                });
+                mStateMachine.processEvent(new EventTapOnCancelIntentButton());
             }
         };
         bottomBarSpec.showDone = true;
         bottomBarSpec.doneCallback = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStateMachine.processEvent(new Event() {
-                    @Override
-                    public Optional<State> apply(State state) {
-                        return state.processOnDoneButtonClicked();
-                    }
-                });
+                mStateMachine.processEvent(new EventTapOnConfirmPhotoButton());
             }
         };
         bottomBarSpec.showRetake = true;
         bottomBarSpec.retakeCallback = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStateMachine.processEvent(new Event() {
-                    @Override
-                    public Optional<State> apply(State state) {
-                        return state.processOnRetakeButtonClicked();
-                    }
-                });
+                mStateMachine.processEvent(new EventTapOnRetakePhotoButton());
             }
         };
         return bottomBarSpec;
@@ -362,12 +292,7 @@ public class CaptureIntentModule extends CameraModule {
             new CaptureIntentModuleUI.Listener() {
                 @Override
                 public void onZoomRatioChanged(final float zoomRatio) {
-                    mStateMachine.processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnZoomRatioChanged(zoomRatio);
-                        }
-                    });
+                    mStateMachine.processEvent(new EventZoomRatioChanged(zoomRatio));
                 }
             };
 
@@ -377,12 +302,7 @@ public class CaptureIntentModule extends CameraModule {
         public void onPreviewLayoutChanged(View v, int left, int top, int right,
                 int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             final Size previewLayoutSize = new Size(right - left, bottom - top);
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnTextureViewLayoutChanged(previewLayoutSize);
-                }
-            });
+            mStateMachine.processEvent(new EventOnTextureViewLayoutChanged(previewLayoutSize));
         }
 
         @Override
@@ -403,12 +323,7 @@ public class CaptureIntentModule extends CameraModule {
                 @Override
                 public boolean onSingleTapUp(MotionEvent ev) {
                     final Point tapPoint = new Point((int) ev.getX(), (int) ev.getY());
-                    mStateMachine.processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnSingleTapOnPreview(tapPoint);
-                        }
-                    });
+                    mStateMachine.processEvent(new EventTapOnPreview(tapPoint));
                     return true;
                 }
             };
@@ -422,13 +337,7 @@ public class CaptureIntentModule extends CameraModule {
         @Override
         public void onSurfaceTextureAvailable(
                 final SurfaceTexture surfaceTexture, int width, int height) {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnSurfaceTextureAvailable(
-                            surfaceTexture, mCameraOpenCallback);
-                }
-            });
+            mStateMachine.processEvent(new EventOnSurfaceTextureAvailable(surfaceTexture));
         }
 
         @Override
@@ -445,199 +354,4 @@ public class CaptureIntentModule extends CameraModule {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
-
-    private OneCamera.CaptureReadyCallback mCaptureReadyCallback =
-            new OneCamera.CaptureReadyCallback() {
-        @Override
-        public void onSetupFailed() {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnPreviewSetupFailed();
-                }
-            });
-        }
-
-        @Override
-        public void onReadyForCapture() {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnPreviewSetupSucceeded(
-                            mCaptureSessionManager, mLocationManager, mHeadingSensor, mSoundPlayer,
-                            mReadyStateChangedListener, mPictureCallback, mPictureSaverCallback,
-                            mFocusStateListener);
-                }
-            });
-        }
-    };
-
-    private OneCamera.OpenCallback mCameraOpenCallback = new OneCamera.OpenCallback() {
-        @Override
-        public void onFailure() {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnCameraOpenFailure();
-                }
-            });
-        }
-
-        @Override
-        public void onCameraClosed() {
-            // Not used anymore.
-        }
-
-        @Override
-        public void onCameraOpened(final OneCamera camera) {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnCameraOpened(camera, mCaptureReadyCallback);
-                }
-            });
-        }
-    };
-
-    private final OneCamera.ReadyStateChangedListener mReadyStateChangedListener =
-            new OneCamera.ReadyStateChangedListener() {
-                /**
-                 * Called when the camera is either ready or not ready to take a picture
-                 * right now.
-                 */
-                @Override
-                public void onReadyStateChanged(final boolean readyForCapture) {
-                    mStateMachine.processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnReadyStateChanged(readyForCapture);
-                        }
-                    });
-                }
-            };
-
-    private final OneCamera.PictureSaverCallback mPictureSaverCallback =
-            new OneCamera.PictureSaverCallback() {
-                @Override
-                public void onRemoteThumbnailAvailable(byte[] jpegImage) {
-                }
-            };
-
-    private final OneCamera.PictureCallback mPictureCallback = new OneCamera.PictureCallback() {
-        @Override
-        public void onQuickExpose() {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnQuickExpose();
-                }
-            });
-        }
-
-        @Override
-        public void onThumbnailResult(byte[] jpegData) {
-        }
-
-        @Override
-        public void onPictureTaken(CaptureSession session) {
-        }
-
-        @Override
-        public void onPictureSaved(Uri uri) {
-        }
-
-        @Override
-        public void onPictureTakingFailed() {
-        }
-
-        @Override
-        public void onTakePictureProgress(float progress) {
-        }
-    };
-
-    private final FocusStateListener mFocusStateListener = new FocusStateListener() {
-        @Override
-        public void onFocusStatusUpdate(final AutoFocusState focusState, final long frameNumber) {
-            mStateMachine.processEvent(new Event() {
-                @Override
-                public Optional<State> apply(State state) {
-                    return state.processOnFocusStateUpdated(focusState, frameNumber);
-                }
-            });
-        }
-    };
-
-    private final CaptureSessionManager.SessionListener mCaptureSessionListener =
-            new CaptureSessionManager.SessionListener() {
-                @Override
-                public void onSessionThumbnailUpdate(final Bitmap thumbnailBitmap) {
-                    mStateMachine.processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnPictureBitmapAvailable(thumbnailBitmap);
-                        }
-                    });
-                }
-
-                @Override
-                public void onSessionPictureDataUpdate(
-                        final byte[] pictureData, final int orientation) {
-                    mStateMachine.processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnPictureCompressed(pictureData, orientation);
-                        }
-                    });
-                }
-
-                @Override
-                public void onSessionQueued(Uri sessionUri) {
-                }
-
-                @Override
-                public void onSessionUpdated(Uri sessionUri) {
-                }
-
-                @Override
-                public void onSessionCaptureIndicatorUpdate(Bitmap bitmap, int rotationDegrees) {
-                }
-
-                @Override
-                public void onSessionDone(Uri sessionUri) {
-                }
-
-                @Override
-                public void onSessionFailed(Uri sessionUri, CharSequence reason) {
-                }
-
-                @Override
-                public void onSessionProgress(Uri sessionUri, int progress) {
-                }
-
-                @Override
-                public void onSessionProgressText(Uri sessionUri, CharSequence message) {
-                }
-            };
-
-    private final OnCountDownStatusListener mOnCountDownStatusListener =
-            new OnCountDownStatusListener() {
-                @Override
-                public void onRemainingSecondsChanged(int remainingSeconds) {
-                    if (remainingSeconds == 1) {
-                        mSoundPlayer.play(R.raw.timer_final_second, 0.6f);
-                    } else if (remainingSeconds == 2 || remainingSeconds == 3) {
-                        mSoundPlayer.play(R.raw.timer_increment, 0.6f);
-                    }
-                }
-
-                @Override
-                public void onCountDownFinished() {
-                    mStateMachine.processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnCountDownFinished();
-                        }
-                    });
-                }
-            };
 }

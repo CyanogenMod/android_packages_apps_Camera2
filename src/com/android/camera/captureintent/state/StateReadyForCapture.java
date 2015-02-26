@@ -18,25 +18,26 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
-import com.android.camera.SoundPlayer;
 import com.android.camera.app.LocationManager;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
+import com.android.camera.captureintent.event.Event;
 import com.android.camera.debug.Log;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
+import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.focus.FocusController;
-import com.android.camera.ui.focus.FocusSound;
 import com.android.camera.util.Size;
-import com.android.camera2.R;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.media.MediaActionSound;
+import android.net.Uri;
 
 /**
  * Represents a state that allows users to take a picture. The capture UI
@@ -58,23 +59,10 @@ public final class StateReadyForCapture extends State {
             StateStartingPreview startingPreview,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
-            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
-            CaptureSessionManager captureSessionManager,
-            LocationManager locationManager,
-            HeadingSensor headingSensor,
-            SoundPlayer soundPlayer,
-            OneCamera.PictureCallback pictureCallback,
-            OneCamera.PictureSaverCallback pictureSaverCallback) {
-        FocusSound focusSound = new FocusSound(soundPlayer, R.raw.material_camera_focus);
-        FocusController focusController = new FocusController(
-                resourceConstructed.get().getModuleUI().getFocusRing(),
-                focusSound,
-                resourceConstructed.get().getMainThread());
-        MediaActionSound mediaActionSound = new MediaActionSound();
+            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera) {
+
         return new StateReadyForCapture(
-                startingPreview, resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
-                captureSessionManager, focusController, locationManager, headingSensor, soundPlayer,
-                mediaActionSound, pictureCallback, pictureSaverCallback);
+                startingPreview, resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera);
     }
 
     public static StateReadyForCapture from(
@@ -87,20 +75,10 @@ public final class StateReadyForCapture extends State {
             State startingPreview,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
-            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
-            CaptureSessionManager captureSessionManager,
-            FocusController focusController,
-            LocationManager locationManager,
-            HeadingSensor headingSensor,
-            SoundPlayer soundPlayer,
-            MediaActionSound mediaActionSound,
-            OneCamera.PictureCallback pictureCallback,
-            OneCamera.PictureSaverCallback pictureSaverCallback) {
+            RefCountBase<ResourceOpenedCamera> resourceOpenedCamera) {
         super(ID.ReadyForCapture, startingPreview);
         mResourceCaptureTools = ResourceCaptureTools.create(
-                resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
-                captureSessionManager, focusController, locationManager, headingSensor,
-                soundPlayer, mediaActionSound, pictureCallback, pictureSaverCallback);
+                resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera);
         mIsCountingDown = false;
         mIsTakingPicture = false;
         mIsDecodingPicture = false;
@@ -119,12 +97,22 @@ public final class StateReadyForCapture extends State {
 
     @Override
     public Optional<State> onEnter() {
-        mResourceCaptureTools.get().getCamera().setFocusDistanceListener(
-                mResourceCaptureTools.get().getFocusController());
+        // Register various listeners. These will be unregistered in onLeave().
+        final OneCamera camera =
+                mResourceCaptureTools.get().getResourceOpenedCamera().get().getCamera();
+        camera.setFocusDistanceListener(mResourceCaptureTools.get().getFocusController());
+        camera.setFocusStateListener(mFocusStateListener);
+        camera.setReadyStateChangedListener(mReadyStateChangedListener);
+        mResourceCaptureTools.get().getCaptureSessionManager()
+                .addSessionListener(mCaptureSessionListener);
+
+        // Display capture UI.
         mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
             @Override
             public void run() {
                 mResourceCaptureTools.get().getModuleUI().showPictureCaptureUI();
+                mResourceCaptureTools.get().getModuleUI().initializeZoom(
+                        mResourceCaptureTools.get().getResourceOpenedCamera().get().getZoomRatio());
             }
         });
         return NO_CHANGE;
@@ -132,6 +120,14 @@ public final class StateReadyForCapture extends State {
 
     @Override
     public void onLeave() {
+        final OneCamera camera =
+                mResourceCaptureTools.get().getResourceOpenedCamera().get().getCamera();
+        camera.setFocusDistanceListener(null);
+        camera.setFocusStateListener(null);
+        camera.setReadyStateChangedListener(null);
+
+        mResourceCaptureTools.get().getCaptureSessionManager()
+                .removeSessionListener(mCaptureSessionListener);
         mResourceCaptureTools.close();
     }
 
@@ -166,6 +162,8 @@ public final class StateReadyForCapture extends State {
                         .getSettingsManager().getInteger(
                         SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
         if (countDownDuration > 0) {
+            mResourceCaptureTools.get().getModuleUI()
+                    .setCountdownFinishedListener(mOnCountDownStatusListener);
             mIsCountingDown = true;
             mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
                 @Override
@@ -176,7 +174,7 @@ public final class StateReadyForCapture extends State {
             return NO_CHANGE;
         }
         mIsTakingPicture = true;
-        mResourceCaptureTools.get().takePictureNow();
+        mResourceCaptureTools.get().takePictureNow(mPictureCallback);
         return NO_CHANGE;
     }
 
@@ -185,7 +183,7 @@ public final class StateReadyForCapture extends State {
         if (mIsCountingDown) {
             mIsCountingDown = false;
             mIsTakingPicture = true;
-            mResourceCaptureTools.get().takePictureNow();
+            mResourceCaptureTools.get().takePictureNow(mPictureCallback);
         }
         return NO_CHANGE;
     }
@@ -303,4 +301,137 @@ public final class StateReadyForCapture extends State {
         }
         return NO_CHANGE;
     }
+
+    private final OneCamera.FocusStateListener mFocusStateListener =
+            new OneCamera.FocusStateListener() {
+                @Override
+                public void onFocusStatusUpdate(final OneCamera.AutoFocusState focusState,
+                        final long frameNumber) {
+                    getStateMachine().processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnFocusStateUpdated(focusState, frameNumber);
+                        }
+                    });
+                }
+            };
+
+    private final OneCamera.ReadyStateChangedListener mReadyStateChangedListener =
+            new OneCamera.ReadyStateChangedListener() {
+                /**
+                 * Called when the camera is either ready or not ready to take a picture
+                 * right now.
+                 */
+                @Override
+                public void onReadyStateChanged(final boolean readyForCapture) {
+                    getStateMachine().processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnReadyStateChanged(readyForCapture);
+                        }
+                    });
+                }
+            };
+
+    private final CountDownView.OnCountDownStatusListener mOnCountDownStatusListener =
+            new CountDownView.OnCountDownStatusListener() {
+                @Override
+                public void onRemainingSecondsChanged(int remainingSeconds) {
+                    mResourceCaptureTools.get().playCountDownSound(remainingSeconds);
+                }
+
+                @Override
+                public void onCountDownFinished() {
+                    getStateMachine().processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnCountDownFinished();
+                        }
+                    });
+                }
+            };
+
+    private final OneCamera.PictureCallback mPictureCallback = new OneCamera.PictureCallback() {
+        @Override
+        public void onQuickExpose() {
+            getStateMachine().processEvent(new Event() {
+                @Override
+                public Optional<State> apply(State state) {
+                    return state.processOnQuickExpose();
+                }
+            });
+        }
+
+        @Override
+        public void onThumbnailResult(byte[] jpegData) {
+        }
+
+        @Override
+        public void onPictureTaken(CaptureSession session) {
+        }
+
+        @Override
+        public void onPictureSaved(Uri uri) {
+        }
+
+        @Override
+        public void onPictureTakingFailed() {
+        }
+
+        @Override
+        public void onTakePictureProgress(float progress) {
+        }
+    };
+
+    private final CaptureSessionManager.SessionListener mCaptureSessionListener =
+            new CaptureSessionManager.SessionListener() {
+                @Override
+                public void onSessionThumbnailUpdate(final Bitmap thumbnailBitmap) {
+                    getStateMachine().processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnPictureBitmapAvailable(thumbnailBitmap);
+                        }
+                    });
+                }
+
+                @Override
+                public void onSessionPictureDataUpdate(
+                        final byte[] pictureData, final int orientation) {
+                    getStateMachine().processEvent(new Event() {
+                        @Override
+                        public Optional<State> apply(State state) {
+                            return state.processOnPictureCompressed(pictureData, orientation);
+                        }
+                    });
+                }
+
+                @Override
+                public void onSessionQueued(Uri sessionUri) {
+                }
+
+                @Override
+                public void onSessionUpdated(Uri sessionUri) {
+                }
+
+                @Override
+                public void onSessionCaptureIndicatorUpdate(Bitmap bitmap, int rotationDegrees) {
+                }
+
+                @Override
+                public void onSessionDone(Uri sessionUri) {
+                }
+
+                @Override
+                public void onSessionFailed(Uri sessionUri, CharSequence reason) {
+                }
+
+                @Override
+                public void onSessionProgress(Uri sessionUri, int progress) {
+                }
+
+                @Override
+                public void onSessionProgressText(Uri sessionUri, CharSequence message) {
+                }
+            };
 }

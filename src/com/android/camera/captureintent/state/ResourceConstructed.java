@@ -17,6 +17,7 @@
 package com.android.camera.captureintent.state;
 
 import com.android.camera.app.AppController;
+import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
@@ -37,6 +38,7 @@ public final class ResourceConstructed implements SafeCloseable {
     private final MainThread mMainThread;
     private final Context mContext;
     private final OneCameraManager mCameraManager;
+    private final LocationManager mLocationManager;
     private final OrientationManager mOrientationManager;
     private final CameraFacingSetting mCameraFacingSetting;
     private final ResolutionSetting mResolutionSetting;
@@ -55,12 +57,13 @@ public final class ResourceConstructed implements SafeCloseable {
             MainThread mainThread,
             Context context,
             OneCameraManager cameraManager,
+            LocationManager locationManager,
             OrientationManager orientationManager,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController) {
         return new RefCountBase<>(new ResourceConstructed(
-                intent, moduleUI, mainThread, context, cameraManager,
+                intent, moduleUI, mainThread, context, cameraManager, locationManager,
                 orientationManager, cameraFacingSetting, resolutionSetting, appController));
     }
 
@@ -70,6 +73,7 @@ public final class ResourceConstructed implements SafeCloseable {
             MainThread mainThread,
             Context context,
             OneCameraManager cameraManager,
+            LocationManager locationManager,
             OrientationManager orientationManager,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
@@ -79,6 +83,7 @@ public final class ResourceConstructed implements SafeCloseable {
         mMainThread = mainThread;
         mContext = context;
         mCameraManager = cameraManager;
+        mLocationManager = locationManager;
         mOrientationManager = orientationManager;
         mCameraFacingSetting = cameraFacingSetting;
         mResolutionSetting = resolutionSetting;
@@ -112,6 +117,10 @@ public final class ResourceConstructed implements SafeCloseable {
 
     public OneCameraManager getCameraManager() {
         return mCameraManager;
+    }
+
+    public LocationManager getLocationManager() {
+        return mLocationManager;
     }
 
     public OrientationManager getOrientationManager() {

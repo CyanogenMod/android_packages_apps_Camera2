@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.state;
+package com.android.camera.captureintent.event;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
-/**
- * Defines event which can be processed by {@link StateMachine}. Example:
- *
- * Event e = new Event() {
- *     @Override
- *     public Optional<State> apply(State state) {
- *         return state.processOnPictureCompressed(data, dataOrientation);
- *     }
- * }
- */
-public interface Event extends Function<State, Optional<State>> {
+import com.android.camera.captureintent.state.State;
+
+import android.graphics.SurfaceTexture;
+
+public class EventOnSurfaceTextureAvailable extends Event {
+    private final SurfaceTexture mSurfaceTexture;
+
+    public EventOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
+        super(surfaceTexture);
+        mSurfaceTexture = surfaceTexture;
+    }
+
+    @Override
+    public Optional<State> apply(State state) {
+        return state.processOnSurfaceTextureAvailable(mSurfaceTexture);
+    }
 }

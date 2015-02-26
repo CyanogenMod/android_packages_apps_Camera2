@@ -19,17 +19,14 @@ package com.android.camera.captureintent.state;
 import com.google.common.base.Optional;
 
 import com.android.camera.CaptureModuleUtil;
-import com.android.camera.SoundPlayer;
-import com.android.camera.app.LocationManager;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.captureintent.CaptureIntentModuleUI;
+import com.android.camera.captureintent.event.EventOnStartPreviewFailed;
+import com.android.camera.captureintent.event.EventOnStartPreviewSucceeded;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.Rational;
-import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
-import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.util.Size;
 
 import java.util.List;
@@ -52,8 +49,7 @@ public final class StateStartingPreview extends State {
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize,
-            OneCamera.CaptureReadyCallback captureReadyCallback) {
+            Size pictureSize) {
         return new StateStartingPreview(
                 openingCamera,
                 resourceConstructed,
@@ -61,8 +57,7 @@ public final class StateStartingPreview extends State {
                 camera,
                 cameraFacing,
                 cameraCharacteristics,
-                pictureSize,
-                captureReadyCallback);
+                pictureSize);
     }
 
     private StateStartingPreview(
@@ -72,15 +67,14 @@ public final class StateStartingPreview extends State {
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize,
-            OneCamera.CaptureReadyCallback captureReadyCallback) {
+            Size pictureSize) {
         super(ID.StartingPreview, previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
         mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
         mResourceOpenedCamera = ResourceOpenedCamera.create(
-                camera, cameraFacing, cameraCharacteristics, pictureSize, captureReadyCallback);
+                camera, cameraFacing, cameraCharacteristics, pictureSize);
     }
 
     @Override
@@ -108,7 +102,8 @@ public final class StateStartingPreview extends State {
             public void run() {
                 mResourceSurfaceTexture.get().setPreviewSize(previewSize);
                 mResourceOpenedCamera.get().startPreview(
-                        mResourceSurfaceTexture.get().createPreviewSurface());
+                        mResourceSurfaceTexture.get().createPreviewSurface(),
+                        mCaptureReadyCallback);
             }
         });
         return Optional.absent();
@@ -133,31 +128,15 @@ public final class StateStartingPreview extends State {
     }
 
     @Override
-    public Optional<State> processOnPreviewSetupSucceeded(
-            CaptureSessionManager captureSessionManager,
-            LocationManager locationManager,
-            HeadingSensor headingSensor,
-            SoundPlayer soundPlayer,
-            OneCamera.ReadyStateChangedListener readyStateChangedListener,
-            OneCamera.PictureCallback pictureCallback,
-            OneCamera.PictureSaverCallback pictureSaverCallback,
-            OneCamera.FocusStateListener focusStateListener) {
-        final OneCamera camera = mResourceOpenedCamera.get().getCamera();
-        camera.setFocusStateListener(focusStateListener);
-        camera.setReadyStateChangedListener(readyStateChangedListener);
+    public Optional<State> processOnPreviewSetupSucceeded() {
         mResourceConstructed.get().getMainThread().execute(new Runnable() {
             @Override
             public void run() {
-                final CaptureIntentModuleUI moduleUI = mResourceConstructed.get().getModuleUI();
-                moduleUI.onPreviewStarted();
-                moduleUI.initializeZoom(camera.getMaxZoom());
-                moduleUI.showPictureCaptureUI();
+                mResourceConstructed.get().getModuleUI().onPreviewStarted();
             }
         });
         return Optional.of((State) StateReadyForCapture.from(
-                this, mResourceConstructed, mResourceSurfaceTexture, mResourceOpenedCamera,
-                captureSessionManager, locationManager, headingSensor, soundPlayer, pictureCallback,
-                pictureSaverCallback));
+                this, mResourceConstructed, mResourceSurfaceTexture, mResourceOpenedCamera));
     }
 
     @Override
@@ -165,4 +144,17 @@ public final class StateStartingPreview extends State {
         Log.e(TAG, "processOnPreviewSetupFailed");
         return Optional.of((State) StateFatal.from(this, mResourceConstructed));
     }
+
+    private OneCamera.CaptureReadyCallback mCaptureReadyCallback =
+            new OneCamera.CaptureReadyCallback() {
+                @Override
+                public void onSetupFailed() {
+                    getStateMachine().processEvent(new EventOnStartPreviewFailed());
+                }
+
+                @Override
+                public void onReadyForCapture() {
+                    getStateMachine().processEvent(new EventOnStartPreviewSucceeded());
+                }
+            };
 }

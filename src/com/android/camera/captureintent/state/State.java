@@ -111,31 +111,20 @@ public abstract class State {
     public Optional<State> processPause() {
         return NO_CHANGE;
     }
-    public Optional<State> processOnSurfaceTextureAvailable(
-            SurfaceTexture surfaceTexture, OneCamera.OpenCallback cameraOpenCallback) {
+    public Optional<State> processOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
         return NO_CHANGE;
     }
     public Optional<State> processOnTextureViewLayoutChanged(Size layoutSize) {
         return NO_CHANGE;
     }
-    public Optional<State> processOnCameraOpened(
-            OneCamera camera,
-            OneCamera.CaptureReadyCallback captureReadyCallback) {
+    public Optional<State> processOnCameraOpened(OneCamera camera) {
         camera.close();
         return NO_CHANGE;
     }
     public Optional<State> processOnCameraOpenFailure() {
         return NO_CHANGE;
     }
-    public Optional<State> processOnPreviewSetupSucceeded(
-            CaptureSessionManager captureSessionManager,
-            LocationManager locationManager,
-            HeadingSensor headingSensor,
-            SoundPlayer soundPlayer,
-            OneCamera.ReadyStateChangedListener readyStateChangedListener,
-            OneCamera.PictureCallback pictureCallback,
-            OneCamera.PictureSaverCallback pictureSaverCallback,
-            OneCamera.FocusStateListener focusStateListener) {
+    public Optional<State> processOnPreviewSetupSucceeded() {
         return NO_CHANGE;
     }
     public Optional<State> processOnPreviewSetupFailed() {

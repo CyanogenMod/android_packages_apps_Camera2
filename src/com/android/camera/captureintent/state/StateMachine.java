@@ -18,6 +18,7 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
+import com.android.camera.captureintent.event.Event;
 import com.android.camera.debug.Log;
 
 import java.util.concurrent.locks.Condition;
@@ -81,12 +82,13 @@ public class StateMachine {
      * This method is thread-safe so it could be called on different threads.
      * Only one event could be processed at a time.
      *
-     * @param stateEvent The event to be processed.
+     * @param event The event to be processed.
      */
-    public void processEvent(Event stateEvent) {
+    public void processEvent(Event event) {
         mStateLock.lock();
         try {
-            Optional<State> newState = stateEvent.apply(mState);
+            Log.d(TAG, "Process event : " + event);
+            Optional<State> newState = event.apply(mState);
             if (newState.isPresent()) {
                 jumpToState(newState.get());
             }
