@@ -110,6 +110,7 @@ public final class StateReadyForCapture extends State {
         mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
             @Override
             public void run() {
+                mResourceCaptureTools.get().getModuleUI().cancelCountDown();
                 mResourceCaptureTools.get().getModuleUI().showPictureCaptureUI();
                 mResourceCaptureTools.get().getModuleUI().initializeZoom(
                         mResourceCaptureTools.get().getResourceOpenedCamera().get().getZoomRatio());
