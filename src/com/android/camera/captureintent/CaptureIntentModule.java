@@ -142,13 +142,12 @@ public class CaptureIntentModule extends CameraModule {
     @Override
     public void init(
             final CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
-        // Do nothing.
+        mAppController.setPreviewStatusListener(mPreviewStatusListener);
     }
 
     @Override
     public void resume() {
         mModuleUI.onModuleResumed();
-        mAppController.setPreviewStatusListener(mPreviewStatusListener);
         mAppController.addPreviewAreaSizeChangedListener(mModuleUI);
         mStateMachine.processEvent(new EventResume());
     }
@@ -157,7 +156,6 @@ public class CaptureIntentModule extends CameraModule {
     public void pause() {
         mModuleUI.setCountdownFinishedListener(null);
         mAppController.removePreviewAreaSizeChangedListener(mModuleUI);
-        mAppController.setPreviewStatusListener(null);
         mModuleUI.onModulePaused();
         mStateMachine.processEvent(new EventPause());
     }

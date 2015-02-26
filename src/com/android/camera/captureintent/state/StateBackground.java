@@ -30,6 +30,7 @@ import com.android.camera.settings.ResolutionSetting;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.SurfaceTexture;
 
 /**
  * Represents a state that module is inactive in background. This is also the
@@ -94,5 +95,11 @@ public final class StateBackground extends State {
     @Override
     public Optional<State> processResume() {
         return Optional.of((State) new StateForeground(this, mResourceConstructed));
+    }
+
+    @Override
+    public Optional<State> processOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
+        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                this, mResourceConstructed, surfaceTexture));
     }
 }

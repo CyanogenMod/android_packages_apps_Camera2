@@ -35,6 +35,7 @@ public abstract class State {
     public static enum ID {
         Uninitialized,
         Background,
+        BackgroundWithSurfaceTexture,
         Fatal,
         Foreground,
         ForegroundWithSurfaceTexture,
