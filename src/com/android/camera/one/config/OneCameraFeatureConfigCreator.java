@@ -84,8 +84,8 @@ public class OneCameraFeatureConfigCreator {
                 }
 
                 // On a non-LEGACY device prior to Lollipop MR1 we fall back to
-                // LIMITED_JPEG due to various HAL bugs.
-                if (!ApiHelper.isLMr1OrHigher()) {
+                // LIMITED_JPEG due to Nexus 5 and 6 HAL bugs.
+                if (!ApiHelper.isLMr1OrHigher() && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6)) {
                     return CaptureSupportLevel.LIMITED_JPEG;
                 }
 
