@@ -115,6 +115,12 @@ public abstract class State {
     public Optional<State> processOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
         return NO_CHANGE;
     }
+    public Optional<State> processOnSurfaceTextureDestroyed() {
+        return NO_CHANGE;
+    }
+    public Optional<State> processOnSurfaceTextureUpdated() {
+        return NO_CHANGE;
+    }
     public Optional<State> processOnTextureViewLayoutChanged(Size layoutSize) {
         return NO_CHANGE;
     }

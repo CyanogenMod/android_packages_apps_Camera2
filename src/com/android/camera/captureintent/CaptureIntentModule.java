@@ -341,6 +341,7 @@ public class CaptureIntentModule extends CameraModule {
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            mStateMachine.processEvent(new EventOnSurfaceTextureDestroyed());
             return true;
         }
 
@@ -351,6 +352,7 @@ public class CaptureIntentModule extends CameraModule {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            mStateMachine.processEvent(new EventOnSurfaceTextureUpdated());
         }
     };
 }

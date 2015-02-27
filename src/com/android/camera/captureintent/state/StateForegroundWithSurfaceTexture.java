@@ -48,8 +48,7 @@ public final class StateForegroundWithSurfaceTexture extends State {
                 foreground,
                 resourceConstructed,
                 surfaceTexture,
-                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()),
-                resourceConstructed.get().getAppController());
+                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()));
     }
 
     // Used to transition from BackgroundWithSurfaceTexture on module is resumed.
@@ -67,13 +66,14 @@ public final class StateForegroundWithSurfaceTexture extends State {
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture,
-            PreviewTransformCalculator previewTransformCalculator,
-            AppController appController) {
+            PreviewTransformCalculator previewTransformCalculator) {
         super(ID.ForegroundWithSurfaceTexture, previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = ResourceSurfaceTexture.create(
-                surfaceTexture, previewTransformCalculator, appController);
+                surfaceTexture,
+                previewTransformCalculator,
+                resourceConstructed.get().getModuleUI());
     }
 
     private StateForegroundWithSurfaceTexture(

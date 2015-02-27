@@ -27,6 +27,7 @@ import com.android.camera.util.AndroidServices;
 import com.android.camera2.R;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,9 +109,18 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     }
 
     /**
+     * Update preview transform matrix.
+     *
+     * @param matrix The preview transform matrix.
+     */
+    public void updatePreviewTransform(Matrix matrix) {
+        MainThread.checkMainThread();
+        mAppUI.updatePreviewTransform(matrix);
+    }
+
+    /**
      * Called when the preview is started.
      */
-
     public void onPreviewStarted() {
         MainThread.checkMainThread();
         mAppUI.onPreviewStarted();

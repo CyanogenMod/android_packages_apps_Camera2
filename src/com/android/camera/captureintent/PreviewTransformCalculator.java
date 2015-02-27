@@ -25,7 +25,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 
 public class PreviewTransformCalculator {
-    private static final Log.Tag TAG = new Log.Tag("PreviewTransformCalculator");
+    private static final Log.Tag TAG = new Log.Tag("PviewTransfmCal");
 
     private final OrientationManager mOrientationManager;
 

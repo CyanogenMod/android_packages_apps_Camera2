@@ -36,7 +36,7 @@ import java.util.List;
  * to be started.
  */
 public final class StateStartingPreview extends State {
-    private static final Log.Tag TAG = new Log.Tag("StateStartingPreview");
+    private static final Log.Tag TAG = new Log.Tag("StStartingPreview");
 
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
@@ -97,12 +97,13 @@ public final class StateStartingPreview extends State {
         } catch (OneCameraAccessException ex) {
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
         }
-        mResourceConstructed.get().getMainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                mResourceSurfaceTexture.get().setPreviewSize(previewSize);
-            }
-        });
+
+        // Must do this before calling ResourceOpenedCamera.startPreview()
+        // since SurfaceTexture.setDefaultBufferSize() needs to be called
+        // before starting preview. Otherwise the size of preview video stream
+        // will be wrong.
+        mResourceSurfaceTexture.get().setPreviewSize(previewSize);
+
         // Start preview right away. Don't dispatch it on other threads or it
         // will cause race condition. b/19522251.
         mResourceOpenedCamera.get().startPreview(

@@ -44,8 +44,7 @@ public class StateBackgroundWithSurfaceTexture extends State {
                 background,
                 resourceConstructed,
                 surfaceTexture,
-                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()),
-                resourceConstructed.get().getAppController());
+                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()));
     }
 
     /**
@@ -64,13 +63,14 @@ public class StateBackgroundWithSurfaceTexture extends State {
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture,
-            PreviewTransformCalculator previewTransformCalculator,
-            AppController appController) {
+            PreviewTransformCalculator previewTransformCalculator) {
         super(State.ID.BackgroundWithSurfaceTexture, previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = ResourceSurfaceTexture.create(
-                surfaceTexture, previewTransformCalculator, appController);
+                surfaceTexture,
+                previewTransformCalculator,
+                resourceConstructed.get().getModuleUI());
     }
 
     private StateBackgroundWithSurfaceTexture(
@@ -100,5 +100,10 @@ public class StateBackgroundWithSurfaceTexture extends State {
     public Optional<State> processResume() {
         return Optional.of((State) StateForegroundWithSurfaceTexture.from(
                 this, mResourceConstructed, mResourceSurfaceTexture));
+    }
+
+    @Override
+    public Optional<State> processOnSurfaceTextureDestroyed() {
+        return Optional.of((State) StateBackground.from(this, mResourceConstructed));
     }
 }

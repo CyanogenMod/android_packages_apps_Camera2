@@ -16,13 +16,12 @@
 
 package com.android.camera.captureintent.state;
 
-import com.android.camera.app.AppController;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.async.SafeCloseable;
+import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.Log;
-import com.android.camera.one.OneCamera;
 import com.android.camera.util.Size;
 
 import android.graphics.Matrix;
@@ -32,7 +31,7 @@ import android.view.Surface;
 import javax.annotation.Nonnull;
 
 public final class ResourceSurfaceTexture implements SafeCloseable {
-    private static final Log.Tag TAG = new Log.Tag("StateSurfaceTextureAvailable");
+    private static final Log.Tag TAG = new Log.Tag("ResSurfaceTexture");
 
     /** The surface texture. */
     private final SurfaceTexture mSurfaceTexture;
@@ -45,8 +44,7 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
 
     private final PreviewTransformCalculator mPreviewTransformCalculator;
 
-    // TODO: Hope one day we could get rid of AppController.
-    private final AppController mAppController;
+    private final CaptureIntentModuleUI mModuleUI;
 
     /**
      * Creates a reference counted {@link ResourceSurfaceTexture} object.
@@ -54,21 +52,21 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     public static RefCountBase<ResourceSurfaceTexture> create(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
-            AppController appController) {
+            CaptureIntentModuleUI moduleUI) {
         ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTexture(
-                surfaceTexture, previewTransformCalculator, appController);
+                surfaceTexture, previewTransformCalculator, moduleUI);
         return new RefCountBase<>(resourceSurfaceTexture);
     }
 
     private ResourceSurfaceTexture(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
-            AppController appController) {
+            CaptureIntentModuleUI moduleUI) {
         mSurfaceTexture = surfaceTexture;
         mPreviewTransformCalculator = previewTransformCalculator;
         mPreviewSize = new Size(0, 0);
         mPreviewLayoutSize = new Size(0, 0);
-        mAppController = appController;
+        mModuleUI = moduleUI;
     }
 
     public Surface createPreviewSurface() {
@@ -84,10 +82,8 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     }
 
     public void setPreviewSize(@Nonnull Size previewSize) {
-        MainThread.checkMainThread();
         // Update preview transform when preview stream size is changed.
         mPreviewSize = previewSize;
-        updatePreviewTransform();
 
         // Update surface texture's default buffer size. See b/17286155.
         mSurfaceTexture.setDefaultBufferSize(mPreviewSize.width(), mPreviewSize.height());
@@ -97,19 +93,21 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
         MainThread.checkMainThread();
 
         // Update preview transform when preview layout size is changed.
-        mPreviewLayoutSize = previewLayoutSize;
-        updatePreviewTransform();
+        if (!mPreviewLayoutSize.equals(previewLayoutSize)) {
+            mPreviewLayoutSize = previewLayoutSize;
+            updatePreviewTransform();
+        }
     }
 
-    private void updatePreviewTransform() {
+    public void updatePreviewTransform() {
         MainThread.checkMainThread();
-        if (mPreviewLayoutSize.getWidth() == 0 || mPreviewLayoutSize.getHeight() == 0) {
+        if (mPreviewSize.getWidth() == 0 || mPreviewSize.getHeight() == 0 ||
+                mPreviewLayoutSize.getWidth() == 0 || mPreviewLayoutSize.getHeight() == 0) {
             return;
         }
-
         Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
                 mPreviewLayoutSize, mPreviewSize);
-        mAppController.updatePreviewTransform(transformMatrix);
+        mModuleUI.updatePreviewTransform(transformMatrix);
     }
 
     @Override

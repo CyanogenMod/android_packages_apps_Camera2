@@ -49,6 +49,7 @@ public final class StateReadyForCapture extends State {
 
     private final RefCountBase<ResourceCaptureTools> mResourceCaptureTools;
 
+    private boolean mShouldUpdateTransformOnNextSurfaceTextureUpdate;
     private boolean mIsCountingDown;
     private boolean mIsTakingPicture;
     private boolean mIsDecodingPicture;
@@ -80,6 +81,7 @@ public final class StateReadyForCapture extends State {
         mIsCountingDown = false;
         mIsTakingPicture = false;
         mIsDecodingPicture = false;
+        mShouldUpdateTransformOnNextSurfaceTextureUpdate = true;
     }
 
     private StateReadyForCapture(
@@ -91,6 +93,7 @@ public final class StateReadyForCapture extends State {
         mIsCountingDown = false;
         mIsTakingPicture = false;
         mIsDecodingPicture = false;
+        mShouldUpdateTransformOnNextSurfaceTextureUpdate = true;
     }
 
     @Override
@@ -136,6 +139,15 @@ public final class StateReadyForCapture extends State {
                 this,
                 mResourceCaptureTools.get().getResourceConstructed(),
                 mResourceCaptureTools.get().getResourceSurfaceTexture()));
+    }
+
+    @Override
+    public Optional<State> processOnSurfaceTextureUpdated() {
+        if (mShouldUpdateTransformOnNextSurfaceTextureUpdate) {
+            mShouldUpdateTransformOnNextSurfaceTextureUpdate = false;
+            mResourceCaptureTools.get().getResourceSurfaceTexture().get().updatePreviewTransform();
+        }
+        return NO_CHANGE;
     }
 
     @Override
