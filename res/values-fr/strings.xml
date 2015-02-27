@@ -33,7 +33,7 @@
     <string name="rotate_left" msgid="2618440058490662604">"Faire pivoter vers la gauche"</string>
     <string name="rotate_right" msgid="4896096424267838355">"Faire pivoter vers la droite"</string>
     <string name="edit" msgid="2776879395749004347">"Modifier"</string>
-    <string name="crop_action" msgid="6933589718464132714">"Rogner"</string>
+    <string name="crop_action" msgid="6933589718464132714">"Recadrer"</string>
     <string name="trim_action" msgid="4736803320203951827">"Couper"</string>
     <string name="set_as" msgid="5469055085024870081">"Définir comme"</string>
     <string name="video_err" msgid="1562566029875081552">"Impossible de lire la vidéo."</string>
@@ -361,8 +361,8 @@
     <string name="edit_with" msgid="615569327230783971">"Modifier avec"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"SUIVANT"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK"</string>
-    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Capteur complet\n(4:3)"</string>
-    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Capteur rogné\n(16:9)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Format 4:3\n(complet)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Format 16:9\n(rogné)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>
