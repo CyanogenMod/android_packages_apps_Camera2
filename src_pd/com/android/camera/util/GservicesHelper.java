@@ -37,6 +37,10 @@ public class GservicesHelper {
         return -1;
     }
 
+    public static int getMaxAllowedImageReaderCount(ContentResolver contentResolver) {
+        return 15;
+    }
+
     public static boolean useCamera2ApiThroughPortabilityLayer(ContentResolver contentResolver) {
         // Use the camera2 API by default. This only affects PhotoModule on L.
         return true;
