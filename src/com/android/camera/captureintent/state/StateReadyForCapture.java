@@ -132,8 +132,10 @@ public final class StateReadyForCapture extends State {
 
     @Override
     public Optional<State> processPause() {
-        return Optional.of((State) StateBackground.from(
-                this, mResourceCaptureTools.get().getResourceConstructed()));
+        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                this,
+                mResourceCaptureTools.get().getResourceConstructed(),
+                mResourceCaptureTools.get().getResourceSurfaceTexture()));
     }
 
     @Override

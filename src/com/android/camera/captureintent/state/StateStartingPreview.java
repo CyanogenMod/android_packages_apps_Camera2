@@ -120,7 +120,8 @@ public final class StateStartingPreview extends State {
 
     @Override
     public Optional<State> processPause() {
-        return Optional.of((State) StateBackground.from(this, mResourceConstructed));
+        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                this, mResourceConstructed, mResourceSurfaceTexture));
     }
 
     @Override

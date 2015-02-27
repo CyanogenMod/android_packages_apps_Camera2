@@ -35,7 +35,7 @@ public class StateBackgroundWithSurfaceTexture extends State {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
 
-    // Used to transition from Foreground on processOnSurfaceTextureAvailable.
+    /** Used to transition from Foreground on processOnSurfaceTextureAvailable. */
     public static StateBackgroundWithSurfaceTexture from(
             StateBackground background,
             RefCountBase<ResourceConstructed> resourceConstructed,
@@ -46,6 +46,18 @@ public class StateBackgroundWithSurfaceTexture extends State {
                 surfaceTexture,
                 new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()),
                 resourceConstructed.get().getAppController());
+    }
+
+    /**
+     * Used to transition from StateOpeningCamera, StateStartingPreview and
+     * StateReadyForCapture on module got paused.
+     */
+    public static StateBackgroundWithSurfaceTexture from(
+            State previousState,
+            RefCountBase<ResourceConstructed> resourceConstructed,
+            RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
+        return new StateBackgroundWithSurfaceTexture(
+                previousState, resourceConstructed, resourceSurfaceTexture);
     }
 
     private StateBackgroundWithSurfaceTexture(
@@ -59,6 +71,17 @@ public class StateBackgroundWithSurfaceTexture extends State {
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = ResourceSurfaceTexture.create(
                 surfaceTexture, previewTransformCalculator, appController);
+    }
+
+    private StateBackgroundWithSurfaceTexture(
+            State previousState,
+            RefCountBase<ResourceConstructed> resourceConstructed,
+            RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
+        super(State.ID.BackgroundWithSurfaceTexture, previousState);
+        mResourceConstructed = resourceConstructed;
+        mResourceConstructed.addRef();     // Will be balanced in onLeave().
+        mResourceSurfaceTexture = resourceSurfaceTexture;
+        mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
     }
 
     @Override

@@ -154,7 +154,8 @@ public final class StateOpeningCamera extends State {
         if (mIsPaused) {
             // Just close the camera and finish.
             camera.close();
-            return Optional.of((State) StateBackground.from(this, mResourceConstructed));
+            return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                    this, mResourceConstructed, mResourceSurfaceTexture));
         }
         return Optional.of((State) StateStartingPreview.from(
                 this, mResourceConstructed, mResourceSurfaceTexture, camera, mCameraFacing,
