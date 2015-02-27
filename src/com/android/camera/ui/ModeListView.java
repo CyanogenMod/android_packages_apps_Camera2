@@ -1581,23 +1581,8 @@ public class ModeListView extends FrameLayout
         insertNewPosition(newPosition, mCurrentTime);
 
         for (int i = 0; i < mModeSelectorItems.length; i++) {
-            mModeSelectorItems[i].setVisibleWidth(calculateVisibleWidthForItem(i,
-                    (int) newPosition));
+            mModeSelectorItems[i].setVisibleWidth((int) newPosition);
         }
-    }
-
-    /**
-     * Calculate the width of a specified item based on its position relative to
-     * the item with longest width.
-     */
-    private int calculateVisibleWidthForItem(int itemId, int longestWidth) {
-        if (itemId == mFocusItem || mFocusItem == NO_ITEM_SELECTED) {
-            return longestWidth;
-        }
-
-        int delay = Math.abs(itemId - mFocusItem) * DELAY_MS;
-        return (int) getPosition(mCurrentTime - delay,
-                mModeSelectorItems[itemId].getVisibleWidth());
     }
 
     /**
@@ -1857,7 +1842,6 @@ public class ModeListView extends FrameLayout
                         "visibleWidth", width);
             }
             animator.setDuration(duration);
-            animator.setStartDelay(i * delay);
             animators.add(animator);
         }
 
@@ -1881,7 +1865,6 @@ public class ModeListView extends FrameLayout
         }
 
         ArrayList<Animator> animators = new ArrayList<Animator>();
-        int focusItem = mFocusItem == NO_ITEM_SELECTED ? 0 : mFocusItem;
         for (int i = 0; i < mTotalModes; i++) {
             ObjectAnimator animator = ObjectAnimator.ofInt(mModeSelectorItems[i],
                     "visibleWidth", width);
