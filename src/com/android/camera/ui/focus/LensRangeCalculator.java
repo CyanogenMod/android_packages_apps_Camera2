@@ -20,8 +20,6 @@ import android.annotation.TargetApi;
 import android.hardware.camera2.CameraCharacteristics;
 import android.os.Build.VERSION_CODES;
 
-import com.android.camera.debug.Log;
-import com.android.camera.debug.Log.Tag;
 import com.android.camera.ui.motion.LinearScale;
 
 /**
@@ -45,8 +43,15 @@ public class LensRangeCalculator {
      */
     public static LinearScale getDiopterToRatioCalculator(CameraCharacteristics characteristics) {
         // From the android documentation:
+        //
         // 0.0f represents farthest focus, and LENS_INFO_MINIMUM_FOCUS_DISTANCE
         // represents the nearest focus the device can achieve.
+        //
+        // Example:
+        //
+        // Infinity    Hyperfocal                 Minimum   Camera
+        //  <----------|-----------------------------|         |
+        // [0.0]     [0.31]                       [14.29]
         Float nearest = characteristics.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE);
         Float hyperfocal = characteristics.get(CameraCharacteristics.LENS_INFO_HYPERFOCAL_DISTANCE);
 

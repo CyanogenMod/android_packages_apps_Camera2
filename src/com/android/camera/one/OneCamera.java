@@ -249,6 +249,14 @@ public interface OneCamera {
             result = 31 * result + (isActive ? 1 : 0);
             return result;
         }
+
+        @Override
+        public String toString() {
+            return "FocusState{" +
+                  "lensDistance=" + lensDistance +
+                  ", isActive=" + isActive +
+                  '}';
+        }
     }
 
     /**

@@ -19,6 +19,7 @@ package com.android.camera.ui.focus;
 import android.graphics.RectF;
 
 import com.android.camera.async.MainThread;
+import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.FocusDistanceListener;
 import com.android.camera.ui.motion.LinearScale;
@@ -48,6 +49,7 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
+                Log.v(TAG, "Running showPassiveFocusAtCenter()");
                 mFocusRing.startPassiveFocus();
                 mFocusRing.centerFocusLocation();
             }
@@ -66,6 +68,7 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
+                Log.v(TAG, "Running showPassiveFocusAt(" + viewX + ", " + viewY + ")");
                 mFocusRing.startPassiveFocus();
                 mFocusRing.setFocusLocation(viewX, viewY);
             }
@@ -84,6 +87,7 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
+                Log.v(TAG, "showActiveFocusAt(" + viewX + ", " + viewY + ")");
                 mFocusRing.startActiveFocus();
                 mFocusRing.setFocusLocation(viewX, viewY);
 
@@ -100,6 +104,7 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
+                Log.v(TAG, "clearFocusIndicator()");
                 mFocusRing.stopFocusAnimations();
             }
         });
@@ -114,6 +119,7 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
+               Log.v(TAG, "configurePreviewDimensions(" + previewArea + ")");
                mFocusRing.configurePreviewDimensions(previewArea);
             }
         });
@@ -127,6 +133,8 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
+                Log.v(TAG, "setFocusRatio(" + ratio + ")");
+
                 if (mFocusRing.isPassiveFocusRunning() ||
                       mFocusRing.isActiveFocusRunning()) {
                     mFocusRing.setRadiusRatio(ratio);
