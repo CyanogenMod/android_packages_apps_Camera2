@@ -18,13 +18,11 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
-import com.android.camera.app.LocationManager;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
 import com.android.camera.captureintent.event.Event;
 import com.android.camera.debug.Log;
-import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
@@ -212,32 +210,6 @@ public final class StateReadyForCapture extends State {
     }
 
     @Override
-    public Optional<State> processOnFocusStateUpdated(
-            OneCamera.AutoFocusState focusState, long frameNumber) {
-        final FocusController focusController = mResourceCaptureTools.get().getFocusController();
-        switch (focusState) {
-            case PASSIVE_SCAN:
-                final Size previewLayoutSize = mResourceCaptureTools.get()
-                        .getResourceSurfaceTexture().get().getPreviewLayoutSize();
-                focusController.showPassiveFocusAt(
-                        (int) (previewLayoutSize.width() / 2.0f),
-                        (int) (previewLayoutSize.height() / 2.0f));
-                break;
-            case ACTIVE_SCAN:
-                break;
-            case PASSIVE_FOCUSED:
-            case PASSIVE_UNFOCUSED:
-                focusController.clearFocusIndicator();
-                break;
-            case ACTIVE_FOCUSED:
-            case ACTIVE_UNFOCUSED:
-                focusController.clearFocusIndicator();
-                break;
-        }
-        return NO_CHANGE;
-    }
-
-    @Override
     public Optional<State> processOnZoomRatioChanged(float zoomRatio) {
         mResourceCaptureTools.get().getResourceOpenedCamera().get().setZoomRatio(zoomRatio);
         return NO_CHANGE;
@@ -317,17 +289,31 @@ public final class StateReadyForCapture extends State {
         return NO_CHANGE;
     }
 
+    private void onFocusStateUpdated(OneCamera.AutoFocusState focusState) {
+        final FocusController focusController = mResourceCaptureTools.get().getFocusController();
+        switch (focusState) {
+            case PASSIVE_SCAN:
+                focusController.showPassiveFocusAtCenter();
+                break;
+            case ACTIVE_SCAN:
+                break;
+            case PASSIVE_FOCUSED:
+            case PASSIVE_UNFOCUSED:
+                focusController.clearFocusIndicator();
+                break;
+            case ACTIVE_FOCUSED:
+            case ACTIVE_UNFOCUSED:
+                focusController.clearFocusIndicator();
+                break;
+        }
+    }
+
     private final OneCamera.FocusStateListener mFocusStateListener =
             new OneCamera.FocusStateListener() {
                 @Override
                 public void onFocusStatusUpdate(final OneCamera.AutoFocusState focusState,
                         final long frameNumber) {
-                    getStateMachine().processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnFocusStateUpdated(focusState, frameNumber);
-                        }
-                    });
+                    onFocusStateUpdated(focusState);
                 }
             };
 

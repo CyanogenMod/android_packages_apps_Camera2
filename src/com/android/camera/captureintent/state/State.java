@@ -137,10 +137,6 @@ public abstract class State {
     public Optional<State> processOnZoomRatioChanged(float zoomRatio) {
         return NO_CHANGE;
     }
-    public Optional<State> processOnFocusStateUpdated(
-            OneCamera.AutoFocusState focusState, long frameNumber) {
-        return NO_CHANGE;
-    }
     public Optional<State> processOnSingleTapOnPreview(Point point) {
         return NO_CHANGE;
     }
