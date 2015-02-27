@@ -84,6 +84,11 @@ public class BasicCameraFactory {
                 CaptureRequest.CONTROL_AE_MODE, new FlashBasedAEMode(flash, hdrSceneSetting));
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, exposure);
+
+        previewBuilder.setParam(CaptureRequest.CONTROL_MODE,
+              new HdrSettingBasedControlMode(hdrSceneSetting,
+                    cameraCharacteristics.getSupportedHardwareLevel(),
+                    CaptureRequest.CONTROL_MODE_AUTO));
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_SCENE_MODE, new HdrSettingBasedSceneMode(hdrSceneSetting));
 
