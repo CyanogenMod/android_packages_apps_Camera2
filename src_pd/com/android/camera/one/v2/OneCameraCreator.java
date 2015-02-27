@@ -33,7 +33,7 @@ public class OneCameraCreator {
     public static OneCamera create(AppController context, boolean useHdr,
             OneCameraFeatureConfig featureConfig, CameraDevice device,
             CameraCharacteristics characteristics, Size pictureSize,
-            int maxMemoryMB,
+            int maxMemoryMB, int maxImages,
             DisplayMetrics displayMetrics, SoundPlayer soundPlayer,
             MainThread mainThread, ImageRotationCalculator imageRotationCalculator,
             BurstFacade burstController) {
