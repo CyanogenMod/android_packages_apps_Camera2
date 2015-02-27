@@ -149,6 +149,7 @@ public class CaptureIntentModule extends CameraModule {
     public void resume() {
         mModuleUI.onModuleResumed();
         mAppController.addPreviewAreaSizeChangedListener(mModuleUI);
+        mAppController.getCameraAppUI().onChangeCamera();
         mStateMachine.processEvent(new EventResume());
     }
 
