@@ -17,6 +17,7 @@
 package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
+import android.media.CameraProfile;
 import android.net.Uri;
 
 import com.android.camera.Exif;
@@ -43,7 +44,8 @@ import java.util.concurrent.Executor;
  */
 public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
-    private static final int DEFAULT_JPEG_COMPRESSION_QUALITY = 90;
+    private static final int DEFAULT_JPEG_COMPRESSION_QUALITY = CameraProfile.
+        getJpegEncodingQualityParameter(CameraProfile.QUALITY_HIGH);
 
     /**
      * Constructor
