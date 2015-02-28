@@ -18,9 +18,16 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
-import com.android.camera.app.AppController;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.PreviewTransformCalculator;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
+import com.android.camera.captureintent.resource.ResourceSurfaceTextureImpl;
+import com.android.camera.captureintent.stateful.EventHandler;
+import com.android.camera.captureintent.event.EventOnSurfaceTextureDestroyed;
+import com.android.camera.captureintent.event.EventResume;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 
 import android.graphics.SurfaceTexture;
 
@@ -31,17 +38,17 @@ import android.graphics.SurfaceTexture;
  * Module is in this state when first run dialog is still presented. The module
  * will be resumed after people finish first run dialog (b/19531554).
  */
-public class StateBackgroundWithSurfaceTexture extends State {
+public class StateBackgroundWithSurfaceTexture extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
 
     /** Used to transition from Foreground on processOnSurfaceTextureAvailable. */
     public static StateBackgroundWithSurfaceTexture from(
-            StateBackground background,
+            State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture) {
         return new StateBackgroundWithSurfaceTexture(
-                background,
+                previousState,
                 resourceConstructed,
                 surfaceTexture,
                 new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()));
@@ -64,24 +71,52 @@ public class StateBackgroundWithSurfaceTexture extends State {
             RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator) {
-        super(State.ID.BackgroundWithSurfaceTexture, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
-        mResourceSurfaceTexture = ResourceSurfaceTexture.create(
+        mResourceSurfaceTexture = ResourceSurfaceTextureImpl.create(
                 surfaceTexture,
                 previewTransformCalculator,
                 resourceConstructed.get().getModuleUI());
+        registerEventHandlers();
     }
 
     private StateBackgroundWithSurfaceTexture(
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
-        super(State.ID.BackgroundWithSurfaceTexture, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
         mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
+        registerEventHandlers();
+    }
+
+    private void registerEventHandlers() {
+        /** Handles EventResume. */
+        EventHandler<EventResume> resumeHandler = new EventHandler<EventResume>() {
+            @Override
+            public Optional<State> processEvent(EventResume eventResume) {
+                return Optional.of((State) StateForegroundWithSurfaceTexture.from(
+                        StateBackgroundWithSurfaceTexture.this,
+                        mResourceConstructed,
+                        mResourceSurfaceTexture));
+            }
+        };
+        setEventHandler(EventResume.class, resumeHandler);
+
+        /** Handles EventOnSurfaceTextureDestroyed. */
+        EventHandler<EventOnSurfaceTextureDestroyed> surfaceTextureDestroyedHandler =
+                new EventHandler<EventOnSurfaceTextureDestroyed>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnSurfaceTextureDestroyed event) {
+                        return Optional.of((State) StateBackground.from(
+                                StateBackgroundWithSurfaceTexture.this, mResourceConstructed));
+                    }
+                };
+        setEventHandler(
+                EventOnSurfaceTextureDestroyed.class, surfaceTextureDestroyedHandler);
     }
 
     @Override
@@ -94,16 +129,5 @@ public class StateBackgroundWithSurfaceTexture extends State {
     public void onLeave() {
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
-    }
-
-    @Override
-    public Optional<State> processResume() {
-        return Optional.of((State) StateForegroundWithSurfaceTexture.from(
-                this, mResourceConstructed, mResourceSurfaceTexture));
-    }
-
-    @Override
-    public Optional<State> processOnSurfaceTextureDestroyed() {
-        return Optional.of((State) StateBackground.from(this, mResourceConstructed));
     }
 }

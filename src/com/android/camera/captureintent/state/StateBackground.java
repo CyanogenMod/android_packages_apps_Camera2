@@ -24,19 +24,26 @@ import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceConstructedImpl;
+import com.android.camera.captureintent.stateful.EventHandler;
+import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
+import com.android.camera.captureintent.event.EventResume;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
+import com.android.camera.captureintent.stateful.StateMachine;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.ResolutionSetting;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.SurfaceTexture;
 
 /**
  * Represents a state that module is inactive in background. This is also the
  * initial state of CaptureIntentModule.
  */
-public final class StateBackground extends State {
+public final class StateBackground extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
 
     public static StateBackground create(
@@ -74,32 +81,53 @@ public final class StateBackground extends State {
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController) {
-        super(ID.Background, stateMachine);
-        mResourceConstructed = ResourceConstructed.create(
+        super(stateMachine);
+        mResourceConstructed = ResourceConstructedImpl.create(
                 intent, moduleUI, mainThread, context, cameraManager, locationManager,
                 orientationManager, cameraFacingSetting, resolutionSetting, appController);
+        registerEventHandlers();
     }
 
     private StateBackground(State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed) {
-        super(ID.Background, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();  // Will be balanced in onLeave().
+        registerEventHandlers();
+    }
+
+    private void registerEventHandlers() {
+        /** Handles EventResume. */
+        EventHandler<EventResume> resumeHandler = new EventHandler<EventResume>() {
+            @Override
+            public Optional<State> processEvent(EventResume eventResume) {
+                return Optional.of((State) StateForeground.from(
+                        StateBackground.this, mResourceConstructed));
+            }
+        };
+        setEventHandler(EventResume.class, resumeHandler);
+
+        /** Handles EventOnSurfaceTextureAvailable */
+        EventHandler<EventOnSurfaceTextureAvailable> onSurfaceTextureAvailableHandler =
+                new EventHandler<EventOnSurfaceTextureAvailable>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnSurfaceTextureAvailable event) {
+                        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                                StateBackground.this,
+                                mResourceConstructed,
+                                event.getSurfaceTexture()));
+                    }
+                };
+        setEventHandler(EventOnSurfaceTextureAvailable.class, onSurfaceTextureAvailableHandler);
+    }
+
+    @Override
+    public Optional<State> onEnter() {
+        return NO_CHANGE;
     }
 
     @Override
     public void onLeave() {
         mResourceConstructed.close();
-    }
-
-    @Override
-    public Optional<State> processResume() {
-        return Optional.of((State) new StateForeground(this, mResourceConstructed));
-    }
-
-    @Override
-    public Optional<State> processOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
-        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
-                this, mResourceConstructed, surfaceTexture));
     }
 }

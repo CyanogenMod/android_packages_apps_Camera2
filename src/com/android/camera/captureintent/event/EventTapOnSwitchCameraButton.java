@@ -16,14 +16,7 @@
 
 package com.android.camera.captureintent.event;
 
-import com.google.common.base.Optional;
+import com.android.camera.captureintent.stateful.Event;
 
-import com.android.camera.captureintent.state.State;
-
-public class EventTapOnSwitchCameraButton extends Event {
-    @Override
-    public Optional<State> apply(State state) {
-        return state.processOnSwitchButtonClicked();
-    }
-
+public class EventTapOnSwitchCameraButton implements Event {
 }

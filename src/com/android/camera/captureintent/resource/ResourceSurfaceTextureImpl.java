@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.state;
+package com.android.camera.captureintent.resource;
 
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.Log;
@@ -30,7 +29,7 @@ import android.view.Surface;
 
 import javax.annotation.Nonnull;
 
-public final class ResourceSurfaceTexture implements SafeCloseable {
+public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture {
     private static final Log.Tag TAG = new Log.Tag("ResSurfaceTexture");
 
     /** The surface texture. */
@@ -47,18 +46,18 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
     private final CaptureIntentModuleUI mModuleUI;
 
     /**
-     * Creates a reference counted {@link ResourceSurfaceTexture} object.
+     * Creates a reference counted {@link ResourceSurfaceTextureImpl} object.
      */
     public static RefCountBase<ResourceSurfaceTexture> create(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
             CaptureIntentModuleUI moduleUI) {
-        ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTexture(
+        ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTextureImpl(
                 surfaceTexture, previewTransformCalculator, moduleUI);
         return new RefCountBase<>(resourceSurfaceTexture);
     }
 
-    private ResourceSurfaceTexture(
+    private ResourceSurfaceTextureImpl(
             SurfaceTexture surfaceTexture,
             PreviewTransformCalculator previewTransformCalculator,
             CaptureIntentModuleUI moduleUI) {
@@ -69,18 +68,22 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
         mModuleUI = moduleUI;
     }
 
+    @Override
     public Surface createPreviewSurface() {
         return new Surface(mSurfaceTexture);
     }
 
+    @Override
     public Size getPreviewSize() {
         return mPreviewSize;
     }
 
+    @Override
     public Size getPreviewLayoutSize() {
         return mPreviewLayoutSize;
     }
 
+    @Override
     public void setPreviewSize(@Nonnull Size previewSize) {
         // Update preview transform when preview stream size is changed.
         mPreviewSize = previewSize;
@@ -89,6 +92,7 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
         mSurfaceTexture.setDefaultBufferSize(mPreviewSize.width(), mPreviewSize.height());
     }
 
+    @Override
     public void setPreviewLayoutSize(@Nonnull Size previewLayoutSize) {
         MainThread.checkMainThread();
 
@@ -99,6 +103,7 @@ public final class ResourceSurfaceTexture implements SafeCloseable {
         }
     }
 
+    @Override
     public void updatePreviewTransform() {
         MainThread.checkMainThread();
         if (mPreviewSize.getWidth() == 0 || mPreviewSize.getHeight() == 0 ||

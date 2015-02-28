@@ -16,21 +16,18 @@
 
 package com.android.camera.captureintent.event;
 
-import com.google.common.base.Optional;
-
-import com.android.camera.captureintent.state.State;
+import com.android.camera.captureintent.stateful.Event;
 
 import android.graphics.Point;
 
-public class EventTapOnPreview extends Event {
+public class EventTapOnPreview implements Event {
     private final Point mTapPoint;
 
     public EventTapOnPreview(Point tapPoint) {
         mTapPoint = tapPoint;
     }
 
-    @Override
-    public Optional<State> apply(State state) {
-        return state.processOnSingleTapOnPreview(mTapPoint);
+    public Point getTapPoint() {
+        return mTapPoint;
     }
 }

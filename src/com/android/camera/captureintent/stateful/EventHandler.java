@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.event;
+package com.android.camera.captureintent.stateful;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
-import com.android.camera.captureintent.state.State;
-
 /**
- * Defines event which can be processed by
- * {@link com.android.camera.captureintent.state.StateMachine}. Example:
+ * Defines an event handler interface that any implementation of this interface
+ * can be used by {@link StateMachine} to handle a particular type of event
+ * which extends {@link Event}.
  *
- * Event e = new Event() {
- *     @Override
- *     public Optional<State> apply(State state) {
- *         return state.processOnPictureCompressed(data, dataOrientation);
- *     }
- * }
+ * @param <T> The particular type of event.
  */
-public class Event implements Function<State, Optional<State>> {
-    @Override
-    public Optional<State> apply(State state) {
-        return Optional.absent();
-    }
+public interface EventHandler<T extends Event> {
+
+    /**
+     * Process a single event.
+     *
+     * @param event The event to be processed.
+     * @return The next desired state. If it is not NO_CHANGE, the state
+     *         machine will change to the next desired state.
+     */
+    public Optional<State> processEvent(T event);
 }

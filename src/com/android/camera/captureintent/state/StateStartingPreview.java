@@ -20,8 +20,17 @@ import com.google.common.base.Optional;
 
 import com.android.camera.CaptureModuleUtil;
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceOpenedCamera;
+import com.android.camera.captureintent.resource.ResourceOpenedCameraImpl;
+import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
+import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnStartPreviewFailed;
 import com.android.camera.captureintent.event.EventOnStartPreviewSucceeded;
+import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
+import com.android.camera.captureintent.event.EventPause;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera;
@@ -35,7 +44,7 @@ import java.util.List;
  * Represents a state that the module is waiting for the preview video stream
  * to be started.
  */
-public final class StateStartingPreview extends State {
+public final class StateStartingPreview extends StateImpl {
     private static final Log.Tag TAG = new Log.Tag("StStartingPreview");
 
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
@@ -68,13 +77,71 @@ public final class StateStartingPreview extends State {
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
-        super(ID.StartingPreview, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
         mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
-        mResourceOpenedCamera = ResourceOpenedCamera.create(
+        mResourceOpenedCamera = ResourceOpenedCameraImpl.create(
                 camera, cameraFacing, cameraCharacteristics, pictureSize);
+        registerEventHandlers();
+    }
+
+    public void registerEventHandlers() {
+        /** Handles EventPause. */
+        EventHandler<EventPause> pauseHandler = new EventHandler<EventPause>() {
+            @Override
+            public Optional<State> processEvent(EventPause event) {
+                return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                        StateStartingPreview.this,
+                        mResourceConstructed,
+                        mResourceSurfaceTexture));
+            }
+        };
+        setEventHandler(EventPause.class, pauseHandler);
+
+        /** Handles EventOnTextureViewLayoutChanged. */
+        EventHandler<EventOnTextureViewLayoutChanged> onTextureViewLayoutChangedHandler =
+                new EventHandler<EventOnTextureViewLayoutChanged>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnTextureViewLayoutChanged event) {
+                        mResourceSurfaceTexture.get().setPreviewLayoutSize(event.getLayoutSize());
+                        return NO_CHANGE;
+                    }
+                };
+        setEventHandler(EventOnTextureViewLayoutChanged.class, onTextureViewLayoutChangedHandler);
+
+        /** Handles EventOnStartPreviewSucceeded. */
+        EventHandler<EventOnStartPreviewSucceeded> onStartPreviewSucceededHandler =
+                new EventHandler<EventOnStartPreviewSucceeded>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnStartPreviewSucceeded event) {
+                        mResourceConstructed.get().getMainThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mResourceConstructed.get().getModuleUI().onPreviewStarted();
+                            }
+                        });
+                        return Optional.of((State) StateReadyForCapture.from(
+                                StateStartingPreview.this,
+                                mResourceConstructed,
+                                mResourceSurfaceTexture,
+                                mResourceOpenedCamera));
+                    }
+                };
+        setEventHandler(EventOnStartPreviewSucceeded.class, onStartPreviewSucceededHandler);
+
+        /** Handles EventOnStartPreviewFailed. */
+        EventHandler<EventOnStartPreviewFailed> onStartPreviewFailedHandler =
+                new EventHandler<EventOnStartPreviewFailed>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnStartPreviewFailed event) {
+                        Log.e(TAG, "processOnPreviewSetupFailed");
+                        return Optional.of((State) StateFatal.from(
+                                StateStartingPreview.this, mResourceConstructed));
+                    }
+                };
+        setEventHandler(EventOnStartPreviewFailed.class, onStartPreviewFailedHandler);
     }
 
     @Override
@@ -104,11 +171,23 @@ public final class StateStartingPreview extends State {
         // will be wrong.
         mResourceSurfaceTexture.get().setPreviewSize(previewSize);
 
+        OneCamera.CaptureReadyCallback captureReadyCallback =
+                new OneCamera.CaptureReadyCallback() {
+                    @Override
+                    public void onSetupFailed() {
+                        getStateMachine().processEvent(new EventOnStartPreviewFailed());
+                    }
+
+                    @Override
+                    public void onReadyForCapture() {
+                        getStateMachine().processEvent(new EventOnStartPreviewSucceeded());
+                    }
+                };
+
         // Start preview right away. Don't dispatch it on other threads or it
         // will cause race condition. b/19522251.
         mResourceOpenedCamera.get().startPreview(
-                mResourceSurfaceTexture.get().createPreviewSurface(),
-                mCaptureReadyCallback);
+                mResourceSurfaceTexture.get().createPreviewSurface(), captureReadyCallback);
         return Optional.absent();
     }
 
@@ -118,47 +197,4 @@ public final class StateStartingPreview extends State {
         mResourceSurfaceTexture.close();
         mResourceOpenedCamera.close();
     }
-
-    @Override
-    public Optional<State> processPause() {
-        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
-                this, mResourceConstructed, mResourceSurfaceTexture));
-    }
-
-    @Override
-    public final Optional<State> processOnTextureViewLayoutChanged(Size layoutSize) {
-        mResourceSurfaceTexture.get().setPreviewLayoutSize(layoutSize);
-        return NO_CHANGE;
-    }
-
-    @Override
-    public Optional<State> processOnPreviewSetupSucceeded() {
-        mResourceConstructed.get().getMainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                mResourceConstructed.get().getModuleUI().onPreviewStarted();
-            }
-        });
-        return Optional.of((State) StateReadyForCapture.from(
-                this, mResourceConstructed, mResourceSurfaceTexture, mResourceOpenedCamera));
-    }
-
-    @Override
-    public Optional<State> processOnPreviewSetupFailed() {
-        Log.e(TAG, "processOnPreviewSetupFailed");
-        return Optional.of((State) StateFatal.from(this, mResourceConstructed));
-    }
-
-    private OneCamera.CaptureReadyCallback mCaptureReadyCallback =
-            new OneCamera.CaptureReadyCallback() {
-                @Override
-                public void onSetupFailed() {
-                    getStateMachine().processEvent(new EventOnStartPreviewFailed());
-                }
-
-                @Override
-                public void onReadyForCapture() {
-                    getStateMachine().processEvent(new EventOnStartPreviewSucceeded());
-                }
-            };
 }

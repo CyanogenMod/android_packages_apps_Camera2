@@ -17,16 +17,23 @@
 package com.android.camera.captureintent.event;
 
 import com.android.camera.captureintent.stateful.Event;
-import com.android.camera.util.Size;
 
-public class EventOnTextureViewLayoutChanged implements Event {
-    private final Size mLayoutSize;
+import android.graphics.Bitmap;
 
-    public EventOnTextureViewLayoutChanged(Size layoutSize) {
-        mLayoutSize = layoutSize;
+public class EventPictureDecoded implements Event {
+    private final Bitmap mPictureBitmap;
+    private final byte[] mPictureData;
+
+    public EventPictureDecoded(Bitmap pictureBitmap, byte[] pictureData) {
+        mPictureBitmap = pictureBitmap;
+        mPictureData = pictureData;
     }
 
-    public Size getLayoutSize() {
-        return mLayoutSize;
+    public Bitmap getPictureBitmap() {
+        return mPictureBitmap;
+    }
+
+    public byte[] getPictureData() {
+        return mPictureData;
     }
 }

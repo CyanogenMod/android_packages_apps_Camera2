@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.state;
+package com.android.camera.captureintent.resource;
 
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.CameraFacingSetting;
@@ -32,7 +31,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 
-public final class ResourceConstructed implements SafeCloseable {
+public final class ResourceConstructedImpl implements ResourceConstructed {
     private final Intent mIntent;
     private final CaptureIntentModuleUI mModuleUI;
     private final MainThread mMainThread;
@@ -49,7 +48,7 @@ public final class ResourceConstructed implements SafeCloseable {
     private final AppController mAppController;
 
     /**
-     * Creates a reference counted {@link ResourceConstructed} object.
+     * Creates a reference counted {@link ResourceConstructedImpl} object.
      */
     public static RefCountBase<ResourceConstructed> create(
             Intent intent,
@@ -62,12 +61,12 @@ public final class ResourceConstructed implements SafeCloseable {
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController) {
-        return new RefCountBase<>(new ResourceConstructed(
+        return new RefCountBase<ResourceConstructed>(new ResourceConstructedImpl(
                 intent, moduleUI, mainThread, context, cameraManager, locationManager,
                 orientationManager, cameraFacingSetting, resolutionSetting, appController));
     }
 
-    private ResourceConstructed(
+    private ResourceConstructedImpl(
             Intent intent,
             CaptureIntentModuleUI moduleUI,
             MainThread mainThread,
@@ -99,50 +98,57 @@ public final class ResourceConstructed implements SafeCloseable {
         mCameraThread.quit();
     }
 
+    @Override
     public Intent getIntent() {
         return mIntent;
     }
 
+    @Override
     public CaptureIntentModuleUI getModuleUI() {
         return mModuleUI;
     }
 
+    @Override
     public MainThread getMainThread() {
         return mMainThread;
     }
 
+    @Override
     public Context getContext() {
         return mContext;
     }
 
+    @Override
     public OneCameraManager getCameraManager() {
         return mCameraManager;
     }
 
+    @Override
     public LocationManager getLocationManager() {
         return mLocationManager;
     }
 
+    @Override
     public OrientationManager getOrientationManager() {
         return mOrientationManager;
     }
 
+    @Override
     public CameraFacingSetting getCameraFacingSetting() {
         return mCameraFacingSetting;
     }
 
+    @Override
     public ResolutionSetting getResolutionSetting() {
         return mResolutionSetting;
     }
 
-    public HandlerThread getCameraThread() {
-        return mCameraThread;
-    }
-
+    @Override
     public Handler getCameraHandler() {
         return mCameraHandler;
     }
 
+    @Override
     public AppController getAppController() {
         return mAppController;
     }

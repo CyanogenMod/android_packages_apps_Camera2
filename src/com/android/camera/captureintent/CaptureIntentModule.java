@@ -32,9 +32,10 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
 import com.android.camera.captureintent.event.*;
-import com.android.camera.captureintent.state.State;
+import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.state.StateBackground;
-import com.android.camera.captureintent.state.StateMachine;
+import com.android.camera.captureintent.stateful.StateMachine;
+import com.android.camera.captureintent.stateful.StateMachineImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.one.OneCamera;
@@ -88,7 +89,7 @@ public class CaptureIntentModule extends CameraModule {
         mContext = appController.getAndroidContext();
         mCameraManager = appController.getCameraManager();
         mSettingsManager = appController.getSettingsManager();
-        mStateMachine = new StateMachine();
+        mStateMachine = new StateMachineImpl();
         mSettingScopeNamespace = settingScopeNamespace;
         mAppController = appController;
 
@@ -101,7 +102,7 @@ public class CaptureIntentModule extends CameraModule {
                 intent, mStateMachine, mModuleUI, MainThread.create(), mContext, mCameraManager,
                 appController.getLocationManager(), appController.getOrientationManager(),
                 cameraFacingSetting, resolutionSetting, appController);
-        mStateMachine.jumpToState(initialState);
+        mStateMachine.setInitialState(initialState);
     }
 
     @Override

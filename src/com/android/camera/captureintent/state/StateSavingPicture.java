@@ -20,6 +20,9 @@ import com.google.common.base.Optional;
 
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 
@@ -32,8 +35,11 @@ import android.provider.MediaStore;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class StateSavingPicture extends State {
-    private static final Log.Tag TAG = new Log.Tag("StateSavingPicture");
+/**
+ * Represents a state that the module is saving the picture to disk.
+ */
+public class StateSavingPicture extends StateImpl {
+    private static final Log.Tag TAG = new Log.Tag("StateSavePic");
 
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final byte[] mPictureData;
@@ -49,7 +55,7 @@ public class StateSavingPicture extends State {
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             byte[] pictureData) {
-        super(ID.SavingPicture, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();  // Will be balanced in onLeave().
         mPictureData = pictureData;

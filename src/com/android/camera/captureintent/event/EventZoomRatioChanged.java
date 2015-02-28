@@ -16,19 +16,16 @@
 
 package com.android.camera.captureintent.event;
 
-import com.google.common.base.Optional;
+import com.android.camera.captureintent.stateful.Event;
 
-import com.android.camera.captureintent.state.State;
-
-public class EventZoomRatioChanged extends Event {
+public class EventZoomRatioChanged implements Event {
     private final float mZoomRatio;
 
     public EventZoomRatioChanged(float zoomRatio) {
         mZoomRatio = zoomRatio;
     }
 
-    @Override
-    public Optional<State> apply(State state) {
-        return state.processOnZoomRatioChanged(mZoomRatio);
+    public float getZoomRatio() {
+        return mZoomRatio;
     }
 }

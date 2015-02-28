@@ -17,16 +17,6 @@
 package com.android.camera.captureintent.event;
 
 import com.android.camera.captureintent.stateful.Event;
-import com.android.camera.util.Size;
 
-public class EventOnTextureViewLayoutChanged implements Event {
-    private final Size mLayoutSize;
-
-    public EventOnTextureViewLayoutChanged(Size layoutSize) {
-        mLayoutSize = layoutSize;
-    }
-
-    public Size getLayoutSize() {
-        return mLayoutSize;
-    }
+public class EventCameraBusy implements Event {
 }

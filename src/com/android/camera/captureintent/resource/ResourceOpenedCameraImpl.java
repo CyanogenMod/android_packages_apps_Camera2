@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.state;
+package com.android.camera.captureintent.resource;
 
 import com.android.camera.async.RefCountBase;
-import com.android.camera.async.SafeCloseable;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
@@ -26,7 +25,7 @@ import com.android.camera.util.Size;
 import android.graphics.PointF;
 import android.view.Surface;
 
-public final class ResourceOpenedCamera implements SafeCloseable {
+public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
     private static final Log.Tag TAG = new Log.Tag("ResOpenedCam");
 
     /** The camera object. */
@@ -45,19 +44,19 @@ public final class ResourceOpenedCamera implements SafeCloseable {
     private float mZoomRatio;
 
     /**
-     * Creates a reference counted {@link ResourceOpenedCamera} object.
+     * Creates a reference counted {@link ResourceOpenedCameraImpl} object.
      */
     public static RefCountBase<ResourceOpenedCamera> create(
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
-        ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCamera(
+        ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCameraImpl(
                 camera, cameraFacing, cameraCharacteristics, pictureSize);
         return new RefCountBase<>(resourceOpenedCamera);
     }
 
-    private ResourceOpenedCamera(
+    private ResourceOpenedCameraImpl(
             OneCamera camera,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
@@ -76,36 +75,44 @@ public final class ResourceOpenedCamera implements SafeCloseable {
         mCamera.close();
     }
 
+    @Override
     public OneCamera getCamera() {
         return mCamera;
     }
 
+    @Override
     public OneCamera.Facing getCameraFacing() {
         return mCameraFacing;
     }
 
+    @Override
     public OneCameraCharacteristics getCameraCharacteristics() {
         return mCameraCharacteristics;
     }
 
+    @Override
     public Size getPictureSize() {
         return mPictureSize;
     }
 
+    @Override
     public float getZoomRatio() {
         return mZoomRatio;
     }
 
+    @Override
     public void setZoomRatio(float zoomRatio) {
         mZoomRatio = zoomRatio;
         mCamera.setZoom(zoomRatio);
     }
 
+    @Override
     public void startPreview(
             Surface previewSurface, OneCamera.CaptureReadyCallback captureReadyCallback) {
         mCamera.startPreview(previewSurface, captureReadyCallback);
     }
 
+    @Override
     public void triggerFocusAndMeterAtPoint(PointF point) {
         mCamera.triggerFocusAndMeterAtPoint(point.x, point.y);
     }

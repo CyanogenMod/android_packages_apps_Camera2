@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.event;
+package com.android.camera.captureintent.stateful;
 
-import com.android.camera.captureintent.stateful.Event;
-import com.android.camera.util.Size;
-
-public class EventOnTextureViewLayoutChanged implements Event {
-    private final Size mLayoutSize;
-
-    public EventOnTextureViewLayoutChanged(Size layoutSize) {
-        mLayoutSize = layoutSize;
-    }
-
-    public Size getLayoutSize() {
-        return mLayoutSize;
-    }
+/**
+ * Defines an event interface that any implementation of this interface can be
+ * processed by {@link EventHandler}.
+ */
+public interface Event {
 }

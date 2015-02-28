@@ -17,16 +17,17 @@
 package com.android.camera.captureintent.event;
 
 import com.android.camera.captureintent.stateful.Event;
-import com.android.camera.util.Size;
 
-public class EventOnTextureViewLayoutChanged implements Event {
-    private final Size mLayoutSize;
+import android.graphics.Bitmap;
 
-    public EventOnTextureViewLayoutChanged(Size layoutSize) {
-        mLayoutSize = layoutSize;
+public class EventFastPictureBitmapAvailable implements Event {
+    private final Bitmap mThumbnailBitmap;
+
+    public EventFastPictureBitmapAvailable(Bitmap thumbnailBitmap) {
+        mThumbnailBitmap = thumbnailBitmap;
     }
 
-    public Size getLayoutSize() {
-        return mLayoutSize;
+    public Bitmap getThumbnailBitmap() {
+        return mThumbnailBitmap;
     }
 }
