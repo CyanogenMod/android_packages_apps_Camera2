@@ -206,6 +206,7 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
         mAppUI.showModeOptions();
         mAppUI.enableModeOptions();
         mAppUI.setShutterButtonEnabled(true);
+        mAppUI.setShouldSuppressCaptureIndicator(true);
     }
 
     public void freezeScreenUntilPreviewReady() {
