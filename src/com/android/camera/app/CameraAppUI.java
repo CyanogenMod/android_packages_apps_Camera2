@@ -20,7 +20,6 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -53,7 +52,6 @@ import com.android.camera.ui.BottomBar;
 import com.android.camera.ui.CaptureAnimationOverlay;
 import com.android.camera.ui.GridLines;
 import com.android.camera.ui.MainActivityLayout;
-import com.android.camera.ui.MarginDrawable;
 import com.android.camera.ui.ModeListView;
 import com.android.camera.ui.ModeTransitionView;
 import com.android.camera.ui.PreviewOverlay;
@@ -546,6 +544,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
     private View mModeOptionsToggle;
+    private boolean mModeListIsHardwareLayer = false;
     private final RoundedThumbnailView mRoundedThumbnailView;
     private final CaptureLayoutHelper mCaptureLayoutHelper;
     private boolean mAccessibilityEnabled;
@@ -1115,6 +1114,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onModeListOpenProgress(float progress) {
+        // When the mode list is in transition, ensure the large layers are
+        // hardware accelerated.
+        if(!mModeListIsHardwareLayer) {
+            mModeListIsHardwareLayer = true;
+            Log.v(TAG, "Enabling hardware layer for the Mode Options Toggle Button.");
+            mModeOptionsToggle.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            Log.v(TAG, "Enabling hardware layer for the Shutter Button.");
+            mShutterButton.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+
         progress = 1 - progress;
         float interpolatedProgress = Gusterpolator.INSTANCE.getInterpolation(progress);
         mModeOptionsToggle.setAlpha(interpolatedProgress);
@@ -1127,6 +1136,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
     @Override
     public void onModeListClosed() {
+        // Convert hardware layers back to default layer types when animation stops
+        // to prevent accidental artifacting.
+        if(mModeListIsHardwareLayer) {
+            mModeListIsHardwareLayer = false;
+            Log.v(TAG, "Disabling hardware layer for the Mode Options Toggle Button.");
+            mModeOptionsToggle.setLayerType(View.LAYER_TYPE_NONE, null);
+            Log.v(TAG, "Disabling hardware layer for the Shutter Button.");
+            mShutterButton.setLayerType(View.LAYER_TYPE_NONE, null);
+        }
+
         // Make sure the alpha on mode options ellipse is reset when mode drawer
         // is closed.
         mModeOptionsToggle.setAlpha(1f);
