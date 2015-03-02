@@ -16,7 +16,10 @@
 
 package com.android.camera.captureintent.state;
 
-import com.google.common.base.Optional;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.media.MediaActionSound;
+import android.net.Uri;
 
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
@@ -31,11 +34,7 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.focus.FocusController;
 import com.android.camera.util.Size;
-
-import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.media.MediaActionSound;
-import android.net.Uri;
+import com.google.common.base.Optional;
 
 /**
  * Represents a state that allows users to take a picture. The capture UI
@@ -289,7 +288,6 @@ public final class StateReadyForCapture extends State {
         return NO_CHANGE;
     }
 
-    @Override
     public Optional<State> processOnCancelShutterButtonClicked() {
         // Cancel in this state means that the countdown was cancelled.
         mIsCountingDown = false;

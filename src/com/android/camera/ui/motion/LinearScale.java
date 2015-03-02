@@ -54,9 +54,9 @@ public final class LinearScale {
      */
     public boolean isInDomain(float domainValue) {
         if (mDomainA > mDomainB) {
-            return domainValue >= mDomainA && domainValue <= mDomainB;
+            return domainValue <= mDomainA && domainValue >= mDomainB;
         }
-        return domainValue >= mDomainB && domainValue <= mDomainA;
+        return domainValue >= mDomainA && domainValue <= mDomainB;
     }
 
     /**
@@ -72,5 +72,14 @@ public final class LinearScale {
      */
     public LinearScale inverse() {
         return new LinearScale(mRangeA, mRangeB, mDomainA, mDomainB);
+    }
+
+    @Override
+    public String toString() {
+        return "LinearScale{" +
+              "mDomainA=" + mDomainA +
+              ", mDomainB=" + mDomainB +
+              ", mRangeA=" + mRangeA +
+              ", mRangeB=" + mRangeB + "}";
     }
 }

@@ -852,14 +852,15 @@ public class CaptureModule extends CameraModule implements
                 startPassiveFocus();
                 break;
             case ACTIVE_SCAN:
+                // Unused, manual scans are triggered via the UI
                 break;
             case PASSIVE_FOCUSED:
             case PASSIVE_UNFOCUSED:
-                mFocusController.clearFocusIndicator();
+                // Unused
                 break;
             case ACTIVE_FOCUSED:
             case ACTIVE_UNFOCUSED:
-                mFocusController.clearFocusIndicator();
+                // Unused
                 break;
         }
 
