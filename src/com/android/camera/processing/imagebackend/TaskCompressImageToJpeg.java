@@ -43,10 +43,6 @@ import java.util.concurrent.Executor;
  * that the JPEG is already encoded in the proper orientation.
  */
 public class TaskCompressImageToJpeg extends TaskJpegEncode {
-
-    private static final int DEFAULT_JPEG_COMPRESSION_QUALITY = CameraProfile.
-        getJpegEncodingQualityParameter(CameraProfile.QUALITY_HIGH);
-
     /**
      * Constructor
      *
@@ -196,7 +192,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
                     // Do the actual compression here.
                     numBytes = compressJpegFromYUV420Image(
-                            img.proxy, compressedData, DEFAULT_JPEG_COMPRESSION_QUALITY,
+                            img.proxy, compressedData, getJpegCompressionQuality(),
                             inputImage.orientation.getDegrees());
 
                     if (numBytes < 0) {
@@ -265,6 +261,13 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.getOrientationValueForRotation(image.orientation.getDegrees())));
         return exif;
+    }
+
+    /**
+     * @return Quality level to use for JPEG compression.
+     */
+    protected int getJpegCompressionQuality () {
+        return CameraProfile.getJpegEncodingQualityParameter(CameraProfile.QUALITY_HIGH);
     }
 
     /**
