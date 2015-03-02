@@ -17,7 +17,10 @@
 package com.android.camera.captureintent.state;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.media.MediaActionSound;
 import android.net.Uri;
 
@@ -219,6 +222,22 @@ public final class StateReadyForCapture extends State {
     @Override
     public Optional<State> processOnSingleTapOnPreview(Point point) {
         mResourceCaptureTools.get().getFocusController().showActiveFocusAt(point.x, point.y);
+
+        RectF previewRect = mResourceCaptureTools.get().getModuleUI().getPreviewRect();
+        int rotationDegree = mResourceCaptureTools.get().getResourceConstructed().get()
+                .getOrientationManager().getDisplayRotation().getDegrees();
+
+        // Normalize coordinates to [0,1] per CameraOne API.
+        float points[] = new float[2];
+        points[0] = (point.x - previewRect.left) / previewRect.width();
+        points[1] = (point.y - previewRect.top) / previewRect.height();
+
+        // Rotate coordinates to portrait orientation per CameraOne API.
+        Matrix rotationMatrix = new Matrix();
+        rotationMatrix.setRotate(rotationDegree, 0.5f, 0.5f);
+        rotationMatrix.mapPoints(points);
+        mResourceCaptureTools.get().getResourceOpenedCamera().get().triggerFocusAndMeterAtPoint(
+                new PointF(points[0], points[1]));
         return NO_CHANGE;
     }
 
