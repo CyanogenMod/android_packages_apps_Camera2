@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"Chyba fotoaparátu"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Nedá sa pripojiť k fotoaparátu."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Fotoaparát je zakázaný z dôvodu bezpečnostných pravidiel."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"Pri ukladaní vašej fotky alebo videa sa vyskytol problém"</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"Chyba pri ukladaní fotky"</string>
     <string name="wait" msgid="765601745709933047">"Čakajte..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Pred použitím fotoaparátu vložte kartu SD."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"Príprava karty SD..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Nepodarilo sa získať prístup ku karte SD."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Časozberný záznam"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"Aplikácii sa nepodarilo pripojiť k fotoaparátu"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"Fotka alebo video sa neuložilo do zariadenia"</string>
     <string name="capturing" msgid="5255164204641920893">"Prebieha snímanie"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Vybrať fotoaparát"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Späť"</string>

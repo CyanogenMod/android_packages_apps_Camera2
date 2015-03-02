@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"क्यामेरा त्रुटि"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"क्यामेरासँग जडान गर्न सकिएन।"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"सुरक्षा नीतिहरूका कारण क्यामरा निष्क्रिय गरिएको छ।"</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"तपाईँको फोटो वा भिडियो सुरक्षित गर्दा एउटा समस्या थियो।"</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"फोटो भण्डारण विफलता।"</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा गर्नुहोस्..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"क्यामेराको उपयोग गर्नु अघि एउटा SD कार्ड भित्र राख्नुहोस्।"</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD कार्ड तयार गरिँदै..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD कार्ड प्रयोग गर्न सकेन।"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"समय ल्याप्स रेकर्डिङ"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"अनुप्रयोग क्यामेरामा जडान हुन सकेन"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"फोटो वा भिडियो यन्त्रको लागि सुरक्षित थिएन।"</string>
     <string name="capturing" msgid="5255164204641920893">"क्याप्चर गरिँदै"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"क्यामेरा चयन गर्नुहोस्"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"पछाडि"</string>

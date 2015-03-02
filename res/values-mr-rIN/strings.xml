@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"कॅमेरा त्रुटी"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"कॅमेर्‍याशी कनेक्ट करणे शक्य नाही."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"सुरक्षा धोरणांमुळे कॅमेरा अक्षम केला गेला आहे."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"आपला फोटो किंवा व्हिडिओ जतन करण्यात समस्या आली."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"फोटो संचयन बिघाड."</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा करा..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"कॅमेरा वापरण्‍यापूर्वी SD कार्ड घाला."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD कार्ड तयार करीत आहे..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD कार्डमध्‍ये प्रवेश करु शकलो नाही."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"वेळ समाप्ती रेकॉर्डिंग"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"कॅमेर्‍याशी अ‍ॅप कनेक्ट करणे शक्य झाले नाही"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"फोटो किंवा व्हिडिओ डिव्हाइस मध्ये जतन झाला नाही."</string>
     <string name="capturing" msgid="5255164204641920893">"कॅप्चर करीत आहे"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"कॅमेरा निवडा"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"परत"</string>

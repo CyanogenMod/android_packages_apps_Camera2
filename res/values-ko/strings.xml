@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"카메라 오류"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"카메라에 연결할 수 없습니다."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"보안 정책으로 인해 카메라 사용이 중지되었습니다."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"사진이나 동영상을 저장하는 중에 문제가 발생했습니다."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"사진을 저장하지 못했습니다."</string>
     <string name="wait" msgid="765601745709933047">"잠시 기다려 주세요..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"카메라를 사용하기 전에 SD 카드를 삽입하세요."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD 카드 준비 중..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD 카드에 액세스할 수 없습니다."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"시간 경과 모드"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"앱을 카메라에 연결하지 못했습니다."</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"사진이나 동영상을 기기에 저장하지 못했습니다."</string>
     <string name="capturing" msgid="5255164204641920893">"캡처 중"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"카메라 선택"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"이전"</string>

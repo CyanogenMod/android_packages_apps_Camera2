@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"Kamerada xatolik"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Kameraga ulanib bo‘lmadi."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Xavfsizlik siyosati shartlariga asoslanib, Kamerangiz o\'chirib qo‘yildi."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"Rasm yoki vidoeni saqlashda muammo yuz berdi."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"Rasmni saqlash bilan bog‘liq xato"</string>
     <string name="wait" msgid="765601745709933047">"Kutib turing…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Kamerani yoqishdan avval SD kartani joylashtiring."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD karta tayyorlanmoqda..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD kartani o‘qishda xatolik yuz berdi."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Vaqt oralig‘ini yozib olish"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"Ilova kameraga ulana olmadi"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"Rasm yoki video qurilmaga saqlanmadi."</string>
     <string name="capturing" msgid="5255164204641920893">"Suratga olinmoqda"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Kamera tanlash"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Orqaga"</string>

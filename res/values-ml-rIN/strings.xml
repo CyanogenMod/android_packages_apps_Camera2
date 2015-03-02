@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"ക്യാമറ പിശക്"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"ക്യാമറയിൽ കണ‌ക്‌റ്റുചെയ്യാനായില്ല."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"സുരക്ഷാ നയങ്ങൾ കാരണം ക്യാമറ പ്രവർത്തനരഹിതമായി."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"നിങ്ങളുടെ ഫോട്ടോയോ വീഡിയോയൊ സംരക്ഷിക്കുന്നതിൽ പ്രശ്‌നമുണ്ടായി."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"ഫോട്ടോ സംഭരിക്കുന്നതിൽ ​​പരാജയപ്പെട്ടു."</string>
     <string name="wait" msgid="765601745709933047">"കാത്തിരിക്കൂ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ക്യാമറ ഉപയോഗിക്കുന്നതിന് മുമ്പ് SD കാർഡ് ചേർക്കുക."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD കാർഡ് തയ്യാറാക്കുന്നു..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD കാർഡ് ആക്‌സസ്സുചെയ്യാനായില്ല."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"ടൈം ലാപ്സ് റെക്കോർഡുചെയ്യൽ"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"അപ്ലിക്കേഷൻ ക്യാമറയുമായി കണക്‌റ്റുചെയ്യാനായില്ല"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"ഫോട്ടോയോ വീഡിയോയോ ഉപകരണത്തിൽ സംരക്ഷിച്ചില്ല."</string>
     <string name="capturing" msgid="5255164204641920893">"ചിത്രമെടുക്കുന്നു"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"ക്യാമറ തിരഞ്ഞെടുക്കുക"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"മടങ്ങുക"</string>

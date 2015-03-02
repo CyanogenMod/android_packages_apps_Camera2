@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"Ֆոտոխցիկի սխալ"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Հնարավոր չէ միանալ ֆոտոխցիկին:"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Ֆոտոխցիկն անջատված է՝ անվտանգության քաղաքականության նկատառումներից ելնելով:"</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"Ձեր լուսանկարը կամ տեսանյութը պահելիս առաջացել է խնդիր:"</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"Չհաջողվեց պահել լուսանկարը:"</string>
     <string name="wait" msgid="765601745709933047">"Խնդրում ենք սպասել..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Տեսախցիկն օգտագործելուց առաջ տեղադրեք SD քարտ:"</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"Պատրաստվում է SD քարտը..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD քարտը հասանելի չէ:"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Ժամանակի սպառումով տեսագրություն"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"Հավելվածին չհաջողվեց կապակցվել ֆոտոխցիկին"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"Լուսանկարը կամ տեսանյութը սարքում չի պահվել:"</string>
     <string name="capturing" msgid="5255164204641920893">"Լուսանկարում"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Ընտրել տեսախցիկը"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Հետևի"</string>

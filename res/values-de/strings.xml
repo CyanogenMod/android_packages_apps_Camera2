@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"Kamerafehler"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Keine Verbindung zur Kamera möglich"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Die Kamera wurde aufgrund von Sicherheitsrichtlinien deaktiviert."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"Beim Speichern Ihres Fotos oder Videos ist ein Problem aufgetreten."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"Fehler beim Speichern des Fotos"</string>
     <string name="wait" msgid="765601745709933047">"Bitte warten…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Legen Sie vor Verwendung der Kamera eine SD-Karte ein."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD-Karte wird vorbereitet…"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Kein Zugriff auf SD-Karte möglich"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Zeitrafferaufnahme"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"Die App konnte keine Verbindung mit der Kamera herstellen."</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"Das Foto oder Video wurde nicht auf dem Gerät gespeichert."</string>
     <string name="capturing" msgid="5255164204641920893">"Wird aufgenommen"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Kamera wählen"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Zurück"</string>

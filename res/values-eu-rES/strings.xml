@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"Kameraren errorea"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Ezin da kamerara konektatu."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Segurtasun-gidalerroak direla medio, kamera desgaitu egin da."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"Arazo bat izan da argazkia edo bideoa gordetzean."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"Errore bat gertatu da argazki-biltegian."</string>
     <string name="wait" msgid="765601745709933047">"Itxaron, mesedez…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Txertatu SD txartela kamera erabili aurretik."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD txartela prestatzen…"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Ezin izan da SD txartela atzitu."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Denbora-bitartearen grabaketa"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"Aplikazioa ezin izan da konektatu kamerara"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"Ez da gorde argazkia edo bideoa gailuan."</string>
     <string name="capturing" msgid="5255164204641920893">"Kapturatzen"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Aukeratu kamera"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Atzekoa"</string>

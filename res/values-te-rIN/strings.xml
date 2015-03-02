@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"కెమెరా లోపం"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"కెమెరాకు కనెక్ట్ చేయడం సాధ్యపడదు."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"భద్రతా విధానాల కారణంగా కెమెరా నిలిపివేయబడింది."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"మీ ఫోటో లేదా వీడియోను సేవ్ చేయడంలో సమస్య ఏర్పడింది."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"ఫోటో నిల్వ వైఫల్యం."</string>
     <string name="wait" msgid="765601745709933047">"దయచేసి వేచి ఉండండి..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"కెమెరాను ఉపయోగించడానికి ముందు SD కార్డును చొప్పించండి."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD కార్డు‌ను సన్నద్ధం చేస్తోంది..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD కార్డును ప్రాప్యత చేయడం సాధ్యపడలేదు."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"గడిచిన సమయం రికార్డింగ్"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"అనువర్తనం కెమెరాకు కనెక్ట్ చేయలేకపోయింది"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"ఫోటో లేదా వీడియో పరికరానికి సేవ్ కాలేదు."</string>
     <string name="capturing" msgid="5255164204641920893">"క్యాప్చర్ చేస్తోంది"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"కెమెరాను ఎంచుకోండి"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"వెనుక వైపు ఉండేది"</string>

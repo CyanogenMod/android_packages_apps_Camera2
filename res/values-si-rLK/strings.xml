@@ -67,11 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"කැමරා දෝෂය"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"කැමරාව වෙත සම්බන්ධ කළ නොහැක."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"ආරක්ෂණ ප්‍රතිපත්ති නිසා කැමරාව අබල කර ඇත."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"ඔබේ ඡායාරූපය හෝ වීඩියෝව සුරැකීමේ ප්‍රශ්නයක් ඇති විය."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"ඡායාරූප ගබඩාව අසාර්ථකයි."</string>
     <string name="wait" msgid="765601745709933047">"කරුණාකර රැඳී සිටින්න..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"කැමරාව භාවිතා කිරීමට පෙර SD කාඩ් පතක් ඇතුලු කරන්න."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD කාඩ් පත පිළියෙළ කෙරේ…"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD කාඩ් පතට ප්‍රවේශ විය නොහැක."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"කාලය ඉකුත්වීමේ පටිගත කිරීම"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"යෙදුමට කැමරාව වෙත සම්බන්ධ වීමට නොහැකි විය"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"ඡායාරූපය හෝ වීඩියෝව උපාංගය වෙත නොසුරැකිණි."</string>
     <string name="capturing" msgid="5255164204641920893">"ග්‍රහණය කරමින්"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"කැමරාව තෝරන්න"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"ආපසු"</string>
