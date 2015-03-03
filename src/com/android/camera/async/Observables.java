@@ -18,6 +18,7 @@ package com.android.camera.async;
 
 import com.android.camera.util.Callback;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
@@ -63,6 +64,14 @@ public class Observables {
                 return input.addCallback(callback, executor);
             }
         };
+    }
+
+    /**
+     * @return An observable which recomputes its output every time an input changes.
+     */
+    public static <T> Observable<T> transform(final List<? extends Observable<?>> inputs,
+                                              final Supplier<T> output) {
+        return ObservableCombiner.transform(inputs, output);
     }
 
     /**

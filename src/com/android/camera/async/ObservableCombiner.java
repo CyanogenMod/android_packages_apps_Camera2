@@ -17,6 +17,7 @@
 package com.android.camera.async;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -37,14 +38,14 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @ThreadSafe
 @ParametersAreNonnullByDefault
-final class ObservableCombiner<I, O> implements Observable<O> {
-    private final ImmutableList<Observable<I>> mInputs;
-    private final Function<List<I>, O> mFunction;
+final class ObservableCombiner<T> implements Observable<T> {
+    private final ImmutableList<Observable<?>> mInputs;
+    private final Supplier<T> mOutput;
 
-    private ObservableCombiner(List<? extends Observable<I>> inputs,
-            Function<List<I>, O> function) {
+    private ObservableCombiner(List<? extends Observable<?>> inputs,
+            Supplier<T> output) {
         mInputs = ImmutableList.copyOf(inputs);
-        mFunction = function;
+        mOutput = output;
     }
 
     /**
@@ -58,9 +59,23 @@ final class ObservableCombiner<I, O> implements Observable<O> {
      *         with the given function. Changes in the output value will result
      *         in calls to any callbacks registered with the output.
      */
-    static <I, O> Observable<O> transform(List<? extends Observable<I>> inputs,
-            Function<List<I>, O> function) {
-        return new ObservableCombiner<>(inputs, function);
+    static <I, O> Observable<O> transform(final List<? extends Observable<I>> inputs,
+            final Function<List<I>, O> function) {
+        return new ObservableCombiner<>(inputs, new Supplier<O>() {
+            @Override
+            public O get() {
+                ArrayList<I> deps = new ArrayList<>();
+                for (Observable<? extends I> dependency : inputs) {
+                    deps.add(dependency.get());
+                }
+                return function.apply(deps);
+            }
+        });
+    }
+
+    static <O> Observable<O> transform(final List<? extends Observable<?>> inputs,
+                                       final Supplier<O> output) {
+        return new ObservableCombiner<>(inputs, output);
     }
 
     @Nonnull
@@ -69,7 +84,7 @@ final class ObservableCombiner<I, O> implements Observable<O> {
     public SafeCloseable addCallback(Runnable callback, Executor executor) {
         Lifetime callbackLifetime = new Lifetime();
 
-        for (Observable<I> input : mInputs) {
+        for (Observable<?> input : mInputs) {
             callbackLifetime.add(input.addCallback(callback, executor));
         }
 
@@ -78,11 +93,7 @@ final class ObservableCombiner<I, O> implements Observable<O> {
 
     @Nonnull
     @Override
-    public O get() {
-        ArrayList<I> deps = new ArrayList<>();
-        for (Observable<? extends I> dependency : mInputs) {
-            deps.add(dependency.get());
-        }
-        return mFunction.apply(deps);
+    public T get() {
+        return mOutput.get();
     }
 }
