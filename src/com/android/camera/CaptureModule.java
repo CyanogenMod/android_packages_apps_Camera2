@@ -1318,7 +1318,7 @@ public class CaptureModule extends CameraModule implements
                                     }
                                 });
                         }
-                });
+                }, mAppController.getFatalErrorHandler());
         guard.stop("mCameraManager.open()");
     }
 

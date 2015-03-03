@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
@@ -28,8 +29,6 @@ import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
-import com.android.camera.settings.SettingsManager;
-import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 
 /**
@@ -45,8 +44,9 @@ public abstract class OneCameraManager {
      * <p>
      * Exactly one call will always be made to a single method in the provided
      * {@link OpenCallback}.
-     *
-     * @param captureSetting the related settings to configure the camera for capture.
+     * 
+     * @param captureSetting the related settings to configure the camera for
+     *            capture.
      * @param handler the handler on which callback methods are invoked.
      * @param mainThread Main thread executor
      * @param imageRotationCalculator Image rotation calculator required for
@@ -55,6 +55,8 @@ public abstract class OneCameraManager {
      * @param soundPlayer the sound player.
      * @param openCallback this listener is called when the camera was opened or
      *            when it failed to open.
+     * @param fatalErrorHandler the fatal error handler to use for indicating
+     *            fatal errors
      */
     public abstract void open(
             OneCameraCaptureSetting captureSetting,
@@ -63,7 +65,8 @@ public abstract class OneCameraManager {
             ImageRotationCalculator imageRotationCalculator,
             BurstFacade burstController,
             SoundPlayer soundPlayer,
-            OpenCallback openCallback);
+            OpenCallback openCallback,
+            FatalErrorHandler fatalErrorHandler);
 
     // TODO: Move this to OneCameraCharacteristics class.
     /**
@@ -108,7 +111,7 @@ public abstract class OneCameraManager {
             Context context,
             DisplayMetrics displayMetrics) throws OneCameraException {
         Optional<OneCameraManager> manager = com.android.camera.one.v2.OneCameraManagerImpl.create(
-                        featureConfig, context, displayMetrics);
+                featureConfig, context, displayMetrics);
         if (!manager.isPresent()) {
             manager = com.android.camera.one.v1.OneCameraManagerImpl.create();
         }

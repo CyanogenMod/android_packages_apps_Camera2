@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.ButtonManager;
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCameraManager;
@@ -378,6 +379,11 @@ public interface AppController {
      * @return Common services and functionality to be shared.
      */
     public CameraServices getServices();
+
+    /**
+     * @return The error handler to invoke for fatal (app-killing) errors.
+     */
+    public FatalErrorHandler getFatalErrorHandler();
 
     /**
      * Returns the {@link com.android.camera.app.CameraAppUI}.

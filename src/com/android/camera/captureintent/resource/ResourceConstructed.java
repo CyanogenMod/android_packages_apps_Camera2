@@ -16,6 +16,7 @@
 
 package com.android.camera.captureintent.resource;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
@@ -117,4 +118,11 @@ public interface ResourceConstructed extends SafeCloseable {
      */
     @Deprecated
     public AppController getAppController();
+
+    /**
+     * Obtains the fatal error handler.
+     *
+     * @return An {@link FatalErrorHandler} object.
+     */
+    public FatalErrorHandler getFatalErrorHandler();
 }

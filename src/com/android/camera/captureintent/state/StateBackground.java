@@ -84,7 +84,8 @@ public final class StateBackground extends StateImpl {
         super(stateMachine);
         mResourceConstructed = ResourceConstructedImpl.create(
                 intent, moduleUI, mainThread, context, cameraManager, locationManager,
-                orientationManager, cameraFacingSetting, resolutionSetting, appController);
+                orientationManager, cameraFacingSetting, resolutionSetting, appController,
+                appController.getFatalErrorHandler());
         registerEventHandlers();
     }
 

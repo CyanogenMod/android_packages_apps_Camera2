@@ -16,12 +16,12 @@
 
 package com.android.camera.one.v2;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.Observable;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
-import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.config.OneCameraFeatureConfig.CaptureSupportLevel;
 import com.android.camera.one.v2.camera2proxy.CameraDeviceProxy;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
@@ -37,5 +37,5 @@ public interface OneCameraFactory {
             Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             Observable<Integer> exposureSetting,
             Observable<Boolean> hdrSceneSetting,
-            BurstFacade burstController);
+            BurstFacade burstController, FatalErrorHandler fatalErrorHandler);
 }

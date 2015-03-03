@@ -16,6 +16,7 @@
 
 package com.android.camera.captureintent.resource;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
@@ -43,6 +44,7 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
     private final ResolutionSetting mResolutionSetting;
     private final HandlerThread mCameraThread;
     private final Handler mCameraHandler;
+    private final FatalErrorHandler mFatalErrorHandler;
 
     // TODO: Hope one day we could get rid of AppController.
     private final AppController mAppController;
@@ -60,10 +62,12 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
             OrientationManager orientationManager,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
-            AppController appController) {
+            AppController appController,
+            FatalErrorHandler fatalErrorHandler) {
         return new RefCountBase<ResourceConstructed>(new ResourceConstructedImpl(
                 intent, moduleUI, mainThread, context, cameraManager, locationManager,
-                orientationManager, cameraFacingSetting, resolutionSetting, appController));
+                orientationManager, cameraFacingSetting, resolutionSetting,
+                appController, fatalErrorHandler));
     }
 
     private ResourceConstructedImpl(
@@ -76,7 +80,8 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
             OrientationManager orientationManager,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
-            AppController appController) {
+            AppController appController,
+            FatalErrorHandler fatalErrorHandler) {
         mIntent = intent;
         mModuleUI = moduleUI;
         mMainThread = mainThread;
@@ -86,6 +91,7 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
         mOrientationManager = orientationManager;
         mCameraFacingSetting = cameraFacingSetting;
         mResolutionSetting = resolutionSetting;
+        mFatalErrorHandler = fatalErrorHandler;
         mAppController = appController;
 
         mCameraThread = new HandlerThread("ImageCaptureIntentModule.CameraHandler");
@@ -151,5 +157,10 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
     @Override
     public AppController getAppController() {
         return mAppController;
+    }
+
+    @Override
+    public FatalErrorHandler getFatalErrorHandler() {
+        return mFatalErrorHandler;
     }
 }

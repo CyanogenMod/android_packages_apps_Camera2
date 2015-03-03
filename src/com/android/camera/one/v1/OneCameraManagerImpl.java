@@ -19,7 +19,7 @@ package com.android.camera.one.v1;
 import android.hardware.Camera;
 import android.os.Handler;
 
-import com.android.camera.CameraActivity;
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
@@ -31,8 +31,6 @@ import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
-import com.android.camera.settings.SettingsManager;
-import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 /**
  * The {@link OneCameraManager} implementation on top of the Camera API 1.
@@ -102,7 +100,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
             ImageRotationCalculator imageRotationCalculator,
             BurstFacade burstController,
             SoundPlayer soundPlayer,
-            OpenCallback openCallback) {
+            OpenCallback openCallback, FatalErrorHandler fatalErrorHandler) {
         throw new RuntimeException("Not implemented yet.");
     }
 
