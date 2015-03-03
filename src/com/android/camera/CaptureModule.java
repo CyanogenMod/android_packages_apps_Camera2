@@ -76,6 +76,7 @@ import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.ui.focus.FocusController;
 import com.android.camera.ui.focus.FocusSound;
 import com.android.camera.util.AndroidServices;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
@@ -104,6 +105,8 @@ public class CaptureModule extends CameraModule implements
     private static final Tag TAG = new Tag("CaptureModule");
     /** Enable additional debug output. */
     private static final boolean DEBUG = true;
+    /** Workaround Flag for b/19271661 to use autotransformation in Capture Layout in Nexus4 **/
+    private static final boolean USE_AUTOTRANSFORM_UI_LAYOUT = ApiHelper.IS_NEXUS_4;
 
     /** Timeout for camera open/close operations. */
     private static final int CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS = 2500;
@@ -181,7 +184,7 @@ public class CaptureModule extends CameraModule implements
 
         @Override
         public boolean shouldAutoAdjustTransformMatrixOnLayout() {
-            return false;
+            return USE_AUTOTRANSFORM_UI_LAYOUT;
         }
 
         @Override
@@ -376,7 +379,7 @@ public class CaptureModule extends CameraModule implements
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         Profile guard = mProfiler.create("CaptureModule.init").start();
-        Log.d(TAG, "init");
+        Log.d(TAG, "init UseAutotransformUiLayout = " + USE_AUTOTRANSFORM_UI_LAYOUT);
         HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
         thread.start();
         mCameraHandler = new Handler(thread.getLooper());
@@ -1113,7 +1116,7 @@ public class CaptureModule extends CameraModule implements
             // Check for an actual change:
             if (mScreenHeight == incomingHeight && mScreenWidth == incomingWidth &&
                     incomingRotation == mDisplayRotation && !forceUpdate) {
-                return;
+                // return;
             }
             // Update display rotation and dimensions
             mDisplayRotation = incomingRotation;
@@ -1132,10 +1135,17 @@ public class CaptureModule extends CameraModule implements
 
             // Get natural orientation and buffer dimensions
 
-            Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
-                    new Size(mScreenWidth, mScreenHeight),
-                    new Size(mPreviewBufferWidth, mPreviewBufferHeight));
-            mAppController.updatePreviewTransform(transformMatrix);
+            if(USE_AUTOTRANSFORM_UI_LAYOUT) {
+                // Use PhotoUI-based AutoTransformation Interface
+                if (mPreviewBufferWidth != 0 && mPreviewBufferHeight !=0) {
+                    mAppController.updatePreviewAspectRatio(mPreviewBufferWidth/ (float) mPreviewBufferHeight);
+                }
+            } else {
+                Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
+                        new Size(mScreenWidth, mScreenHeight),
+                        new Size(mPreviewBufferWidth, mPreviewBufferHeight));
+                mAppController.updatePreviewTransform(transformMatrix);
+            }
         }
     }
 
