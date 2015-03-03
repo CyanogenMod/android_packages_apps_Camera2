@@ -73,6 +73,7 @@ import com.android.camera.app.CameraController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.CameraServices;
 import com.android.camera.app.CameraServicesImpl;
+import com.android.camera.app.DevicePluginImpl;
 import com.android.camera.app.FirstRunDialog;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.MemoryManager;
@@ -229,6 +230,7 @@ public class CameraActivity extends QuickActivity
     private int mCurrentModeIndex;
     private CameraModule mCurrentModule;
     private ModuleManagerImpl mModuleManager;
+    private DevicePluginImpl mDevicePlugin;
     private FrameLayout mAboveFilmstripControlLayout;
     private FilmstripController mFilmstripController;
     private boolean mFilmstripVisible;
@@ -538,6 +540,7 @@ public class CameraActivity extends QuickActivity
         }
         Log.v(TAG, "invoking onChangeCamera");
         mCameraAppUI.onChangeCamera();
+        mDevicePlugin.onCameraOpened(camera);
     }
 
     private void resetExposureCompensationToDefault(CameraAgent.CameraProxy camera) {
@@ -1511,6 +1514,9 @@ public class CameraActivity extends QuickActivity
 
         ModulesInfo.setupModules(mAppContext, mModuleManager, mFeatureConfig);
 
+        mDevicePlugin = new DevicePluginImpl();
+        mDevicePlugin.onCreate(mAppContext);
+
         initPowerShutter();
         initMaxBrightness();
 
@@ -2201,6 +2207,7 @@ public class CameraActivity extends QuickActivity
         if (mModeListView != null) {
             mModeListView.setVisibilityChangedListener(null);
         }
+        mDevicePlugin.onDestroy();
         mCameraController = null;
         mSettingsManager = null;
         mOrientationManager = null;
