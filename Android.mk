@@ -15,6 +15,12 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd_gcam)
 
+ifneq ($(BOARD_CAMERA_PLUGIN),)
+    LOCAL_SRC_FILES += $(call all-java-files-under, ../../../$(BOARD_CAMERA_PLUGIN))
+else
+    LOCAL_SRC_FILES += $(call all-java-files-under, src_plugin)
+endif
+
 LOCAL_RESOURCE_DIR += \
 	$(LOCAL_PATH)/res \
 	$(LOCAL_PATH)/res_p
