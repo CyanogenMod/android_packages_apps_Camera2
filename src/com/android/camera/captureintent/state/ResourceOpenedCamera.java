@@ -23,6 +23,7 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
 
+import android.graphics.PointF;
 import android.view.Surface;
 
 public final class ResourceOpenedCamera implements SafeCloseable {
@@ -103,5 +104,9 @@ public final class ResourceOpenedCamera implements SafeCloseable {
     public void startPreview(
             Surface previewSurface, OneCamera.CaptureReadyCallback captureReadyCallback) {
         mCamera.startPreview(previewSurface, captureReadyCallback);
+    }
+
+    public void triggerFocusAndMeterAtPoint(PointF point) {
+        mCamera.triggerFocusAndMeterAtPoint(point.x, point.y);
     }
 }

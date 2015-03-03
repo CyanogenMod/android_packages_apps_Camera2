@@ -54,10 +54,14 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     /** The image view to display the captured picture. */
     private final ImageView mIntentReviewImageView;
 
+    /** The layout rect of the preview. */
+    private RectF mPreviewRect;
+
     private final PreviewStatusListener.PreviewAreaChangedListener mPreviewAreaChangedListener =
             new PreviewStatusListener.PreviewAreaChangedListener() {
                 @Override
                 public void onPreviewAreaChanged(RectF previewArea) {
+                    mPreviewRect = previewArea;
                     FrameLayout.LayoutParams params =
                             (FrameLayout.LayoutParams) mIntentReviewImageView.getLayoutParams();
                     params.width = (int) previewArea.width();
@@ -85,6 +89,15 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
         mProgressOverlay = (ProgressOverlay) mRootView.findViewById(R.id.progress_overlay);
         mFocusRing = (FocusRing) mRootView.findViewById(R.id.focus_ring);
         mCountdownView = (CountDownView) mRootView.findViewById(R.id.count_down_view);
+
+        mPreviewRect = new RectF(0, 0, 0, 0);
+    }
+
+    /**
+     * Obtains the current preview layout rect.
+     */
+    public RectF getPreviewRect() {
+        return mPreviewRect;
     }
 
     /**
