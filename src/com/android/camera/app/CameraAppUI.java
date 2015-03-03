@@ -544,7 +544,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         }
     };
     private View mModeOptionsToggle;
-    private boolean mModeListIsHardwareLayer = false;
     private final RoundedThumbnailView mRoundedThumbnailView;
     private final CaptureLayoutHelper mCaptureLayoutHelper;
     private boolean mAccessibilityEnabled;
@@ -1116,12 +1115,24 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onModeListOpenProgress(float progress) {
         // When the mode list is in transition, ensure the large layers are
         // hardware accelerated.
-        if(!mModeListIsHardwareLayer) {
-            mModeListIsHardwareLayer = true;
-            Log.v(TAG, "Enabling hardware layer for the Mode Options Toggle Button.");
-            mModeOptionsToggle.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            Log.v(TAG, "Enabling hardware layer for the Shutter Button.");
-            mShutterButton.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        if (progress >= 1.0f || progress <= 0.0f) {
+            // Convert hardware layers back to default layer types when animation stops
+            // to prevent accidental artifacting.
+            if(mModeOptionsToggle.getLayerType() == View.LAYER_TYPE_HARDWARE ||
+                  mShutterButton.getLayerType() == View.LAYER_TYPE_HARDWARE) {
+                Log.v(TAG, "Disabling hardware layer for the Mode Options Toggle Button.");
+                mModeOptionsToggle.setLayerType(View.LAYER_TYPE_NONE, null);
+                Log.v(TAG, "Disabling hardware layer for the Shutter Button.");
+                mShutterButton.setLayerType(View.LAYER_TYPE_NONE, null);
+            }
+        } else {
+            if(mModeOptionsToggle.getLayerType() != View.LAYER_TYPE_HARDWARE ||
+                  mShutterButton.getLayerType() != View.LAYER_TYPE_HARDWARE) {
+                Log.v(TAG, "Enabling hardware layer for the Mode Options Toggle Button.");
+                mModeOptionsToggle.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                Log.v(TAG, "Enabling hardware layer for the Shutter Button.");
+                mShutterButton.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
         }
 
         progress = 1 - progress;
@@ -1138,8 +1149,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onModeListClosed() {
         // Convert hardware layers back to default layer types when animation stops
         // to prevent accidental artifacting.
-        if(mModeListIsHardwareLayer) {
-            mModeListIsHardwareLayer = false;
+        if(mModeOptionsToggle.getLayerType() == View.LAYER_TYPE_HARDWARE ||
+              mShutterButton.getLayerType() == View.LAYER_TYPE_HARDWARE) {
             Log.v(TAG, "Disabling hardware layer for the Mode Options Toggle Button.");
             mModeOptionsToggle.setLayerType(View.LAYER_TYPE_NONE, null);
             Log.v(TAG, "Disabling hardware layer for the Shutter Button.");

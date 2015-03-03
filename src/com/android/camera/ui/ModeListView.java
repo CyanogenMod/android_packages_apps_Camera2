@@ -108,7 +108,6 @@ public class ModeListView extends FrameLayout
     private int mListBackgroundColor;
     private LinearLayout mListView;
     private View mSettingsButton;
-    private boolean mSettingsButtonIsHardwareLayer = false;
     private int mTotalModes;
     private ModeSelectorItem[] mModeSelectorItems;
     private AnimatorSet mAnimatorSet;
@@ -703,8 +702,7 @@ public class ModeListView extends FrameLayout
          * @param success indicates whether the animation finishes successfully
          */
         private void onAnimationEnd(boolean success) {
-            if (mSettingsButtonIsHardwareLayer) {
-                mSettingsButtonIsHardwareLayer = false;
+            if (mSettingsButton.getLayerType() == View.LAYER_TYPE_HARDWARE) {
                 Log.v(TAG, "Disabling hardware layer for the Settings Button. (onAnimationEnd)");
                 mSettingsButton.setLayerType(View.LAYER_TYPE_NONE, null);
             }
@@ -1704,14 +1702,12 @@ public class ModeListView extends FrameLayout
         if (mSettingsButton != null) {
             // Disable the hardware layer when the ratio reaches 0.0 or 1.0.
             if (openRatio >= 1.0f || openRatio <= 0.0f) {
-                if (mSettingsButtonIsHardwareLayer) {
-                    mSettingsButtonIsHardwareLayer = false;
+                if (mSettingsButton.getLayerType() == View.LAYER_TYPE_HARDWARE) {
                     Log.v(TAG, "Disabling hardware layer for the Settings Button. (via alpha)");
                     mSettingsButton.setLayerType(View.LAYER_TYPE_NONE, null);
                 }
             } else {
-                if (!mSettingsButtonIsHardwareLayer) {
-                    mSettingsButtonIsHardwareLayer = true;
+                if (mSettingsButton.getLayerType() != View.LAYER_TYPE_HARDWARE) {
                     Log.v(TAG, "Enabling hardware layer for the Settings Button.");
                     mSettingsButton.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                 }
