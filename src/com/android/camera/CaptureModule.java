@@ -600,6 +600,8 @@ public class CaptureModule extends CameraModule implements
         // state, ... ).
         mAppController.getCameraAppUI().enableModeOptions();
         mAppController.setShutterEnabled(true);
+        mAppController.getCameraAppUI().showAccessibilityZoomUI(
+                mCameraCharacteristics.getAvailableMaxDigitalZoom());
 
         mHdrPlusEnabled = mStickyGcamCamera || mAppController.getSettingsManager().getInteger(
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS) == 1;

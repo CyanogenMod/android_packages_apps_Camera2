@@ -552,6 +552,21 @@
     <!-- Text on the button that toggles the filmstrip. [CHAR LIMIT=20] -->
     <string name="btn_filmstrip_toggle">Filmstrip</string>
 
+    <!-- Content description of the button that zooms in. [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_zoom_plus">Zoom in</string>
+
+    <!-- Text on the button that zooms in [CHAR LIMIT=20] -->
+    <string name="btn_zoom_plus">Z+</string>
+
+    <!-- Content description of the button that zooms out. [CHAR LIMIT=NONE] -->
+    <string name="accessibility_mode_zoom_minus">Zoom out</string>
+
+    <!-- Text on the button that zooms out [CHAR LIMIT=20] -->
+    <string name="btn_zoom_minus">Z-</string>
+
+    <!-- Accessibility message spoken by TalkBack informing user of the current zoom value [CHAR LIMIT=NONE] -->
+    <string name="accessibility_zoom_announcement">Zoom value is %.1f</string>
+
     <!-- Default text for a button that can be toggled on and off. -->
     <string name="capital_on">ON</string>
     <!-- Default text for a button that can be toggled on and off. -->

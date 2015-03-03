@@ -29,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import android.widget.Button;
 import com.android.camera.debug.Log;
 import com.android.camera2.R;
 
@@ -50,6 +51,8 @@ public class PreviewOverlay extends View
     implements PreviewStatusListener.PreviewAreaChangedListener {
 
     public static final float ZOOM_MIN_RATIO = 1.0f;
+    private static final int NUM_ZOOM_LEVELS = 7;
+    private static final float MIN_ZOOM = 1f;
 
     private static final Log.Tag TAG = new Log.Tag("PreviewOverlay");
 
@@ -64,6 +67,19 @@ public class PreviewOverlay extends View
     private View.OnTouchListener mTouchListener = null;
     private OnZoomChangedListener mZoomListener = null;
     private OnPreviewTouchedListener mOnPreviewTouchedListener;
+
+    /** Maximum zoom; intialize to 1.0 (disabled) */
+    private float mMaxZoom = MIN_ZOOM;
+    /**
+     * Current zoom value in accessibility mode, ranging from MIN_ZOOM to
+     * mMaxZoom.
+     */
+    private float mCurrA11yZoom = MIN_ZOOM;
+    /**
+     * Current zoom level ranging between 1 and NUM_ZOOM_LEVELS. Each level is
+     * associated with a discrete zoom value.
+     */
+    private int mCurrA11yZoomLevel = 1;
 
     public interface OnZoomChangedListener {
         /**
@@ -108,6 +124,53 @@ public class PreviewOverlay extends View
                           OnZoomChangedListener zoomChangeListener) {
         mZoomListener = zoomChangeListener;
         mZoomProcessor.setupZoom(zoomMaxRatio, zoom);
+    }
+
+    /**
+     * uZooms camera in when in accessibility mode.
+     *
+     * @param view is the current view
+     * @param maxZoom is the maximum zoom value on the given device
+     * @return float representing the current zoom value
+     */
+    public float zoomIn(View view, float maxZoom) {
+        mCurrA11yZoomLevel++;
+        mMaxZoom = maxZoom;
+        mCurrA11yZoom = getZoomAtLevel(mCurrA11yZoomLevel);
+        mZoomListener.onZoomValueChanged(mCurrA11yZoom);
+        view.announceForAccessibility(String.format(
+                view.getResources().
+                        getString(R.string.accessibility_zoom_announcement), mCurrA11yZoom));
+        return mCurrA11yZoom;
+    }
+
+    /**
+     * Zooms camera out when in accessibility mode.
+     *
+     * @param view is the current view
+     * @param maxZoom is the maximum zoom value on the given device
+     * @return float representing the current zoom value
+     */
+    public float zoomOut(View view, float maxZoom) {
+        mCurrA11yZoomLevel--;
+        mMaxZoom = maxZoom;
+        mCurrA11yZoom = getZoomAtLevel(mCurrA11yZoomLevel);
+        mZoomListener.onZoomValueChanged(mCurrA11yZoom);
+        view.announceForAccessibility(String.format(
+                view.getResources().
+                        getString(R.string.accessibility_zoom_announcement), mCurrA11yZoom));
+        return mCurrA11yZoom;
+    }
+
+    /**
+     * Method used in accessibility mode. Ensures that there are evenly spaced
+     * zoom values ranging from MIN_ZOOM to NUM_ZOOM_LEVELS
+     *
+     * @param level is the zoom level being computed in the range
+     * @return the zoom value at the given level
+     */
+    private float getZoomAtLevel(int level) {
+        return (MIN_ZOOM + ((level - 1) * ((mMaxZoom - MIN_ZOOM) / (NUM_ZOOM_LEVELS - 1))));
     }
 
     @Override
@@ -174,6 +237,8 @@ public class PreviewOverlay extends View
         mZoomListener = null;
         mGestureDetector = null;
         mTouchListener = null;
+        mCurrA11yZoomLevel = 1;
+        mCurrA11yZoom = MIN_ZOOM;
     }
 
     /**
