@@ -20,6 +20,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
+import android.util.Range;
 import android.view.Surface;
 
 import com.android.camera.async.BufferQueue;
@@ -36,6 +37,7 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.core.ResponseListener;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
+import com.android.camera.util.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,6 +123,7 @@ public class BurstCaptureCommand implements CameraCommand {
                             mBuilderFactory.create(BURST_TEMPLATE_TYPE);
                     photoRequest.setParam(CaptureRequest.CONTROL_AF_MODE,
                             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
+                    checkAndApplyNexus5FrameRateWorkaround(photoRequest);
 
                     photoRequest.addStream(imageStream);
                     // Hook up the camera stream to burst input surface.
@@ -173,4 +176,14 @@ public class BurstCaptureCommand implements CameraCommand {
         }
     }
 
+    /**
+     * On Nexus 5 limit frame rate to 24 fps. See b/18950682.
+     */
+    private static void checkAndApplyNexus5FrameRateWorkaround(RequestBuilder request) {
+        if (ApiHelper.IS_NEXUS_5) {
+            // For burst limit the frame rate to 24 fps.
+            Range<Integer> frameRateBackOff = new Range<>(7, 24);
+            request.setParam(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, frameRateBackOff);
+        }
+    }
 }
