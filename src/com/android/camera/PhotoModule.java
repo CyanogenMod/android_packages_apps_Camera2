@@ -1189,6 +1189,10 @@ public class PhotoModule
         mCameraDevice = cameraProxy;
 
         initializeCapabilities();
+        // mCameraCapabilities is guaranteed to initialized at this point.
+        mAppController.getCameraAppUI().showAccessibilityZoomUI(
+                mCameraCapabilities.getMaxZoomRatio());
+
 
         // Reset zoom value index.
         mZoomValue = 1.0f;
@@ -1423,8 +1427,6 @@ public class PhotoModule
             mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
         }
         mAppController.addPreviewAreaSizeChangedListener(mUI);
-        mAppController.getCameraAppUI().showAccessibilityZoomUI(
-                mCameraCapabilities.getMaxZoomRatio());
 
         CameraProvider camProvider = mActivity.getCameraProvider();
         if (camProvider == null) {
