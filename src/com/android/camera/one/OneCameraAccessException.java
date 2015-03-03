@@ -26,4 +26,8 @@ public class OneCameraAccessException extends Exception {
     public OneCameraAccessException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public OneCameraAccessException(Throwable cause) {
+        super(cause);
+    }
 }

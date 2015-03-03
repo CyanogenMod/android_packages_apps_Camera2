@@ -141,6 +141,10 @@ public class OneCameraManagerImpl extends OneCameraManager {
             }
             characteristics = new OneCameraCharacteristicsImpl(
                     mCameraInfos[cameraId], cameraParameters);
+        } catch (RuntimeException ex) {
+            // Wrap it as an OneCameraAccessException so it could be handled
+            // properly.
+            throw new OneCameraAccessException(ex);
         } finally {
             if (camera != null) {
                 camera.release();
