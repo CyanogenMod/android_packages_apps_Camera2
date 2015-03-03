@@ -19,20 +19,66 @@ package com.android.camera.async;
 import com.android.camera.util.Callback;
 
 /**
- * Note: This interface, alone, does not provide a means of guaranteeing which
- * thread the callback will be invoked on. Use
- * {@link com.android.camera.async.ConcurrentState}, {@link BufferQueue}, or
- * {@link java.util.concurrent.Future} instead to guarantee thread-safety.
+ * Wraps {@link ConcurrentState} with {@link #setCallback} semantics which
+ * overwrite any existing callback.
  */
-public interface Listenable<T> extends SafeCloseable {
+public class Listenable<T> implements SafeCloseable {
+    private final ConcurrentState<T> mState;
+    private final MainThread mMainThread;
+    private final Object mLock;
+    private boolean mClosed;
+    private SafeCloseable mExistingCallbackHandle;
+
+    public Listenable(ConcurrentState<T> state, MainThread mainThread) {
+        mState = state;
+        mMainThread = mainThread;
+        mLock = new Object();
+        mClosed = false;
+        mExistingCallbackHandle = null;
+    }
+
     /**
      * Sets the callback, removing any existing callback first.
      */
-    public void setCallback(Callback<T> callback);
+    public void setCallback(final Callback<T> callback) {
+        synchronized (mLock) {
+            if (mClosed) {
+                return;
+            }
+            if (mExistingCallbackHandle != null) {
+                // Unregister any existing callback
+                mExistingCallbackHandle.close();
+            }
+            mExistingCallbackHandle = mState.addCallback(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onCallback(mState.get());
+                }
+            }, mMainThread);
+        }
+    }
 
     /**
-     * Removes any existing callback.
+     * Removes any existing callbacks.
+     */
+    public void clear() {
+        synchronized (mLock) {
+            mClosed = true;
+            if (mExistingCallbackHandle != null) {
+                // Unregister any existing callback
+                mExistingCallbackHandle.close();
+            }
+        }
+    }
+
+    /**
+     * Removes any existing callbacks.  Once closed, no more callbacks will be registered.
      */
     @Override
-    public void close();
+    public void close() {
+        synchronized (mLock) {
+            mClosed = true;
+            clear();
+        }
+    }
 }

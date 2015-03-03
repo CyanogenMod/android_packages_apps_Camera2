@@ -19,6 +19,7 @@ package com.android.camera.one.v2.initialization;
 import android.content.Context;
 import android.view.Surface;
 
+import com.android.camera.async.FilteredCallback;
 import com.android.camera.async.Listenable;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.async.Updatable;
@@ -114,12 +115,13 @@ class GenericOneCameraImpl implements OneCamera {
 
     @Override
     public void setFocusDistanceListener(final FocusDistanceListener listener) {
+        if (listener == null) {
+            mFocusStateListenable.clear();
+            return;
+        }
         mFocusStateListenable.setCallback(new Callback<FocusState>() {
             @Override
             public void onCallback(@Nonnull FocusState focusState) {
-                if (listener == null) {
-                    return;
-                }
                 if (focusState.isActive) {
                     listener.onFocusDistance(focusState.lensDistance, mLensRange);
                 }
@@ -129,15 +131,19 @@ class GenericOneCameraImpl implements OneCamera {
 
     @Override
     public void setReadyStateChangedListener(final ReadyStateChangedListener listener) {
-        mReadyStateListenable.setCallback(new Callback<Boolean>() {
+        if (listener == null) {
+            mReadyStateListenable.clear();
+            return;
+        }
+
+        Callback<Boolean> readyStateCallback = new Callback<Boolean>() {
             @Override
-            public void onCallback(Boolean result) {
-                if (listener == null) {
-                    return;
-                }
+            public void onCallback(@Nonnull Boolean result) {
                 listener.onReadyStateChanged(result);
             }
-        });
+        };
+
+        mReadyStateListenable.setCallback(new FilteredCallback<>(readyStateCallback));
     }
 
     @Override

@@ -27,7 +27,7 @@ import com.android.camera.async.FilteredUpdatable;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Listenable;
-import com.android.camera.async.ListenableConcurrentState;
+import com.android.camera.async.MainThread;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.PreviewSizeSelector;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
@@ -70,7 +70,7 @@ public class InitializedOneCameraFactory {
      */
     public InitializedOneCameraFactory(
             final Lifetime lifetime, final CameraStarter cameraStarter, CameraDeviceProxy device,
-            List<Surface> outputSurfaces, Executor mainThreadExecutor,
+            List<Surface> outputSurfaces, MainThread mainThreadExecutor,
             HandlerFactory handlerFactory, float maxZoom, List<Size> supportedPreviewSizes,
             LinearScale lensRange, OneCamera.Facing direction) {
         // Assembles and returns a OneCamera based on the CameraStarter.
@@ -103,11 +103,11 @@ public class InitializedOneCameraFactory {
 
         // Wrap state to be able to register listeners which run on the main
         // thread.
-        Listenable<Integer> afStateListenable = new ListenableConcurrentState<>(afState,
+        Listenable<Integer> afStateListenable = new Listenable<>(afState,
                 mainThreadExecutor);
-        Listenable<OneCamera.FocusState> focusStateListenable = new ListenableConcurrentState<>(
+        Listenable<OneCamera.FocusState> focusStateListenable = new Listenable<>(
                 focusState, mainThreadExecutor);
-        Listenable<Boolean> readyStateListenable = new ListenableConcurrentState<>(readyState,
+        Listenable<Boolean> readyStateListenable = new Listenable<>(readyState,
                 mainThreadExecutor);
 
         // Wrap each value in a filter to ensure that only differences pass

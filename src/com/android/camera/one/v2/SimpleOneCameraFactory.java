@@ -60,6 +60,7 @@ import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -191,34 +192,20 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 }
 
                 // Wire-together ready-state.
-                Observable<Boolean> atLeastOneImageAvailable = Observables.transform(
-                        sharedImageReaderFactory.provideAvailableImageCount(),
-                        new Function<Integer, Boolean>() {
+                final Observable<Integer> availableImageCount = sharedImageReaderFactory
+                        .provideAvailableImageCount();
+                final Observable<Boolean> frameServerAvailability = frameServerComponent
+                        .provideReadyState();
+                Observable<Boolean> ready = Observables.transform(
+                        Arrays.asList(availableImageCount, frameServerAvailability),
+                        new Supplier<Boolean>() {
                             @Override
-                            public Boolean apply(Integer integer) {
-                                return integer >= 1;
+                            public Boolean get() {
+                                boolean atLeastOneImageAvailable = availableImageCount.get() >= 1;
+                                boolean frameServerAvailable = frameServerAvailability.get();
+                                return atLeastOneImageAvailable && frameServerAvailable;
                             }
                         });
-
-                Function<List<Boolean>, Boolean> andFunc = new Function<List<Boolean>, Boolean>() {
-                    @Override
-                    public Boolean apply(List<Boolean> booleans) {
-                        for (Boolean input : booleans) {
-                            if (!input) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                };
-
-                // The camera is "ready" if and only if at least one image is
-                // available AND the frame server is available.
-                Observable<Boolean> ready = Observables.transform(
-                        Arrays.asList(
-                                atLeastOneImageAvailable,
-                                frameServerComponent.provideReadyState()),
-                        andFunc);
 
                 lifetime.add(Observables.addThreadSafeCallback(ready, readyState));
 
