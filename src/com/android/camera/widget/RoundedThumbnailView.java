@@ -16,8 +16,6 @@
 
 package com.android.camera.widget;
 
-import java.util.LinkedList;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -42,8 +40,9 @@ import com.android.camera.debug.Log;
 import com.android.camera.ui.motion.InterpolatorHelper;
 import com.android.camera.util.ApiHelper;
 import com.android.camera2.R;
-
 import com.google.common.base.Optional;
+
+import java.util.LinkedList;
 
 /**
  * A view that shows a pop-out effect for a thumbnail image as the new capture indicator design for
@@ -114,6 +113,7 @@ public class RoundedThumbnailView extends View {
      * Fields for view layout.
      */
     private float mThumbnailPadding;
+    private RectF mViewRect;
 
     /**
      * Fields for the thumbnail pop-out effect.
@@ -136,6 +136,8 @@ public class RoundedThumbnailView extends View {
     private float mThumbnailShrinkDiameterBegin;
     // The ending diameter of the thumbnail for the shrink phase in thumbnail pop-out effect.
     private float mThumbnailShrinkDiameterEnd;
+    // Paint object for the reveal circle.
+    private final Paint mRevealCirclePaint;
 
     /**
      * Fields for the ripple effect.
@@ -162,6 +164,8 @@ public class RoundedThumbnailView extends View {
     private float mCurrentRippleRingThickness;
     // The current ripple ring opacity which is updated by the ripple animator and used by onDraw().
     private float mCurrentRippleRingOpacity;
+    // The paint used for drawing the ripple effect.
+    private final Paint mRipplePaint;
 
     /**
      * Fields for the hit state effect.
@@ -242,6 +246,9 @@ public class RoundedThumbnailView extends View {
         mRippleDurationMs = RIPPLE_DURATION_MS;
         mRippleRingDiameterEnd =
                 getResources().getDimension(R.dimen.rounded_thumbnail_ripple_ring_diameter_max);
+
+        mViewRect = new RectF(0, 0, mRippleRingDiameterEnd, mRippleRingDiameterEnd);
+
         mRippleRingDiameterBegin =
                 getResources().getDimension(R.dimen.rounded_thumbnail_ripple_ring_diameter_min);
         mRippleRingThicknessBegin =
@@ -255,6 +262,16 @@ public class RoundedThumbnailView extends View {
         mHitStateCirclePaint.setAntiAlias(true);
         mHitStateCirclePaint.setColor(Color.WHITE);
         mHitStateCirclePaint.setStyle(Paint.Style.FILL);
+
+        mRipplePaint = new Paint();
+        mRipplePaint.setAntiAlias(true);
+        mRipplePaint.setColor(Color.WHITE);
+        mRipplePaint.setStyle(Paint.Style.STROKE);
+
+        mRevealCirclePaint = new Paint();
+        mRevealCirclePaint.setAntiAlias(true);
+        mRevealCirclePaint.setColor(Color.WHITE);
+        mRevealCirclePaint.setStyle(Paint.Style.FILL);
 
         mActiveRevealRequest = Optional.absent();
         mFinishedRevealRequest = Optional.absent();
@@ -276,8 +293,8 @@ public class RoundedThumbnailView extends View {
 
         final float viewDiameter = mRippleRingDiameterEnd;
         final float finalDiameter = mThumbnailShrinkDiameterEnd;
-        final RectF viewBound =
-                new RectF(0, 0, viewDiameter, viewDiameter);
+
+        canvas.clipRect(mViewRect);
 
         // Draw the thumbnail of latest finished reveal request.
         if (mFinishedRevealRequest.isPresent()) {
@@ -289,7 +306,7 @@ public class RoundedThumbnailView extends View {
                 canvas.save();
                 canvas.scale(scaleRatio, scaleRatio, centerX, centerY);
                 canvas.drawRoundRect(
-                        viewBound,
+                        mViewRect,
                         centerX,
                         centerY,
                         thumbnailPaint);
@@ -302,15 +319,11 @@ public class RoundedThumbnailView extends View {
             // Draw ripple ring first or the ring will cover thumbnail.
             if (mCurrentRippleRingThickness > 0) {
                 // Draw the ripple ring.
-                Paint ripplePaint = new Paint();
-                ripplePaint.setAntiAlias(true);
-                ripplePaint.setStrokeWidth(mCurrentRippleRingThickness);
-                ripplePaint.setColor(Color.WHITE);
-                ripplePaint.setAlpha((int) (mCurrentRippleRingOpacity * 255));
-                ripplePaint.setStyle(Paint.Style.STROKE);
+                mRipplePaint.setAlpha((int) (mCurrentRippleRingOpacity * 255));
+                mRipplePaint.setStrokeWidth(mCurrentRippleRingThickness);
 
                 canvas.save();
-                canvas.drawCircle(centerX, centerY, mCurrentRippleRingDiameter / 2, ripplePaint);
+                canvas.drawCircle(centerX, centerY, mCurrentRippleRingDiameter / 2, mRipplePaint);
                 canvas.restore();
             }
 
@@ -324,20 +337,16 @@ public class RoundedThumbnailView extends View {
             Paint thumbnailPaint = mActiveRevealRequest.get().getThumbnailPaint();
             if (thumbnailPaint != null) {
                 canvas.drawRoundRect(
-                        viewBound,
+                        mViewRect,
                         centerX,
                         centerY,
                         thumbnailPaint);
             }
 
             // Draw the reveal while circle.
-            Paint revealCirclePaint = new Paint();
-            revealCirclePaint.setAntiAlias(true);
-            revealCirclePaint.setColor(Color.WHITE);
-            revealCirclePaint.setAlpha((int) (mCurrentRevealCircleOpacity * 255));
-            revealCirclePaint.setStyle(Paint.Style.FILL);
+            mRevealCirclePaint.setAlpha((int) (mCurrentRevealCircleOpacity * 255));
             canvas.drawCircle(centerX, centerY,
-                    mRippleRingDiameterEnd / 2, revealCirclePaint);
+                    mRippleRingDiameterEnd / 2, mRevealCirclePaint);
 
             canvas.restore();
         }
@@ -585,6 +594,11 @@ public class RoundedThumbnailView extends View {
         announceForAccessibility(mActiveRevealRequest.get().getAccessibilityString());
     }
 
+    @Override
+    public boolean hasOverlappingRendering() {
+        return true;
+    }
+
     /**
      * Encapsulates necessary information for a complete thumbnail reveal animation.
      */
@@ -594,9 +608,6 @@ public class RoundedThumbnailView extends View {
 
         // The accessibility string.
         private String mAccessibilityString;
-
-        // The original full-size image bitmap.
-        private Bitmap mOriginalBitmap;
 
         // The cached Paint object to draw the thumbnail.
         private Paint mThumbnailPaint;
@@ -634,25 +645,34 @@ public class RoundedThumbnailView extends View {
          * @return the paint object which can be used to draw the thumbnail on a Canvas.
          */
         public Paint getThumbnailPaint() {
+            return mThumbnailPaint;
+        }
+
+        /**
+         * Used to precompute the thumbnail paint from the given source bitmap.
+         *
+         * @param srcBitmap
+         */
+        private void precomputeThumbnailPaint(Bitmap srcBitmap) {
             // Lazy loading the thumbnail paint object.
             if (mThumbnailPaint == null) {
                 // Can't create a paint object until the thumbnail bitmap is available.
-                if (mOriginalBitmap == null) {
-                    return null;
+                if (srcBitmap == null) {
+                    return;
                 }
                 // The original bitmap should be a square shape.
-                if (mOriginalBitmap.getWidth() != mOriginalBitmap.getHeight()) {
-                    return null;
+                if (srcBitmap.getWidth() != srcBitmap.getHeight()) {
+                    return;
                 }
 
                 // Create a bitmap shader for the paint.
                 BitmapShader shader = new BitmapShader(
-                        mOriginalBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-                if (mOriginalBitmap.getWidth() != mViewSize) {
+                      srcBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+                if (srcBitmap.getWidth() != mViewSize) {
                     // Create a transformation matrix for the bitmap shader if the size is not
                     // matched.
                     RectF srcRect = new RectF(
-                            0.0f, 0.0f, mOriginalBitmap.getWidth(), mOriginalBitmap.getHeight());
+                          0.0f, 0.0f, srcBitmap.getWidth(), srcBitmap.getHeight());
                     RectF dstRect = new RectF(0.0f, 0.0f, mViewSize, mViewSize);
                     Matrix shaderMatrix = new Matrix();
                     shaderMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.FILL);
@@ -664,7 +684,6 @@ public class RoundedThumbnailView extends View {
                 mThumbnailPaint.setAntiAlias(true);
                 mThumbnailPaint.setShader(shader);
             }
-            return mThumbnailPaint;
         }
 
         /**
@@ -696,11 +715,13 @@ public class RoundedThumbnailView extends View {
          * @param thumbnailBitmap The thumbnail image to be shown.
          */
         public void setThumbnailBitmap(Bitmap thumbnailBitmap) {
-            mOriginalBitmap = thumbnailBitmap;
+            Bitmap originalBitmap = thumbnailBitmap;
             // Crop the image if it is not square.
-            if (mOriginalBitmap.getWidth() != mOriginalBitmap.getHeight()) {
-                mOriginalBitmap = cropCenterBitmap(mOriginalBitmap);
+            if (originalBitmap.getWidth() != originalBitmap.getHeight()) {
+                originalBitmap = cropCenterBitmap(originalBitmap);
             }
+
+            precomputeThumbnailPaint(originalBitmap);
         }
 
         /**
