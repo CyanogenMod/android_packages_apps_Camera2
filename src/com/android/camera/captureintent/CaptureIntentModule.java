@@ -27,6 +27,7 @@ import android.view.View;
 import com.android.camera.ButtonManager;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraModule;
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
@@ -46,11 +47,13 @@ import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.stats.UsageStatistics;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
+import com.google.common.logging.eventprotos;
 
 /**
  * The camera module that handles image capture intent.
@@ -181,8 +184,7 @@ public class CaptureIntentModule extends CameraModule {
             characteristics = mResourceConstructed.get().getCameraManager()
                     .getCameraCharacteristics(cameraFacingSetting.getCameraFacing());
         } catch (OneCameraAccessException ocae) {
-            mResourceConstructed.get().getAppController().showErrorAndFinish(
-                    R.string.cannot_connect_camera);
+            mResourceConstructed.get().getFatalErrorHandler().onGenericCameraAccessFailure();
             return null;
         }
 

@@ -83,6 +83,7 @@ import com.android.camera.util.GcamHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent.CameraProxy;
+import com.google.common.logging.eventprotos;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -372,7 +373,7 @@ public class CaptureModule extends CameraModule implements
         try {
             mCameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
         } catch (OneCameraAccessException ocae) {
-            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;
         }
     }
@@ -949,6 +950,7 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void onPictureTakingFailed() {
+        mAppController.getFatalErrorHandler().onMediaStorageFailure();
     }
 
     /**
@@ -1246,7 +1248,7 @@ public class CaptureModule extends CameraModule implements
         if (mCameraManager == null) {
             Log.e(TAG, "no available OneCameraManager, showing error dialog");
             mCameraOpenCloseLock.release();
-            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             guard.stop("No OneCameraManager");
             return;
         }
@@ -1273,7 +1275,7 @@ public class CaptureModule extends CameraModule implements
                     mCameraFacing, mAppController.getResolutionSetting(), mSettingsManager,
                     mAppController.getCameraScope(), useHdr);
         } catch (OneCameraAccessException ex) {
-            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;
         }
         mPictureSize = captureSetting.getCaptureSize();
@@ -1286,7 +1288,7 @@ public class CaptureModule extends CameraModule implements
                         Log.e(TAG, "Could not open camera.");
                         mCamera = null;
                         mCameraOpenCloseLock.release();
-                        mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+                        mAppController.getFatalErrorHandler().onCameraOpenFailure();
                     }
 
                     @Override

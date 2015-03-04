@@ -44,7 +44,7 @@ class PictureTakerImpl implements PictureTaker {
     }
 
     @Override
-    public void takePicture(OneCamera.PhotoCaptureParameters params, CaptureSession session) {
+    public void takePicture(OneCamera.PhotoCaptureParameters params, final CaptureSession session) {
         OneCamera.PictureCallback pictureCallback = params.callback;
 
         // Wrap the pictureCallback with a thread-safe adapter which guarantees
@@ -73,6 +73,9 @@ class PictureTakerImpl implements PictureTaker {
                     failed = false;
                 } catch (Exception e) {
                     failureCallback.update(null);
+                    // TODO: add finishWithCancellation and remove from
+                    // filmstrip
+                    session.finishWithFailure("content", true);
                     throw e;
                 }
             }

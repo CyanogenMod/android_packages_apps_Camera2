@@ -256,19 +256,17 @@ public class PhotoModule
                     if (uri != null) {
                         mActivity.notifyNewMedia(uri);
                     } else {
-                        onError(false);
+                        onError();
                     }
                 }
             };
 
     /**
-     * Displays Feedback dialog on non-fatal errors
-     * @param finishActivity indicates whether to finish the activity after the user submits Feedback
+     * Displays error dialog and allows use to enter feedback. Does not shut
+     * down the app.
      */
-    private void onError(boolean finishActivity) {
-        UsageStatistics.instance().storageWarning(Storage.ACCESS_FAILURE);
-        CameraUtil.showError(mActivity, R.string.media_storage_failure,
-                R.string.feedback_description_save_photo, finishActivity);
+    private void onError() {
+        mAppController.getFatalErrorHandler().onMediaStorageFailure();
     }
 
     private boolean mShouldResizeTo16x9 = false;
@@ -1265,7 +1263,7 @@ public class PhotoModule
                     mActivity.setResultEx(Activity.RESULT_OK);
                     mActivity.finish();
                 } catch (IOException ex) {
-                    onError(true);
+                    onError();
                 } finally {
                     CameraUtil.closeSilently(outputStream);
                 }
@@ -1294,12 +1292,12 @@ public class PhotoModule
             } catch (FileNotFoundException ex) {
                 Log.w(TAG, "error writing temp cropping file to: " + sTempCropFilename, ex);
                 mActivity.setResultEx(Activity.RESULT_CANCELED);
-                onError(true);
+                onError();
                 return;
             } catch (IOException ex) {
                 Log.w(TAG, "error writing temp cropping file to: " + sTempCropFilename, ex);
                 mActivity.setResultEx(Activity.RESULT_CANCELED);
-                onError(true);
+                onError();
                 return;
             } finally {
                 CameraUtil.closeSilently(tempStream);
@@ -1956,7 +1954,7 @@ public class PhotoModule
         try {
             pictureSize = mAppController.getResolutionSetting().getPictureSize(cameraFacing);
         } catch (OneCameraAccessException ex) {
-            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;
         }
 

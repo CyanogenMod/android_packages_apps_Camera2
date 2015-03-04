@@ -103,13 +103,14 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
          * failed to process.
          */
         @Override
-        public void notifyTaskFailed(final Uri uri, final CharSequence reason) {
+        public void notifyTaskFailed(final Uri uri, final CharSequence reason,
+                final boolean removeFromFilmstrip) {
             mMainHandler.execute(new Runnable() {
                 @Override
                 public void run() {
                     synchronized (mTaskListeners) {
                         for (SessionListener listener : mTaskListeners) {
-                            listener.onSessionFailed(uri, reason);
+                            listener.onSessionFailed(uri, reason, removeFromFilmstrip);
                         }
                     }
                     finalizeSession(uri);

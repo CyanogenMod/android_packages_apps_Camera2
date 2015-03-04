@@ -381,7 +381,7 @@ public interface AppController {
     public CameraServices getServices();
 
     /**
-     * @return The error handler to invoke for fatal (app-killing) errors.
+     * @return The error handler to invoke for errors.
      */
     public FatalErrorHandler getFatalErrorHandler();
 
@@ -414,14 +414,6 @@ public interface AppController {
      * Shows the given tutorial overlay.
      */
     public void showTutorial(AbstractTutorialOverlay tutorial);
-
-    /**
-     * Shows and error message on the screen and, when dismissed, exits the
-     * activity.
-     *
-     * @param messageId the ID of the message to show on screen before exiting.
-     */
-    public void showErrorAndFinish(int messageId);
 
     /**
      * Finishes the activity since the intent is completed successfully.

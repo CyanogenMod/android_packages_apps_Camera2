@@ -56,7 +56,7 @@ public interface CaptureSessionManager {
         public void onSessionDone(Uri mediaUri);
 
         /** Called when the session with the given Uri failed processing. */
-        public void onSessionFailed(Uri mediaUri, CharSequence reason);
+        public void onSessionFailed(Uri mediaUri, CharSequence reason, boolean removeFromFilmstrip);
 
         /** Called when the session with the given Uri has progressed. */
         public void onSessionProgress(Uri mediaUri, int progress);

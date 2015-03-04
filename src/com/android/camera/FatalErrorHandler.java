@@ -34,19 +34,19 @@ import com.android.camera2.R;
 public interface FatalErrorHandler {
     public static enum Reason {
         CANNOT_CONNECT_TO_CAMERA(
-                R.string.cannot_connect_camera,
+                R.string.error_cannot_connect_camera,
                 R.string.feedback_description_camera_access,
                 true),
         CAMERA_HAL_FAILED(
-                R.string.cannot_connect_camera,
+                R.string.error_cannot_connect_camera,
                 R.string.feedback_description_camera_access,
                 true),
         CAMERA_DISABLED_BY_SECURITY_POLICY(
-                R.string.camera_disabled,
+                R.string.error_camera_disabled,
                 R.string.feedback_description_camera_access,
                 true),
         MEDIA_STORAGE_FAILURE(
-                R.string.media_storage_failure,
+                R.string.error_media_storage_failure,
                 R.string.feedback_description_save_photo,
                 false);
 
@@ -118,8 +118,38 @@ public interface FatalErrorHandler {
     }
 
     /**
+     * Handles Media Storage Failures - ie. images aren't being saved to disk.
+     */
+    public void onMediaStorageFailure();
+
+    /**
+     * Handles error where the camera cannot be opened.
+     */
+    public void onCameraOpenFailure();
+
+    /**
+     * Handles error where the camera cannot be reconnected.
+     */
+    public void onCameraReconnectFailure();
+
+    /**
+     * Handles generic error where the camera is unavailable. Only use this if
+     * you are unsure what caused the error, such as a reconnection or open.
+     * failure
+     */
+    public void onGenericCameraAccessFailure();
+
+    /**
+     * Handles error where the camera is disabled due to security.
+     */
+    public void onCameraDisabledFailure();
+
+
+    /**
      * Handles a fatal error, e.g. by displaying the appropriate dialog and
      * exiting the activity.
+     * @deprecated use specific implementations above instead
      */
+    @Deprecated
     public void handleFatalError(Reason reason);
 }

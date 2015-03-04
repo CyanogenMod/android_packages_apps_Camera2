@@ -176,7 +176,7 @@ public interface CaptureSession {
      * notification of finished state, {@link #finalize()} must be called to
      * fully complete the session.
      */
-    public void finishWithFailure(CharSequence reason);
+    public void finishWithFailure(CharSequence reason, boolean removeFromFilmstrip);
 
     /**
      * All processing complete, finalize the session and remove any resources.

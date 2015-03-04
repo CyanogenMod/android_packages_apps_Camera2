@@ -159,6 +159,8 @@ public final class StateStartingPreview extends StateImpl {
                     pictureAspectRatio.toDouble(),
                     null);
             if (previewSize == null) {
+                // TODO: Try to avoid entering StateFatal by seeing if there is
+                // another way to get the correct preview size.
                 return Optional.of((State) StateFatal.from(this, mResourceConstructed));
             }
         } catch (OneCameraAccessException ex) {

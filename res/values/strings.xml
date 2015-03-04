@@ -128,13 +128,13 @@
     <string name="camera_error_title">Camera error</string>
 
     <!-- message for the dialog showing the error of camera hardware -->
-    <string name="cannot_connect_camera">Can\'t connect to the camera.</string>
+    <string name="error_cannot_connect_camera">Can\'t connect to the camera.</string>
 
     <!-- message for the dialog showing the camera is disabled because of security policies. Camera cannot be used. -->
-    <string name="camera_disabled">Camera has been disabled because of security policies.</string>
+    <string name="error_camera_disabled">Camera has been disabled because of security policies.</string>
 
     <!-- message for the dialog showing that the user's photo could not be saved [CHAR LIMIT=NONE] -->
-    <string name="media_storage_failure">There was a problem saving your photo or video.</string>
+    <string name="error_media_storage_failure">There was a problem saving your photo or video.</string>
 
     <!-- Reason used for session failure which is visible in UI [CHAR LIMIT=NONE] -->
     <string name="reason_storage_failure">Photo storage failure.</string>

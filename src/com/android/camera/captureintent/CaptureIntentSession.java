@@ -166,7 +166,7 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public void finishWithFailure(CharSequence reason) {
+    public void finishWithFailure(CharSequence reason, boolean removeFromFilmstrip) {
         throw new RuntimeException("Not supported.");
     }
 

@@ -241,14 +241,13 @@ public class CaptureSessionImpl implements CaptureSession {
         try {
             mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
                     orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
+            mSessionNotifier.notifyTaskDone(mUri);
         } catch (IOException e) {
             Log.e(TAG, "IOException", e);
             // TODO: Replace with a sensisble description
             // Placeholder string R.string.reason_storage_failure
-            finishWithFailure("content");
+            finishWithFailure("content", true);
         }
-
-        mSessionNotifier.notifyTaskDone(mUri);
     }
 
     @Override
@@ -340,14 +339,14 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public void finishWithFailure(CharSequence reason) {
+    public void finishWithFailure(CharSequence reason, boolean removeFromFilmstrip) {
         if (mPlaceHolderSession == null) {
             throw new IllegalStateException(
                     "Cannot call finish without calling startSession first.");
         }
         mProgressMessage = reason;
         mSessionManager.putErrorMessage(mUri, reason);
-        mSessionNotifier.notifyTaskFailed(mUri, reason);
+        mSessionNotifier.notifyTaskFailed(mUri, reason, removeFromFilmstrip);
     }
 
     @Override

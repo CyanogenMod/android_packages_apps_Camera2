@@ -240,6 +240,7 @@ public class CameraActivity extends QuickActivity
     private ViewGroup mUndoDeletionBar;
     private boolean mIsUndoingDeletion = false;
     private boolean mIsActivityRunning = false;
+    private FatalErrorHandler mFatalErrorHandler;
 
     private final Uri[] mNfcPushUris = new Uri[1];
 
@@ -527,35 +528,26 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public void onCameraDisabled(int cameraId) {
-        UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.SECURITY, null,
-                UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera disabled: " + cameraId);
-        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
+        mFatalErrorHandler.onCameraDisabledFailure();
     }
 
     @Override
     public void onDeviceOpenFailure(int cameraId, String info) {
-        UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, info,
-                UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera open failure: " + info);
-        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
+        mFatalErrorHandler.onCameraOpenFailure();
     }
 
     @Override
     public void onDeviceOpenedAlready(int cameraId, String info) {
         Log.w(TAG, "Camera open already: " + cameraId + "," + info);
-        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
+        mFatalErrorHandler.onGenericCameraAccessFailure();
     }
 
     @Override
     public void onReconnectionFailure(CameraAgent mgr, String info) {
-        UsageStatistics.instance().cameraFailure(
-                eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null,
-                UsageStatistics.NONE, UsageStatistics.NONE);
         Log.w(TAG, "Camera reconnection failure:" + info);
-        CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
+        mFatalErrorHandler.onCameraReconnectFailure();
     }
 
     private static class MainHandler extends Handler {
@@ -966,7 +958,7 @@ public class CameraActivity extends QuickActivity
                 }
 
                 @Override
-                public void onSessionFailed(Uri uri, CharSequence reason) {
+                public void onSessionFailed(Uri uri, CharSequence reason, boolean removeFromFilmstrip) {
                     Log.v(TAG, "onSessionFailed:" + uri);
 
                     int failedIndex = mDataAdapter.findByContentUri(uri);
@@ -975,15 +967,12 @@ public class CameraActivity extends QuickActivity
                     if (currentIndex == failedIndex) {
                         updateSessionProgress(0);
                         showProcessError(reason);
+                        mDataAdapter.refresh(uri);
                     }
-                    if (reason.equals("content")) {
-                        UsageStatistics.instance().storageWarning(Storage.ACCESS_FAILURE);
-                        CameraUtil.showError(CameraActivity.this, R.string.media_storage_failure,
-                                R.string.feedback_description_save_photo, false);
+                    if (removeFromFilmstrip) {
+                        mFatalErrorHandler.onMediaStorageFailure();
+                        mDataAdapter.removeAt(failedIndex);
                     }
-
-                    // HERE
-                    mDataAdapter.refresh(uri);
                 }
 
                 @Override
@@ -1396,8 +1385,7 @@ public class CameraActivity extends QuickActivity
                         Log.e(TAG, "Fatal error during onPause, call Activity.finish()");
                         finish();
                     } else {
-                        CameraUtil.showError(CameraActivity.this, R.string.camera_disabled,
-                                R.string.feedback_description_camera_access, true);
+                        mFatalErrorHandler.handleFatalError(FatalErrorHandler.Reason.CANNOT_CONNECT_TO_CAMERA);
                     }
                 }
             };
@@ -1420,6 +1408,7 @@ public class CameraActivity extends QuickActivity
         mSoundPlayer = new SoundPlayer(mAppContext);
         mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver(),
                 getServices().getMemoryManager());
+        mFatalErrorHandler = new FatalErrorHandlerImpl(this);
 
         profile.mark();
         if (!Glide.isSetup()) {
@@ -1451,10 +1440,9 @@ public class CameraActivity extends QuickActivity
             mCameraManager = OneCameraManager.get(
                     mFeatureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
         } catch (OneCameraException e) {
-            // Log error and continue. Modules requiring OneCamera should check
-            // and handle if null by showing error dialog or other treatment.
+            // Log error and continue start process while showing error dialog..
             Log.e(TAG, "Creating camera manager failed.", e);
-            CameraUtil.showError(this, R.string.camera_disabled, R.string.feedback_description_camera_access, true);
+            mFatalErrorHandler.onGenericCameraAccessFailure();
         }
         profile.mark("OneCameraManager.get");
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
@@ -1679,8 +1667,7 @@ public class CameraActivity extends QuickActivity
 
             @Override
             public void onCameraAccessException() {
-                CameraUtil.showError(CameraActivity.this, R.string.camera_disabled,
-                        R.string.feedback_description_camera_access, true);
+                mFatalErrorHandler.onGenericCameraAccessFailure();
             }
         });
         profile.stop();
@@ -2409,7 +2396,7 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public FatalErrorHandler getFatalErrorHandler() {
-        return new FatalErrorHandlerImpl(this);
+        return mFatalErrorHandler;
     }
 
     public List<String> getSupportedModeNames() {
@@ -2696,11 +2683,6 @@ public class CameraActivity extends QuickActivity
     @Override
     public void showTutorial(AbstractTutorialOverlay tutorial) {
         mCameraAppUI.showTutorial(tutorial, getLayoutInflater());
-    }
-
-    @Override
-    public void showErrorAndFinish(int messageId) {
-        CameraUtil.showError(this, messageId, R.string.feedback_description_camera_access, true);
     }
 
     @Override

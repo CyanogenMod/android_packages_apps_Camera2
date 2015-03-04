@@ -31,7 +31,8 @@ public interface SessionNotifier {
     public void notifyTaskDone(final Uri uri);
 
     /** A task has failed to process. */
-    public void notifyTaskFailed(final Uri uri, final CharSequence reason);
+    public void notifyTaskFailed(final Uri uri, final CharSequence reason,
+            boolean removeFromFilmstrip);
 
     /** A task has progressed. */
     public void notifyTaskProgress(final Uri uri, final int progressPercent);

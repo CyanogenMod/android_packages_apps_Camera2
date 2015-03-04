@@ -258,7 +258,8 @@ public class StateReviewingPicture extends StateImpl {
                 }
 
                 @Override
-                public void onSessionFailed(Uri sessionUri, CharSequence reason) {
+                public void onSessionFailed(Uri sessionUri, CharSequence reason,
+                        boolean removeFromFilmstrip) {
                 }
 
                 @Override
