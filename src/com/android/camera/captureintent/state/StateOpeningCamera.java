@@ -21,9 +21,14 @@ import com.google.common.base.Optional;
 import com.android.camera.SoundPlayer;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.burst.BurstFacadeFactory;
-import com.android.camera.captureintent.event.Event;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
+import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnOpenCameraFailed;
 import com.android.camera.captureintent.event.EventOnOpenCameraSucceeded;
+import com.android.camera.captureintent.event.EventPause;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
@@ -36,7 +41,7 @@ import com.android.camera.util.Size;
 /**
  * Represents a state that the module is waiting for a camera to be opened.
  */
-public final class StateOpeningCamera extends State {
+public final class StateOpeningCamera extends StateImpl {
     private static final Log.Tag TAG = new Log.Tag("StateOpeningCamera");
 
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
@@ -99,7 +104,7 @@ public final class StateOpeningCamera extends State {
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics) {
-        super(ID.OpeningCamera, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
@@ -107,6 +112,57 @@ public final class StateOpeningCamera extends State {
         mCameraFacing = cameraFacing;
         mCameraCharacteristics = cameraCharacteristics;
         mIsPaused = false;
+        registerEventHandlers();
+    }
+
+    private void registerEventHandlers() {
+        /** Handles EventPause. */
+        EventHandler<EventPause> pauseHandler = new EventHandler<EventPause>() {
+            @Override
+            public Optional<State> processEvent(EventPause event) {
+                mIsPaused = true;
+                return NO_CHANGE;
+            }
+        };
+        setEventHandler(EventPause.class, pauseHandler);
+
+        /** Handles EventOnOpenCameraSucceeded. */
+        EventHandler<EventOnOpenCameraSucceeded> onOpenCameraSucceededHandler =
+                new EventHandler<EventOnOpenCameraSucceeded>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnOpenCameraSucceeded event) {
+                        final OneCamera camera = event.getCamera();
+                        if (mIsPaused) {
+                            // Just close the camera and finish.
+                            camera.close();
+                            return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                                    StateOpeningCamera.this,
+                                    mResourceConstructed,
+                                    mResourceSurfaceTexture));
+                        }
+                        return Optional.of((State) StateStartingPreview.from(
+                                StateOpeningCamera.this,
+                                mResourceConstructed,
+                                mResourceSurfaceTexture,
+                                camera,
+                                mCameraFacing,
+                                mCameraCharacteristics,
+                                mPictureSize));
+                    }
+                };
+        setEventHandler(EventOnOpenCameraSucceeded.class, onOpenCameraSucceededHandler);
+
+        /** Handles EventOnOpenCameraFailed. */
+        EventHandler<EventOnOpenCameraFailed> onOpenCameraFailedHandler =
+                new EventHandler<EventOnOpenCameraFailed>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnOpenCameraFailed event) {
+                        Log.e(TAG, "processOnCameraOpenFailure");
+                        return Optional.of((State) StateFatal.from(
+                                StateOpeningCamera.this, mResourceConstructed));
+                    }
+                };
+        setEventHandler(EventOnOpenCameraFailed.class, onOpenCameraFailedHandler);
     }
 
     @Override
@@ -148,30 +204,5 @@ public final class StateOpeningCamera extends State {
     public void onLeave() {
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
-    }
-
-    @Override
-    public Optional<State> processPause() {
-        mIsPaused = true;
-        return NO_CHANGE;
-    }
-
-    @Override
-    public Optional<State> processOnCameraOpened(OneCamera camera) {
-        if (mIsPaused) {
-            // Just close the camera and finish.
-            camera.close();
-            return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
-                    this, mResourceConstructed, mResourceSurfaceTexture));
-        }
-        return Optional.of((State) StateStartingPreview.from(
-                this, mResourceConstructed, mResourceSurfaceTexture, camera, mCameraFacing,
-                mCameraCharacteristics, mPictureSize));
-    }
-
-    @Override
-    public Optional<State> processOnCameraOpenFailure() {
-        Log.e(TAG, "processOnCameraOpenFailure");
-        return Optional.of((State) StateFatal.from(this, mResourceConstructed));
     }
 }

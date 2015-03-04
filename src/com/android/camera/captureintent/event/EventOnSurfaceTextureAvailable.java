@@ -16,21 +16,18 @@
 
 package com.android.camera.captureintent.event;
 
-import com.google.common.base.Optional;
-
-import com.android.camera.captureintent.state.State;
+import com.android.camera.captureintent.stateful.Event;
 
 import android.graphics.SurfaceTexture;
 
-public class EventOnSurfaceTextureAvailable extends Event {
+public class EventOnSurfaceTextureAvailable implements Event {
     private final SurfaceTexture mSurfaceTexture;
 
     public EventOnSurfaceTextureAvailable(SurfaceTexture surfaceTexture) {
         mSurfaceTexture = surfaceTexture;
     }
 
-    @Override
-    public Optional<State> apply(State state) {
-        return state.processOnSurfaceTextureAvailable(mSurfaceTexture);
+    public SurfaceTexture getSurfaceTexture() {
+        return mSurfaceTexture;
     }
 }

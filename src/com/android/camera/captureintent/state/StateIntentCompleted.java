@@ -20,13 +20,16 @@ import com.google.common.base.Optional;
 
 import com.android.camera.app.AppController;
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 
 import android.content.Intent;
 
 /**
  *
  */
-public final class StateIntentCompleted extends State {
+public final class StateIntentCompleted extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final Optional<Intent> mResultIntent;
 
@@ -49,7 +52,7 @@ public final class StateIntentCompleted extends State {
             State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             Optional<Intent> resultIntent) {
-        super(ID.IntentCompleted, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();
         mResultIntent = resultIntent;
@@ -69,5 +72,9 @@ public final class StateIntentCompleted extends State {
             }
         });
         return NO_CHANGE;
+    }
+
+    @Override
+    public void onLeave() {
     }
 }

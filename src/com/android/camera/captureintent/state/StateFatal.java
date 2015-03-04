@@ -19,22 +19,25 @@ package com.android.camera.captureintent.state;
 import com.google.common.base.Optional;
 
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera2.R;
 
 /**
  * Represents a state that app is in an unrecoverable error state. Must show an
  * error dialog and finish.
  */
-public final class StateFatal extends State {
+public final class StateFatal extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
 
     public static StateFatal from(
-            State anyState, RefCountBase<ResourceConstructed> resourceConstructed) {
-        return new StateFatal(anyState, resourceConstructed);
+            State previousState, RefCountBase<ResourceConstructed> resourceConstructed) {
+        return new StateFatal(previousState, resourceConstructed);
     }
 
     private StateFatal(State previousState, RefCountBase<ResourceConstructed> resourceConstructed) {
-        super(ID.Fatal, previousState);
+        super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();
     }

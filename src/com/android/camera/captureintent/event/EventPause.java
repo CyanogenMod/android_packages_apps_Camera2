@@ -16,13 +16,7 @@
 
 package com.android.camera.captureintent.event;
 
-import com.google.common.base.Optional;
+import com.android.camera.captureintent.stateful.Event;
 
-import com.android.camera.captureintent.state.State;
-
-public class EventPause extends Event {
-    @Override
-    public Optional<State> apply(State state) {
-        return state.processPause();
-    }
+public class EventPause implements Event {
 }

@@ -21,10 +21,20 @@ import com.google.common.base.Optional;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
-import com.android.camera.captureintent.event.Event;
+import com.android.camera.captureintent.resource.ResourceCaptureTools;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.stateful.EventHandler;
+import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
+import com.android.camera.captureintent.event.EventPause;
+import com.android.camera.captureintent.event.EventPictureCompressed;
+import com.android.camera.captureintent.event.EventPictureDecoded;
+import com.android.camera.captureintent.event.EventTapOnCancelIntentButton;
+import com.android.camera.captureintent.event.EventTapOnConfirmPhotoButton;
+import com.android.camera.captureintent.event.EventTapOnRetakePhotoButton;
+import com.android.camera.captureintent.stateful.State;
+import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.session.CaptureSessionManager;
-import com.android.camera.util.Size;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -36,7 +46,7 @@ import android.net.Uri;
  * - OnRetakeButtonClicked
  * - OnDoneButtonClicked
  */
-public class StateReviewingPicture extends State {
+public class StateReviewingPicture extends StateImpl {
     private static final Log.Tag TAG = new Log.Tag("StateReviewPic");
 
     private final RefCountBase<ResourceCaptureTools> mResourceCaptureTools;
@@ -60,17 +70,137 @@ public class StateReviewingPicture extends State {
     }
 
     private StateReviewingPicture(
-            StateReadyForCapture previousState,
+            State previousState,
             RefCountBase<ResourceCaptureTools> resourceCaptureTools,
             Bitmap pictureBitmap,
             Optional<byte[]> pictureData) {
-        super(ID.ReviewingPicture, previousState);
+        super(previousState);
         mResourceCaptureTools = resourceCaptureTools;
         mResourceCaptureTools.addRef();  // Will be balanced in onLeave().
         mPictureBitmap = pictureBitmap;
         mPictureData = pictureData;
         mIsReviewingThumbnail = !pictureData.isPresent();
         mShouldFinishWhenReceivePictureData = false;
+        registerEventHandlers();
+    }
+
+    private void registerEventHandlers() {
+        /** Handles EventPause. */
+        EventHandler<EventPause> pauseHandler = new EventHandler<EventPause>() {
+            @Override
+            public Optional<State> processEvent(EventPause event) {
+                return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                        StateReviewingPicture.this,
+                        mResourceCaptureTools.get().getResourceConstructed(),
+                        mResourceCaptureTools.get().getResourceSurfaceTexture()));
+            }
+        };
+        setEventHandler(EventPause.class, pauseHandler);
+
+        /** Handles EventOnTextureViewLayoutChanged. */
+        EventHandler<EventOnTextureViewLayoutChanged> onTextureViewLayoutChangedHandler =
+                new EventHandler<EventOnTextureViewLayoutChanged>() {
+                    @Override
+                    public Optional<State> processEvent(EventOnTextureViewLayoutChanged event) {
+                        mResourceCaptureTools.get().getResourceSurfaceTexture().get()
+                                .setPreviewLayoutSize(event.getLayoutSize());
+                        return NO_CHANGE;
+                    }
+                };
+        setEventHandler(EventOnTextureViewLayoutChanged.class, onTextureViewLayoutChangedHandler);
+
+        /** Handles EventTapOnCancelIntentButton. */
+        EventHandler<EventTapOnCancelIntentButton> tapOnCancelIntentButtonHandler =
+                new EventHandler<EventTapOnCancelIntentButton>() {
+                    @Override
+                    public Optional<State> processEvent(EventTapOnCancelIntentButton event) {
+                        return Optional.of((State) StateIntentCompleted.from(
+                                StateReviewingPicture.this,
+                                mResourceCaptureTools.get().getResourceConstructed()));
+                    }
+                };
+        setEventHandler(EventTapOnCancelIntentButton.class, tapOnCancelIntentButtonHandler);
+
+        /** Handles EventTapOnConfirmPhotoButton. */
+        EventHandler<EventTapOnConfirmPhotoButton> tapOnConfirmPhotoButtonHandler =
+                new EventHandler<EventTapOnConfirmPhotoButton>() {
+                    @Override
+                    public Optional<State> processEvent(EventTapOnConfirmPhotoButton event) {
+                        // If the compressed data is not available, need to wait until it arrives.
+                        if (!mPictureData.isPresent()) {
+                            mShouldFinishWhenReceivePictureData = true;
+                            return NO_CHANGE;
+                        }
+
+                        // If the compressed data is available, just saving the picture and finish.
+                        return Optional.of((State) StateSavingPicture.from(
+                                StateReviewingPicture.this,
+                                mResourceCaptureTools.get().getResourceConstructed(),
+                                mPictureData.get()));
+                    }
+                };
+        setEventHandler(EventTapOnConfirmPhotoButton.class, tapOnConfirmPhotoButtonHandler);
+
+        /** Handles EventTapOnRetakePhotoButton. */
+        EventHandler<EventTapOnRetakePhotoButton> tapOnRetakePhotoButtonHandler =
+                new EventHandler<EventTapOnRetakePhotoButton>() {
+                    @Override
+                    public Optional<State> processEvent(EventTapOnRetakePhotoButton event) {
+                        return Optional.of((State) StateReadyForCapture.from(
+                                StateReviewingPicture.this, mResourceCaptureTools));
+                    }
+                };
+        setEventHandler(EventTapOnRetakePhotoButton.class, tapOnRetakePhotoButtonHandler);
+
+        /** Handles EventPictureCompressed. */
+        EventHandler<EventPictureCompressed> pictureCompressedHandler =
+                new EventHandler<EventPictureCompressed>() {
+                    @Override
+                    public Optional<State> processEvent(EventPictureCompressed event) {
+                        // Users have clicked the done button, save the data and finish now.
+                        if (mShouldFinishWhenReceivePictureData) {
+                            return Optional.of((State) StateSavingPicture.from(
+                                    StateReviewingPicture.this,
+                                    mResourceCaptureTools.get().getResourceConstructed(),
+                                    event.getPictureData()));
+                        }
+
+                        if (mIsReviewingThumbnail) {
+                            final byte[] pictureData = event.getPictureData();
+                            final int pictureOrientation = event.getOrientation();
+                            ResourceConstructed resourceConstructed =
+                                    mResourceCaptureTools.get().getResourceConstructed().get();
+                            resourceConstructed.getCameraHandler().post(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            final Bitmap pictureBitmap = PictureDecoder.decode(
+                                                    pictureData,
+                                                    CaptureIntentConfig.DOWN_SAMPLE_FACTOR,
+                                                    pictureOrientation,
+                                                    false);
+                                            getStateMachine().processEvent(
+                                                    new EventPictureDecoded(pictureBitmap, pictureData));
+                                        }
+                                    });
+                        }
+                        // Wait until the picture got decoded.
+                        return NO_CHANGE;
+                    }
+                };
+        setEventHandler(EventPictureCompressed.class, pictureCompressedHandler);
+
+        /** Handles EventPictureDecoded. */
+        EventHandler<EventPictureDecoded> pictureDecodedHandler =
+                new EventHandler<EventPictureDecoded>() {
+                    @Override
+                    public Optional<State> processEvent(EventPictureDecoded event) {
+                        mPictureData = Optional.of(event.getPictureData());
+                        showPicture(event.getPictureBitmap());
+                        return NO_CHANGE;
+                    }
+                };
+        setEventHandler(EventPictureDecoded.class, pictureDecodedHandler);
     }
 
     @Override
@@ -86,88 +216,6 @@ public class StateReviewingPicture extends State {
         mResourceCaptureTools.close();
         mResourceCaptureTools.get().getCaptureSessionManager()
                 .removeSessionListener(mCaptureSessionListener);
-    }
-
-    @Override
-    public Optional<State> processPause() {
-        return Optional.of((State) StateBackground.from(
-                this, mResourceCaptureTools.get().getResourceConstructed()));
-    }
-
-    @Override
-    public final Optional<State> processOnTextureViewLayoutChanged(Size layoutSize) {
-        mResourceCaptureTools.get().getResourceSurfaceTexture().get()
-                .setPreviewLayoutSize(layoutSize);
-        return NO_CHANGE;
-    }
-
-    @Override
-    public Optional<State> processOnCancelIntentButtonClicked() {
-        return Optional.of((State) StateIntentCompleted.from(
-                this, mResourceCaptureTools.get().getResourceConstructed()));
-    }
-
-    @Override
-    public Optional<State> processOnDoneButtonClicked() {
-        // If the compressed data is not available, need to wait until it arrives.
-        if (!mPictureData.isPresent()) {
-            mShouldFinishWhenReceivePictureData = true;
-            return NO_CHANGE;
-        }
-
-        // If the compressed data is available, just saving the picture and finish.
-        return Optional.of((State) StateSavingPicture.from(
-                this, mResourceCaptureTools.get().getResourceConstructed(), mPictureData.get()));
-    }
-
-    @Override
-    public Optional<State> processOnRetakeButtonClicked() {
-        return Optional.of((State) StateReadyForCapture.from(this, mResourceCaptureTools));
-    }
-
-    @Override
-    public Optional<State> processOnPictureCompressed(
-            final byte[] pictureData, final int pictureOrientation) {
-        Log.d(TAG, "processOnPictureCompressed");
-
-        // Users have clicked the done button, save the data and finish now.
-        if (mShouldFinishWhenReceivePictureData) {
-            return Optional.of((State) StateSavingPicture.from(
-                    this, mResourceCaptureTools.get().getResourceConstructed(), pictureData));
-        }
-
-        if (mIsReviewingThumbnail) {
-            ResourceConstructed resourceConstructed =
-                    mResourceCaptureTools.get().getResourceConstructed().get();
-            resourceConstructed.getCameraHandler().post(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            final Bitmap pictureBitmap = PictureDecoder.decode(
-                                    pictureData,
-                                    CaptureIntentConfig.DOWN_SAMPLE_FACTOR,
-                                    pictureOrientation,
-                                    false);
-                            getStateMachine().processEvent(new Event() {
-                                @Override
-                                public Optional<State> apply(State state) {
-                                    return state.processOnPictureDecoded(pictureBitmap, pictureData);
-                                }
-                            });
-                        }
-                    });
-        }
-        // Wait until the picture got decoded.
-        return NO_CHANGE;
-    }
-
-    @Override
-    public Optional<State> processOnPictureDecoded(Bitmap pictureBitmap, byte[] pictureData) {
-        Log.d(TAG, "processOnPictureDecoded");
-
-        mPictureData = Optional.of(pictureData);
-        showPicture(pictureBitmap);
-        return NO_CHANGE;
     }
 
     private void showPicture(final Bitmap bitmap) {
@@ -188,14 +236,9 @@ public class StateReviewingPicture extends State {
                 }
 
                 @Override
-                public void onSessionPictureDataUpdate(
-                        final byte[] pictureData, final int orientation) {
-                    getStateMachine().processEvent(new Event() {
-                        @Override
-                        public Optional<State> apply(State state) {
-                            return state.processOnPictureCompressed(pictureData, orientation);
-                        }
-                    });
+                public void onSessionPictureDataUpdate(byte[] pictureData, int orientation) {
+                    getStateMachine().processEvent(
+                            new EventPictureCompressed(pictureData, orientation));
                 }
 
                 @Override

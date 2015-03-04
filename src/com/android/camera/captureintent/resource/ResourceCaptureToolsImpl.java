@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.camera.captureintent.state;
+package com.android.camera.captureintent.resource;
 
 import com.android.camera.SoundPlayer;
-import com.android.camera.app.LocationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.captureintent.CaptureIntentSessionFactory;
 import com.android.camera.debug.Log;
@@ -38,7 +36,7 @@ import com.android.camera2.R;
 
 import android.media.MediaActionSound;
 
-public final class ResourceCaptureTools implements SafeCloseable {
+public final class ResourceCaptureToolsImpl implements ResourceCaptureTools {
     private static final Log.Tag TAG = new Log.Tag("ResCapTools");
 
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
@@ -52,7 +50,7 @@ public final class ResourceCaptureTools implements SafeCloseable {
     private final MediaActionSound mMediaActionSound;
 
     /**
-     * Creates a reference counted {@link ResourceCaptureTools} object.
+     * Creates a reference counted {@link ResourceCaptureToolsImpl} object.
      */
     public static RefCountBase<ResourceCaptureTools> create(
             RefCountBase<ResourceConstructed> resourceConstructed,
@@ -71,14 +69,14 @@ public final class ResourceCaptureTools implements SafeCloseable {
                 focusSound,
                 resourceConstructed.get().getMainThread());
         MediaActionSound mediaActionSound = new MediaActionSound();
-        ResourceCaptureTools resourceCaptureTools = new ResourceCaptureTools(
+        ResourceCaptureTools resourceCaptureTools = new ResourceCaptureToolsImpl(
                 resourceConstructed, resourceSurfaceTexture, resourceOpenedCamera,
                 captureSessionManager, focusController, headingSensor, soundPlayer,
                 mediaActionSound);
         return new RefCountBase<>(resourceCaptureTools);
     }
 
-    private ResourceCaptureTools(
+    private ResourceCaptureToolsImpl(
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             RefCountBase<ResourceOpenedCamera> resourceOpenedCamera,
@@ -114,30 +112,37 @@ public final class ResourceCaptureTools implements SafeCloseable {
         mSoundPlayer.unloadSound(R.raw.timer_final_second);
     }
 
+    @Override
     public RefCountBase<ResourceConstructed> getResourceConstructed() {
         return mResourceConstructed;
     }
 
+    @Override
     public RefCountBase<ResourceSurfaceTexture> getResourceSurfaceTexture() {
         return mResourceSurfaceTexture;
     }
 
+    @Override
     public RefCountBase<ResourceOpenedCamera> getResourceOpenedCamera() {
         return mResourceOpenedCamera;
     }
 
+    @Override
     public CaptureSessionManager getCaptureSessionManager() {
         return mCaptureSessionManager;
     }
 
+    @Override
     public FocusController getFocusController() {
         return mFocusController;
     }
 
+    @Override
     public MediaActionSound getMediaActionSound() {
         return mMediaActionSound;
     }
 
+    @Override
     public void takePictureNow(OneCamera.PictureCallback pictureCallback) {
         // Create a new capture session.
         final long timestamp = System.currentTimeMillis();
@@ -161,6 +166,7 @@ public final class ResourceCaptureTools implements SafeCloseable {
         mResourceOpenedCamera.get().getCamera().takePicture(params, session);
     }
 
+    @Override
     public void playCountDownSound(int remainingSeconds) {
         if (remainingSeconds == 1) {
             mSoundPlayer.play(R.raw.timer_final_second, 0.6f);
@@ -169,14 +175,17 @@ public final class ResourceCaptureTools implements SafeCloseable {
         }
     }
 
+    @Override
     public MainThread getMainThread() {
         return mResourceConstructed.get().getMainThread();
     }
 
+    @Override
     public CaptureIntentModuleUI getModuleUI() {
         return mResourceConstructed.get().getModuleUI();
     }
 
+    @Override
     public OneCamera getCamera() {
         return mResourceOpenedCamera.get().getCamera();
     }
