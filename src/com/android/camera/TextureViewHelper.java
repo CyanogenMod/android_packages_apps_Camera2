@@ -270,6 +270,10 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         OrientationManager.DeviceOrientation deviceOrientation =
                 OrientationManager.DeviceOrientation.from(currentDisplayOrientation);
 
+        // This rotation code assumes that the aspect ratio of the content
+        // (not of necessarily the surface) equals the aspect ratio of view that is receiving
+        // the preview.  So, a 4:3 surface that contains 16:9 data will look correct as
+        // long as the view is also 16:9.
         switch (deviceOrientation) {
             case CLOCKWISE_90:
                 transform.setRectToRect(rotatedRect, desiredBounds, Matrix.ScaleToFit.FILL);
