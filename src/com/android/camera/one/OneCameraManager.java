@@ -16,10 +16,11 @@
 
 package com.android.camera.one;
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 
-import com.android.camera.CameraActivity;
+import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log.Tag;
@@ -27,6 +28,7 @@ import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 
@@ -44,23 +46,24 @@ public abstract class OneCameraManager {
      * Exactly one call will always be made to a single method in the provided
      * {@link OpenCallback}.
      *
-     * @param facing which camera to open. The first camera found in the given
-     *            direction will be opened.
-     * @param enableHdr if an HDR feature exists, open a camera that supports it
-     * @param captureSize the capture size. This must be one of the supported
-     *            sizes.
-     * @param callback this listener is called when the camera was opened or
-     *            when it failed to open.
+     * @param captureSetting the related settings to configure the camera for capture.
      * @param handler the handler on which callback methods are invoked.
      * @param mainThread Main thread executor
      * @param imageRotationCalculator Image rotation calculator required for
      *            Camera Factory initialization
      * @param burstController the burst facade to configure
+     * @param soundPlayer the sound player.
+     * @param openCallback this listener is called when the camera was opened or
+     *            when it failed to open.
      */
-    public abstract void open(Facing facing, boolean enableHdr, Size captureSize,
-            OpenCallback callback, Handler handler,
-            MainThread mainThread, final ImageRotationCalculator imageRotationCalculator,
-            BurstFacade burstController);
+    public abstract void open(
+            OneCameraCaptureSetting captureSetting,
+            Handler handler,
+            MainThread mainThread,
+            ImageRotationCalculator imageRotationCalculator,
+            BurstFacade burstController,
+            SoundPlayer soundPlayer,
+            OpenCallback openCallback);
 
     // TODO: Move this to OneCameraCharacteristics class.
     /**
@@ -87,9 +90,11 @@ public abstract class OneCameraManager {
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
      */
-    public static OneCameraManager get(CameraActivity activity, DisplayMetrics displayMetrics,
-            OneCameraFeatureConfig featureConfig) throws OneCameraException {
-        return create(activity, displayMetrics, featureConfig);
+    public static OneCameraManager get(
+            OneCameraFeatureConfig featureConfig,
+            Context context,
+            DisplayMetrics displayMetrics) throws OneCameraException {
+        return create(featureConfig, context, displayMetrics);
     }
 
     /**
@@ -98,13 +103,14 @@ public abstract class OneCameraManager {
      * @throws OneCameraException Thrown if an error occurred while trying to
      *             access the camera.
      */
-    private static OneCameraManager create(CameraActivity activity, DisplayMetrics displayMetrics,
-             OneCameraFeatureConfig featureConfig) throws OneCameraException {
-        Optional<OneCameraManager> manager =
-                com.android.camera.one.v2.OneCameraManagerImpl.create(activity, displayMetrics,
-                        featureConfig);
+    private static OneCameraManager create(
+            OneCameraFeatureConfig featureConfig,
+            Context context,
+            DisplayMetrics displayMetrics) throws OneCameraException {
+        Optional<OneCameraManager> manager = com.android.camera.one.v2.OneCameraManagerImpl.create(
+                        featureConfig, context, displayMetrics);
         if (!manager.isPresent()) {
-            manager = com.android.camera.one.v1.OneCameraManagerImpl.create(activity);
+            manager = com.android.camera.one.v1.OneCameraManagerImpl.create();
         }
         if (!manager.isPresent()) {
             throw new OneCameraException("No camera manager is available.");

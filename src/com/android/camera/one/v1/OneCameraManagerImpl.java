@@ -20,15 +20,18 @@ import android.hardware.Camera;
 import android.os.Handler;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 /**
@@ -46,7 +49,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
     private OneCameraCharacteristics mBackCameraCharacteristics;
     private OneCameraCharacteristics mFrontCameraCharacteristics;
 
-    public static Optional<OneCameraManager> create(CameraActivity activity) {
+    public static Optional<OneCameraManager> create() {
         int numberOfCameras;
         Camera.CameraInfo[] cameraInfos;
         try {
@@ -92,10 +95,14 @@ public class OneCameraManagerImpl extends OneCameraManager {
     }
 
     @Override
-    public void open(Facing facing, boolean enableHdr, Size pictureSize,
-            OpenCallback callback, Handler handler,
+    public void open(
+            OneCameraCaptureSetting captureSetting,
+            Handler handler,
             MainThread mainThread,
-            ImageRotationCalculator imageRotationCalculator, BurstFacade burstController) {
+            ImageRotationCalculator imageRotationCalculator,
+            BurstFacade burstController,
+            SoundPlayer soundPlayer,
+            OpenCallback openCallback) {
         throw new RuntimeException("Not implemented yet.");
     }
 

@@ -57,6 +57,7 @@ import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.v2.OneCameraManagerImpl;
@@ -1212,15 +1213,20 @@ public class CaptureModule extends CameraModule implements
         // Only enable GCam on the back camera
         boolean useHdr = mHdrPlusEnabled && mCameraFacing == Facing.BACK;
 
+        OneCameraCaptureSetting captureSetting;
         // Read the preferred picture size from the setting.
         try {
-            mPictureSize = mAppController.getResolutionSetting().getPictureSize(mCameraFacing);
+            captureSetting = OneCameraCaptureSetting.create(
+                    mCameraFacing, mAppController.getResolutionSetting(), mSettingsManager,
+                    mAppController.getModuleScope(), useHdr);
         } catch (OneCameraAccessException ex) {
             mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
             return;
         }
+        mPictureSize = captureSetting.getCaptureSize();
 
-        mCameraManager.open(mCameraFacing, useHdr, mPictureSize,
+        mCameraManager.open(captureSetting, mCameraHandler, mainThread,
+                imageRotationCalculator, mBurstController, mSoundPlayer,
                 new OpenCallback() {
                     @Override
                     public void onFailure() {
@@ -1312,7 +1318,7 @@ public class CaptureModule extends CameraModule implements
                                     }
                                 });
                         }
-                }, mCameraHandler, mainThread, imageRotationCalculator, mBurstController);
+                });
         guard.stop("mCameraManager.open()");
     }
 

@@ -16,28 +16,33 @@
 
 package com.android.camera.one.v2;
 
+import android.content.Context;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.util.DisplayMetrics;
 
 import com.android.camera.SoundPlayer;
-import com.android.camera.app.AppController;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.Size;
 
 public class OneCameraCreator {
-    public static OneCamera create(AppController context, boolean useHdr,
-            OneCameraFeatureConfig featureConfig, CameraDevice device,
-            CameraCharacteristics characteristics, Size pictureSize,
-            int maxMemoryMB, int maxImages,
-            DisplayMetrics displayMetrics, SoundPlayer soundPlayer,
-            MainThread mainThread, ImageRotationCalculator imageRotationCalculator,
-            BurstFacade burstController) {
+    public static OneCamera create(
+            CameraDevice device,
+            CameraCharacteristics characteristics,
+            OneCameraFeatureConfig featureConfig,
+            OneCameraCaptureSetting captureSetting,
+            DisplayMetrics displayMetrics,
+            Context context,
+            MainThread mainThread,
+            ImageRotationCalculator imageRotationCalculator,
+            BurstFacade burstController,
+            SoundPlayer soundPlayer) {
         // TODO: Might want to switch current camera to vendor HDR.
-        return new OneCameraImpl(device, characteristics, pictureSize);
+        return new OneCameraImpl(device, characteristics, captureSetting.getCaptureSize());
     }
 }
