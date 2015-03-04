@@ -1669,6 +1669,14 @@ public class CameraActivity extends QuickActivity
             }
 
             @Override
+            public void onFirstRunDialogCancelled() {
+                // App isn't functional until users finish first run dialog.
+                // We need to finish here since users hit back button during
+                // first run dialog (b/19593942).
+                finish();
+            }
+
+            @Override
             public void onCameraAccessException() {
                 CameraUtil.showError(CameraActivity.this, R.string.camera_disabled,
                         R.string.feedback_description_camera_access, true);
