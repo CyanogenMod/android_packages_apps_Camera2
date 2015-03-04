@@ -218,6 +218,16 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Ռեժիմների ցանկ"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Ցուցադրել կամ թաքցնել տեսաժապավենը"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Տեսաժապավեն"</string>
+    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
+    <skip />
+    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
+    <skip />
+    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
+    <skip />
+    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
+    <skip />
+    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"Միացված"</string>
     <string name="capital_off" msgid="3020696135020167263">"Անջատված"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Նվագարկել տեսանյութը"</string>

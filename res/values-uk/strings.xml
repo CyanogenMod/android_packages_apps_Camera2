@@ -67,7 +67,7 @@
     <string name="camera_error_title" msgid="6200558085072670067">"Помилка камери"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Не вдається під’єднатися до камери."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Камеру вимкнено через правила безпеки."</string>
-    <string name="media_storage_failure" msgid="1699400130652902305">"Проблема зберігання фото або відео."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"Не вдалося зберегти фото або відео."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Помилка зберігання фото."</string>
     <string name="wait" msgid="765601745709933047">"Зачекайте…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Вставте карту SD перед тим, як користуватися камерою."</string>
@@ -218,6 +218,16 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Список режимів"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Увімкнути або вимкнути діафільм"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Діафільм"</string>
+    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
+    <skip />
+    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
+    <skip />
+    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
+    <skip />
+    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
+    <skip />
+    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"УВІМК"</string>
     <string name="capital_off" msgid="3020696135020167263">"ВИМК"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Дивитися відео"</string>

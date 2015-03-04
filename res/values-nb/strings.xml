@@ -68,7 +68,7 @@
     <string name="cannot_connect_camera" msgid="4311259792784598381">"Kan ikke koble til kameraet."</string>
     <string name="camera_disabled" msgid="6963443549010040595">"Kameraet har blitt deaktivert på grunn av retningslinjer for sikkerhet."</string>
     <string name="media_storage_failure" msgid="1699400130652902305">"Det oppsto et problem under lagringen av bildet eller videoen din."</string>
-    <string name="reason_storage_failure" msgid="6818898304774654969">"Feil med bildelagring."</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"Feil under bildelagring."</string>
     <string name="wait" msgid="765601745709933047">"Vent litt …"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Sett inn et SD-kort før du bruker kameraet."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"Forbereder SD-kort …"</string>
@@ -218,6 +218,16 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Modusliste"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Vis eller skjul filmstripe"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Filmstripe"</string>
+    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
+    <skip />
+    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
+    <skip />
+    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
+    <skip />
+    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
+    <skip />
+    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"PÅ"</string>
     <string name="capital_off" msgid="3020696135020167263">"AV"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Spill av videoen"</string>

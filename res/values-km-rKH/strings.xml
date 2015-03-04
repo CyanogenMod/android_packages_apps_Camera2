@@ -67,19 +67,15 @@
     <string name="camera_error_title" msgid="6200558085072670067">"ម៉ាស៊ីន​ថត​មាន​បញ្ហា"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"មិន​អាច​តភ្ជាប់​ម៉ាស៊ីន​ថត។"</string>
     <string name="camera_disabled" msgid="6963443549010040595">"បាន​បិទ​ម៉ាស៊ីន​ថត ដោយសារ​គោលនយោបាយ​សុវត្ថិភាព។"</string>
-    <!-- no translation found for media_storage_failure (1699400130652902305) -->
-    <skip />
-    <!-- no translation found for reason_storage_failure (6818898304774654969) -->
-    <skip />
+    <string name="media_storage_failure" msgid="1699400130652902305">"មានបញ្ហាក្នុងការរក្សាទុករូបថត ឬវីដេអូរបស់អ្នក។"</string>
+    <string name="reason_storage_failure" msgid="6818898304774654969">"បរាជ័យក្នុងការផ្ទុករូបថត។"</string>
     <string name="wait" msgid="765601745709933047">"សូម​រង់ចាំ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"បញ្ចូល​កាត​អេសឌី​មុន​នឹង​ប្រើ​ម៉ាស៊ីន​ថត។"</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"កំពុង​រៀបចំ​កាត​អេសឌី..."</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"មិន​អាច​ចូល​ដំណើរការ​កាត​អេសឌី។"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"កំណត់ត្រា​​ពេល​វេលា​កន្លង​ទៅ"</string>
-    <!-- no translation found for feedback_description_camera_access (419090951070170132) -->
-    <skip />
-    <!-- no translation found for feedback_description_save_photo (8658767358989083228) -->
-    <skip />
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"កម្មវិធីនេះមិនអាចភ្ជាប់ទៅកាមេរ៉ាបានទេ"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"រូបថត ឬវីដេអូមិនបានរក្សាទុកទៅឧបករណ៍ទេ។"</string>
     <string name="capturing" msgid="5255164204641920893">"កំពុង​ចាប់​យក"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"ជ្រើស​ម៉ាស៊ីន​ថត"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"ខាង​ក្រោយ"</string>
@@ -222,6 +218,16 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"បញ្ជី​​របៀប"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"បិទ/បើក​ហ្វីល"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"ហ្វីល"</string>
+    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
+    <skip />
+    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
+    <skip />
+    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
+    <skip />
+    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
+    <skip />
+    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"បើក"</string>
     <string name="capital_off" msgid="3020696135020167263">"បិទ"</string>
     <string name="video_control_play" msgid="6895236811408921715">"ចាក់​វីដេអូ"</string>
