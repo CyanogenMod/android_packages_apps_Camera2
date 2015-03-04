@@ -39,6 +39,7 @@ public class FirstRunDialog {
 
     public interface FirstRunDialogListener {
         public void onFirstRunStateReady();
+        public void onFirstRunDialogCancelled();
         public void onCameraAccessException();
     }
 
@@ -101,10 +102,16 @@ public class FirstRunDialog {
      */
     public void dismiss() {
         if (mAspectRatioPreferenceDialog != null) {
+            // Remove the listener since we actively dismiss the dialog.
+            mAspectRatioPreferenceDialog.setOnDismissListener(null);
             mAspectRatioPreferenceDialog.dismiss();
+            mAspectRatioPreferenceDialog = null;
         }
         if (mLocationPreferenceDialog != null) {
+            // Remove the listener since we actively dismiss the dialog.
+            mLocationPreferenceDialog.setOnDismissListener(null);
             mLocationPreferenceDialog.dismiss();
+            mLocationPreferenceDialog = null;
         }
     }
 
@@ -164,10 +171,13 @@ public class FirstRunDialog {
         mAspectRatioPreferenceDialog = mAppController.createDialog();
         mAspectRatioPreferenceDialog.setContentView(dialogLayout, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        // Detect if the dialog is dismissed by back button.
         mAspectRatioPreferenceDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 mAspectRatioPreferenceDialog = null;
+                dismiss();
+                mListener.onFirstRunDialogCancelled();
             }
         });
 
@@ -202,10 +212,13 @@ public class FirstRunDialog {
         mLocationPreferenceDialog = mAppController.createDialog();
         mLocationPreferenceDialog.setContentView(dialogLayout, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        // Detect if the dialog is dismissed by back button.
         mLocationPreferenceDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 mLocationPreferenceDialog = null;
+                dismiss();
+                mListener.onFirstRunDialogCancelled();
             }
         });
 
