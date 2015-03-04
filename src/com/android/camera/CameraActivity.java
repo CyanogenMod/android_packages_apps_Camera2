@@ -1419,7 +1419,8 @@ public class CameraActivity extends QuickActivity
         mOrientationManager = new OrientationManagerImpl(this, mMainHandler);
         mSettingsManager = getServices().getSettingsManager();
         mSoundPlayer = new SoundPlayer(mAppContext);
-        mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver());
+        mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver(),
+                getServices().getMemoryManager());
 
         profile.mark();
         if (!Glide.isSetup()) {
@@ -1448,8 +1449,8 @@ public class CameraActivity extends QuickActivity
         }
         profile.mark("Glide.setup");
         try {
-            mCameraManager = OneCameraManager.get(this, ResolutionUtil.getDisplayMetrics(this),
-                    mFeatureConfig);
+            mCameraManager = OneCameraManager.get(
+                    mFeatureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
         } catch (OneCameraException e) {
             // Log error and continue. Modules requiring OneCamera should check
             // and handle if null by showing error dialog or other treatment.

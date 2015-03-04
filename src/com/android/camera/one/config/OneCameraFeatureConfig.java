@@ -80,13 +80,27 @@ public class OneCameraFeatureConfig {
     private final Function<CameraCharacteristics, CaptureSupportLevel> mCaptureModeDetector;
     /** The level of HDR+ support. */
     private final HdrPlusSupportLevel mHdrPlusSupportLevel;
+    /**
+     * The maximum amount of memory can be consumed by all opened cameras
+     * during capture and processing, in megabytes.
+     */
+    private final int mMaxMemoryMB;
+
+    /**
+     * The maximum number of images the camera should allocate in the image reader.
+     */
+    private final int mMaxAllowedImageReaderCount;
 
     OneCameraFeatureConfig(boolean useCaptureModule,
             Function<CameraCharacteristics, CaptureSupportLevel> captureModeDetector,
-            HdrPlusSupportLevel hdrPlusSupportLevel) {
+            HdrPlusSupportLevel hdrPlusSupportLevel,
+            int maxMemoryMB,
+            int maxAllowedImageReaderCount) {
         mUseCaptureModule = useCaptureModule;
         mCaptureModeDetector = captureModeDetector;
         mHdrPlusSupportLevel = hdrPlusSupportLevel;
+        mMaxMemoryMB = maxMemoryMB;
+        mMaxAllowedImageReaderCount = maxAllowedImageReaderCount;
     }
 
     /**
@@ -110,5 +124,21 @@ public class OneCameraFeatureConfig {
      */
     public HdrPlusSupportLevel getHdrPlusSupportLevel() {
         return mHdrPlusSupportLevel;
+    }
+
+    /**
+     * @return The maximum amount of memory can be consumed by all opened
+     *         cameras during capture and processing, in megabytes.
+     */
+    public int getMaxMemoryMB() {
+        return mMaxMemoryMB;
+    }
+
+    /**
+     * @return The maximum number of images the camera should allocate in the
+     *         image reader.
+     */
+    public int getMaxAllowedImageReaderCount() {
+        return mMaxAllowedImageReaderCount;
     }
 }

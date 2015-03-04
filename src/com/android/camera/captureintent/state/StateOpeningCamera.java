@@ -18,6 +18,7 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
+import com.android.camera.SoundPlayer;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.captureintent.event.Event;
@@ -26,6 +27,7 @@ import com.android.camera.captureintent.event.EventOnOpenCameraSucceeded;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
@@ -114,10 +116,15 @@ public final class StateOpeningCamera extends State {
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
         }
 
+        OneCameraCaptureSetting captureSetting;
         try {
-            /** Read the picture size from the setting. */
-            mPictureSize = mResourceConstructed.get().getResolutionSetting().getPictureSize(
-                    mCameraFacing);
+            captureSetting = OneCameraCaptureSetting.create(
+                    mCameraFacing,
+                    mResourceConstructed.get().getResolutionSetting(),
+                    mResourceConstructed.get().getAppController().getSettingsManager(),
+                    mResourceConstructed.get().getAppController().getModuleScope(),
+                    false);
+            mPictureSize = captureSetting.getCaptureSize();
         } catch (OneCameraAccessException ex) {
             Log.e(TAG, "Failed while open camera", ex);
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
@@ -125,15 +132,15 @@ public final class StateOpeningCamera extends State {
 
         final ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl.from(
                 mResourceConstructed.get().getOrientationManager(), mCameraCharacteristics);
+
         mResourceConstructed.get().getCameraManager().open(
-                mCameraFacing,
-                false,
-                mPictureSize,
-                mCameraOpenCallback,
+                captureSetting,
                 mResourceConstructed.get().getCameraHandler(),
                 mResourceConstructed.get().getMainThread(),
                 imageRotationCalculator,
-                new BurstFacadeFactory.BurstFacadeStub());
+                new BurstFacadeFactory.BurstFacadeStub(),
+                new SoundPlayer(mResourceConstructed.get().getContext()),
+                mCameraOpenCallback);
         return Optional.absent();
     }
 

@@ -19,6 +19,7 @@ package com.android.camera.one.config;
 import android.content.ContentResolver;
 import android.hardware.camera2.CameraCharacteristics;
 
+import com.android.camera.app.MemoryManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.config.OneCameraFeatureConfig.CaptureSupportLevel;
 import com.android.camera.one.config.OneCameraFeatureConfig.HdrPlusSupportLevel;
@@ -37,7 +38,8 @@ public class OneCameraFeatureConfigCreator {
     /**
      * Create the default camera feature config.
      */
-    public static OneCameraFeatureConfig createDefault(ContentResolver contentResolver) {
+    public static OneCameraFeatureConfig createDefault(ContentResolver contentResolver,
+            MemoryManager memoryManager) {
         // Enable CaptureModule on all L devices unless the device is
         // black-listed.
         boolean useCaptureModule = ApiHelper.HAS_CAMERA_2_API
@@ -49,7 +51,9 @@ public class OneCameraFeatureConfigCreator {
                 GcamHelper.determineHdrPlusSupportLevel(contentResolver, useCaptureModule);
         return new OneCameraFeatureConfig(useCaptureModule,
                 buildCaptureModuleDetector(contentResolver),
-                hdrPlusSupportLevel);
+                hdrPlusSupportLevel,
+                memoryManager.getMaxAllowedNativeMemoryAllocation(),
+                GservicesHelper.getMaxAllowedImageReaderCount(contentResolver));
     }
 
     private static Function<CameraCharacteristics, CaptureSupportLevel> buildCaptureModuleDetector(

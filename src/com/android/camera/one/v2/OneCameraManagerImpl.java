@@ -17,6 +17,7 @@
 package com.android.camera.one.v2;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
@@ -25,9 +26,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 
-import com.android.camera.CameraActivity;
 import com.android.camera.SoundPlayer;
-import com.android.camera.app.AppController;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log;
@@ -36,14 +35,13 @@ import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
-import com.android.camera.util.GservicesHelper;
-import com.android.camera.util.Size;
 
 import com.google.common.base.Optional;
 
@@ -54,16 +52,15 @@ import com.google.common.base.Optional;
 public class OneCameraManagerImpl extends OneCameraManager {
     private static final Tag TAG = new Tag("OneCameraMgrImpl2");
 
-    private final AppController mAppController;
+    private final Context mContext;
     private final OneCameraFeatureConfig mFeatureConfig;
     private final CameraManager mCameraManager;
-    private final int mMaxMemoryMB;
-    private final int mMaxImages;
     private final DisplayMetrics mDisplayMetrics;
-    private final SoundPlayer mSoundPlayer;
 
-    public static Optional<OneCameraManager> create(CameraActivity activity,
-            DisplayMetrics displayMetrics, OneCameraFeatureConfig featureConfig) {
+    public static Optional<OneCameraManager> create(
+            OneCameraFeatureConfig featureConfig,
+            Context context,
+            DisplayMetrics displayMetrics) {
         if (!ApiHelper.HAS_CAMERA_2_API) {
             return Optional.absent();
         }
@@ -74,14 +71,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
             Log.e(TAG, "camera2.CameraManager is not available.");
             return Optional.absent();
         }
-        final int maxMemoryMB = activity.getServices().getMemoryManager()
-                .getMaxAllowedNativeMemoryAllocation();
-        final SoundPlayer soundPlayer = activity.getSoundPlayer();
-        final int maxImages = GservicesHelper.
-                getMaxAllowedImageReaderCount(activity.getContentResolver());
         OneCameraManager oneCameraManager = new OneCameraManagerImpl(
-                activity, featureConfig, cameraManager, maxMemoryMB, maxImages, displayMetrics,
-                soundPlayer);
+                featureConfig, context, cameraManager, displayMetrics);
         return Optional.of(oneCameraManager);
     }
 
@@ -89,29 +80,28 @@ public class OneCameraManagerImpl extends OneCameraManager {
      * Instantiates a new {@link OneCameraManager} for Camera2 API.
      *
      * @param cameraManager the underlying Camera2 camera manager.
-     * @param maxMemoryMB maximum amount of memory opened cameras should consume
-     *            during capture and processing, in megabytes.
      */
-    public OneCameraManagerImpl(AppController appController, OneCameraFeatureConfig featureConfig,
-            CameraManager cameraManager, int maxMemoryMB, int maxImages,
-            DisplayMetrics displayMetrics, SoundPlayer soundPlayer) {
-        mAppController = appController;
+    public OneCameraManagerImpl(OneCameraFeatureConfig featureConfig,
+            Context context,
+            CameraManager cameraManager,
+            DisplayMetrics displayMetrics) {
         mFeatureConfig = featureConfig;
+        mContext = context;
         mCameraManager = cameraManager;
-        mMaxMemoryMB = maxMemoryMB;
-        mMaxImages = maxImages;
         mDisplayMetrics = displayMetrics;
-        mSoundPlayer = soundPlayer;
     }
 
     @Override
-    public void open(Facing facing, final boolean useHdr, final Size pictureSize,
-            final OpenCallback openCallback,
-            Handler handler, final MainThread mainThread,
+    public void open(
+            final OneCameraCaptureSetting captureSetting,
+            final Handler handler,
+            final MainThread mainThread,
             final ImageRotationCalculator imageRotationCalculator,
-            final BurstFacade burstController) {
+            final BurstFacade burstController,
+            final SoundPlayer soundPlayer,
+            final OpenCallback openCallback) {
         try {
-            final String cameraId = getCameraId(facing);
+            final String cameraId = getCameraId(captureSetting.getCameraFacing());
             Log.i(TAG, "Opening Camera ID " + cameraId);
             mCameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
                 // We may get multiple calls to StateCallback, but only the
@@ -158,10 +148,17 @@ public class OneCameraManagerImpl extends OneCameraManager {
                                     .getCameraCharacteristics(device.getId());
                             // TODO: Set boolean based on whether HDR+ is
                             // enabled.
-                            OneCamera oneCamera = OneCameraCreator.create(mAppController, useHdr,
-                                    mFeatureConfig, device, characteristics, pictureSize,
-                                    mMaxMemoryMB, mMaxImages, mDisplayMetrics, mSoundPlayer,
-                                    mainThread, imageRotationCalculator, burstController);
+                            OneCamera oneCamera = OneCameraCreator.create(
+                                    device,
+                                    characteristics,
+                                    mFeatureConfig,
+                                    captureSetting,
+                                    mDisplayMetrics,
+                                    mContext,
+                                    mainThread,
+                                    imageRotationCalculator,
+                                    burstController,
+                                    soundPlayer);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {
                             Log.d(TAG, "Could not get camera characteristics");
