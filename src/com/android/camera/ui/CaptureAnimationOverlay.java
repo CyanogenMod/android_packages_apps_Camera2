@@ -20,28 +20,23 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.FrameLayout;
 
 import com.android.camera.debug.Log;
-import com.android.camera.util.Gusterpolator;
-import com.android.camera2.R;
 
 /**
  * This class handles all the animations at capture time. Post capture animations
  * will be handled in a separate place.
  */
 public class CaptureAnimationOverlay extends View
-    implements PreviewStatusListener.PreviewAreaChangedListener {
+        implements PreviewStatusListener.PreviewAreaChangedListener {
     private final static Log.Tag TAG = new Log.Tag("CaptureAnimOverlay");
 
     private final static int FLASH_COLOR = Color.WHITE;
@@ -53,9 +48,8 @@ public class CaptureAnimationOverlay extends View
     private static final long SHORT_FLASH_FULL_DURATION_MS = 34;
     private static final long SHORT_FLASH_DECREASE_DURATION_MS = 100;
 
-    private RectF mPreviewArea = new RectF();
-
     private AnimatorSet mFlashAnimation;
+    private final RectF mPreviewArea = new RectF();
     private final Paint mPaint = new Paint();
     private final Interpolator mFlashAnimInterpolator;
     private final ValueAnimator.AnimatorUpdateListener mFlashAnimUpdateListener;
@@ -68,7 +62,8 @@ public class CaptureAnimationOverlay extends View
         mFlashAnimUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                setAlpha((Float) animation.getAnimatedValue());
+                float alpha = 255.0f * (Float) animation.getAnimatedValue();
+                mPaint.setAlpha((int) alpha);
                 invalidate();
             }
         };
@@ -86,7 +81,7 @@ public class CaptureAnimationOverlay extends View
 
             @Override
             public void onAnimationCancel(Animator animation) {
-
+                // End is always called after cancel.
             }
 
             @Override
@@ -136,14 +131,22 @@ public class CaptureAnimationOverlay extends View
     }
 
     @Override
+    public void onPreviewAreaChanged(RectF previewArea) {
+        mPreviewArea.set(previewArea);
+    }
+
+    @Override
     public void onDraw(Canvas canvas) {
         if (mFlashAnimation != null && mFlashAnimation.isRunning()) {
+            // mPaint alpha is animated by the animation.
             canvas.drawRect(mPreviewArea, mPaint);
+            canvas.clipRect(mPreviewArea);
         }
     }
 
     @Override
-    public void onPreviewAreaChanged(RectF previewArea) {
-        mPreviewArea.set(previewArea);
+    public boolean hasOverlappingRendering() {
+        // The internal draw method will NOT have draw calls that overlap.
+        return false;
     }
 }
