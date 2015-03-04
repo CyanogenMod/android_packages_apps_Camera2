@@ -30,7 +30,7 @@ import com.android.camera.session.CaptureSession;
  * The expected usage of BurstFacade can be described by the regular expression
  * "<code>initialize (startBurst stopBurst)* release</code>". That is there can
  * be multiple calls to
- * {@link #startBurst(CaptureSession, DeviceOrientation, Facing, int)} and
+ * {@link #startBurst(CaptureSession.CaptureSessionCreator, DeviceOrientation, Facing, int)} and
  * {@link #stopBurst()} between {@link #initialize(SurfaceTexture)} and
  * {@link #release()} calls.
  */
@@ -39,13 +39,13 @@ public interface BurstFacade {
     /**
      * Starts the burst.
      *
-     * @param captureSession the capture session to use for this burst
+     * @param captureSessionCreator can create and start empty capture sessions
      * @param deviceOrientation the orientation of the device
      * @param cameraFacing the camera facing
      * @param imageOrientationDegrees the orientation of captured image in
      *            degrees
      */
-    public void startBurst(CaptureSession captureSession,
+    public void startBurst(CaptureSession.CaptureSessionCreator captureSessionCreator,
             DeviceOrientation deviceOrientation,
             Facing cameraFacing,
             int imageOrientationDegrees);

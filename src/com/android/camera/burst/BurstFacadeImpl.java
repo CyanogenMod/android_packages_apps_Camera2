@@ -122,7 +122,7 @@ class BurstFacadeImpl implements BurstFacade {
     }
 
     @Override
-    public void startBurst(CaptureSession captureSession,
+    public void startBurst(CaptureSession.CaptureSessionCreator captureSessionCreator,
             DeviceOrientation deviceOrientation,
             Facing cameraFacing,
             int imageOrientationDegrees) {
@@ -130,6 +130,8 @@ class BurstFacadeImpl implements BurstFacade {
         if (mBurstTaker.get() != null &&
                 mBurstModuleState.compareAndSet(BurstModuleState.IDLE,
                         BurstModuleState.RUNNING)) {
+            // Only create a session if we do start a burst.
+            CaptureSession captureSession = captureSessionCreator.createAndStartEmpty();
             mActiveStackSaver = captureSession.getStackSaver();
 
             mOrientationLockController.lockOrientation();

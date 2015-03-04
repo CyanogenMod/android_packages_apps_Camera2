@@ -29,6 +29,13 @@ import com.android.camera.util.Size;
  * a photo sphere or HDR+ photo.
  */
 public interface CaptureSession {
+
+    /** Classes implementing this interface can produce a capture session. */
+    public static interface CaptureSessionCreator {
+        /** Creates and starts a new capture session. */
+        public CaptureSession createAndStartEmpty();
+    }
+
     /**
      * Classes implementing this interface can listen to progress updates of
      * this session.

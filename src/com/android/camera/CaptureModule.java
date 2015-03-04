@@ -416,8 +416,6 @@ public class CaptureModule extends CameraModule implements
     @Override
     public void onShutterButtonLongPressed() {
         try {
-            CaptureSession session = createAndStartCaptureSession();
-
             OneCameraCharacteristics cameraCharacteristics;
             cameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
             DeviceOrientation deviceOrientation = mAppController.getOrientationManager()
@@ -425,7 +423,13 @@ public class CaptureModule extends CameraModule implements
             ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
                     .from(mAppController.getOrientationManager(), cameraCharacteristics);
 
-            mBurstController.startBurst(session,
+            mBurstController.startBurst(
+                    new CaptureSession.CaptureSessionCreator() {
+                        @Override
+                        public CaptureSession createAndStartEmpty() {
+                            return createAndStartEmpty();
+                        }
+                    },
                     deviceOrientation,
                     mCamera.getDirection(),
                     imageRotationCalculator.toImageRotation().getDegrees());

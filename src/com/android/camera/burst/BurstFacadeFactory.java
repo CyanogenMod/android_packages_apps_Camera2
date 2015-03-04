@@ -40,7 +40,7 @@ public class BurstFacadeFactory {
      */
     public static class BurstFacadeStub implements BurstFacade {
         @Override
-        public void startBurst(CaptureSession captureSession,
+        public void startBurst(CaptureSession.CaptureSessionCreator captureSessionCreator,
                 DeviceOrientation deviceOrientation, Facing cameraFacing,
                 int imageOrientationDegrees) {
         }

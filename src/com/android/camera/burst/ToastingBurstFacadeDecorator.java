@@ -70,11 +70,11 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
     }
 
     @Override
-    public void startBurst(CaptureSession captureSession,
+    public void startBurst(CaptureSession.CaptureSessionCreator captureSessionCreator,
             DeviceOrientation deviceOrientation, Facing cameraFacing, int imageOrientationDegrees) {
         mToaster.showToastBurstStarted();
-        mBurstFacade.startBurst(captureSession,
-                deviceOrientation, cameraFacing, imageOrientationDegrees);
+        mBurstFacade.startBurst(captureSessionCreator, deviceOrientation, cameraFacing,
+                imageOrientationDegrees);
     }
 
     @Override
