@@ -21,50 +21,51 @@ import com.android.camera.util.Size;
 
 import android.view.Surface;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Defines an interface that any implementation of this is responsible for
  * retaining and releasing a {@link android.graphics.SurfaceTexture}.
  */
+@ParametersAreNonnullByDefault
 public interface ResourceSurfaceTexture extends SafeCloseable {
     /**
      * Creates a surface from this surface texture for preview.
      *
      * @return A {@link android.view.Surface} object.
      */
-    Surface createPreviewSurface();
+    public Surface createPreviewSurface();
 
     /**
-     * Updates the transform matrix of .
+     * Updates the transform matrix in {@link com.android.camera.TextureViewHelper}.
      */
-    void updatePreviewTransform();
+    public void updatePreviewTransform();
 
     /**
      * Obtains the chosen preview stream size.
      *
      * @return A {@link com.android.camera.util.Size} object.
      */
-    Size getPreviewSize();
+    public Size getPreviewSize();
 
     /**
      * Changes the preview stream size.
      *
      * @param previewSize The new preview stream size.
      */
-    void setPreviewSize(@Nonnull Size previewSize);
+    public void setPreviewSize(Size previewSize);
 
     /**
      * Obtains the current view layout size for the preview.
      *
      * @return A {@link com.android.camera.util.Size} object.
      */
-    Size getPreviewLayoutSize();
+    public Size getPreviewLayoutSize();
 
     /**
      * Changes the current view layout size.
      *
      * @param previewLayoutSize The new preview view layout size.
      */
-    void setPreviewLayoutSize(@Nonnull Size previewLayoutSize);
+    public void setPreviewLayoutSize(Size previewLayoutSize);
 }

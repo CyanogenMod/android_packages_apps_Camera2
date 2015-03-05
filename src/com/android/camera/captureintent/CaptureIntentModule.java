@@ -16,7 +16,6 @@
 
 package com.android.camera.captureintent;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -31,7 +30,11 @@ import com.android.camera.CameraModule;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
+import com.android.camera.async.RefCountBase;
+import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.captureintent.event.*;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceConstructedImpl;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.state.StateBackground;
 import com.android.camera.captureintent.stateful.StateMachine;
@@ -41,9 +44,7 @@ import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
-import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.CameraFacingSetting;
-import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
@@ -60,24 +61,11 @@ public class CaptureIntentModule extends CameraModule {
     /** The module UI. */
     private final CaptureIntentModuleUI mModuleUI;
 
-    /** The Android application context. */
-    private final Context mContext;
-
-    /** The camera manager. */
-    private final OneCameraManager mCameraManager;
-
-    /** The app settings manager. */
-    private final SettingsManager mSettingsManager;
+    /** The available resources after construction. */
+    private final RefCountBase<ResourceConstructed> mResourceConstructed;
 
     /** The module state machine. */
     private final StateMachine mStateMachine;
-
-    /** The setting scope namespace. */
-    private final String mSettingScopeNamespace;
-
-    /** The app controller. */
-    // TODO: Put this in the end and hope one day we can get rid of it.
-    private final AppController mAppController;
 
     public CaptureIntentModule(AppController appController, Intent intent,
             String settingScopeNamespace) {
@@ -86,22 +74,22 @@ public class CaptureIntentModule extends CameraModule {
                 appController.getCameraAppUI(),
                 appController.getModuleLayoutRoot(),
                 mUIListener);
-        mContext = appController.getAndroidContext();
-        mCameraManager = appController.getCameraManager();
-        mSettingsManager = appController.getSettingsManager();
         mStateMachine = new StateMachineImpl();
-        mSettingScopeNamespace = settingScopeNamespace;
-        mAppController = appController;
-
+        mResourceConstructed = ResourceConstructedImpl.create(
+                intent,
+                mModuleUI,
+                settingScopeNamespace,
+                MainThread.create(),
+                appController.getAndroidContext(),
+                appController.getCameraManager(),
+                appController.getLocationManager(),
+                appController.getOrientationManager(),
+                appController.getSettingsManager(),
+                new BurstFacadeFactory.BurstFacadeStub(),
+                appController,
+                appController.getFatalErrorHandler());
+        final State initialState = StateBackground.create(mStateMachine, mResourceConstructed);
         // Set the initial state.
-        final CameraFacingSetting cameraFacingSetting = new CameraFacingSetting(
-                mContext.getResources(), mSettingsManager, mSettingScopeNamespace);
-        final ResolutionSetting resolutionSetting = new ResolutionSetting(
-                mSettingsManager, mCameraManager);
-        final State initialState = StateBackground.create(
-                intent, mStateMachine, mModuleUI, MainThread.create(), mContext, mCameraManager,
-                appController.getLocationManager(), appController.getOrientationManager(),
-                cameraFacingSetting, resolutionSetting, appController);
         mStateMachine.setInitialState(initialState);
     }
 
@@ -133,31 +121,33 @@ public class CaptureIntentModule extends CameraModule {
     @Override
     public void init(
             final CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
-        mAppController.setPreviewStatusListener(mPreviewStatusListener);
+        mResourceConstructed.get().getAppController()
+                .setPreviewStatusListener(mPreviewStatusListener);
 
         // Issue cancel countdown event when the button is pressed.
         // TODO: Make this part of the official API the way shutter button events are.
-        mAppController.getCameraAppUI().setCancelShutterButtonListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mStateMachine.processEvent(new EventTapOnCancelShutterButton());
-            }
-        });
+        mResourceConstructed.get().getAppController().getCameraAppUI()
+                .setCancelShutterButtonListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mStateMachine.processEvent(new EventTapOnCancelShutterButton());
+                    }
+                });
 
     }
 
     @Override
     public void resume() {
         mModuleUI.onModuleResumed();
-        mAppController.addPreviewAreaSizeChangedListener(mModuleUI);
-        mAppController.getCameraAppUI().onChangeCamera();
+        mResourceConstructed.get().getAppController().addPreviewAreaSizeChangedListener(mModuleUI);
+        mResourceConstructed.get().getAppController().getCameraAppUI().onChangeCamera();
         mStateMachine.processEvent(new EventResume());
     }
 
     @Override
     public void pause() {
         mModuleUI.setCountdownFinishedListener(null);
-        mAppController.removePreviewAreaSizeChangedListener(mModuleUI);
+        mResourceConstructed.get().getAppController().removePreviewAreaSizeChangedListener(mModuleUI);
         mModuleUI.onModulePaused();
         mStateMachine.processEvent(new EventPause());
     }
@@ -184,21 +174,23 @@ public class CaptureIntentModule extends CameraModule {
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        final CameraFacingSetting cameraFacingSetting = new CameraFacingSetting(
-                mContext.getResources(), mSettingsManager, mSettingScopeNamespace);
+        final CameraFacingSetting cameraFacingSetting =
+                mResourceConstructed.get().getCameraFacingSetting();
         final OneCameraCharacteristics characteristics;
         try {
-            characteristics = mCameraManager.getCameraCharacteristics(
-                    cameraFacingSetting.getCameraFacing());
+            characteristics = mResourceConstructed.get().getCameraManager()
+                    .getCameraCharacteristics(cameraFacingSetting.getCameraFacing());
         } catch (OneCameraAccessException ocae) {
-            mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
+            mResourceConstructed.get().getAppController().showErrorAndFinish(
+                    R.string.cannot_connect_camera);
             return null;
         }
 
         return new HardwareSpec() {
             @Override
             public boolean isFrontCameraSupported() {
-                return mCameraManager.hasCameraFacing(OneCamera.Facing.FRONT);
+                return mResourceConstructed.get().getCameraManager()
+                        .hasCameraFacing(OneCamera.Facing.FRONT);
             }
 
             @Override
@@ -274,7 +266,8 @@ public class CaptureIntentModule extends CameraModule {
 
     @Override
     public String getPeekAccessibilityString() {
-        return mContext.getResources().getString(R.string.photo_accessibility_peek);
+        return mResourceConstructed.get().getContext().getResources()
+                .getString(R.string.photo_accessibility_peek);
     }
 
     @Override
@@ -307,7 +300,7 @@ public class CaptureIntentModule extends CameraModule {
 
         @Override
         public boolean shouldAutoAdjustTransformMatrixOnLayout() {
-            return false;
+            return CaptureIntentConfig.WORKAROUND_PREVIEW_STRETCH_BUG_NEXUS4;
         }
 
         @Override

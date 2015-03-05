@@ -16,20 +16,17 @@
 
 package com.android.camera.captureintent.state;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
 import com.android.camera.async.RefCountBase;
-import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
-import com.android.camera.captureintent.resource.ResourceSurfaceTextureImpl;
 import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureDestroyed;
 import com.android.camera.captureintent.event.EventResume;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
-
-import android.graphics.SurfaceTexture;
 
 /**
  * Represents a state that module is inactive in background but surface texture
@@ -42,18 +39,6 @@ public class StateBackgroundWithSurfaceTexture extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
 
-    /** Used to transition from Foreground on processOnSurfaceTextureAvailable. */
-    public static StateBackgroundWithSurfaceTexture from(
-            State previousState,
-            RefCountBase<ResourceConstructed> resourceConstructed,
-            SurfaceTexture surfaceTexture) {
-        return new StateBackgroundWithSurfaceTexture(
-                previousState,
-                resourceConstructed,
-                surfaceTexture,
-                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()));
-    }
-
     /**
      * Used to transition from StateOpeningCamera, StateStartingPreview and
      * StateReadyForCapture on module got paused.
@@ -64,21 +49,6 @@ public class StateBackgroundWithSurfaceTexture extends StateImpl {
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
         return new StateBackgroundWithSurfaceTexture(
                 previousState, resourceConstructed, resourceSurfaceTexture);
-    }
-
-    private StateBackgroundWithSurfaceTexture(
-            State previousState,
-            RefCountBase<ResourceConstructed> resourceConstructed,
-            SurfaceTexture surfaceTexture,
-            PreviewTransformCalculator previewTransformCalculator) {
-        super(previousState);
-        mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();     // Will be balanced in onLeave().
-        mResourceSurfaceTexture = ResourceSurfaceTextureImpl.create(
-                surfaceTexture,
-                previewTransformCalculator,
-                resourceConstructed.get().getModuleUI());
-        registerEventHandlers();
     }
 
     private StateBackgroundWithSurfaceTexture(
@@ -129,5 +99,10 @@ public class StateBackgroundWithSurfaceTexture extends StateImpl {
     public void onLeave() {
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
+    }
+
+    @VisibleForTesting
+    public RefCountBase<ResourceSurfaceTexture> getResourceSurfaceTexture() {
+        return mResourceSurfaceTexture;
     }
 }

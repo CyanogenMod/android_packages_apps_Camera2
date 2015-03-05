@@ -18,26 +18,18 @@ package com.android.camera.captureintent.state;
 
 import com.google.common.base.Optional;
 
-import com.android.camera.app.AppController;
-import com.android.camera.app.LocationManager;
-import com.android.camera.app.OrientationManager;
-import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.captureintent.CaptureIntentModuleUI;
+import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.resource.ResourceConstructed;
-import com.android.camera.captureintent.resource.ResourceConstructedImpl;
+import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
+import com.android.camera.captureintent.resource.ResourceSurfaceTextureImpl;
+import com.android.camera.captureintent.resource.ResourceSurfaceTextureNexus4Impl;
 import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
 import com.android.camera.captureintent.event.EventResume;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.captureintent.stateful.StateMachine;
-import com.android.camera.one.OneCameraManager;
-import com.android.camera.settings.CameraFacingSetting;
-import com.android.camera.settings.ResolutionSetting;
-
-import android.content.Context;
-import android.content.Intent;
 
 /**
  * Represents a state that module is inactive in background. This is also the
@@ -47,20 +39,9 @@ public final class StateBackground extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
 
     public static StateBackground create(
-            Intent intent,
             StateMachine stateMachine,
-            CaptureIntentModuleUI moduleUI,
-            MainThread mainThread,
-            Context context,
-            OneCameraManager cameraManager,
-            LocationManager locationManager,
-            OrientationManager orientationManager,
-            CameraFacingSetting cameraFacingSetting,
-            ResolutionSetting resolutionSetting,
-            AppController appController) {
-        return new StateBackground(
-                stateMachine, intent, moduleUI, mainThread, context, cameraManager, locationManager,
-                orientationManager, cameraFacingSetting, resolutionSetting, appController);
+            RefCountBase<ResourceConstructed> resourceConstructed) {
+        return new StateBackground(stateMachine, resourceConstructed);
     }
 
     public static StateBackground from(
@@ -71,21 +52,10 @@ public final class StateBackground extends StateImpl {
 
     private StateBackground(
             StateMachine stateMachine,
-            Intent intent,
-            CaptureIntentModuleUI moduleUI,
-            MainThread mainThread,
-            Context context,
-            OneCameraManager cameraManager,
-            LocationManager locationManager,
-            OrientationManager orientationManager,
-            CameraFacingSetting cameraFacingSetting,
-            ResolutionSetting resolutionSetting,
-            AppController appController) {
+            RefCountBase<ResourceConstructed> resourceConstructed) {
         super(stateMachine);
-        mResourceConstructed = ResourceConstructedImpl.create(
-                intent, moduleUI, mainThread, context, cameraManager, locationManager,
-                orientationManager, cameraFacingSetting, resolutionSetting, appController,
-                appController.getFatalErrorHandler());
+        mResourceConstructed = resourceConstructed;
+        mResourceConstructed.addRef();  // Will be balanced in onLeave().
         registerEventHandlers();
     }
 
@@ -113,10 +83,24 @@ public final class StateBackground extends StateImpl {
                 new EventHandler<EventOnSurfaceTextureAvailable>() {
                     @Override
                     public Optional<State> processEvent(EventOnSurfaceTextureAvailable event) {
-                        return Optional.of((State) StateBackgroundWithSurfaceTexture.from(
+                        RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture;
+                        if (CaptureIntentConfig.WORKAROUND_PREVIEW_STRETCH_BUG_NEXUS4) {
+                            resourceSurfaceTexture = ResourceSurfaceTextureNexus4Impl.create(
+                                    mResourceConstructed,
+                                    event.getSurfaceTexture());
+                        } else {
+                            resourceSurfaceTexture = ResourceSurfaceTextureImpl.create(
+                                    mResourceConstructed,
+                                    event.getSurfaceTexture());
+                        }
+                        State nextState = StateBackgroundWithSurfaceTexture.from(
                                 StateBackground.this,
                                 mResourceConstructed,
-                                event.getSurfaceTexture()));
+                                resourceSurfaceTexture);
+                        // Release ResourceSurfaceTexture after it was handed
+                        // over to StateBackgroundWithSurfaceTexture.
+                        resourceSurfaceTexture.close();
+                        return Optional.of(nextState);
                     }
                 };
         setEventHandler(EventOnSurfaceTextureAvailable.class, onSurfaceTextureAvailableHandler);

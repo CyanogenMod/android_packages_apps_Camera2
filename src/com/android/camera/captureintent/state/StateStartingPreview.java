@@ -52,7 +52,7 @@ public final class StateStartingPreview extends StateImpl {
     private final RefCountBase<ResourceOpenedCamera> mResourceOpenedCamera;
 
     public static StateStartingPreview from(
-            StateOpeningCamera openingCamera,
+            State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera camera,
@@ -60,7 +60,7 @@ public final class StateStartingPreview extends StateImpl {
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
         return new StateStartingPreview(
-                openingCamera,
+                previousState,
                 resourceConstructed,
                 resourceSurfaceTexture,
                 camera,

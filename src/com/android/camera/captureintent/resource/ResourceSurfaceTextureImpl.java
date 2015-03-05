@@ -18,7 +18,6 @@ package com.android.camera.captureintent.resource;
 
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
@@ -27,10 +26,13 @@ import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture {
+@ParametersAreNonnullByDefault
+public class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture {
     private static final Log.Tag TAG = new Log.Tag("ResSurfaceTexture");
+
+    private final RefCountBase<ResourceConstructed> mResourceConstructed;
 
     /** The surface texture. */
     private final SurfaceTexture mSurfaceTexture;
@@ -41,31 +43,39 @@ public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture 
     /** The preview layout size. */
     private Size mPreviewLayoutSize;
 
-    private final PreviewTransformCalculator mPreviewTransformCalculator;
+    /** The default buffer size in SurfaceTexture. */
+    private Size mSurfaceTextureDefaultBufferSize;
 
-    private final CaptureIntentModuleUI mModuleUI;
+    private final PreviewTransformCalculator mPreviewTransformCalculator;
 
     /**
      * Creates a reference counted {@link ResourceSurfaceTextureImpl} object.
      */
     public static RefCountBase<ResourceSurfaceTexture> create(
-            SurfaceTexture surfaceTexture,
-            PreviewTransformCalculator previewTransformCalculator,
-            CaptureIntentModuleUI moduleUI) {
+            RefCountBase<ResourceConstructed> resourceConstructed,
+            SurfaceTexture surfaceTexture) {
         ResourceSurfaceTexture resourceSurfaceTexture = new ResourceSurfaceTextureImpl(
-                surfaceTexture, previewTransformCalculator, moduleUI);
+                resourceConstructed,
+                surfaceTexture,
+                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()));
         return new RefCountBase<>(resourceSurfaceTexture);
     }
 
-    private ResourceSurfaceTextureImpl(
+    protected ResourceSurfaceTextureImpl(
+            RefCountBase<ResourceConstructed> resourceConstructed,
             SurfaceTexture surfaceTexture,
-            PreviewTransformCalculator previewTransformCalculator,
-            CaptureIntentModuleUI moduleUI) {
+            PreviewTransformCalculator previewTransformCalculator) {
+        mResourceConstructed = resourceConstructed;
+        mResourceConstructed.addRef();
         mSurfaceTexture = surfaceTexture;
         mPreviewTransformCalculator = previewTransformCalculator;
         mPreviewSize = new Size(0, 0);
         mPreviewLayoutSize = new Size(0, 0);
-        mModuleUI = moduleUI;
+        mSurfaceTextureDefaultBufferSize = new Size(0, 0);
+    }
+
+    public RefCountBase<ResourceConstructed> getResourceConstructed() {
+        return mResourceConstructed;
     }
 
     @Override
@@ -84,7 +94,7 @@ public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture 
     }
 
     @Override
-    public void setPreviewSize(@Nonnull Size previewSize) {
+    public void setPreviewSize(Size previewSize) {
         // Update preview transform when preview stream size is changed.
         mPreviewSize = previewSize;
 
@@ -93,7 +103,7 @@ public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture 
     }
 
     @Override
-    public void setPreviewLayoutSize(@Nonnull Size previewLayoutSize) {
+    public void setPreviewLayoutSize(Size previewLayoutSize) {
         MainThread.checkMainThread();
 
         // Update preview transform when preview layout size is changed.
@@ -101,6 +111,14 @@ public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture 
             mPreviewLayoutSize = previewLayoutSize;
             updatePreviewTransform();
         }
+    }
+
+    /**
+     * Updates the default buffer size in SurfaceTexture with the configured
+     * preview stream size.
+     */
+    protected void updateSurfaceTextureDefaultBufferSize(Size defaultBufferSize) {
+        mSurfaceTexture.setDefaultBufferSize(defaultBufferSize.width(), defaultBufferSize.height());
     }
 
     @Override
@@ -112,10 +130,11 @@ public final class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture 
         }
         Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
                 mPreviewLayoutSize, mPreviewSize);
-        mModuleUI.updatePreviewTransform(transformMatrix);
+        mResourceConstructed.get().getModuleUI().updatePreviewTransform(transformMatrix);
     }
 
     @Override
     public void close() {
+        mResourceConstructed.close();
     }
 }

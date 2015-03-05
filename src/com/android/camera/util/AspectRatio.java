@@ -30,6 +30,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public final class AspectRatio {
+    private static final AspectRatio ASPECT_RATIO_4x3 = AspectRatio.of(4, 3);
+    private static final AspectRatio ASPECT_RATIO_16x9 = AspectRatio.of(16, 9);
+
     private final int mWidth;
     private final int mHeight;
 
@@ -53,12 +56,24 @@ public final class AspectRatio {
         return of(size.width(), size.height());
     }
 
+    public static AspectRatio of4x3() {
+        return ASPECT_RATIO_4x3;
+    }
+
+    public static AspectRatio of16x9() {
+        return ASPECT_RATIO_16x9;
+    }
+
     public int getHeight() {
         return mHeight;
     }
 
     public int getWidth() {
         return mWidth;
+    }
+
+    public float toFloat() {
+        return (float) mWidth / (float) mHeight;
     }
 
     @Override

@@ -16,12 +16,10 @@
 
 package com.android.camera.captureintent.state;
 
-import com.android.camera.FatalErrorHandlerImpl;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
-import com.android.camera.SoundPlayer;
 import com.android.camera.async.RefCountBase;
-import com.android.camera.burst.BurstFacadeFactory;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
 import com.android.camera.captureintent.stateful.EventHandler;
@@ -74,30 +72,13 @@ public final class StateOpeningCamera extends StateImpl {
     };
 
     public static StateOpeningCamera from(
-            StateForegroundWithSurfaceTexture foregroundWithSurfaceTexture,
+            State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics) {
-        return new StateOpeningCamera(foregroundWithSurfaceTexture, resourceConstructed,
+        return new StateOpeningCamera(previousState, resourceConstructed,
                 resourceSurfaceTexture, cameraFacing, cameraCharacteristics);
-    }
-
-    public static StateOpeningCamera from(
-            StateReadyForCapture readyForCapture,
-            RefCountBase<ResourceConstructed> resourceConstructed,
-            RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
-        OneCamera.Facing cameraFacing =
-                resourceConstructed.get().getCameraFacingSetting().getCameraFacing();
-        OneCameraCharacteristics characteristics;
-        try {
-            characteristics =
-                    resourceConstructed.get().getCameraManager().getCameraCharacteristics(cameraFacing);
-        } catch (OneCameraAccessException ex) {
-            characteristics = null;
-        }
-        return new StateOpeningCamera(readyForCapture, resourceConstructed, resourceSurfaceTexture,
-                cameraFacing, characteristics);
     }
 
     private StateOpeningCamera(State previousState,
@@ -195,8 +176,8 @@ public final class StateOpeningCamera extends StateImpl {
                 mResourceConstructed.get().getCameraHandler(),
                 mResourceConstructed.get().getMainThread(),
                 imageRotationCalculator,
-                new BurstFacadeFactory.BurstFacadeStub(),
-                new SoundPlayer(mResourceConstructed.get().getContext()),
+                mResourceConstructed.get().getBurstFacade(),
+                mResourceConstructed.get().getSoundPlayer(),
                 mCameraOpenCallback,
                 mResourceConstructed.get().getFatalErrorHandler());
         return Optional.absent();
@@ -206,5 +187,10 @@ public final class StateOpeningCamera extends StateImpl {
     public void onLeave() {
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
+    }
+
+    @VisibleForTesting
+    public boolean isPaused() {
+        return mIsPaused;
     }
 }

@@ -16,6 +16,7 @@
 
 package com.android.camera.captureintent.state;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
 import com.android.camera.async.RefCountBase;
@@ -38,45 +39,19 @@ public final class StateForegroundWithSurfaceTexture extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
 
-    // Used to transition from Foreground on surface texture is available.
-    public static StateForegroundWithSurfaceTexture from(
-            StateForeground foreground,
-            RefCountBase<ResourceConstructed> resourceConstructed,
-            SurfaceTexture surfaceTexture) {
-        return new StateForegroundWithSurfaceTexture(
-                foreground,
-                resourceConstructed,
-                surfaceTexture,
-                new PreviewTransformCalculator(resourceConstructed.get().getOrientationManager()));
-    }
-
     // Used to transition from BackgroundWithSurfaceTexture on module is resumed.
     public static StateForegroundWithSurfaceTexture from(
-            StateBackgroundWithSurfaceTexture backgroundWithSurfaceTexture,
+            State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
         return new StateForegroundWithSurfaceTexture(
-                backgroundWithSurfaceTexture,
+                previousState,
                 resourceConstructed,
                 resourceSurfaceTexture);
     }
 
     private StateForegroundWithSurfaceTexture(
-            StateImpl previousState,
-            RefCountBase<ResourceConstructed> resourceConstructed,
-            SurfaceTexture surfaceTexture,
-            PreviewTransformCalculator previewTransformCalculator) {
-        super(previousState);
-        mResourceConstructed = resourceConstructed;
-        mResourceConstructed.addRef();     // Will be balanced in onLeave().
-        mResourceSurfaceTexture = ResourceSurfaceTextureImpl.create(
-                surfaceTexture,
-                previewTransformCalculator,
-                resourceConstructed.get().getModuleUI());
-    }
-
-    private StateForegroundWithSurfaceTexture(
-            StateImpl previousState,
+            State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture) {
         super(previousState);
@@ -106,5 +81,10 @@ public final class StateForegroundWithSurfaceTexture extends StateImpl {
     public void onLeave() {
         mResourceConstructed.close();
         mResourceSurfaceTexture.close();
+    }
+
+    @VisibleForTesting
+    public RefCountBase<ResourceSurfaceTexture> getResourceSurfaceTexture() {
+        return mResourceSurfaceTexture;
     }
 }

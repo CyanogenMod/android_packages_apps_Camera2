@@ -52,6 +52,8 @@ import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.settings.Keys;
@@ -220,18 +222,35 @@ public final class StateReadyForCapture extends StateImpl {
                 new EventHandler<EventTapOnSwitchCameraButton>() {
                     @Override
                     public Optional<State> processEvent(EventTapOnSwitchCameraButton event) {
+                        final ResourceConstructed resourceConstructed =
+                                mResourceCaptureTools.get().getResourceConstructed().get();
+
                         // Freeze the screen.
                         mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
                             @Override
                             public void run() {
-                                mResourceCaptureTools.get().getModuleUI().freezeScreenUntilPreviewReady();
+                                resourceConstructed.getModuleUI().freezeScreenUntilPreviewReady();
                             }
                         });
+
+                        OneCamera.Facing cameraFacing =
+                                resourceConstructed.getCameraFacingSetting().getCameraFacing();
+                        OneCameraCharacteristics characteristics;
+                        try {
+                            characteristics = resourceConstructed.getCameraManager()
+                                    .getCameraCharacteristics(cameraFacing);
+                        } catch (OneCameraAccessException ex) {
+                            return Optional.of((State) StateFatal.from(
+                                    StateReadyForCapture.this,
+                                    mResourceCaptureTools.get().getResourceConstructed()));
+                        }
 
                         return Optional.of((State) StateOpeningCamera.from(
                                 StateReadyForCapture.this,
                                 mResourceCaptureTools.get().getResourceConstructed(),
-                                mResourceCaptureTools.get().getResourceSurfaceTexture()));
+                                mResourceCaptureTools.get().getResourceSurfaceTexture(),
+                                cameraFacing,
+                                characteristics));
                     }
                 };
         setEventHandler(EventTapOnSwitchCameraButton.class, tapOnSwitchCameraButtonHandler);
