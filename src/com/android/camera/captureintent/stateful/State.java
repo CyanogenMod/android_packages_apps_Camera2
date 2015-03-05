@@ -18,10 +18,13 @@ package com.android.camera.captureintent.stateful;
 
 import com.google.common.base.Optional;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Defines an state interface that any implementation of the interface can be
  * operated by {@link StateMachine}.
  */
+@ParametersAreNonnullByDefault
 public interface State {
 
     public static Optional<State> NO_CHANGE = Optional.absent();
@@ -66,4 +69,11 @@ public interface State {
      */
     public <T extends Event> void setEventHandler(
             Class<T> eventClass, EventHandler<T> eventHandler);
+
+    /**
+     * Removes the handler for a specific type of event.
+     *
+     * @param eventClass The event class.
+     */
+    public <T extends Event> void removeEventHandler(Class<T> eventClass);
 }

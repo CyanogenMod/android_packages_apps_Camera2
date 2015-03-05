@@ -143,6 +143,7 @@ public final class StateReadyForCapture extends StateImpl {
                             mShouldUpdateTransformOnNextSurfaceTextureUpdate = false;
                             mResourceCaptureTools.get().getResourceSurfaceTexture().get()
                                     .updatePreviewTransform();
+                            removeEventHandler(EventOnSurfaceTextureUpdated.class);
                         }
                         return NO_CHANGE;
                     }
