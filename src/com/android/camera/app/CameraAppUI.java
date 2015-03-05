@@ -1545,8 +1545,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mSuppressCaptureIndicator || mFilmstripLayout.getVisibility() == View.VISIBLE) {
             return;
         }
-        mRoundedThumbnailView.setThumbnail(thumbnailBitmap);
-        mRoundedThumbnailView.setRotation(rotation);
+        mRoundedThumbnailView.setThumbnail(thumbnailBitmap, rotation);
     }
 
     /**

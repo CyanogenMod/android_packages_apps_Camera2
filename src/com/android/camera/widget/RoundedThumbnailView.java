@@ -424,17 +424,18 @@ public class RoundedThumbnailView extends View {
      * Updates the thumbnail image.
      *
      * @param thumbnailBitmap The thumbnail image to be shown.
+     * @param rotation The orientation of the image in degrees.
      */
-    public void setThumbnail(final Bitmap thumbnailBitmap) {
+    public void setThumbnail(final Bitmap thumbnailBitmap, final int rotation) {
         MainThread.checkMainThread();
         if (mRevealRequestWaitQueue.isEmpty()) {
             if (mActiveRevealRequest.isPresent()) {
-                mActiveRevealRequest.get().setThumbnailBitmap(thumbnailBitmap);
+                mActiveRevealRequest.get().setThumbnailBitmap(thumbnailBitmap, rotation);
             }
         } else {
             // Update the thumbnail in the latest reveal request.
             RevealRequest latestRevealRequest = mRevealRequestWaitQueue.peekLast();
-            latestRevealRequest.setThumbnailBitmap(thumbnailBitmap);
+            latestRevealRequest.setThumbnailBitmap(thumbnailBitmap, rotation);
         }
     }
 
@@ -662,10 +663,8 @@ public class RoundedThumbnailView extends View {
 
         /**
          * Used to precompute the thumbnail paint from the given source bitmap.
-         *
-         * @param srcBitmap
          */
-        private void precomputeThumbnailPaint(Bitmap srcBitmap) {
+        private void precomputeThumbnailPaint(Bitmap srcBitmap, int rotation) {
             // Lazy loading the thumbnail paint object.
             if (mThumbnailPaint == null) {
                 // Can't create a paint object until the thumbnail bitmap is available.
@@ -686,8 +685,17 @@ public class RoundedThumbnailView extends View {
                     RectF srcRect = new RectF(
                           0.0f, 0.0f, srcBitmap.getWidth(), srcBitmap.getHeight());
                     RectF dstRect = new RectF(0.0f, 0.0f, mViewSize, mViewSize);
+
                     Matrix shaderMatrix = new Matrix();
+
+                    // Scale the shader to fit the destination view size.
                     shaderMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.FILL);
+
+                    // Rotate the image around the given source rect point.
+                    shaderMatrix.preRotate(rotation,
+                          srcRect.width() / 2,
+                          srcRect.height() / 2);
+
                     shader.setLocalMatrix(shaderMatrix);
                 }
 
@@ -725,15 +733,16 @@ public class RoundedThumbnailView extends View {
          * Updates the thumbnail image.
          *
          * @param thumbnailBitmap The thumbnail image to be shown.
+         * @param rotation The orientation of the image in degrees.
          */
-        public void setThumbnailBitmap(Bitmap thumbnailBitmap) {
+        public void setThumbnailBitmap(Bitmap thumbnailBitmap, int rotation) {
             Bitmap originalBitmap = thumbnailBitmap;
             // Crop the image if it is not square.
             if (originalBitmap.getWidth() != originalBitmap.getHeight()) {
                 originalBitmap = cropCenterBitmap(originalBitmap);
             }
 
-            precomputeThumbnailPaint(originalBitmap);
+            precomputeThumbnailPaint(originalBitmap, rotation);
         }
 
         /**
