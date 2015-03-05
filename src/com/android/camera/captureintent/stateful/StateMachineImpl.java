@@ -102,9 +102,9 @@ public class StateMachineImpl implements StateMachine {
     public void processEvent(Event event) {
         mStateLock.lock();
         try {
-            Log.d(TAG, "Process event : " + event);
             EventHandler eventHandler = mState.getEventHandler(event.getClass());
             if (eventHandler != null) {
+                Log.d(TAG, "Process event : " + event);
                 Optional<State> newState = eventHandler.processEvent(event);
                 if (newState.isPresent()) {
                     jumpToState(newState.get());
