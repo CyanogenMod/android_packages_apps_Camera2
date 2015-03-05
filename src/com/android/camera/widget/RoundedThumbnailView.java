@@ -78,30 +78,24 @@ import java.util.LinkedList;
 public class RoundedThumbnailView extends View {
     private static final Log.Tag TAG = new Log.Tag("RoundedThumbnailView");
 
-    /**
-     * Configurations for the thumbnail pop-out effect.
-     */
+     // Configurations for the thumbnail pop-out effect.
     private static final long THUMBNAIL_STRETCH_DURATION_MS = 200;
     private static final long THUMBNAIL_SHRINK_DURATION_MS = 200;
     private static final float THUMBNAIL_REVEAL_CIRCLE_OPACITY_BEGIN = 0.5f;
     private static final float THUMBNAIL_REVEAL_CIRCLE_OPACITY_END = 0.0f;
-    /**
-     * Configurations for the ripple effect.
-     */
+
+    // Configurations for the ripple effect.
     private static final long RIPPLE_DURATION_MS = 200;
     private static final float RIPPLE_OPACITY_BEGIN = 0.4f;
     private static final float RIPPLE_OPACITY_END = 0.0f;
-    /**
-     * Configurations for the hit-state effect.
-     */
+
+    // Configurations for the hit-state effect.
     private static final float HIT_STATE_CIRCLE_OPACITY_HIDDEN = -1.0f;
     private static final float HIT_STATE_CIRCLE_OPACITY_BEGIN = 0.7f;
     private static final float HIT_STATE_CIRCLE_OPACITY_END = 0.0f;
     private static final long HIT_STATE_DURATION_MS = 150;
 
-    /**
-     * Defines call events.
-     */
+    /** Defines call events. */
     public interface Callback {
         public void onHitStateFinished();
     }
@@ -109,81 +103,99 @@ public class RoundedThumbnailView extends View {
     /** The registered callback. */
     private Optional<Callback> mCallback;
 
-    /**
-     * Fields for view layout.
-     */
+    // Fields for view layout.
     private float mThumbnailPadding;
     private RectF mViewRect;
 
-    /**
-     * Fields for the thumbnail pop-out effect.
-     */
-    // The animators to move the thumbnail.
+    // Fields for the thumbnail pop-out effect.
+    /** The animators to move the thumbnail. */
     private AnimatorSet mThumbnailAnimatorSet;
-    // The current diameter for the thumbnail image.
+    /** The current diameter for the thumbnail image. */
     private float mCurrentThumbnailDiameter;
-    // The current reveal circle opacity.
+    /** The current reveal circle opacity. */
     private float mCurrentRevealCircleOpacity;
-    // The duration of the stretch phase in thumbnail pop-out effect.
+    /** The duration of the stretch phase in thumbnail pop-out effect. */
     private long mThumbnailStretchDurationMs;
-    // The duration of the shrink phase in thumbnail pop-out effect.
+    /** The duration of the shrink phase in thumbnail pop-out effect. */
     private long mThumbnailShrinkDurationMs;
-    // The beginning diameter of the thumbnail for the stretch phase in thumbnail pop-out effect.
+    /**
+     * The beginning diameter of the thumbnail for the stretch phase in
+     * thumbnail pop-out effect.
+     */
     private float mThumbnailStretchDiameterBegin;
-    // The ending diameter of the thumbnail for the stretch phase in thumbnail pop-out effect.
+    /**
+     * The ending diameter of the thumbnail for the stretch phase in thumbnail
+     * pop-out effect.
+     */
     private float mThumbnailStretchDiameterEnd;
-    // The beginning diameter of the thumbnail for the shrink phase in thumbnail pop-out effect.
+    /**
+     * The beginning diameter of the thumbnail for the shrink phase in thumbnail
+     * pop-out effect.
+     */
     private float mThumbnailShrinkDiameterBegin;
-    // The ending diameter of the thumbnail for the shrink phase in thumbnail pop-out effect.
+    /**
+     * The ending diameter of the thumbnail for the shrink phase in thumbnail
+     * pop-out effect.
+     */
     private float mThumbnailShrinkDiameterEnd;
-    // Paint object for the reveal circle.
+    /** Paint object for the reveal circle. */
     private final Paint mRevealCirclePaint;
 
-    /**
-     * Fields for the ripple effect.
-     */
-    // The start delay of the ripple effect.
+    // Fields for the ripple effect.
+    /** The start delay of the ripple effect. */
     private long mRippleStartDelayMs;
-    // The duration of the ripple effect.
+    /** The duration of the ripple effect. */
     private long mRippleDurationMs;
-    // The beginning diameter of the ripple ring.
+    /** The beginning diameter of the ripple ring. */
     private float mRippleRingDiameterBegin;
-    // The ending diameter of the ripple ring.
+    /** The ending diameter of the ripple ring. */
     private float mRippleRingDiameterEnd;
-    // The beginning thickness of the ripple ring.
+    /** The beginning thickness of the ripple ring. */
     private float mRippleRingThicknessBegin;
-    // The ending thickness of the ripple ring.
+    /** The ending thickness of the ripple ring. */
     private float mRippleRingThicknessEnd;
-    // A lazily loaded animator for the ripple effect.
+    /** A lazily loaded animator for the ripple effect. */
     private ValueAnimator mRippleAnimator;
-    // The current ripple ring diameter which is updated by the ripple animator and used by
-    // onDraw().
+    /**
+     * The current ripple ring diameter which is updated by the ripple animator
+     * and used by onDraw().
+     */
     private float mCurrentRippleRingDiameter;
-    // The current ripple ring thickness which is updated by the ripple animator and used by
-    // onDraw().
+    /**
+     * The current ripple ring thickness which is updated by the ripple animator
+     * and used by onDraw().
+     */
     private float mCurrentRippleRingThickness;
-    // The current ripple ring opacity which is updated by the ripple animator and used by onDraw().
+    /**
+     * The current ripple ring opacity which is updated by the ripple animator
+     * and used by onDraw().
+     */
     private float mCurrentRippleRingOpacity;
-    // The paint used for drawing the ripple effect.
+    /** The paint used for drawing the ripple effect. */
     private final Paint mRipplePaint;
 
-    /**
-     * Fields for the hit state effect.
-     */
-    // The paint to draw hit state circle.
+    // Fields for the hit state effect.
+    /** The paint to draw hit state circle. */
     private final Paint mHitStateCirclePaint;
-    // The current hit state circle opacity (0.0 - 1.0) which is updated by the
-    // hit state animator. If -1, the hit state circle won't be drawn.
+    /**
+     * The current hit state circle opacity (0.0 - 1.0) which is updated by the
+     * hit state animator. If -1, the hit state circle won't be drawn.
+     */
     private float mCurrentHitStateCircleOpacity;
 
-    // The waiting queue for all pending reveal requests. The latest request should be in the end of
-    // the queue.
+    /**
+     * The waiting queue for all pending reveal requests. The latest request
+     * should be in the end of the queue.
+     */
     private LinkedList<RevealRequest> mRevealRequestWaitQueue = new LinkedList<>();
 
-    // The currently running reveal request.
+    /** The currently running reveal request. */
     private Optional<RevealRequest> mActiveRevealRequest;
 
-    // The latest finished reveal request. Its thumbnail will be shown until a newer one replace it.
+    /**
+     * The latest finished reveal request. Its thumbnail will be shown until a
+     * newer one replace it.
+     */
     private Optional<RevealRequest> mFinishedRevealRequest;
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
