@@ -22,6 +22,7 @@ import android.content.Intent;
 import com.android.camera.debug.Log;
 import com.android.camera.processing.imagebackend.ImageBackend;
 import com.android.camera.util.AndroidContext;
+import com.android.camera2.R;
 
 import java.util.LinkedList;
 
@@ -60,7 +61,11 @@ public class ProcessingServiceManager implements ProcessingTaskConsumer {
 
     private ProcessingServiceManager(Context context) {
         mAppContext = context;
-        mImageBackend = new ImageBackend(this);
+
+        // Read and set the round thumbnail diameter value from resources.
+        int tinyThumbnailSize = context.getResources()
+              .getDimensionPixelSize(R.dimen.rounded_thumbnail_diameter_max);
+        mImageBackend = new ImageBackend(this, tinyThumbnailSize);
     }
 
     /**
