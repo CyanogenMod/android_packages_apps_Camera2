@@ -1110,6 +1110,17 @@ public class CaptureModule extends CameraModule implements
         updatePreviewTransform(incomingWidth, incomingHeight, false);
     }
 
+    /**
+     * Returns whether it is necessary to apply device-specific fix for b/19271661
+     * on the AutoTransform Path, i.e. USE_AUTOTRANSFORM_UI_LAYOUT == true
+     *
+     * @return whether to apply workaround fix for b/19271661
+     */
+    private boolean requiresNexus4SpecificFixFor16By9Previews() {
+        return USE_AUTOTRANSFORM_UI_LAYOUT && ApiHelper.IS_NEXUS_4
+                && is16by9AspectRatio(mPictureSize);
+    }
+
     /***
      * Update the preview transform based on the new dimensions. TODO: Make work
      * with all: aspect ratios/resolutions x screens/cameras.
@@ -1123,7 +1134,7 @@ public class CaptureModule extends CameraModule implements
             // Check for an actual change:
             if (mScreenHeight == incomingHeight && mScreenWidth == incomingWidth &&
                     incomingRotation == mDisplayRotation && !forceUpdate) {
-                // return;
+                return;
             }
             // Update display rotation and dimensions
             mDisplayRotation = incomingRotation;
@@ -1144,8 +1155,15 @@ public class CaptureModule extends CameraModule implements
 
             if(USE_AUTOTRANSFORM_UI_LAYOUT) {
                 // Use PhotoUI-based AutoTransformation Interface
-                if (mPreviewBufferWidth != 0 && mPreviewBufferHeight !=0) {
-                    mAppController.updatePreviewAspectRatio(mPreviewBufferWidth/ (float) mPreviewBufferHeight);
+                if (mPreviewBufferWidth != 0 && mPreviewBufferHeight != 0) {
+                    if (requiresNexus4SpecificFixFor16By9Previews()) {
+                        // Force preview size to be 16:9, even though surface is 4:3
+                        // Surface content is assumed to be 16:9.
+                        mAppController.updatePreviewAspectRatio(16.f / 9.f);
+                    } else {
+                        mAppController.updatePreviewAspectRatio(
+                                mPreviewBufferWidth / (float) mPreviewBufferHeight);
+                    }
                 }
             } else {
                 Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
@@ -1154,6 +1172,27 @@ public class CaptureModule extends CameraModule implements
                 mAppController.updatePreviewTransform(transformMatrix);
             }
         }
+    }
+
+
+    /**
+     * Calculates whether a picture size is 16:9 ratio, regardless of its
+     * orientation.
+     *
+     * @param size the size of the picture to be considered
+     * @return true, if the picture is 16:9; false if it's invalid or size is null
+     */
+    private boolean is16by9AspectRatio(Size size) {
+        if (size == null || size.getWidth() == 0 || size.getHeight() == 0) {
+            return false;
+        }
+
+        // Normalize aspect ratio to be greater than 1.
+        final float aspectRatio = (size.getHeight() > size.getWidth())
+                ? (size.getHeight() / (float) size.getWidth())
+                : (size.getWidth() / (float) size.getHeight());
+
+        return Math.abs(aspectRatio - (16.f / 9.f)) < 0.001f;
     }
 
     /**
@@ -1169,6 +1208,16 @@ public class CaptureModule extends CameraModule implements
         Size previewBufferSize = mCamera.pickPreviewSize(mPictureSize, mContext);
         mPreviewBufferWidth = previewBufferSize.getWidth();
         mPreviewBufferHeight = previewBufferSize.getHeight();
+
+        // Workaround for N4 TextureView/HAL issues b/19271661 for 16:9 preview
+        // streams.
+        if (requiresNexus4SpecificFixFor16By9Previews()) {
+            // Override the preview selection logic to the largest N4 4:3
+            // preview size but pass in 16:9 aspect ratio in
+            // UpdatePreviewAspectRatio later.
+            mPreviewBufferWidth = 1280;
+            mPreviewBufferHeight = 960;
+        }
         updatePreviewBufferSize();
     }
 
