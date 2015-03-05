@@ -27,6 +27,7 @@ extern "C" {
 }
 
 using namespace std;
+using namespace jpegutil;
 
 template <typename T>
 void safeDelete(T& t) {
@@ -44,88 +45,104 @@ void safeDeleteArray(T& t) {
   }
 }
 
-jpegutil::Plane::RowIterator::RowIterator(const Plane* plane) : plane_(plane) {
-  // We must be able to supply up to 8 * 2 lines at a time to libjpeg.
-  // 8 = vertical size of blocks transformed with DCT.
-  // 2 = scaling factor for Y vs UV planes.
-  bufRowCount_ = 16;
-
-  // Rows must be padded to the next multiple of 16
-  // TODO OPTIMIZE Cb and Cr components only need to be padded to a multiple of
-  // 8.
-  rowPadding_ = (16 - (plane_->planeWidth_ % 16)) % 16;
-  bufRowStride_ = plane_->planeWidth_ + rowPadding_;
-
-  // Round up to the nearest multiple of 64 for cache alignment
-  bufRowStride_ = (bufRowStride_ + 63) & ~63;
-
-  // Allocate an extra 64 bytes to allow for cache alignment
-  size_t bufSize = bufRowStride_ * bufRowCount_ + 64;
-
-  // TODO OPTIMIZE if the underlying data has a pixel-stride of 1, and an image
-  // width which is a multiple of 16, we can avoid this allocation and simply
-  // return pointers into the underlying data in operator()(int) instead of
-  // copying the data.
-  buffer_ = unique_ptr<unsigned char[]>(new unsigned char[bufSize]);
-
-  // Find the start of the 64-byte aligned buffer we allocated.
-  size_t bufStart = reinterpret_cast<size_t>(&buffer_[0]);
-  size_t alignedBufStart = (bufStart + 63) & ~63;
-  alignedBuffer_ = reinterpret_cast<unsigned char*>(alignedBufStart);
-
-  bufCurRow_ = 0;
-}
-
-unsigned char* jpegutil::Plane::RowIterator::operator()(int y) {
-  unsigned char* bufCurRowPtr = alignedBuffer_ + bufRowStride_ * bufCurRow_;
-
-  unsigned char* srcPtr = &plane_->data_[y * plane_->rowStride_];
-  unsigned char* dstPtr = bufCurRowPtr;
-
-  // Use memcpy when possible.
-  if (plane_->pixelStride_ == 1) {
-    memcpy(dstPtr, srcPtr, plane_->planeWidth_);
-  } else {
-    int pixelStride = plane_->pixelStride_;
-
-    for (int i = 0; i < plane_->planeWidth_; i++) {
-      *dstPtr = *srcPtr;
-
-      srcPtr += pixelStride;
-      dstPtr++;
-    }
+jpegutil::Transform::Transform(int orig_x, int orig_y, int one_x, int one_y)
+    : orig_x_(orig_x), orig_y_(orig_y), one_x_(one_x), one_y_(one_y) {
+  if (orig_x == one_x || orig_y == one_y) {
+    // Handle the degenerate case of cropping to a 0x0 rectangle.
+    mat00_ = 0;
+    mat01_ = 0;
+    mat10_ = 0;
+    mat11_ = 0;
+    return;
   }
 
-  // Add padding to the right side by replicating the rightmost column of
-  // (actual) image values into the padding bytes.
-  memset(&bufCurRowPtr[plane_->planeWidth_],
-         bufCurRowPtr[plane_->planeWidth_ - 1], rowPadding_);
-
-  bufCurRow_++;
-  // Wrap within ring buffer.
-  bufCurRow_ %= bufRowCount_;
-
-  return bufCurRowPtr;
+  if (one_x > orig_x && one_y > orig_y) {
+    // 0-degree rotation
+    mat00_ = 1;
+    mat01_ = 0;
+    mat10_ = 0;
+    mat11_ = 1;
+    output_width_ = abs(one_x - orig_x);
+    output_height_ = abs(one_y - orig_y);
+  } else if (one_x < orig_x && one_y > orig_y) {
+    // 90-degree CCW rotation
+    mat00_ = 0;
+    mat01_ = -1;
+    mat10_ = 1;
+    mat11_ = 0;
+    output_width_ = abs(one_y - orig_y);
+    output_height_ = abs(one_x - orig_x);
+  } else if (one_x > orig_x && one_y < orig_y) {
+    // 270-degree CCW rotation
+    mat00_ = 0;
+    mat01_ = 1;
+    mat10_ = -1;
+    mat11_ = 0;
+    output_width_ = abs(one_y - orig_y);
+    output_height_ = abs(one_x - orig_x);
+  } else if (one_x < orig_x && one_y < orig_y) {
+    // 180-degree CCW rotation
+    mat00_ = -1;
+    mat01_ = 0;
+    mat10_ = 0;
+    mat11_ = -1;
+    output_width_ = abs(one_x - orig_x);
+    output_height_ = abs(one_y - orig_y);
+  }
 }
 
-jpegutil::Plane::Plane(int imgWidth, int imgHeight, int planeWidth,
-                       int planeHeight, unsigned char* data, int pixelStride,
-                       int rowStride)
-    : imgWidth_(imgWidth),
-      imgHeight_(imgHeight),
-      planeWidth_(planeWidth),
-      planeHeight_(planeHeight),
-      data_(data),
-      rowStride_(rowStride),
-      pixelStride_(pixelStride) {}
+jpegutil::Transform jpegutil::Transform::ForCropFollowedByRotation(
+    int cropLeft, int cropTop, int cropRight, int cropBottom, int rot90) {
+  // The input crop-region excludes cropRight and cropBottom, so transform the
+  // crop rect such that it defines the entire valid region of pixels
+  // inclusively.
+  cropRight -= 1;
+  cropBottom -= 1;
 
-int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
-                       const Plane& crPlane, unsigned char* outBuf,
-                       size_t outBufCapacity, std::function<void(size_t)> flush,
-                       int quality) {
-  int imgWidth = yPlane.imgWidth();
-  int imgHeight = yPlane.imgHeight();
+  int cropXLow = min(cropLeft, cropRight);
+  int cropYLow = min(cropTop, cropBottom);
+  int cropXHigh = max(cropLeft, cropRight);
+  int cropYHigh = max(cropTop, cropBottom);
+  rot90 %= 4;
+  if (rot90 == 0) {
+    return Transform(cropXLow, cropYLow, cropXHigh + 1, cropYHigh + 1);
+  } else if (rot90 == 1) {
+    return Transform(cropXHigh, cropYLow, cropXLow - 1, cropYHigh + 1);
+  } else if (rot90 == 2) {
+    return Transform(cropXHigh, cropYHigh, cropXLow - 1, cropYLow - 1);
+  } else if (rot90 == 3) {
+    return Transform(cropXLow, cropYHigh, cropXHigh + 1, cropYLow - 1);
+  }
+  // Impossible case.
+  return Transform(cropXLow, cropYLow, cropXHigh + 1, cropYHigh + 1);
+}
 
+bool jpegutil::Transform::operator==(const Transform& other) const {
+  return other.orig_x_ == orig_x_ &&  //
+         other.orig_y_ == orig_y_ &&  //
+         other.one_x_ == one_x_ &&    //
+         other.one_y_ == one_y_;
+}
+
+/**
+ * Transforms the input coordinates.  Coordinates outside the cropped region
+ * are clamped to valid values.
+ */
+void jpegutil::Transform::Map(int x, int y, int* x_out, int* y_out) const {
+  x = max(x, 0);
+  y = max(y, 0);
+  x = min(x, output_width() - 1);
+  y = min(y, output_height() - 1);
+  *x_out = x * mat00_ + y * mat01_ + orig_x_;
+  *y_out = x * mat10_ + y * mat11_ + orig_y_;
+}
+
+int jpegutil::Compress(int img_width, int img_height,
+                       jpegutil::RowIterator<16>& y_row_generator,
+                       jpegutil::RowIterator<8>& cb_row_generator,
+                       jpegutil::RowIterator<8>& cr_row_generator,
+                       unsigned char* out_buf, size_t out_buf_capacity,
+                       std::function<void(size_t)> flush, int quality) {
   // libjpeg requires the use of setjmp/longjmp to recover from errors.  Since
   // this doesn't play well with RAII, we must use pointers and manually call
   // delete. See POSIX documentation for longjmp() for details on why the
@@ -138,10 +155,6 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
   JSAMPROW* volatile yArr = nullptr;
   JSAMPROW* volatile cbArr = nullptr;
   JSAMPROW* volatile crArr = nullptr;
-
-  Plane::RowIterator* volatile yRowGenerator = nullptr;
-  Plane::RowIterator* volatile cbRowGenerator = nullptr;
-  Plane::RowIterator* volatile crRowGenerator = nullptr;
 
   JSAMPARRAY imgArr[3];
 
@@ -176,9 +189,6 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
     safeDeleteArray(yArr);
     safeDeleteArray(cbArr);
     safeDeleteArray(crArr);
-    safeDelete(yRowGenerator);
-    safeDelete(cbRowGenerator);
-    safeDelete(crRowGenerator);
 
     return -1;
   }
@@ -188,11 +198,11 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
 
   // Stores data needed by our c-style callbacks into libjpeg
   struct ClientData {
-    unsigned char* outBuf;
-    size_t outBufCapacity;
+    unsigned char* out_buf;
+    size_t out_buf_capacity;
     std::function<void(size_t)> flush;
     int totalOutputBytes;
-  } clientData{outBuf, outBufCapacity, flush, 0};
+  } clientData{out_buf, out_buf_capacity, flush, 0};
 
   cinfo.client_data = &clientData;
 
@@ -202,20 +212,20 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
   dest.init_destination = [](j_compress_ptr cinfo) {
     ClientData& cdata = *reinterpret_cast<ClientData*>(cinfo->client_data);
 
-    cinfo->dest->next_output_byte = cdata.outBuf;
-    cinfo->dest->free_in_buffer = cdata.outBufCapacity;
+    cinfo->dest->next_output_byte = cdata.out_buf;
+    cinfo->dest->free_in_buffer = cdata.out_buf_capacity;
   };
 
   dest.empty_output_buffer = [](j_compress_ptr cinfo) -> boolean {
     ClientData& cdata = *reinterpret_cast<ClientData*>(cinfo->client_data);
 
-    size_t numBytesInBuffer = cdata.outBufCapacity;
+    size_t numBytesInBuffer = cdata.out_buf_capacity;
     cdata.flush(numBytesInBuffer);
     cdata.totalOutputBytes += numBytesInBuffer;
 
     // Reset the buffer
-    cinfo->dest->next_output_byte = cdata.outBuf;
-    cinfo->dest->free_in_buffer = cdata.outBufCapacity;
+    cinfo->dest->next_output_byte = cdata.out_buf;
+    cinfo->dest->free_in_buffer = cdata.out_buf_capacity;
 
     return true;
   };
@@ -227,8 +237,8 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
   cinfo.dest = &dest;
 
   // Set jpeg parameters
-  cinfo.image_width = imgWidth;
-  cinfo.image_height = imgHeight;
+  cinfo.image_width = img_width;
+  cinfo.image_height = img_height;
   cinfo.input_components = 3;
 
   // Set defaults based on the above values
@@ -259,32 +269,17 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
   imgArr[1] = const_cast<JSAMPARRAY>(cbArr);
   imgArr[2] = const_cast<JSAMPARRAY>(crArr);
 
-  yRowGenerator = new Plane::RowIterator(&yPlane);
-  cbRowGenerator = new Plane::RowIterator(&cbPlane);
-  crRowGenerator = new Plane::RowIterator(&crPlane);
+  for (int y = 0; y < img_height; y += DCTSIZE * 2) {
+    std::array<unsigned char*, 16> yData = y_row_generator.LoadAt(y);
+    std::array<unsigned char*, 8> cbData = cb_row_generator.LoadAt(y / 2);
+    std::array<unsigned char*, 8> crData = cr_row_generator.LoadAt(y / 2);
 
-  Plane::RowIterator& yRG = *const_cast<Plane::RowIterator*>(yRowGenerator);
-  Plane::RowIterator& cbRG = *const_cast<Plane::RowIterator*>(cbRowGenerator);
-  Plane::RowIterator& crRG = *const_cast<Plane::RowIterator*>(crRowGenerator);
-
-  for (int y = 0; y < imgHeight; y += DCTSIZE * 2) {
     for (int row = 0; row < DCTSIZE * 2; row++) {
-      yArr[row] = yRG(y + row);
+      yArr[row] = yData[row];
     }
-
     for (int row = 0; row < DCTSIZE; row++) {
-      // The y-index within the subsampled chroma planes to send to libjpeg.
-      const int chY = y / 2 + row;
-
-      if (chY < imgHeight / 2) {
-        cbArr[row] = cbRG(chY);
-        crArr[row] = crRG(chY);
-      } else {
-        // When we have run out of rows in the chroma planes to compress, send
-        // the last row as padding.
-        cbArr[row] = cbRG(imgHeight / 2 - 1);
-        crArr[row] = crRG(imgHeight / 2 - 1);
-      }
+      cbArr[row] = cbData[row];
+      crArr[row] = crData[row];
     }
 
     jpeg_write_raw_data(&cinfo, imgArr, DCTSIZE * 2);
@@ -292,7 +287,7 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
 
   jpeg_finish_compress(&cinfo);
 
-  int numBytesInBuffer = cinfo.dest->next_output_byte - outBuf;
+  int numBytesInBuffer = cinfo.dest->next_output_byte - out_buf;
 
   flush(numBytesInBuffer);
 
@@ -301,9 +296,68 @@ int jpegutil::compress(const Plane& yPlane, const Plane& cbPlane,
   safeDeleteArray(yArr);
   safeDeleteArray(cbArr);
   safeDeleteArray(crArr);
-  safeDelete(yRowGenerator);
-  safeDelete(cbRowGenerator);
-  safeDelete(crRowGenerator);
+
+  jpeg_destroy_compress(&cinfo);
 
   return clientData.totalOutputBytes;
+}
+
+int jpegutil::Compress(
+    /** Input image dimensions */
+    int width, int height,
+    /** Y Plane */
+    unsigned char* yBuf, int yPStride, int yRStride,
+    /** Cb Plane */
+    unsigned char* cbBuf, int cbPStride, int cbRStride,
+    /** Cr Plane */
+    unsigned char* crBuf, int crPStride, int crRStride,
+    /** Output */
+    unsigned char* outBuf, size_t outBufCapacity,
+    /** Jpeg compression parameters */
+    int quality,
+    /** Crop */
+    int cropLeft, int cropTop, int cropRight, int cropBottom,
+    /** Rotation (multiple of 90).  For example, rot90 = 1 implies a 90 degree
+     * rotation. */
+    int rot90) {
+  int finalWidth;
+  int finalHeight;
+  finalWidth = cropRight - cropLeft;
+  finalHeight = cropBottom - cropTop;
+
+  rot90 %= 4;
+  // for 90 and 270-degree rotations, flip the final width and height
+  if (rot90 == 1) {
+    finalWidth = cropBottom - cropTop;
+    finalHeight = cropRight - cropLeft;
+  } else if (rot90 == 3) {
+    finalWidth = cropBottom - cropTop;
+    finalHeight = cropRight - cropLeft;
+  }
+
+  const Plane yP = {width, height, yBuf, yPStride, yRStride};
+  const Plane cbP = {width / 2, height / 2, cbBuf, cbPStride, cbRStride};
+  const Plane crP = {width / 2, height / 2, crBuf, crPStride, crRStride};
+
+  auto flush = [](size_t numBytes) {
+    // do nothing
+  };
+
+  // Round up to the nearest multiple of 64.
+  int y_row_length = (finalWidth + 16 + 63) & ~63;
+  int cb_row_length = (finalWidth / 2 + 16 + 63) & ~63;
+  int cr_row_length = (finalWidth / 2 + 16 + 63) & ~63;
+
+  Transform yTrans = Transform::ForCropFollowedByRotation(
+      cropLeft, cropTop, cropRight, cropBottom, rot90);
+
+  Transform chromaTrans = Transform::ForCropFollowedByRotation(
+      cropLeft / 2, cropTop / 2, cropRight / 2, cropBottom / 2, rot90);
+
+  RowIterator<16> yIter(yP, yTrans, y_row_length);
+  RowIterator<8> cbIter(cbP, chromaTrans, cb_row_length);
+  RowIterator<8> crIter(crP, chromaTrans, cr_row_length);
+
+  return Compress(finalWidth, finalHeight, yIter, cbIter, crIter, outBuf,
+                  outBufCapacity, flush, quality);
 }
