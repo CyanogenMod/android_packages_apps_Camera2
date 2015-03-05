@@ -21,6 +21,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.util.DisplayMetrics;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
@@ -41,7 +42,8 @@ public class OneCameraCreator {
             MainThread mainThread,
             ImageRotationCalculator imageRotationCalculator,
             BurstFacade burstController,
-            SoundPlayer soundPlayer) {
+            SoundPlayer soundPlayer,
+            FatalErrorHandler fatalErrorHandler) {
         // TODO: Might want to switch current camera to vendor HDR.
         return new OneCameraImpl(device, characteristics, captureSetting.getCaptureSize());
     }
