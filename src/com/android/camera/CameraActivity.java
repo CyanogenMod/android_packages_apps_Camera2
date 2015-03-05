@@ -61,7 +61,6 @@ import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
@@ -1920,7 +1919,9 @@ public class CameraActivity extends QuickActivity
                     break;
             }
         }
-        UsageStatistics.instance().foregrounded(source, currentUserInterfaceMode());
+        UsageStatistics.instance().foregrounded(source, currentUserInterfaceMode(),
+                isKeyguardSecure(), isKeyguardLocked(),
+                mStartupOnCreate, mExecutionStartNanoTime);
 
         mGalleryIntent = IntentHelper.getGalleryIntent(mAppContext);
         if (ApiHelper.isLOrHigher()) {

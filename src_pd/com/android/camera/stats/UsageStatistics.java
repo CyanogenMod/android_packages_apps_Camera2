@@ -46,7 +46,9 @@ public class UsageStatistics {
     public void mediaView(String ref, long modifiedMillis, float zoom) {
     }
 
-    public void foregrounded(int source, int mode) {
+    public void foregrounded(int source, int mode, boolean isKeyguardLocked,
+                             boolean isKeyguardSecure, boolean startupOnCreate,
+                             long controlTime) {
     }
 
     public void backgrounded() {
