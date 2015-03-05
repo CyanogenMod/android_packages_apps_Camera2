@@ -23,7 +23,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
 import android.view.Surface;
 
-import com.android.camera.CaptureModule;
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
@@ -59,7 +59,6 @@ import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
 import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import java.util.ArrayList;
@@ -100,7 +99,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             final Observable<Integer> exposureSetting,
             final Observable<Boolean> hdrSceneSetting,
-            final BurstFacade burstFacade) {
+            final BurstFacade burstFacade, FatalErrorHandler fatalErrorHandler) {
         final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(new LoggingImageReader(

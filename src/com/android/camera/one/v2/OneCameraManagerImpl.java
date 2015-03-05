@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
@@ -99,7 +100,8 @@ public class OneCameraManagerImpl extends OneCameraManager {
             final ImageRotationCalculator imageRotationCalculator,
             final BurstFacade burstController,
             final SoundPlayer soundPlayer,
-            final OpenCallback openCallback) {
+            final OpenCallback openCallback,
+            final FatalErrorHandler fatalErrorHandler) {
         try {
             final String cameraId = getCameraId(captureSetting.getCameraFacing());
             Log.i(TAG, "Opening Camera ID " + cameraId);
@@ -158,7 +160,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
                                     mainThread,
                                     imageRotationCalculator,
                                     burstController,
-                                    soundPlayer);
+                                    soundPlayer, fatalErrorHandler);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {
                             Log.d(TAG, "Could not get camera characteristics");

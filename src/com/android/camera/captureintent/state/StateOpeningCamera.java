@@ -16,6 +16,7 @@
 
 package com.android.camera.captureintent.state;
 
+import com.android.camera.FatalErrorHandlerImpl;
 import com.google.common.base.Optional;
 
 import com.android.camera.SoundPlayer;
@@ -196,7 +197,8 @@ public final class StateOpeningCamera extends StateImpl {
                 imageRotationCalculator,
                 new BurstFacadeFactory.BurstFacadeStub(),
                 new SoundPlayer(mResourceConstructed.get().getContext()),
-                mCameraOpenCallback);
+                mCameraOpenCallback,
+                mResourceConstructed.get().getFatalErrorHandler());
         return Optional.absent();
     }
 

@@ -21,6 +21,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.util.Range;
 import android.view.Surface;
 
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.MainThread;
@@ -48,8 +49,9 @@ import com.android.camera.one.v2.common.SimpleCaptureStream;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.core.ResponseListener;
 import com.android.camera.one.v2.core.ResponseListeners;
-import com.android.camera.one.v2.errorhandling.RepeatFailureDetector;
+import com.android.camera.one.v2.errorhandling.RepeatFailureHandlerComponent;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
@@ -59,7 +61,6 @@ import com.android.camera.stats.UsageStatistics;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import java.util.ArrayList;
@@ -106,11 +107,13 @@ public class ZslOneCameraFactory implements OneCameraFactory {
             final OneCameraCharacteristics characteristics,
             CaptureSupportLevel featureConfig,
             final MainThread mainThread,
-            Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
+            Size pictureSize,
+            final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             final Observable<Integer> exposureSetting,
             final Observable<Boolean> hdrSceneSetting,
-            final BurstFacade burstFacade) {
+            final BurstFacade burstFacade,
+            final FatalErrorHandler fatalErrorHandler) {
         final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(
@@ -201,22 +204,24 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         sharedImageReaderFactory.provideMetadataPool(), flashSetting);
                 BurstTaker burstTaker = new BurstTakerImpl(cameraCommandExecutor, frameServer,
                         rootBuilder, sharedImageReaderFactory.provideSharedImageReader(),
-                        burstFacade.getInputSurface(),basicCameraFactory.providePreviewStarter(),
-                        // ImageReader#acquireLatestImage() requires two images as the margin so
-                        // specify that as the maximum number of images that can be used by burst.
+                        burstFacade.getInputSurface(), basicCameraFactory.providePreviewStarter(),
+                        // ImageReader#acquireLatestImage() requires two images
+                        // as the margin so
+                        // specify that as the maximum number of images that can
+                        // be used by burst.
                         mMaxImageCount - 2);
 
                 burstFacade.setBurstTaker(burstTaker);
 
                 if (isBackCamera && ApiHelper.IS_NEXUS_5) {
                     // Workaround for bug: 19061883
-                    RepeatFailureDetector failureDetector = new RepeatFailureDetector(
-                            Loggers.tagFactory(), UsageStatistics.instance(),
-                            cameraCaptureSession, cameraCommandExecutor, basicCameraFactory
-                            .providePreviewStarter(), 10);
+                    ResponseListener failureDetector = RepeatFailureHandlerComponent.create(
+                            Loggers.tagFactory(),
+                            fatalErrorHandler, cameraCaptureSession, cameraCommandExecutor,
+                            basicCameraFactory.providePreviewStarter(),
+                            UsageStatistics.instance(), 10).provideResponseListener();
                     rootBuilder.addResponseListener(failureDetector);
                 }
-
 
                 final Observable<Integer> availableImageCount = sharedImageReaderFactory
                         .provideAvailableImageCount();

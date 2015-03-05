@@ -49,6 +49,7 @@ import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraDisabledException;
+import com.android.camera.FatalErrorHandler;
 import com.android.camera.debug.Log;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
@@ -283,7 +284,9 @@ public class CameraUtil {
     /**
      * Shows custom error dialog. Designed specifically
      * for the scenario where the camera cannot be attached.
+     * @deprecated Use {@link FatalErrorHandler} instead.
      */
+    @Deprecated
     public static void showError(final Activity activity, final int dialogMsgId, final int feedbackMsgId,
                                  final boolean finishActivity) {
         final DialogInterface.OnClickListener buttonListener =

@@ -2405,6 +2405,11 @@ public class CameraActivity extends QuickActivity
         return CameraServicesImpl.instance();
     }
 
+    @Override
+    public FatalErrorHandler getFatalErrorHandler() {
+        return new FatalErrorHandlerImpl(this);
+    }
+
     public List<String> getSupportedModeNames() {
         List<Integer> indices = mModuleManager.getSupportedModeIndexList();
         List<String> supported = new ArrayList<String>();
