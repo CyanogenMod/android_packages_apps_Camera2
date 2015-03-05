@@ -238,5 +238,9 @@
         <item name="android:textColor">@color/dialog_text_color</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">1.9sp</item>
+        <!-- In v21 Material, can handle black button with a tint property; for
+             earlier versions we must fully replace the drawable which we do
+             here with a Material-style black asset -->
+        <item name="android:button">@drawable/checkbox_material_black</item>
     </style>
 </resources>
