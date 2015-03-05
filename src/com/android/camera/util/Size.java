@@ -18,9 +18,12 @@ package com.android.camera.util;
 
 import android.annotation.TargetApi;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build.VERSION_CODES;
 import android.hardware.Camera;
 import android.text.TextUtils;
+
+import com.google.common.base.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +53,10 @@ public class Size {
         this.height = height;
     }
 
+    public static Size of(Rect rectangle) {
+        return new Size(rectangle.width(), rectangle.height());
+    }
+
     /**
      * Constructor from a source {@link android.hardware.Camera.Size}.
      *
@@ -68,6 +75,7 @@ public class Size {
     public int getWidth() {
         return width;
     }
+
     public int getHeight() {
         return height;
     }
@@ -75,6 +83,7 @@ public class Size {
     public int width() {
         return width;
     }
+
     public int height() {
         return height;
     }
@@ -82,6 +91,36 @@ public class Size {
     @Override
     public String toString() {
         return width + "x" + height;
+    }
+
+    public Size transpose() {
+        return new Size(height, width);
+    }
+
+    /**
+     * @return The landscape version of this size.
+     */
+    public Size asLandscape() {
+        if (isLandscape()) {
+            return this;
+        } else {
+            return transpose();
+        }
+    }
+
+    /**
+     * @return The portrait version of this size.
+     */
+    public Size asPortrait() {
+        if (isPortrait()) {
+            return this;
+        } else {
+            return transpose();
+        }
+    }
+
+    public long area() {
+        return width * height;
     }
 
     @Override
@@ -92,6 +131,11 @@ public class Size {
 
         Size otherSize = (Size) other;
         return otherSize.width == this.width && otherSize.height == this.height;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(width, height);
     }
 
     public com.android.ex.camera2.portability.Size toPortabilitySize() {
@@ -160,5 +204,21 @@ public class Size {
             list.add(new Size(cameraSize));
         }
         return list;
+    }
+
+    /**
+     * @return True if this size is in landscape orientation. Square
+     *         sizes are both portrait *and* landscape.
+     */
+    private boolean isLandscape() {
+        return width >= height;
+    }
+
+    /**
+     * @return True if this size is in portrait orientation. Square
+     *         sizes are both portrait *and* landscape.
+     */
+    private boolean isPortrait() {
+        return height >= width;
     }
 }

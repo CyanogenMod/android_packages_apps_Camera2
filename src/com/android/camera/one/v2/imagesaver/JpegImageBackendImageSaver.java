@@ -18,6 +18,7 @@ package com.android.camera.one.v2.imagesaver;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 
 import com.android.camera.Exif;
@@ -161,13 +162,13 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
 
     /**
      * Constructor
-     *
+     * 
      * @param executor Executor to run listener events on the ImageBackend
      * @param imageRotationCalculator the image rotation calculator to determine
      */
     public JpegImageBackendImageSaver(MainThread executor,
-            ImageRotationCalculator imageRotationCalculator,
-            ImageBackend imageBackend) {
+                                      ImageRotationCalculator imageRotationCalculator,
+                                      ImageBackend imageBackend) {
         mExecutor = executor;
         mImageRotationCalculator = imageRotationCalculator;
         mImageBackend = imageBackend;
