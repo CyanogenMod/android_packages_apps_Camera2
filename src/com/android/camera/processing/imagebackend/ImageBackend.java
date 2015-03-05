@@ -17,8 +17,6 @@
 package com.android.camera.processing.imagebackend;
 
 import com.android.camera.debug.Log;
-import com.android.camera.processing.ProcessingService;
-import com.android.camera.processing.ProcessingServiceManager;
 import com.android.camera.processing.ProcessingTaskConsumer;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
@@ -115,7 +113,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * minimum size of FAST_THUMBNAIL target for the CONVERT_TO_RGB_PREVIEW
      * task.
      */
-    private final static Size FAST_THUMBNAIL_TARGET_SIZE = new Size(160, 100);
+    private final Size mTinyThumbnailTargetSize;
 
     /**
      * A standard viewable size (in pixels) for the filmstrip thumbnail in the
@@ -137,13 +135,14 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     private ImageProcessorProxyListener mProxyListener = null;
 
     // Default constructor, values are conservatively targeted to the Nexus 6
-    public ImageBackend(ProcessingTaskConsumer processingTaskConsumer) {
+    public ImageBackend(ProcessingTaskConsumer processingTaskConsumer, int tinyThumbnailSize) {
         mThreadPoolFast = Executors.newFixedThreadPool(NUM_THREADS_FAST, new FastThreadFactory());
         mThreadPoolSlow = Executors.newFixedThreadPool(NUM_THREADS_SLOW, new SlowThreadFactory());
         mProxyListener = new ImageProcessorProxyListener();
         mImageSemaphoreMap = new HashMap<>();
         mShadowTaskMap = new HashMap<>();
         mProcessingTaskConsumer = processingTaskConsumer;
+        mTinyThumbnailTargetSize = new Size(tinyThumbnailSize, tinyThumbnailSize);
     }
 
     /**
@@ -155,13 +154,14 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      */
     public ImageBackend(ExecutorService fastService, ExecutorService slowService,
             ImageProcessorProxyListener imageProcessorProxyListener,
-            ProcessingTaskConsumer processingTaskConsumer) {
+            ProcessingTaskConsumer processingTaskConsumer, int tinyThumbnailSize) {
         mThreadPoolFast = fastService;
         mThreadPoolSlow = slowService;
         mProxyListener = imageProcessorProxyListener;
         mImageSemaphoreMap = new HashMap<>();
         mShadowTaskMap = new HashMap<>();
         mProcessingTaskConsumer = processingTaskConsumer;
+        mTinyThumbnailTargetSize = new Size(tinyThumbnailSize, tinyThumbnailSize);
     }
 
     /**
@@ -438,7 +438,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
             // Add an additional type of task to the appropriate queue.
             tasksToExecute.add(new TaskConvertImageToRGBPreview(img, executor,
                     this, TaskImageContainer.ProcessingPriority.FAST, session,
-                    FAST_THUMBNAIL_TARGET_SIZE,
+                    mTinyThumbnailTargetSize,
                     TaskConvertImageToRGBPreview.ThumbnailShape.SQUARE_ASPECT_CIRCULAR_INSET));
         }
 
@@ -458,7 +458,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
             TaskConvertImageToRGBPreview.ThumbnailShape thumbnailShape) {
         return new TaskConvertImageToRGBPreview(image, executor, imageBackend,
                 TaskImageContainer.ProcessingPriority.FAST, session,
-                FAST_THUMBNAIL_TARGET_SIZE, thumbnailShape);
+                mTinyThumbnailTargetSize, thumbnailShape);
     }
 
     public TaskCompressImageToJpeg createTaskCompressImageToJpeg(ImageToProcess image,
