@@ -42,8 +42,6 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera2.R;
 import com.google.common.base.Optional;
 
-import java.util.LinkedList;
-
 /**
  * A view that shows a pop-out effect for a thumbnail image as the new capture indicator design for
  * Haleakala. When a photo is taken, this view will appear in the bottom right corner of the view
@@ -184,19 +182,20 @@ public class RoundedThumbnailView extends View {
     private float mCurrentHitStateCircleOpacity;
 
     /**
-     * The waiting queue for all pending reveal requests. The latest request
-     * should be in the end of the queue.
+     * The pending reveal request. This is created when start is called, but is
+     * not drawn until the thumbnail is available. Once the bitmap is available
+     * it is swapped into the foreground request.
      */
-    private LinkedList<RevealRequest> mRevealRequestWaitQueue = new LinkedList<>();
+    private RevealRequest mPendingRequest;
 
-    /** The currently running reveal request. */
-    private Optional<RevealRequest> mActiveRevealRequest;
+    /** The currently animating reveal request. */
+    private RevealRequest mForegroundRequest;
 
     /**
-     * The latest finished reveal request. Its thumbnail will be shown until a
-     * newer one replace it.
+     * The latest finished reveal request. Its thumbnail will be shown until
+     * a newer one replace it.
      */
-    private Optional<RevealRequest> mFinishedRevealRequest;
+    private RevealRequest mBackgroundRequest;
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -284,9 +283,6 @@ public class RoundedThumbnailView extends View {
         mRevealCirclePaint.setAntiAlias(true);
         mRevealCirclePaint.setColor(Color.WHITE);
         mRevealCirclePaint.setStyle(Paint.Style.FILL);
-
-        mActiveRevealRequest = Optional.absent();
-        mFinishedRevealRequest = Optional.absent();
     }
 
     @Override
@@ -309,8 +305,8 @@ public class RoundedThumbnailView extends View {
         canvas.clipRect(mViewRect);
 
         // Draw the thumbnail of latest finished reveal request.
-        if (mFinishedRevealRequest.isPresent()) {
-            Paint thumbnailPaint = mFinishedRevealRequest.get().getThumbnailPaint();
+        if (mBackgroundRequest != null) {
+            Paint thumbnailPaint = mBackgroundRequest.getThumbnailPaint();
             if (thumbnailPaint != null) {
                 // Draw the old thumbnail with the final diameter.
                 float scaleRatio = finalDiameter / viewDiameter;
@@ -327,7 +323,7 @@ public class RoundedThumbnailView extends View {
         }
 
         // Draw animated parts (thumbnail and ripple) if there exists a reveal request.
-        if (mActiveRevealRequest.isPresent()) {
+        if (mForegroundRequest != null) {
             // Draw ripple ring first or the ring will cover thumbnail.
             if (mCurrentRippleRingThickness > 0) {
                 // Draw the ripple ring.
@@ -346,7 +342,7 @@ public class RoundedThumbnailView extends View {
             canvas.scale(scaleRatio, scaleRatio, centerX, centerY);
 
             // Draw the new popping up thumbnail.
-            Paint thumbnailPaint = mActiveRevealRequest.get().getThumbnailPaint();
+            Paint thumbnailPaint = mForegroundRequest.getThumbnailPaint();
             if (thumbnailPaint != null) {
                 canvas.drawRoundRect(
                         mViewRect,
@@ -413,11 +409,7 @@ public class RoundedThumbnailView extends View {
     public void startRevealThumbnailAnimation(String accessibilityString) {
         MainThread.checkMainThread();
         // Create a new request.
-        RevealRequest latestRevealRequest =
-                new RevealRequest(getMeasuredWidth(), accessibilityString);
-        mRevealRequestWaitQueue.addLast(latestRevealRequest);
-        // Process the next request.
-        processNextRevealRequest();
+        mPendingRequest = new RevealRequest(getMeasuredWidth(), accessibilityString);
     }
 
     /**
@@ -428,14 +420,13 @@ public class RoundedThumbnailView extends View {
      */
     public void setThumbnail(final Bitmap thumbnailBitmap, final int rotation) {
         MainThread.checkMainThread();
-        if (mRevealRequestWaitQueue.isEmpty()) {
-            if (mActiveRevealRequest.isPresent()) {
-                mActiveRevealRequest.get().setThumbnailBitmap(thumbnailBitmap, rotation);
-            }
+
+        if(mPendingRequest != null) {
+            mPendingRequest.setThumbnailBitmap(thumbnailBitmap, rotation);
+
+            runPendingRequestAnimation();
         } else {
-            // Update the thumbnail in the latest reveal request.
-            RevealRequest latestRevealRequest = mRevealRequestWaitQueue.peekLast();
-            latestRevealRequest.setThumbnailBitmap(thumbnailBitmap, rotation);
+            Log.e(TAG, "Pending thumb was null!");
         }
     }
 
@@ -447,6 +438,18 @@ public class RoundedThumbnailView extends View {
         // Make this view invisible.
         setVisibility(GONE);
 
+        clearAnimations();
+
+        // Remove all pending reveal requests.
+        mPendingRequest = null;
+        mForegroundRequest = null;
+        mBackgroundRequest = null;
+    }
+
+    /**
+     * Stop currently running animators.
+     */
+    private void clearAnimations() {
         // Stop currently running animators.
         if (mThumbnailAnimatorSet != null && mThumbnailAnimatorSet.isRunning()) {
             mThumbnailAnimatorSet.removeAllListeners();
@@ -463,148 +466,132 @@ public class RoundedThumbnailView extends View {
             // its listeners properly reconnected.  Fix for b/19034435
             mRippleAnimator = null;
         }
-        // Remove all pending reveal requests.
-        mRevealRequestWaitQueue.clear();
-        mActiveRevealRequest = Optional.absent();
-        mFinishedRevealRequest = Optional.absent();
     }
 
     /**
-     * Pick the next request in the reveal request queue and start a reveal animation for the
-     * request.
+     * Set the foreground request to the background, complete it, and run the
+     * animation for the pending thumbnail.
      */
-    private void processNextRevealRequest() {
-        // Do nothing if the queue is empty.
-        if (mRevealRequestWaitQueue.isEmpty()) {
-            return;
-        }
-        // Do nothing if the active request is still running.
-        if (mActiveRevealRequest.isPresent()) {
-            return;
+    private void runPendingRequestAnimation() {
+        // Shift foreground to background, and pending to foreground.
+        if (mForegroundRequest != null) {
+            mBackgroundRequest = mForegroundRequest;
+            mBackgroundRequest.finishRippleAnimation();
+            mBackgroundRequest.finishThumbnailAnimation();
         }
 
-        // Pick the first request in the queue and make it active.
-        mActiveRevealRequest = Optional.of(mRevealRequestWaitQueue.peekFirst());
-        mRevealRequestWaitQueue.removeFirst();
+        mForegroundRequest = mPendingRequest;
+        mPendingRequest = null;
 
         // Make this view visible.
         setVisibility(VISIBLE);
 
-        // Lazily load the thumbnail animator.
-        if (mThumbnailAnimatorSet == null) {
-            Interpolator stretchInterpolator;
-            if (ApiHelper.isLOrHigher()) {
-                // Both phases use fast_out_flow_in interpolator.
-                stretchInterpolator = AnimationUtils.loadInterpolator(
-                        getContext(), android.R.interpolator.fast_out_slow_in);
-            } else {
-                stretchInterpolator = new AccelerateDecelerateInterpolator();
-            }
+        // Ensure there are no running animations.
+        clearAnimations();
 
-            // The first phase of thumbnail animation. Stretch the thumbnail to the maximal size.
-            ValueAnimator stretchAnimator = ValueAnimator.ofFloat(
-                    mThumbnailStretchDiameterBegin, mThumbnailStretchDiameterEnd);
-            stretchAnimator.setDuration(mThumbnailStretchDurationMs);
-            stretchAnimator.setInterpolator(stretchInterpolator);
-            stretchAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    mCurrentThumbnailDiameter = (Float) valueAnimator.getAnimatedValue();
-                    float fraction = valueAnimator.getAnimatedFraction();
-                    float opacityDiff = THUMBNAIL_REVEAL_CIRCLE_OPACITY_END -
-                            THUMBNAIL_REVEAL_CIRCLE_OPACITY_BEGIN;
-                    mCurrentRevealCircleOpacity =
-                            THUMBNAIL_REVEAL_CIRCLE_OPACITY_BEGIN + fraction * opacityDiff;
-                    invalidate();
-                }
-            });
-
-            // The second phase of thumbnail animation. Shrink the thumbnail to the final size.
-            Interpolator shrinkInterpolator = stretchInterpolator;
-            ValueAnimator shrinkAnimator = ValueAnimator.ofFloat(
-                    mThumbnailShrinkDiameterBegin, mThumbnailShrinkDiameterEnd);
-            shrinkAnimator.setDuration(mThumbnailShrinkDurationMs);
-            shrinkAnimator.setInterpolator(shrinkInterpolator);
-            shrinkAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    mCurrentThumbnailDiameter = (Float) valueAnimator.getAnimatedValue();
-                    invalidate();
-                }
-            });
-
-            // The stretch and shrink animators play sequentially.
-            mThumbnailAnimatorSet = new AnimatorSet();
-            mThumbnailAnimatorSet.playSequentially(stretchAnimator, shrinkAnimator);
-            mThumbnailAnimatorSet.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (mActiveRevealRequest.isPresent()) {
-                        final RevealRequest activeRevealRequest = mActiveRevealRequest.get();
-                        // Mark the thumbnail animation as finished.
-                        activeRevealRequest.finishThumbnailAnimation();
-                        // Process the next reveal request if both thumbnail animation and ripple
-                        // animation are both finished.
-                        if (activeRevealRequest.isFinished()) {
-                            mFinishedRevealRequest = Optional.of(activeRevealRequest);
-                            mActiveRevealRequest = Optional.absent();
-                            processNextRevealRequest();
-                        }
-                    }
-                }
-            });
+        Interpolator stretchInterpolator;
+        if (ApiHelper.isLOrHigher()) {
+            // Both phases use fast_out_flow_in interpolator.
+            stretchInterpolator = AnimationUtils.loadInterpolator(
+                  getContext(), android.R.interpolator.fast_out_slow_in);
+        } else {
+            stretchInterpolator = new AccelerateDecelerateInterpolator();
         }
+
+        // The first phase of thumbnail animation. Stretch the thumbnail to the maximal size.
+        ValueAnimator stretchAnimator = ValueAnimator.ofFloat(
+              mThumbnailStretchDiameterBegin, mThumbnailStretchDiameterEnd);
+        stretchAnimator.setDuration(mThumbnailStretchDurationMs);
+        stretchAnimator.setInterpolator(stretchInterpolator);
+        stretchAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mCurrentThumbnailDiameter = (Float) valueAnimator.getAnimatedValue();
+                float fraction = valueAnimator.getAnimatedFraction();
+                float opacityDiff = THUMBNAIL_REVEAL_CIRCLE_OPACITY_END -
+                      THUMBNAIL_REVEAL_CIRCLE_OPACITY_BEGIN;
+                mCurrentRevealCircleOpacity =
+                      THUMBNAIL_REVEAL_CIRCLE_OPACITY_BEGIN + fraction * opacityDiff;
+                invalidate();
+            }
+        });
+
+        // The second phase of thumbnail animation. Shrink the thumbnail to the final size.
+        Interpolator shrinkInterpolator = stretchInterpolator;
+        ValueAnimator shrinkAnimator = ValueAnimator.ofFloat(
+              mThumbnailShrinkDiameterBegin, mThumbnailShrinkDiameterEnd);
+        shrinkAnimator.setDuration(mThumbnailShrinkDurationMs);
+        shrinkAnimator.setInterpolator(shrinkInterpolator);
+        shrinkAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mCurrentThumbnailDiameter = (Float) valueAnimator.getAnimatedValue();
+                invalidate();
+            }
+        });
+
+        // The stretch and shrink animators play sequentially.
+        mThumbnailAnimatorSet = new AnimatorSet();
+        mThumbnailAnimatorSet.playSequentially(stretchAnimator, shrinkAnimator);
+        mThumbnailAnimatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mForegroundRequest != null) {
+                    // Mark the thumbnail animation as finished.
+                    mForegroundRequest.finishThumbnailAnimation();
+                    processRevealRequests();
+                }
+            }
+        });
+
         // Start thumbnail animation immediately.
         mThumbnailAnimatorSet.start();
 
         // Lazily load the ripple animator.
-        if (mRippleAnimator == null) {
+        // Ripple effect uses linear_out_slow_in interpolator.
+        Interpolator rippleInterpolator =
+              InterpolatorHelper.getLinearOutSlowInInterpolator(getContext());
 
-            // Ripple effect uses linear_out_slow_in interpolator.
-            Interpolator rippleInterpolator =
-                    InterpolatorHelper.getLinearOutSlowInInterpolator(getContext());
+        // When start shrinking the thumbnail, a ripple effect is triggered at the same time.
+        mRippleAnimator =
+              ValueAnimator.ofFloat(mRippleRingDiameterBegin, mRippleRingDiameterEnd);
+        mRippleAnimator.setDuration(mRippleDurationMs);
+        mRippleAnimator.setInterpolator(rippleInterpolator);
+        mRippleAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mForegroundRequest != null) {
+                    mForegroundRequest.finishRippleAnimation();
+                    processRevealRequests();
+                }
+            }
+        });
+        mRippleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mCurrentRippleRingDiameter = (Float) valueAnimator.getAnimatedValue();
+                float fraction = valueAnimator.getAnimatedFraction();
+                mCurrentRippleRingThickness = mRippleRingThicknessBegin +
+                      fraction * (mRippleRingThicknessEnd - mRippleRingThicknessBegin);
+                mCurrentRippleRingOpacity = RIPPLE_OPACITY_BEGIN +
+                      fraction * (RIPPLE_OPACITY_END - RIPPLE_OPACITY_BEGIN);
+                invalidate();
+            }
+        });
 
-            // When start shrinking the thumbnail, a ripple effect is triggered at the same time.
-            mRippleAnimator =
-                    ValueAnimator.ofFloat(mRippleRingDiameterBegin, mRippleRingDiameterEnd);
-            mRippleAnimator.setDuration(mRippleDurationMs);
-            mRippleAnimator.setInterpolator(rippleInterpolator);
-            mRippleAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (mActiveRevealRequest.isPresent()) {
-                        final RevealRequest activeRevealRequest = mActiveRevealRequest.get();
-                        // Mark the ripple animation as finished.
-                        activeRevealRequest.finishRippleAnimation();
-                        // Process the next reveal request if both thumbnail animation and ripple
-                        // animation are both finished.
-                        if (activeRevealRequest.isFinished()) {
-                            mFinishedRevealRequest = Optional.of(activeRevealRequest);
-                            mActiveRevealRequest = Optional.absent();
-                            processNextRevealRequest();
-                        }
-                    }
-                }
-            });
-            mRippleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    mCurrentRippleRingDiameter = (Float) valueAnimator.getAnimatedValue();
-                    float fraction = valueAnimator.getAnimatedFraction();
-                    mCurrentRippleRingThickness = mRippleRingThicknessBegin +
-                            fraction * (mRippleRingThicknessEnd - mRippleRingThicknessBegin);
-                    mCurrentRippleRingOpacity = RIPPLE_OPACITY_BEGIN +
-                            fraction * (RIPPLE_OPACITY_END - RIPPLE_OPACITY_BEGIN);
-                    invalidate();
-                }
-            });
-        }
         // Start ripple animation after delay.
         mRippleAnimator.setStartDelay(mRippleStartDelayMs);
         mRippleAnimator.start();
 
         // Announce the accessibility string.
-        announceForAccessibility(mActiveRevealRequest.get().getAccessibilityString());
+        announceForAccessibility(mForegroundRequest.getAccessibilityString());
+    }
+
+    private void processRevealRequests() {
+        if(mForegroundRequest != null && mForegroundRequest.isFinished()) {
+            mBackgroundRequest = mForegroundRequest;
+            mForegroundRequest = null;
+        }
     }
 
     @Override
