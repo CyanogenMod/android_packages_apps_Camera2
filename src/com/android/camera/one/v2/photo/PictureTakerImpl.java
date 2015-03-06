@@ -29,6 +29,7 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.session.CaptureSession;
 import com.android.camera2.R;
+import com.google.common.base.Objects;
 
 class PictureTakerImpl implements PictureTaker {
     private final MainThread mMainExecutor;
@@ -42,6 +43,43 @@ class PictureTakerImpl implements PictureTaker {
         mCameraCommandExecutor = cameraCommandExecutor;
         mImageSaverBuilder = imageSaverBuilder;
         mCommand = command;
+    }
+
+    private final class PictureTakerCommand implements CameraCommand {
+        private final Updatable<Void> mImageExposureCallback;
+        private final ImageSaver mImageSaver;
+        private final Updatable<Void> mFailureCallback;
+        private final CaptureSession mSession;
+
+        private PictureTakerCommand(Updatable<Void> failureCallback,
+                Updatable<Void> imageExposureCallback,
+                ImageSaver imageSaver,
+                CaptureSession session) {
+            mFailureCallback = failureCallback;
+            mImageExposureCallback = imageExposureCallback;
+            mImageSaver = imageSaver;
+            mSession = session;
+        }
+
+        @Override
+        public void run() throws InterruptedException, CameraAccessException,
+                CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
+            try {
+                mCommand.run(mImageExposureCallback, mImageSaver);
+            } catch (Exception e) {
+                mFailureCallback.update(null);
+                mSession.finishWithFailure(R.string.error_cannot_connect_camera,
+                        true /* remove from filmstrip */);
+                throw e;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this)
+                    .add("command", mCommand)
+                    .toString();
+        }
     }
 
     @Override
@@ -64,21 +102,7 @@ class PictureTakerImpl implements PictureTaker {
                 OrientationManager.DeviceOrientation.from(params.orientation),
                 session);
 
-        mCameraCommandExecutor.execute(new CameraCommand() {
-            @Override
-            public void run() throws InterruptedException, CameraAccessException,
-                    CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
-                boolean failed = true;
-                try {
-                    mCommand.run(imageExposureCallback, imageSaver);
-                    failed = false;
-                } catch (Exception e) {
-                    failureCallback.update(null);
-                    session.finishWithFailure(R.string.error_cannot_connect_camera,
-                            true /* remove from filmstrip */);
-                    throw e;
-                }
-            }
-        });
+        mCameraCommandExecutor.execute(new PictureTakerCommand(failureCallback,
+                imageExposureCallback, imageSaver, session));
     }
 }

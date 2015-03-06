@@ -160,7 +160,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         new Provider<ExecutorService>() {
                             @Override
                             public ExecutorService get() {
-                                return Executors.newScheduledThreadPool(1);
+                                return Executors.newCachedThreadPool();
                             }
                         });
 

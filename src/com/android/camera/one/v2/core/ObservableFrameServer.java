@@ -22,11 +22,11 @@ import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
-import com.android.camera.util.Callback;
 
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +39,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 final class ObservableFrameServer implements FrameServer, Observable<Boolean> {
+    /**
+     * The total number of clients which either have an exclusive Session or are
+     * waiting to acquire one. When this is positive, the frame server is "not
+     * available".
+     */
+    private final AtomicInteger mClientCount;
     private final ConcurrentState<Boolean> mAvailability;
     private final FrameServer mDelegate;
 
@@ -61,7 +67,8 @@ final class ObservableFrameServer implements FrameServer, Observable<Boolean> {
         @Override
         public void close() {
             if (!mClosed.getAndSet(true)) {
-                mAvailability.update(true);
+                int clients = mClientCount.decrementAndGet();
+                mAvailability.update(clients == 0);
                 mDelegate.close();
             }
         }
@@ -69,15 +76,27 @@ final class ObservableFrameServer implements FrameServer, Observable<Boolean> {
 
     public ObservableFrameServer(FrameServer delegate) {
         mDelegate = delegate;
+        mClientCount = new AtomicInteger(0);
         mAvailability = new ConcurrentState<>(true);
     }
 
     @Nonnull
     @Override
     public Session createExclusiveSession() throws InterruptedException {
-        Session session = mDelegate.createExclusiveSession();
-        mAvailability.update(false);
-        return new SessionImpl(session);
+        int clients = mClientCount.incrementAndGet();
+        mAvailability.update(clients == 0);
+        try {
+            // Ownership of the incremented value in mClientCount is passed to
+            // the session, which is responsible for decrementing it later.
+            Session session = mDelegate.createExclusiveSession();
+            return new SessionImpl(session);
+        } catch (InterruptedException e) {
+            // If no session was acquired, we still "own" the increment of
+            // mClientCount and must decrement it here.
+            clients = mClientCount.decrementAndGet();
+            mAvailability.update(clients == 0);
+            throw e;
+        }
     }
 
     @Nullable
@@ -87,7 +106,8 @@ final class ObservableFrameServer implements FrameServer, Observable<Boolean> {
         if (session == null) {
             return null;
         } else {
-            mAvailability.update(false);
+            int clients = mClientCount.incrementAndGet();
+            mAvailability.update(clients == 0);
             return new SessionImpl(session);
         }
     }
