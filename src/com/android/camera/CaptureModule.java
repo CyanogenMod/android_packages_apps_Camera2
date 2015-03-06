@@ -362,7 +362,7 @@ public class CaptureModule extends CameraModule implements
                     public void onBurstReadyStateChanged(boolean ready) {
                         // TODO: This needs to take into account the state of
                         // the whole system, not just burst.
-                        mAppController.setShutterEnabled(ready);
+                       onReadyStateChanged(false);
                     }
                 });
         mMediaActionSound = new MediaActionSound();
@@ -912,10 +912,6 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void onReadyStateChanged(boolean readyForCapture) {
-        if (!mBurstController.isReady()) {
-            return;
-        }
-
         if (readyForCapture) {
             mAppController.getCameraAppUI().enableModeOptions();
         }

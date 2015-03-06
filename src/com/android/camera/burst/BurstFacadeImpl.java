@@ -77,7 +77,6 @@ class BurstFacadeImpl implements BurstFacade {
                 @Override
                 public void onBurstError(Exception error) {
                     Log.e(TAG, "Exception while running the burst" + error);
-                    reEnableUI();
                 }
 
                 @Override
@@ -86,7 +85,7 @@ class BurstFacadeImpl implements BurstFacade {
                             new Runnable() {
                         @Override
                         public void run() {
-                            reEnableUI();
+                            mBurstModuleState.set(BurstModuleState.IDLE);
                             }
                         });
                 }
@@ -166,11 +165,6 @@ class BurstFacadeImpl implements BurstFacade {
     }
 
     @Override
-    public boolean isReady() {
-        return mBurstModuleState.get() == BurstModuleState.IDLE;
-    }
-
-    @Override
     public boolean stopBurst() {
         MainThread.checkMainThread();
             boolean wasStopped = false;
@@ -178,6 +172,7 @@ class BurstFacadeImpl implements BurstFacade {
                     BurstModuleState.STOPPING)) {
                 mBurstTaker.get().stopBurst();
                 wasStopped = true;
+                reEnableUI();
             }
             return wasStopped;
     }
@@ -217,7 +212,6 @@ class BurstFacadeImpl implements BurstFacade {
 
     private void reEnableUI() {
         MainThread.checkMainThread();
-        mBurstModuleState.set(BurstModuleState.IDLE);
         mOrientationLockController.unlockOrientation();
         // Re-enable the shutter button.
         mReadyStateListener.onBurstReadyStateChanged(true);

@@ -46,7 +46,7 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
         }
 
         public void showToastBurstStopped() {
-            Toast.makeText(mContext, MSG_BURST_STOPPED, Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, MSG_BURST_STOPPED, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -77,10 +77,6 @@ public class ToastingBurstFacadeDecorator implements BurstFacade {
                 imageOrientationDegrees);
     }
 
-    @Override
-    public boolean isReady() {
-        return mBurstFacade.isReady();
-    }
 
     @Override
     public boolean stopBurst() {

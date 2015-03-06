@@ -59,11 +59,6 @@ public interface BurstFacade {
     public boolean stopBurst();
 
     /**
-     * @return Whether this burst controller is ready to start another burst.
-     */
-    public boolean isReady();
-
-    /**
      * Initialize resources and use the provided {@link SurfaceTexture} for
      * streaming low-res preview frames for the burst.
      *

@@ -46,11 +46,6 @@ public class BurstFacadeFactory {
         }
 
         @Override
-        public boolean isReady() {
-            return true;
-        }
-
-        @Override
         public boolean stopBurst() {
             return false;
         }

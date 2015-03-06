@@ -27,7 +27,6 @@ import com.android.camera.async.BufferQueue;
 import com.android.camera.async.BufferQueue.BufferQueueClosedException;
 import com.android.camera.async.Lifetime;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
-import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.CaptureStream;
 import com.android.camera.one.v2.core.FrameServer;
@@ -115,8 +114,8 @@ public class BurstCaptureCommand implements CameraCommand {
             // handler and insert images in it from the image stream.
             // The ring buffer size is one less than the image count.
             int ringBufferSize = mMaxImageCount - 1;
-            try (RingBuffer<MetadataImage> ringBuffer = new RingBuffer(ringBufferSize,
-                    mBurstEvictionHandler)) {
+            try (RingBuffer<MetadataImage> ringBuffer =
+                    new RingBuffer<MetadataImage>(ringBufferSize, mBurstEvictionHandler)) {
                 try (ImageStream imageStream =
                         mManagedImageReader.createStream(mMaxImageCount)) {
                     mBurstLifetime.add(imageStream);
@@ -157,7 +156,8 @@ public class BurstCaptureCommand implements CameraCommand {
                             MetadataFuture metadataFuture = new MetadataFuture();
                             photoRequest.addResponseListener(metadataFuture);
 
-                            ringBuffer.insertImage(new MetadataImage(imageStream.getNext(), metadataFuture.getMetadata()));
+                            ringBuffer.insertImage(new MetadataImage(imageStream.getNext(),
+                                    metadataFuture.getMetadata()));
                         }
                     } catch (BufferQueueClosedException e) {
                         // This is normal. the image stream was closed.
