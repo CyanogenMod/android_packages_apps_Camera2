@@ -26,7 +26,7 @@ import com.android.camera.ui.motion.LinearScale;
  * Compute diopter range scale to convert lens focus distances into
  * a ratio value.
  */
-@TargetApi(VERSION_CODES.L)
+@TargetApi(VERSION_CODES.LOLLIPOP)
 public class LensRangeCalculator {
 
     /**
