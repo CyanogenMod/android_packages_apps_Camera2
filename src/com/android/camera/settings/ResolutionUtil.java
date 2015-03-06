@@ -24,6 +24,7 @@ import com.android.camera.exif.Rational;
 import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+import com.google.common.collect.Lists;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -31,8 +32,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
 
 /**
  * This class is used to help manage the many different resolutions available on
@@ -385,4 +391,51 @@ public class ResolutionUtil {
         return displayMetrics;
     }
 
+    /**
+     * Takes selected sizes and a list of blacklisted sizes. All the blacklistes
+     * sizes will be removed from the 'sizes' list.
+     *
+     * @param sizes the sizes to be filtered.
+     * @param blacklistString a String containing a comma-separated list of
+     *            sizes that should be removed from the original list.
+     * @return A list that contains the filtered items.
+     */
+    @ParametersAreNonnullByDefault
+    public static List<Size> filterBlackListedSizes(List<Size> sizes, String blacklistString) {
+        String[] blacklistStringArray = blacklistString.split(",");
+        if (blacklistStringArray.length == 0) {
+            return sizes;
+        }
+
+        Set<String> blacklistedSizes = new HashSet(Lists.newArrayList(blacklistStringArray));
+        List<Size> newSizeList = new ArrayList<>();
+        for (Size size : sizes) {
+            if (!isBlackListed(size, blacklistedSizes)) {
+                newSizeList.add(size);
+            }
+        }
+        return newSizeList;
+    }
+
+    /**
+     * Returns whether the given size is within the blacklist string.
+     *
+     * @param size the size to check
+     * @param blacklistString a String containing a comma-separated list of
+     *            sizes that should not be available on the device.
+     * @return Whether the given size is blacklisted.
+     */
+    public static boolean isBlackListed(Size size, String blacklistString) {
+        String[] blacklistStringArray = blacklistString.split(",");
+        if (blacklistStringArray.length == 0) {
+            return false;
+        }
+        Set<String> blacklistedSizes = new HashSet(Lists.newArrayList(blacklistStringArray));
+        return isBlackListed(size, blacklistedSizes);
+    }
+
+    private static boolean isBlackListed(Size size, Set<String> blacklistedSizes) {
+        String sizeStr = size.getWidth() + "x" + size.getHeight();
+        return blacklistedSizes.contains(sizeStr);
+    }
 }

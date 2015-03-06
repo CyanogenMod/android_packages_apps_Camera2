@@ -1475,7 +1475,8 @@ public class CameraActivity extends QuickActivity
         appUpgrader.upgrade(mSettingsManager);
         Keys.setDefaults(mSettingsManager, mAppContext);
 
-        mResolutionSetting = new ResolutionSetting(mSettingsManager, mCameraManager);
+        mResolutionSetting = new ResolutionSetting(mSettingsManager, mCameraManager,
+                getContentResolver());
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         // We suppress this flag via theme when drawing the system preview
