@@ -160,7 +160,7 @@ public final class StateOpeningCamera extends StateImpl {
                     mCameraFacing,
                     mResourceConstructed.get().getResolutionSetting(),
                     mResourceConstructed.get().getAppController().getSettingsManager(),
-                    mResourceConstructed.get().getAppController().getModuleScope(),
+                    mResourceConstructed.get().getAppController().getCameraScope(),
                     false);
             mPictureSize = captureSetting.getCaptureSize();
         } catch (OneCameraAccessException ex) {
