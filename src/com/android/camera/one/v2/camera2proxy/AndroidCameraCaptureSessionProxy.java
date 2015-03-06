@@ -26,6 +26,10 @@ import android.os.Handler;
 
 import java.util.List;
 
+/**
+ * A CameraCaptureSessionProxy backed by an
+ * {@link android.hardware.camera2.CameraCaptureSession}.
+ */
 public class AndroidCameraCaptureSessionProxy implements CameraCaptureSessionProxy {
     private class AndroidCaptureCallback extends CameraCaptureSession.CaptureCallback {
         private final CaptureCallback mCallback;
@@ -120,8 +124,12 @@ public class AndroidCameraCaptureSessionProxy implements CameraCaptureSessionPro
 
     @Override
     public int setRepeatingBurst(List<CaptureRequest> requests, CaptureCallback listener,
-            Handler handler) throws CameraAccessException {
-        return mSession.setRepeatingBurst(requests, new AndroidCaptureCallback(listener), handler);
+            Handler handler) throws CameraAccessException, CameraCaptureSessionClosedException {
+        try {
+            return mSession.setRepeatingBurst(requests, new AndroidCaptureCallback(listener), handler);
+        } catch (IllegalStateException e) {
+            throw new CameraCaptureSessionClosedException(e);
+        }
     }
 
     @Override
