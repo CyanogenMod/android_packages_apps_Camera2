@@ -48,20 +48,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 public class YuvImageBackendImageSaver implements ImageSaver.Builder {
     @ParametersAreNonnullByDefault
-    private static class ImageSaverImpl implements SingleImageSaver {
-        private final MainThread mExecutor;
+    private final class ImageSaverImpl implements SingleImageSaver {
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
-        private final ImageBackend mImageBackend;
         private final ImageProcessorListener mPreviewListener;
 
-        public ImageSaverImpl(MainThread executor,
-                CaptureSession session, OrientationManager.DeviceOrientation imageRotation,
-                ImageBackend imageBackend, ImageProcessorListener previewListener) {
-            mExecutor = executor;
+        public ImageSaverImpl(CaptureSession session,
+                OrientationManager.DeviceOrientation imageRotation,
+                ImageProcessorListener previewListener) {
             mSession = session;
             mImageRotation = imageRotation;
-            mImageBackend = imageBackend;
             mPreviewListener = previewListener;
         }
 
@@ -84,7 +80,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE);
 
             try {
-                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation),
+                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, mCrop),
                         mExecutor, taskFlagsSet, mSession);
             } catch (InterruptedException e) {
                 // Impossible exception because receiveImage is nonblocking
@@ -213,7 +209,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
 
         PreviewListener previewListener = new PreviewListener(mExecutor,
                 proxyListener, session, imageRotation, pictureSaverCallback);
-        return new MostRecentImageSaver(new ImageSaverImpl(mExecutor, session,
-                imageRotation, mImageBackend, previewListener));
+        return new MostRecentImageSaver(new ImageSaverImpl(session,
+                imageRotation, previewListener));
     }
 }

@@ -17,6 +17,7 @@
 package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.media.CameraProfile;
 import android.net.Uri;
 
@@ -62,8 +63,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      * JpegUtilNative#compressJpegFromYUV420Image}
      */
     public int compressJpegFromYUV420Image(ImageProxy img, ByteBuffer outBuf, int quality,
-            int degrees) {
-        return JpegUtilNative.compressJpegFromYUV420Image(img, outBuf, quality, degrees);
+            Rect crop, int degrees) {
+        return JpegUtilNative.compressJpegFromYUV420Image(img, outBuf, quality, crop, degrees);
     }
 
     /**
@@ -193,7 +194,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     // Do the actual compression here.
                     numBytes = compressJpegFromYUV420Image(
                             img.proxy, compressedData, getJpegCompressionQuality(),
-                            inputImage.orientation.getDegrees());
+                            img.crop, inputImage.orientation.getDegrees());
 
                     if (numBytes < 0) {
                         throw new RuntimeException("Error compressing jpeg.");
