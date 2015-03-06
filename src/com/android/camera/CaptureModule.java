@@ -1271,7 +1271,7 @@ public class CaptureModule extends CameraModule implements
         try {
             captureSetting = OneCameraCaptureSetting.create(
                     mCameraFacing, mAppController.getResolutionSetting(), mSettingsManager,
-                    mAppController.getModuleScope(), useHdr);
+                    mAppController.getCameraScope(), useHdr);
         } catch (OneCameraAccessException ex) {
             mAppController.showErrorAndFinish(R.string.cannot_connect_camera);
             return;
