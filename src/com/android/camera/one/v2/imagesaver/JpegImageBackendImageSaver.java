@@ -23,7 +23,6 @@ import android.net.Uri;
 
 import com.android.camera.Exif;
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.MainThread;
 import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
@@ -36,11 +35,15 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -51,22 +54,21 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * and just routes this image artifact as the thumbnail and to remote devices.
  */
 public class JpegImageBackendImageSaver implements ImageSaver.Builder {
+
     @ParametersAreNonnullByDefault
-    private static class ImageSaverImpl implements SingleImageSaver {
-        private final MainThread mExecutor;
+    private final class ImageSaverImpl implements SingleImageSaver {
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
         private final ImageBackend mImageBackend;
-        private final ImageProcessorListener mPreviewListener;
+        private final ImageProcessorListener mImageProcessorListener;
 
-        public ImageSaverImpl(MainThread executor,
-                CaptureSession session, OrientationManager.DeviceOrientation imageRotation,
-                ImageBackend imageBackend, ImageProcessorListener previewListener) {
-            mExecutor = executor;
+        public ImageSaverImpl(CaptureSession session,
+                OrientationManager.DeviceOrientation imageRotation,
+                ImageBackend imageBackend, ImageProcessorListener imageProcessorListener) {
             mSession = session;
             mImageRotation = imageRotation;
             mImageBackend = imageBackend;
-            mPreviewListener = previewListener;
+            mImageProcessorListener = imageProcessorListener;
         }
 
         @Override
@@ -77,18 +79,15 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
             if (thumbnail.isPresent()) {
                 thumbnail.get().close();
             }
-            final ImageProcessorProxyListener listenerProxy = mImageBackend.getProxyListener();
-
-            listenerProxy.registerListener(mPreviewListener, image);
 
             Set<ImageConsumer.ImageTaskFlags> taskFlagsSet = new HashSet<>();
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.COMPRESS_TO_JPEG_AND_WRITE_TO_DISK);
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE);
 
             try {
-                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, metadata, new Rect
-                                (0, 0, image.getWidth(), image.getHeight())),
-                        mExecutor, taskFlagsSet, mSession);
+                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, metadata,
+                        new Rect(0, 0, image.getWidth(), image.getHeight())),
+                        mExecutor, taskFlagsSet, mSession, Optional.of(mImageProcessorListener));
             } catch (InterruptedException e) {
                 // Impossible exception because receiveImage is nonblocking
                 throw new RuntimeException(e);
@@ -96,18 +95,16 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
         }
     }
 
-    private static class PreviewListener implements ImageProcessorListener {
-        private final MainThread mExecutor;
+    private static class JpegImageProcessorListener implements ImageProcessorListener {
         private final ImageProcessorProxyListener mListenerProxy;
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
         private final OneCamera.PictureSaverCallback mPictureSaverCallback;
 
-        private PreviewListener(MainThread executor,
-                ImageProcessorProxyListener listenerProxy, CaptureSession session,
+        private JpegImageProcessorListener(ImageProcessorProxyListener listenerProxy,
+                CaptureSession session,
                 OrientationManager.DeviceOrientation imageRotation,
                 OneCamera.PictureSaverCallback pictureSaverCallback) {
-            mExecutor = executor;
             mListenerProxy = listenerProxy;
             mSession = session;
             mImageRotation = imageRotation;
@@ -150,29 +147,46 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
 
         @Override
         public void onResultUri(TaskImageContainer.TaskInfo task, Uri uri) {
-            // Remove yourself from the listener after JPEG save.
-            mListenerProxy.unregisterListener(this);
+            // Do Nothing
         }
     }
+
     /** Factor to downsample full-size JPEG image for use in thumbnail bitmap. */
     private static final int JPEG_DOWNSAMPLE_FOR_FAST_INDICATOR = 4;
     private static Log.Tag TAG = new Log.Tag("JpegImgBESaver");
-    private final MainThread mExecutor;
     private final ImageRotationCalculator mImageRotationCalculator;
     private final ImageBackend mImageBackend;
+    private final Executor mExecutor;
 
     /**
-     * Constructor
-     * 
-     * @param executor Executor to run listener events on the ImageBackend
+     * Constructor Instantiate a local instance executor for all JPEG ImageSaver
+     * factory requests via constructor.
+     *
      * @param imageRotationCalculator the image rotation calculator to determine
+     * @param imageBackend ImageBackend to run the image tasks
      */
-    public JpegImageBackendImageSaver(MainThread executor,
-                                      ImageRotationCalculator imageRotationCalculator,
-                                      ImageBackend imageBackend) {
-        mExecutor = executor;
+    public JpegImageBackendImageSaver(
+            ImageRotationCalculator imageRotationCalculator,
+            ImageBackend imageBackend) {
         mImageRotationCalculator = imageRotationCalculator;
         mImageBackend = imageBackend;
+        mExecutor = Executors.newSingleThreadExecutor();
+    }
+
+    /**
+     * Constructor for dependency injection/ testing.
+     *
+     * @param imageRotationCalculator the image rotation calculator to determine
+     * @param imageBackend ImageBackend to run the image tasks
+     * @param executor Executor to be used for listener events in ImageBackend.
+     */
+    @VisibleForTesting
+    public JpegImageBackendImageSaver(
+            ImageRotationCalculator imageRotationCalculator,
+            ImageBackend imageBackend, Executor executor) {
+        mImageRotationCalculator = imageRotationCalculator;
+        mImageBackend = imageBackend;
+        mExecutor = executor;
     }
 
     /**
@@ -190,9 +204,9 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
 
         ImageProcessorProxyListener proxyListener = mImageBackend.getProxyListener();
 
-        PreviewListener previewListener = new PreviewListener(mExecutor,
+        JpegImageProcessorListener jpegImageProcessorListener = new JpegImageProcessorListener(
                 proxyListener, session, imageRotation, pictureSaverCallback);
-        return new MostRecentImageSaver(new ImageSaverImpl(mExecutor, session,
-                imageRotation, mImageBackend, previewListener));
+        return new MostRecentImageSaver(new ImageSaverImpl(session,
+                imageRotation, mImageBackend, jpegImageProcessorListener));
     }
 }

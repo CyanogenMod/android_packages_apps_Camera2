@@ -16,35 +16,80 @@
 
 package com.android.camera.processing.imagebackend;
 
+import com.google.common.base.Optional;
+
 import android.content.Context;
 import android.location.Location;
+
 import com.android.camera.app.CameraServices;
 import com.android.camera.debug.Log;
 import com.android.camera.processing.ProcessingTask;
 import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * TODO: Figure out if this should be a static private class in ImageBackend.
+ * Implements a placeholder task so that ImageBackend can communicate to the
+ * ProcessingServiceManager, when it is running a set of task created by the
+ * receiveImage call. The ImageShadow tasks also contains a Runnable which can
+ * be executed when the set of TaskImageContainers associated with the
+ * ImageShadow tasks completes. This implementation of the ProcessingTask will
+ * block the ProcessingServiceManager from running any other jobs. However,
+ * ProcessingServiceManager has no thread control over the ImageBackend. So
+ * while ProcessingServiceManager may queue up this ImageShadowTask for later
+ * execution, the ImageBackend will process the TaskImageContainer jobs without
+ * regard to this ImageShadowTask being queued.
  */
+@ParametersAreNonnullByDefault
 class ImageShadowTask implements ProcessingTask {
     static final private Log.Tag TAG = new Log.Tag("ImageShadowTask");
 
     private final CaptureSession mCaptureSession;
     private final ImageBackend.BlockSignalProtocol mProtocol;
+    private final Runnable mRunnableWhenDone;
     private ProcessingTaskDoneListener mDoneListener;
     private Condition mSignal;
 
+    /**
+     * Constructor
+     *
+     * @param protocol the blocking implementation that will keep this shadow
+     *            task from completing before all of its associated subtasks are
+     *            done
+     * @param captureSession the capture session associated with this shadow
+     *            task
+     * @param runnableWhenDone optional runnable to be executed when all the
+     *            associated sub-tasks of the ImageShadowTask are completed.
+     *            This runnable will be executed on the Executor of the last
+     *            subtask that completes (as specified in TaskImageContainer).
+     *            This underlying runnable is a part of the ImageBackend
+     *            infrastructure, and should NOT be associated with the
+     *            ProcessingTask implementation.
+     */
     ImageShadowTask(ImageBackend.BlockSignalProtocol protocol,
-            CaptureSession captureSession) {
+            CaptureSession captureSession, Optional<Runnable> runnableWhenDone) {
         mProtocol = protocol;
         mCaptureSession = captureSession;
+        if(runnableWhenDone.isPresent()) {
+            mRunnableWhenDone = runnableWhenDone.get();
+        } else {
+            mRunnableWhenDone = null;
+        }
     }
 
     ImageBackend.BlockSignalProtocol getProtocol() {
         return mProtocol;
+    }
+
+    /**
+     * Returns the Runnable to be executed when all the associated
+     * TaskImageContainer of ImageShadowTask have been completed.
+     */
+    public Runnable getRunnableWhenDone() {
+        return mRunnableWhenDone;
     }
 
     @Override

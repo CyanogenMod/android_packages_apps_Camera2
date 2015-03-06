@@ -22,7 +22,6 @@ import android.graphics.Rect;
 import android.net.Uri;
 
 import com.android.camera.app.OrientationManager;
-import com.android.camera.async.MainThread;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
@@ -30,16 +29,19 @@ import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.processing.imagebackend.ImageBackend;
 import com.android.camera.processing.imagebackend.ImageConsumer;
 import com.android.camera.processing.imagebackend.ImageProcessorListener;
-import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
 import com.android.camera2.R;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,18 +50,19 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Wires up the ImageBackend task submission process to save Yuv images.
  */
 public class YuvImageBackendImageSaver implements ImageSaver.Builder {
+
     @ParametersAreNonnullByDefault
     private final class ImageSaverImpl implements SingleImageSaver {
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
-        private final ImageProcessorListener mPreviewListener;
+        private final ImageProcessorListener mImageProcessorListener;
 
         public ImageSaverImpl(CaptureSession session,
                 OrientationManager.DeviceOrientation imageRotation,
-                ImageProcessorListener previewListener) {
+                ImageProcessorListener imageProcessorListener) {
             mSession = session;
             mImageRotation = imageRotation;
-            mPreviewListener = previewListener;
+            mImageProcessorListener = imageProcessorListener;
         }
 
         @Override
@@ -70,9 +73,6 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
             if (thumbnail.isPresent()) {
                 thumbnail.get().close();
             }
-            final ImageProcessorProxyListener listenerProxy = mImageBackend.getProxyListener();
-
-            listenerProxy.registerListener(mPreviewListener, image);
 
             Set<ImageConsumer.ImageTaskFlags> taskFlagsSet = new HashSet<>();
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CREATE_EARLY_FILMSTRIP_PREVIEW);
@@ -81,8 +81,9 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE);
 
             try {
-                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, metadata, mCrop),
-                        mExecutor, taskFlagsSet, mSession);
+                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, metadata,
+                        mCrop), mExecutor, taskFlagsSet, mSession,
+                        Optional.of(mImageProcessorListener));
             } catch (InterruptedException e) {
                 // Impossible exception because receiveImage is nonblocking
                 throw new RuntimeException(e);
@@ -90,19 +91,14 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         }
     }
 
-    private static class PreviewListener implements ImageProcessorListener {
-        private final MainThread mExecutor;
-        private final ImageProcessorProxyListener mListenerProxy;
+    private static class YuvImageProcessorListener implements ImageProcessorListener {
         private final CaptureSession mSession;
         private final OrientationManager.DeviceOrientation mImageRotation;
         private final OneCamera.PictureSaverCallback mPictureSaverCallback;
 
-        private PreviewListener(MainThread executor,
-                ImageProcessorProxyListener listenerProxy, CaptureSession session,
+        private YuvImageProcessorListener(CaptureSession session,
                 OrientationManager.DeviceOrientation imageRotation,
                 OneCamera.PictureSaverCallback pictureSaverCallback) {
-            mExecutor = executor;
-            mListenerProxy = listenerProxy;
             mSession = session;
             mImageRotation = imageRotation;
             mPictureSaverCallback = pictureSaverCallback;
@@ -148,49 +144,55 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                     final Bitmap bitmapIntermediateRotated = Bitmap.createBitmap(
                             bitmapIntermediate, 0, 0, bitmapIntermediate.getWidth(),
                             bitmapIntermediate.getHeight(), matrix, true);
-                    mExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            // TODO: Finalize and I18N string.
-                            // Don't use this thumbnail for the capture
-                            // indicator.
-                            mSession.updateThumbnail(bitmapIntermediateRotated);
-                            mSession.setProgressMessage(R.string.session_saving_image);
-                        }
-                    });
+                    mSession.updateThumbnail(bitmapIntermediateRotated);
+                    mSession.setProgressMessage(R.string.session_saving_image);
                     break;
             }
         }
 
         @Override
         public void onResultUri(TaskImageContainer.TaskInfo task, Uri uri) {
-            // Remove yourself from the listener after JPEG save.
-            // TODO: This should really be done by the ImageBackend to guarantee
-            // ordering, since technically this could happen out of order.
-            mListenerProxy.unregisterListener(this);
+            // Do Nothing
         }
     }
 
-    private final MainThread mExecutor;
     private final ImageRotationCalculator mImageRotationCalculator;
     private final ImageBackend mImageBackend;
     private final Rect mCrop;
+    private final Executor mExecutor;
 
     /**
      * Constructor
      *
-     * @param executor Executor to run listener events on the ImageBackend
      * @param imageRotationCalculator the image rotation calculator to determine
+     * @param imageBackend ImageBackend to run the image tasks
      * @param crop the crop to apply. Note that crop must be done *before* any
      *            rotation of the images.
      */
-    public YuvImageBackendImageSaver(MainThread executor,
-            ImageRotationCalculator imageRotationCalculator,
+    public YuvImageBackendImageSaver(ImageRotationCalculator imageRotationCalculator,
             ImageBackend imageBackend, Rect crop) {
-        mExecutor = executor;
         mImageRotationCalculator = imageRotationCalculator;
         mImageBackend = imageBackend;
         mCrop = crop;
+        mExecutor = Executors.newSingleThreadExecutor();
+    }
+
+    /**
+     * Constructor for dependency injection/ testing.
+     *
+     * @param imageRotationCalculator the image rotation calculator to determine
+     * @param imageBackend ImageBackend to run the image tasks
+     * @param crop the crop to apply. Note that crop must be done *before* any
+     *            rotation of the images.
+     * @param executor Executor to be used for listener events in ImageBackend.
+     */
+    @VisibleForTesting
+    public YuvImageBackendImageSaver(ImageRotationCalculator imageRotationCalculator,
+            ImageBackend imageBackend, Rect crop, Executor executor) {
+        mImageRotationCalculator = imageRotationCalculator;
+        mImageBackend = imageBackend;
+        mCrop = crop;
+        mExecutor = executor;
     }
 
     /**
@@ -206,11 +208,9 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         final OrientationManager.DeviceOrientation imageRotation = mImageRotationCalculator
                 .toImageRotation();
 
-        ImageProcessorProxyListener proxyListener = mImageBackend.getProxyListener();
-
-        PreviewListener previewListener = new PreviewListener(mExecutor,
-                proxyListener, session, imageRotation, pictureSaverCallback);
-        return new MostRecentImageSaver(new ImageSaverImpl(session,
-                imageRotation, previewListener));
+        YuvImageProcessorListener yuvImageProcessorListener = new YuvImageProcessorListener(
+                session, imageRotation, pictureSaverCallback);
+        return new MostRecentImageSaver(new ImageSaverImpl(session, imageRotation,
+                yuvImageProcessorListener));
     }
 }

@@ -17,13 +17,14 @@
 package com.android.camera.processing.imagebackend;
 
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
+
+import javax.annotation.Nullable;
 
 /**
  * TaskImageContainer are the base class of tasks that wish to run with the
@@ -171,13 +172,12 @@ public abstract class TaskImageContainer implements Runnable {
      * Constructor to use when keeping the image reference.
      *
      * @param image Image reference that needs to be released.
-     * @param Executor Executor to run the event handling
-     * @param imageTaskManager a reference to the ImageBackend, in case, you
-     *            need to spawn other tasks
+     * @param Executor Executor to run the event handling, if required.
+     * @param imageTaskManager a reference to the ImageBackend, in case, you need to spawn other tasks
      * @param preferredLane Priority that the derived task will run at
      * @param captureSession Session that handles image processing events
      */
-    public TaskImageContainer(ImageToProcess image, Executor Executor,
+    public TaskImageContainer(ImageToProcess image, @Nullable Executor Executor,
             ImageTaskManager imageTaskManager,
             ProcessingPriority preferredLane, CaptureSession captureSession) {
         mImage = image;

@@ -21,31 +21,40 @@ import android.net.Uri;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 /**
  * Implements the ability for the object to send events to multiple listeners in
  * a thread-safe manner. Also, listeners can also filter messages based on the a
- * specific image result. TODO: Replace this object with a more generic listener
- * classes.
+ * specific image result.
+ * <p>
+ * TODO: Replace this object with a more generic listener class. TODO: Replace
+ * the image filter code with something more efficient.
  */
 public class ImageProcessorProxyListener implements ImageProcessorListener {
 
     private final static Log.Tag TAG = new Log.Tag("IProxyListener");
 
-    private List<ImageProcessorListener> mRegisteredListeners = null;
+    private final List<ImageProcessorListener> mRegisteredListeners;
 
-    private HashMap<ImageProcessorListener, Long> mImageFilter = null;
+    private final HashMap<ImageProcessorListener, Long> mImageFilter;
 
     /**
-     * Wrapper for the log to avoid direct references to Android Log objects that will
-     * crash unit tests.  Subclasses may override this method for debugging.
+     * Wrapper for the log to avoid direct references to Android Log objects
+     * that will crash unit tests. Subclasses may override this method for
+     * debugging.
+     *
      * @param message
      */
     protected void logWrapper(String message) {
-        // Do Nothing
+        // Uncomment for more verbose messaging.
+        // Log.v(TAG, message);
     }
 
     ImageProcessorProxyListener() {
@@ -53,21 +62,63 @@ public class ImageProcessorProxyListener implements ImageProcessorListener {
         mImageFilter = new HashMap<ImageProcessorListener, Long>();
     }
 
-    // TODO: Return the state of the paired thing in processing
-    public List<TaskImageContainer.TaskImage> registerListener(ImageProcessorListener listener,
-            ImageProxy image) {
+    /**
+     * Returns the size of the ImageFilter so that we ensure that there are no
+     * reference leaks.
+     *
+     * @return the number of elements in the mapping between
+     *         ImageProcessorListener and their ids.
+     */
+    @VisibleForTesting
+    public int getMapSize() {
         synchronized (mRegisteredListeners) {
-            mRegisteredListeners.add(listener);
+            return mImageFilter.size();
+        }
+    }
+
+    /**
+     * Returns the number of ImageProcessorListener held by the system so that
+     * we ensure that there are no reference leaks.
+     *
+     * @return the number of registered ImageProcessorListener
+     */
+    @VisibleForTesting
+    public int getNumRegisteredListeners() {
+        synchronized (mRegisteredListeners) {
+            return mRegisteredListeners.size();
+        }
+    }
+
+    /**
+     * Register a listener filtered by a particular image object. If image is
+     * null, then events from all image processing will be sent to the
+     * registered listener.
+     *
+     * @param listener The listener to be registered.
+     * @param image The specific image to filter the events to the listener. If
+     *            null, then the listener receives events from all images that
+     *            are being processed.
+     */
+    public void registerListener(ImageProcessorListener listener,
+            @Nullable ImageProxy image) {
+        synchronized (mRegisteredListeners) {
+            logWrapper("There are " + mRegisteredListeners.size()
+                    + " listeners before addition");
+            if (!mRegisteredListeners.contains(listener)) {
+                mRegisteredListeners.add(listener);
+                logWrapper("Listener will be overwritten.");
+            }
+
             if (image == null) {
                 mImageFilter.put(listener, null);
             } else {
                 mImageFilter.put(listener, image.getTimestamp());
             }
+            logWrapper("There are " + mRegisteredListeners.size()
+                    + " listeners after addition");
         }
 
-        // TODO: return an array that encapsulated the current jobs that are
-        // running.
-        return null;
+        return;
     }
 
     private List<ImageProcessorListener> filteredListeners(long imageId) {
@@ -87,7 +138,8 @@ public class ImageProcessorProxyListener implements ImageProcessorListener {
             if (mRegisteredListeners.contains(listener)) {
                 mRegisteredListeners.remove(listener);
                 mImageFilter.remove(listener);
-                logWrapper("There are " + mRegisteredListeners.size() + " listeners after removal");
+                logWrapper("There are " + mRegisteredListeners.size()
+                        + " listeners after removal");
             } else {
                 logWrapper("Couldn't find listener.  There are " + mRegisteredListeners.size()
                         + " listeners after removal");
