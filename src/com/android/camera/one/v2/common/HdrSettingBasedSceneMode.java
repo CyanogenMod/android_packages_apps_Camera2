@@ -25,7 +25,7 @@ import com.google.common.base.Supplier;
 /**
  * Computes the current scene mode to use based on the current hdr setting.
  */
-@TargetApi(VERSION_CODES.L)
+@TargetApi(VERSION_CODES.LOLLIPOP)
 public class HdrSettingBasedSceneMode implements Supplier<Integer> {
     // API 21 omitted this constant officially, but kept it around as a hidden constant
     // MR1 brings it back officially as the same int value.
