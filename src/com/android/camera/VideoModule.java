@@ -1609,7 +1609,7 @@ public class VideoModule extends CameraModule
 
         mCameraSettings.setPreviewSize(new Size(mDesiredPreviewWidth, mDesiredPreviewHeight));
         // This is required for Samsung SGH-I337 and probably other Samsung S4 versions
-        if (Build.BRAND.toLowerCase().contains("samsung")) {
+        if (Build.BRAND.toLowerCase().contains("samsung") && mCameraCapabilities.getSupportedVideoSizes().size() != 0) {
             mCameraSettings.setSetting("video-size",
                     mProfile.videoFrameWidth + "x" + mProfile.videoFrameHeight);
         }
