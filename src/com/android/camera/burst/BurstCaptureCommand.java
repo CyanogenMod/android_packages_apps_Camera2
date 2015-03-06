@@ -163,11 +163,8 @@ public class BurstCaptureCommand implements CameraCommand {
                 }
             }
         } finally {
-            // Make sure the images are closed after the callback.
-            try (Lifetime capturedImagesLifetime = new Lifetime()) {
-                for (ImageProxy image : capturedImages) {
-                    capturedImagesLifetime.add(image);
-                }
+            try {
+                // Note: BurstController will release images after use
                 mBurstController.processBurstResults(capturedImages);
             } finally {
                 // Switch back to the old request.

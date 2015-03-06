@@ -155,7 +155,8 @@ class BurstFacadeImpl implements BurstFacade {
                     mBurstController.startBurst(
                             mSurfaceTextureContainer.get().getSurfaceTexture(),
                             imageStreamProperties,
-                            mBurstResultsListener);
+                            mBurstResultsListener,
+                            captureSession);
 
             // Start burst.
             mBurstTaker.get().startBurst(evictionHandler, mBurstController);
