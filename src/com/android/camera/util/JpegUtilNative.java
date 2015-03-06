@@ -209,7 +209,7 @@ public class JpegUtilNative {
      */
     public static int compressJpegFromYUV420Image(ImageProxy img, ByteBuffer outBuf, int quality,
             Rect crop, int degrees) {
-        Preconditions.checkState(degrees > 0, "Rotation must be positive");
+        Preconditions.checkState(degrees >= 0, "Rotation cannot be negative");
         Preconditions.checkState((degrees % 90) == 0, "Rotation must be a multiple of 90 degrees");
         Preconditions.checkState(outBuf.isDirect(), "Output buffer must be direct");
         Preconditions.checkState(crop.left < crop.right, "Invalid crop rectangle");
