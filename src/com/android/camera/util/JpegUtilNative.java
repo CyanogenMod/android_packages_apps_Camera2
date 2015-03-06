@@ -209,14 +209,18 @@ public class JpegUtilNative {
      */
     public static int compressJpegFromYUV420Image(ImageProxy img, ByteBuffer outBuf, int quality,
             Rect crop, int degrees) {
-        Preconditions.checkState(degrees >= 0, "Rotation cannot be negative");
-        Preconditions.checkState((degrees % 90) == 0, "Rotation must be a multiple of 90 degrees");
+        Preconditions.checkState((degrees % 90) == 0, "Rotation must be a multiple of 90 degrees," +
+                " was " + degrees);
+        // Handle negative angles by converting to positive.
+        degrees = ((degrees % 360) + (360 * 2)) % 360;
         Preconditions.checkState(outBuf.isDirect(), "Output buffer must be direct");
-        Preconditions.checkState(crop.left < crop.right, "Invalid crop rectangle");
-        Preconditions.checkState(crop.top < crop.bottom, "Invalid crop rectangle");
+        Preconditions.checkState(crop.left < crop.right, "Invalid crop rectangle: " +
+                crop.toString());
+        Preconditions.checkState(crop.top < crop.bottom, "Invalid crop rectangle: " +
+                crop.toString());
         final int NUM_PLANES = 3;
         Preconditions.checkState(img.getFormat() == ImageFormat.YUV_420_888, "Only " +
-                "ImageFormat.YUV_420_888 is supported");
+                "ImageFormat.YUV_420_888 is supported, found " + img.getFormat());
         final List<ImageProxy.Plane> planeList = img.getPlanes();
         Preconditions.checkState(planeList.size() == NUM_PLANES);
 
