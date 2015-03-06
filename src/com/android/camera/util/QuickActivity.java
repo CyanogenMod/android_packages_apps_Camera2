@@ -21,6 +21,8 @@ import android.app.KeyguardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+
 import com.android.camera.debug.Log;
 import javax.annotation.Nullable;
 
@@ -68,6 +70,11 @@ public abstract class QuickActivity extends Activity {
      */
     private boolean mSkippedFirstOnResume = false;
 
+    /** When application execution started in SystemClock.elapsedRealtimeNanos(). */
+    protected long mExecutionStartNanoTime = 0;
+    /** Was this session started with onCreate(). */
+    protected boolean mStartupOnCreate = false;
+
     /** Handle to Keyguard service. */
     @Nullable
     private KeyguardManager mKeyguardManager = null;
@@ -99,7 +106,9 @@ public abstract class QuickActivity extends Activity {
 
     @Override
     protected final void onCreate(Bundle bundle) {
+        mExecutionStartNanoTime = SystemClock.elapsedRealtimeNanos();
         logLifecycle("onCreate", true);
+        mStartupOnCreate = true;
         super.onCreate(bundle);
         mMainHandler = new Handler(getMainLooper());
         onCreateTasks(bundle);
@@ -159,6 +168,7 @@ public abstract class QuickActivity extends Activity {
             onPauseTasks();
         }
         super.onPause();
+        mStartupOnCreate = false;
         logLifecycle("onPause", false);
     }
 
@@ -194,7 +204,7 @@ public abstract class QuickActivity extends Activity {
         Log.v(TAG, prefix + " " + methodName + ": Activity = " + toString());
     }
 
-    private boolean isKeyguardLocked() {
+    protected boolean isKeyguardLocked() {
         if (mKeyguardManager == null) {
             mKeyguardManager = AndroidServices.instance().provideKeyguardManager();
         }
@@ -204,7 +214,7 @@ public abstract class QuickActivity extends Activity {
         return false;
     }
 
-    private boolean isKeyguardSecure() {
+    protected boolean isKeyguardSecure() {
         if (mKeyguardManager == null) {
             mKeyguardManager = AndroidServices.instance().provideKeyguardManager();
         }
