@@ -16,6 +16,7 @@
 
 package com.android.camera.captureintent.stateful;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -51,6 +52,14 @@ public interface State {
      * it holds at this point.
      */
     public void onLeave();
+
+    /**
+     * Obtains the number of registered event handlers in the state.
+     *
+     * @return The number of registered event handlers in the state.
+     */
+    @VisibleForTesting
+    public int getEventHandlerCount();
 
     /**
      * Obtains the event handler for a particular type of event.

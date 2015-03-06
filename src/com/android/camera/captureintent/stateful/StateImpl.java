@@ -55,6 +55,11 @@ public abstract class StateImpl implements State {
     }
 
     @Override
+    public int getEventHandlerCount() {
+        return mEventHandlerMap.size();
+    }
+
+    @Override
     public final <T extends Event> EventHandler<T> getEventHandler(Class<T> eventClass) {
         return mEventHandlerMap.get(eventClass);
     }

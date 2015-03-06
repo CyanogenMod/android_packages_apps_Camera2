@@ -132,6 +132,18 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     }
 
     /**
+     * Update preview aspect ratio.
+     *
+     * This is useful only when TextureViewHelper auto transform is enabled.
+     *
+     * @param aspectRatio The preview aspect ratio.
+     */
+    public void updatePreviewAspectRatio(float aspectRatio) {
+        MainThread.checkMainThread();
+        mAppUI.updatePreviewAspectRatio(aspectRatio);
+    }
+
+    /**
      * Called when the preview is started.
      */
     public void onPreviewStarted() {

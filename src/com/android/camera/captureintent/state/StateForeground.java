@@ -19,7 +19,11 @@ package com.android.camera.captureintent.state;
 import com.google.common.base.Optional;
 
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
+import com.android.camera.captureintent.resource.ResourceSurfaceTextureImpl;
+import com.android.camera.captureintent.resource.ResourceSurfaceTextureNexus4Impl;
 import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
 import com.android.camera.captureintent.event.EventPause;
@@ -65,10 +69,24 @@ public final class StateForeground extends StateImpl {
                 new EventHandler<EventOnSurfaceTextureAvailable>() {
                     @Override
                     public Optional<State> processEvent(EventOnSurfaceTextureAvailable event) {
-                        return Optional.of((State) StateForegroundWithSurfaceTexture.from(
+                        RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture;
+                        if (CaptureIntentConfig.WORKAROUND_PREVIEW_STRETCH_BUG_NEXUS4) {
+                            resourceSurfaceTexture = ResourceSurfaceTextureNexus4Impl.create(
+                                    mResourceConstructed,
+                                    event.getSurfaceTexture());
+                        } else {
+                            resourceSurfaceTexture = ResourceSurfaceTextureImpl.create(
+                                    mResourceConstructed,
+                                    event.getSurfaceTexture());
+                        }
+                        State nextState = StateForegroundWithSurfaceTexture.from(
                                 StateForeground.this,
                                 mResourceConstructed,
-                                event.getSurfaceTexture()));
+                                resourceSurfaceTexture);
+                        // Release ResourceSurfaceTexture after it was handed
+                        // over to StateForegroundWithSurfaceTexture.
+                        resourceSurfaceTexture.close();
+                        return Optional.of(nextState);
                     }
                 };
         setEventHandler(

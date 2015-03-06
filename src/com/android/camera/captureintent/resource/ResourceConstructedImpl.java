@@ -17,15 +17,18 @@
 package com.android.camera.captureintent.resource;
 
 import com.android.camera.FatalErrorHandler;
+import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.ResolutionSetting;
+import com.android.camera.settings.SettingsManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,16 +38,20 @@ import android.os.HandlerThread;
 public final class ResourceConstructedImpl implements ResourceConstructed {
     private final Intent mIntent;
     private final CaptureIntentModuleUI mModuleUI;
+    private final String mSettingScopeNamespace;
     private final MainThread mMainThread;
     private final Context mContext;
     private final OneCameraManager mCameraManager;
     private final LocationManager mLocationManager;
     private final OrientationManager mOrientationManager;
+    private final SettingsManager mSettingsManager;
+    private final BurstFacade mBurstFacade;
     private final CameraFacingSetting mCameraFacingSetting;
     private final ResolutionSetting mResolutionSetting;
     private final HandlerThread mCameraThread;
     private final Handler mCameraHandler;
     private final FatalErrorHandler mFatalErrorHandler;
+    private final SoundPlayer mSoundPlayer;
 
     // TODO: Hope one day we could get rid of AppController.
     private final AppController mAppController;
@@ -55,43 +62,55 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
     public static RefCountBase<ResourceConstructed> create(
             Intent intent,
             CaptureIntentModuleUI moduleUI,
+            String settingScopeNamespace,
             MainThread mainThread,
             Context context,
             OneCameraManager cameraManager,
             LocationManager locationManager,
             OrientationManager orientationManager,
-            CameraFacingSetting cameraFacingSetting,
-            ResolutionSetting resolutionSetting,
+            SettingsManager settingsManager,
+            BurstFacade burstFacade,
             AppController appController,
             FatalErrorHandler fatalErrorHandler) {
+        final CameraFacingSetting cameraFacingSetting = new CameraFacingSetting(
+                context.getResources(), settingsManager, settingScopeNamespace);
+        final ResolutionSetting resolutionSetting = new ResolutionSetting(
+                settingsManager, cameraManager);
         return new RefCountBase<ResourceConstructed>(new ResourceConstructedImpl(
-                intent, moduleUI, mainThread, context, cameraManager, locationManager,
-                orientationManager, cameraFacingSetting, resolutionSetting,
-                appController, fatalErrorHandler));
+                intent, moduleUI, settingScopeNamespace, mainThread, context, cameraManager,
+                locationManager, orientationManager, settingsManager, burstFacade,
+                cameraFacingSetting, resolutionSetting, appController, fatalErrorHandler));
     }
 
     private ResourceConstructedImpl(
             Intent intent,
             CaptureIntentModuleUI moduleUI,
+            String settingScopeNamespace,
             MainThread mainThread,
             Context context,
             OneCameraManager cameraManager,
             LocationManager locationManager,
             OrientationManager orientationManager,
+            SettingsManager settingsManager,
+            BurstFacade burstFacade,
             CameraFacingSetting cameraFacingSetting,
             ResolutionSetting resolutionSetting,
             AppController appController,
             FatalErrorHandler fatalErrorHandler) {
         mIntent = intent;
         mModuleUI = moduleUI;
+        mSettingScopeNamespace = settingScopeNamespace;
         mMainThread = mainThread;
         mContext = context;
         mCameraManager = cameraManager;
         mLocationManager = locationManager;
         mOrientationManager = orientationManager;
+        mSettingsManager = settingsManager;
+        mBurstFacade = burstFacade;
         mCameraFacingSetting = cameraFacingSetting;
         mResolutionSetting = resolutionSetting;
         mFatalErrorHandler = fatalErrorHandler;
+        mSoundPlayer = new SoundPlayer(mContext);
         mAppController = appController;
 
         mCameraThread = new HandlerThread("ImageCaptureIntentModule.CameraHandler");
@@ -112,6 +131,11 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
     @Override
     public CaptureIntentModuleUI getModuleUI() {
         return mModuleUI;
+    }
+
+    @Override
+    public String getSettingScopeNamespace() {
+        return mSettingScopeNamespace;
     }
 
     @Override
@@ -140,6 +164,16 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
     }
 
     @Override
+    public SettingsManager getSettingsManager() {
+        return mSettingsManager;
+    }
+
+    @Override
+    public BurstFacade getBurstFacade() {
+        return mBurstFacade;
+    }
+
+    @Override
     public CameraFacingSetting getCameraFacingSetting() {
         return mCameraFacingSetting;
     }
@@ -152,6 +186,11 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
     @Override
     public Handler getCameraHandler() {
         return mCameraHandler;
+    }
+
+    @Override
+    public SoundPlayer getSoundPlayer() {
+        return mSoundPlayer;
     }
 
     @Override

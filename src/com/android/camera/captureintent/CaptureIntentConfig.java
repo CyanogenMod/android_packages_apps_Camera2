@@ -16,7 +16,16 @@
 
 package com.android.camera.captureintent;
 
+import com.android.camera.util.ApiHelper;
+
 public class CaptureIntentConfig {
     public static final int DOWN_SAMPLE_FACTOR = 4;
     public static final int INLINE_BITMAP_MAX_PIXEL_NUM = 50 * 1024;
+
+    /**
+     * Workaround for TextureView/HAL issues in API1 / API2 Legacy Mode
+     * (b/19271661) for 16:9 preview streams on Nexus 4. See more details
+     * in {@link ResourceSurfaceTextureNexus4Impl}.
+     */
+    public static final boolean WORKAROUND_PREVIEW_STRETCH_BUG_NEXUS4 = ApiHelper.IS_NEXUS_4;
 }

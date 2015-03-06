@@ -17,15 +17,18 @@
 package com.android.camera.captureintent.resource;
 
 import com.android.camera.FatalErrorHandler;
+import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
 import com.android.camera.app.LocationManager;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.SafeCloseable;
+import com.android.camera.burst.BurstFacade;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.ResolutionSetting;
+import com.android.camera.settings.SettingsManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -45,12 +48,20 @@ public interface ResourceConstructed extends SafeCloseable {
     public Intent getIntent();
 
     /**
-     * Obtains the UI object associated with this module.
+     * Obtains the UI object associated with the intent module.
      *
      * @return A {@link com.android.camera.captureintent.CaptureIntentModuleUI}
      *         object.
      */
     public CaptureIntentModuleUI getModuleUI();
+
+    /**
+     * Obtains the scope namespace used in
+     * {@link com.android.camera.settings.SettingsManager}.
+     *
+     * @return The scope namespace of the intent module.
+     */
+    public String getSettingScopeNamespace();
 
     /**
      * Obtains the main thread.
@@ -90,6 +101,20 @@ public interface ResourceConstructed extends SafeCloseable {
     public OrientationManager getOrientationManager();
 
     /**
+     * Obtains the settings manager of the activity.
+     *
+     * @return A {@link com.android.camera.settings.SettingsManager} object.
+     */
+    public SettingsManager getSettingsManager();
+
+    /**
+     * Obtains the burst facade.
+     *
+     * @return A {@link com.android.camera.burst.BurstFacade} object.
+     */
+    public BurstFacade getBurstFacade();
+
+    /**
      * Obtains the current camera facing setting.
      *
      * @return A {@link com.android.camera.settings.CameraFacingSetting} object.
@@ -109,6 +134,13 @@ public interface ResourceConstructed extends SafeCloseable {
      * @return A {@link android.os.Handler} object.
      */
     public Handler getCameraHandler();
+
+    /**
+     * Obtains a sound player that is able to play various capture sounds.
+     *
+     * @return A {@link com.android.camera.SoundPlayer} object.
+     */
+    public SoundPlayer getSoundPlayer();
 
     /**
      * Obtains the app controller

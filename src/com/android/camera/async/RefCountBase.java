@@ -16,6 +16,7 @@
 
 package com.android.camera.async;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 /**
@@ -69,5 +70,12 @@ public class RefCountBase<T extends SafeCloseable> implements SafeCloseable {
         // Do this outside of the mLock critical section for speed and to avoid
         // deadlock.
         mObject.close();
+    }
+
+    @VisibleForTesting
+    public int getRefCount() {
+        synchronized (mLock) {
+            return mRefCount;
+        }
     }
 }
