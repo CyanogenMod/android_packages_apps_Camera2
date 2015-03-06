@@ -37,6 +37,7 @@ import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
 import com.android.camera.util.GoogleHelpHelper;
+import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
@@ -116,8 +117,8 @@ public class CameraSettingsActivity extends FragmentActivity {
             Context context = this.getActivity().getApplicationContext();
             addPreferencesFromResource(R.xml.camera_preferences);
 
-            // Allow the Helper to edit the full preference hierarchy, not the sub
-            // tree we may show as root. See {@link #getPreferenceScreen()}.
+            // Allow the Helper to edit the full preference hierarchy, not the
+            // sub tree we may show as root. See {@link #getPreferenceScreen()}.
             mGetSubPrefAsRoot = false;
             CameraSettingsActivityHelper.addAdditionalPreferences(this, context);
             mGetSubPrefAsRoot = true;
@@ -147,18 +148,18 @@ public class CameraSettingsActivity extends FragmentActivity {
             setPreferenceScreenIntent(resolutionScreen);
 
             final PreferenceScreen advancedScreen =
-                (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
+                    (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
             setPreferenceScreenIntent(advancedScreen);
 
             Preference helpPref = findPreference(PREF_LAUNCH_HELP);
             helpPref.setOnPreferenceClickListener(
-                new OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        new GoogleHelpHelper(activity).launchGoogleHelp();
-                        return true;
-                    }
-                });
+                    new OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            new GoogleHelpHelper(activity).launchGoogleHelp();
+                            return true;
+                        }
+                    });
             getPreferenceScreen().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(this);
         }
@@ -337,8 +338,8 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Sets the entries for the given list preference.
          *
-         * @param selectedSizes The possible S,M,L entries the user can
-         *            choose from.
+         * @param selectedSizes The possible S,M,L entries the user can choose
+         *            from.
          * @param preference The preference to set the entries for.
          */
         private void setEntriesForSelection(List<Size> selectedSizes,
@@ -387,7 +388,8 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Sets the summary for the given list preference.
          *
-         * @param oldPictureSizes The old selected picture sizes for small medium and large
+         * @param oldPictureSizes The old selected picture sizes for small
+         *            medium and large
          * @param displayableSizes The human readable preferred sizes
          * @param preference The preference for which to set the summary.
          */
@@ -440,6 +442,11 @@ public class CameraSettingsActivity extends FragmentActivity {
                             backCameraId);
                     mPictureSizesBack = ResolutionUtil
                             .getDisplayableSizesFromSupported(sizes, true);
+
+                    String blacklisted = GservicesHelper
+                            .getBlacklistedResolutionsBack(getActivity().getContentResolver());
+                    mPictureSizesBack = ResolutionUtil.filterBlackListedSizes(mPictureSizesBack,
+                            blacklisted);
                 }
                 mVideoQualitiesBack = SettingsUtil.getSelectedVideoQualities(backCameraId);
             } else {
@@ -453,10 +460,14 @@ public class CameraSettingsActivity extends FragmentActivity {
                 List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(frontCameraId,
                         this.getActivity().getApplicationContext());
                 if (sizes != null) {
-                    mOldPictureSizesFront= SettingsUtil.getSelectedCameraPictureSizes(sizes,
+                    mOldPictureSizesFront = SettingsUtil.getSelectedCameraPictureSizes(sizes,
                             frontCameraId);
                     mPictureSizesFront =
                             ResolutionUtil.getDisplayableSizesFromSupported(sizes, false);
+                    String blacklisted = GservicesHelper
+                            .getBlacklistedResolutionsFront(getActivity().getContentResolver());
+                    mPictureSizesFront = ResolutionUtil.filterBlackListedSizes(mPictureSizesFront,
+                            blacklisted);
                 }
                 mVideoQualitiesFront = SettingsUtil.getSelectedVideoQualities(frontCameraId);
             } else {

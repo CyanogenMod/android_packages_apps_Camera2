@@ -75,7 +75,7 @@ public final class ResourceConstructedImpl implements ResourceConstructed {
         final CameraFacingSetting cameraFacingSetting = new CameraFacingSetting(
                 context.getResources(), settingsManager, settingScopeNamespace);
         final ResolutionSetting resolutionSetting = new ResolutionSetting(
-                settingsManager, cameraManager);
+                settingsManager, cameraManager, context.getContentResolver());
         return new RefCountBase<ResourceConstructed>(new ResourceConstructedImpl(
                 intent, moduleUI, settingScopeNamespace, mainThread, context, cameraManager,
                 locationManager, orientationManager, settingsManager, burstFacade,

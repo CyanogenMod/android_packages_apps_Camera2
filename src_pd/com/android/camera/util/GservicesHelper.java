@@ -21,6 +21,14 @@ import android.content.Context;
 
 public class GservicesHelper {
 
+    public static String getBlacklistedResolutionsBack(ContentResolver contentResolver) {
+        return "";
+    }
+
+    public static String getBlacklistedResolutionsFront(ContentResolver contentResolver) {
+        return "";
+    }
+
     public static boolean isCaptureModuleDisabled(ContentResolver contentResolver) {
         return false;
     }

@@ -16,12 +16,14 @@
 
 package com.android.camera.settings;
 
+import android.content.ContentResolver;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Size;
 
 import android.graphics.ImageFormat;
@@ -36,12 +38,17 @@ public class ResolutionSetting {
     private static final Log.Tag TAG = new Log.Tag("ResolutionSettings");
 
     private final SettingsManager mSettingsManager;
-
     private final OneCameraManager mOneCameraManager;
+    private final String mResolutionBlackListBack;
+    private final String mResolutionBlackListFront;
 
-    public ResolutionSetting(SettingsManager settingsManager, OneCameraManager oneCameraManager) {
+    public ResolutionSetting(SettingsManager settingsManager, OneCameraManager oneCameraManager,
+            ContentResolver contentResolver) {
         mSettingsManager = settingsManager;
         mOneCameraManager = oneCameraManager;
+
+        mResolutionBlackListBack = GservicesHelper.getBlacklistedResolutionsBack(contentResolver);
+        mResolutionBlackListFront = GservicesHelper.getBlacklistedResolutionsFront(contentResolver);
     }
 
     /**
@@ -56,11 +63,18 @@ public class ResolutionSetting {
         OneCameraCharacteristics cameraCharacteristics =
                 mOneCameraManager.getCameraCharacteristics(cameraFacing);
 
-        // Pick the largest picture size with the selected aspect ratio and save the choice for front camera.
+        // Pick the largest picture size with the selected aspect ratio and save
+        // the choice for front camera.
         final String pictureSizeSettingKey = cameraFacing == OneCamera.Facing.FRONT ?
                 Keys.KEY_PICTURE_SIZE_FRONT : Keys.KEY_PICTURE_SIZE_BACK;
+        final String blacklist = cameraFacing == OneCamera.Facing.FRONT ? mResolutionBlackListFront
+                : mResolutionBlackListBack;
+
         final List<Size> supportedPictureSizes =
-                cameraCharacteristics.getSupportedPictureSizes(ImageFormat.JPEG);
+                ResolutionUtil.filterBlackListedSizes(
+                        cameraCharacteristics.getSupportedPictureSizes(ImageFormat.JPEG),
+                        blacklist);
+
         final Size chosenPictureSize =
                 ResolutionUtil.getLargestPictureSize(aspectRatio, supportedPictureSizes);
         mSettingsManager.set(
@@ -79,31 +93,47 @@ public class ResolutionSetting {
         final String pictureSizeSettingKey = cameraFacing == OneCamera.Facing.FRONT ?
                 Keys.KEY_PICTURE_SIZE_FRONT : Keys.KEY_PICTURE_SIZE_BACK;
 
-        /**
-         * If there is no saved reference, pick a largest size with 4:3 aspect
-         * ratio as a fallback.
-         */
-        final boolean isPictureSizeSettingSet =
+        Size pictureSize = null;
+
+        String blacklist = "";
+        if (cameraFacing == OneCamera.Facing.BACK) {
+            blacklist = mResolutionBlackListBack;
+        } else if (cameraFacing == OneCamera.Facing.FRONT) {
+            blacklist = mResolutionBlackListFront;
+        }
+
+        // If there is no saved picture size preference or the saved on is
+        // blacklisted., pick a largest size with 4:3 aspect
+        boolean isPictureSizeSettingSet =
                 mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL, pictureSizeSettingKey);
-        if (!isPictureSizeSettingSet) {
+        boolean isPictureSizeBlacklisted = false;
+
+        // If a picture size is set, check whether it's blacklisted.
+        if (isPictureSizeSettingSet) {
+            pictureSize = SettingsUtil.sizeFromSettingString(
+                    mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL, pictureSizeSettingKey));
+            isPictureSizeBlacklisted = ResolutionUtil.isBlackListed(pictureSize, blacklist);
+        }
+
+        if (!isPictureSizeSettingSet || isPictureSizeBlacklisted){
             final Rational aspectRatio = ResolutionUtil.ASPECT_RATIO_4x3;
 
             final OneCameraCharacteristics cameraCharacteristics =
                     mOneCameraManager.getCameraCharacteristics(cameraFacing);
             final List<Size> supportedPictureSizes =
-                    cameraCharacteristics.getSupportedPictureSizes(ImageFormat.JPEG);
+                    ResolutionUtil.filterBlackListedSizes(
+                            cameraCharacteristics.getSupportedPictureSizes(ImageFormat.JPEG),
+                            blacklist);
             final Size fallbackPictureSize =
                     ResolutionUtil.getLargestPictureSize(aspectRatio, supportedPictureSizes);
             mSettingsManager.set(
                     SettingsManager.SCOPE_GLOBAL,
                     pictureSizeSettingKey,
                     SettingsUtil.sizeToSettingString(fallbackPictureSize));
+            pictureSize = fallbackPictureSize;
             Log.e(TAG, "Picture size setting is not set. Choose " + fallbackPictureSize);
         }
-
-        /** Reads picture size setting from SettingsManager. */
-        return SettingsUtil.sizeFromSettingString(
-                mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL, pictureSizeSettingKey));
+        return pictureSize;
     }
 
     /**
