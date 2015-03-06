@@ -173,8 +173,8 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     inputImage = new TaskImage(img.rotation, img.proxy.getWidth(),
                             img.proxy.getHeight(),
                             img.proxy.getFormat());
-                    Size resultSize = getImageSizeForOrientation(img.proxy.getWidth(),
-                            img.proxy.getHeight(),
+                    Size resultSize = getImageSizeForOrientation(img.crop.width(),
+                            img.crop.height(),
                             img.rotation);
 
                     // Resulting image will be rotated so that viewers won't
