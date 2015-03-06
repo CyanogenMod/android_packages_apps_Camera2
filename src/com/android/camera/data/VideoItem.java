@@ -31,6 +31,8 @@ import com.android.camera2.R;
 import com.bumptech.glide.Glide;
 import com.google.common.base.Optional;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -129,7 +131,8 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
         Optional<MediaDetails> optionalDetails = super.getMediaDetails();
         if (optionalDetails.isPresent()) {
             MediaDetails mediaDetails = optionalDetails.get();
-            String duration = MediaDetails.formatDuration(mContext, mData.getVideoDurationMillis());
+            String duration = MediaDetails.formatDuration(mContext,
+                    TimeUnit.MILLISECONDS.toSeconds(mData.getVideoDurationMillis()));
             mediaDetails.addDetail(MediaDetails.INDEX_DURATION, duration);
         }
         return optionalDetails;
