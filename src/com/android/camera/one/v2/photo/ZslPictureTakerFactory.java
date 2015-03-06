@@ -16,17 +16,22 @@
 
 package com.android.camera.one.v2.photo;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
+
 import android.hardware.camera2.CameraDevice;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.MainThread;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
+import com.android.camera.one.v2.core.ResponseManager;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.photo.zsl.AcceptableZslImageFilter;
+import com.android.camera.one.v2.photo.zsl.AutoFlashZslImageFilter;
 import com.android.camera.one.v2.photo.zsl.ZslImageCaptureCommand;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.metadatasynchronizer.MetadataPool;
@@ -45,7 +50,12 @@ public class ZslPictureTakerFactory {
     private static final long MAX_LOOKBACK_NANOS = 100000000; // 100 ms
     private final PictureTakerImpl mPictureTaker;
 
-    public ZslPictureTakerFactory(MainThread mainExecutor,
+    private ZslPictureTakerFactory(PictureTakerImpl pictureTaker) {
+        mPictureTaker = pictureTaker;
+    }
+
+    public static ZslPictureTakerFactory create(Logger.Factory logFactory,
+            MainThread mainExecutor,
             CameraCommandExecutor commandExecutor,
             ImageSaver.Builder imageSaverBuilder,
             FrameServer frameServer,
@@ -53,7 +63,8 @@ public class ZslPictureTakerFactory {
             ManagedImageReader sharedImageReader,
             BufferQueue<ImageProxy> ringBuffer,
             MetadataPool metadataPool,
-            Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode) {
+            Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode,
+            ResponseManager globalResponseManager) {
         // When flash is ON, always use the ConvergedImageCaptureCommand which
         // performs the AF & AE precapture sequence.
         ImageCaptureCommand flashOnCommand = new ConvergedImageCaptureCommand(
@@ -68,18 +79,24 @@ public class ZslPictureTakerFactory {
                 CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
                 Arrays.asList(rootRequestBuilder), /* ae */false, /* af */true);
         ImageCaptureCommand flashOffCommand =
-                new ZslImageCaptureCommand(ringBuffer, metadataPool, flashOffFallback,
+                new ZslImageCaptureCommand(logFactory, ringBuffer, metadataPool, flashOffFallback,
                         new AcceptableZslImageFilter(true, false), MAX_LOOKBACK_NANOS);
         // When flash is Auto, use ZSL and filter images to require AF
         // convergence, and AE convergence.
+        AutoFlashZslImageFilter autoFlashZslImageFilter = AutoFlashZslImageFilter.create(
+                logFactory, /* afConvergence */true);
+        globalResponseManager.addResponseListener(forPartialMetadata(autoFlashZslImageFilter));
         ImageCaptureCommand flashAutoCommand =
-                new ZslImageCaptureCommand(ringBuffer, metadataPool, flashOnCommand,
-                        new AcceptableZslImageFilter(true, true), MAX_LOOKBACK_NANOS);
+                new ZslImageCaptureCommand(logFactory, ringBuffer, metadataPool, flashOnCommand,
+                        autoFlashZslImageFilter, MAX_LOOKBACK_NANOS);
 
-        ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(flashMode,
+        ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(logFactory, flashMode,
                 flashOnCommand, flashAutoCommand, flashOffCommand);
-        mPictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor, imageSaverBuilder,
+        PictureTakerImpl pictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor,
+                imageSaverBuilder,
                 flashBasedCommand);
+
+        return new ZslPictureTakerFactory(pictureTaker);
     }
 
     public PictureTaker providePictureTaker() {

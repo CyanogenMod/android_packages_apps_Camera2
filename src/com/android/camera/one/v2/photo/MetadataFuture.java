@@ -19,6 +19,7 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.TotalCaptureResult;
 
+import com.android.camera.one.v2.camera2proxy.AndroidTotalCaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.core.ResponseListener;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -38,7 +39,7 @@ public final class MetadataFuture extends ResponseListener {
     @Override
     public void onCompleted(TotalCaptureResult result) {
         super.onCompleted(result);
-        mMetadata.set(new TotalCaptureResultProxy(result));
+        mMetadata.set(new AndroidTotalCaptureResultProxy(result));
     }
 
     @Override

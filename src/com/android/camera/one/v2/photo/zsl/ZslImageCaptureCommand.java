@@ -21,6 +21,8 @@ import android.support.v4.util.Pair;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Updatable;
+import com.android.camera.debug.Log;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
@@ -50,16 +52,21 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public class ZslImageCaptureCommand implements ImageCaptureCommand {
+    private final Logger mLog;
     private final BufferQueue<ImageProxy> mZslRingBuffer;
     private final MetadataPool mZslMetadataPool;
     private final ImageCaptureCommand mFallbackCommand;
     private final Predicate<TotalCaptureResultProxy> mMetadataFilter;
     private final long mMaxLookBackNanos;
 
-    public ZslImageCaptureCommand(BufferQueue<ImageProxy> zslRingBuffer, MetadataPool
-            zslMetadataPool, ImageCaptureCommand fallbackCommand,
-            Predicate<TotalCaptureResultProxy> metadataFilter, long maxLookBackNanos) {
+    public ZslImageCaptureCommand(Logger.Factory logFactory,
+            BufferQueue<ImageProxy> zslRingBuffer,
+            MetadataPool zslMetadataPool,
+            ImageCaptureCommand fallbackCommand,
+            Predicate<TotalCaptureResultProxy> metadataFilter,
+            long maxLookBackNanos) {
         mZslRingBuffer = zslRingBuffer;
+        mLog = logFactory.create(new Log.Tag("ZSLImageCaptureCmd"));
         mZslMetadataPool = zslMetadataPool;
         mFallbackCommand = fallbackCommand;
         mMetadataFilter = metadataFilter;
@@ -158,9 +165,11 @@ public class ZslImageCaptureCommand implements ImageCaptureCommand {
         try {
             Pair<ImageProxy, TotalCaptureResultProxy> image = tryGetZslImage();
             if (image != null) {
+                mLog.i("ZSL image available");
                 imageExposeCallback.update(null);
                 imageSaver.addFullSizeImage(image.first, Futures.immediateFuture(image.second));
             } else {
+                mLog.i("No ZSL image available, using fallback: " + mFallbackCommand);
                 mustCloseImageSaver = false;
                 mFallbackCommand.run(imageExposeCallback, imageSaver);
             }

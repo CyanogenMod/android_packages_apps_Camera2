@@ -20,6 +20,8 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 
 import com.android.camera.async.Updatable;
+import com.android.camera.one.v2.camera2proxy.AndroidCaptureResultProxy;
+import com.android.camera.one.v2.camera2proxy.AndroidTotalCaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 
@@ -67,7 +69,7 @@ public final class ResponseListeners {
         return new ResponseListenerBase<TotalCaptureResultProxy>(callback) {
             @Override
             public void onCompleted(TotalCaptureResult result) {
-                callback.update(new TotalCaptureResultProxy(result));
+                callback.update(new AndroidTotalCaptureResultProxy(result));
             }
         };
     }
@@ -81,12 +83,12 @@ public final class ResponseListeners {
         return new ResponseListenerBase<CaptureResultProxy>(callback) {
             @Override
             public void onProgressed(CaptureResult partialResult) {
-                callback.update(new CaptureResultProxy(partialResult));
+                callback.update(new AndroidCaptureResultProxy(partialResult));
             }
 
             @Override
             public void onCompleted(TotalCaptureResult result) {
-                callback.update(new TotalCaptureResultProxy(result));
+                callback.update(new AndroidTotalCaptureResultProxy(result));
             }
         };
     }

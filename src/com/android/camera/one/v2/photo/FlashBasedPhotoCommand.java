@@ -19,6 +19,8 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.Updatable;
+import com.android.camera.debug.Log;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
@@ -29,15 +31,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 final class FlashBasedPhotoCommand implements ImageCaptureCommand {
+    private final Logger mLog;
     private final Supplier<OneCamera.PhotoCaptureParameters.Flash> mFlashMode;
     private final ImageCaptureCommand mFlashOnCommand;
     private final ImageCaptureCommand mFlashAutoCommand;
     private final ImageCaptureCommand mFlashOffCommand;
 
-    FlashBasedPhotoCommand(Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode,
-                           ImageCaptureCommand flashOnCommand,
-                           ImageCaptureCommand flashAutoCommand,
-                           ImageCaptureCommand flashOffCommand) {
+    FlashBasedPhotoCommand(Logger.Factory logFactory,
+            Supplier<OneCamera.PhotoCaptureParameters.Flash> flashMode,
+            ImageCaptureCommand flashOnCommand,
+            ImageCaptureCommand flashAutoCommand,
+            ImageCaptureCommand flashOffCommand) {
+        mLog = logFactory.create(new Log.Tag("FlashBasedPhotoCmd"));
         mFlashMode = flashMode;
         mFlashOnCommand = flashOnCommand;
         mFlashAutoCommand = flashAutoCommand;
@@ -51,10 +56,13 @@ final class FlashBasedPhotoCommand implements ImageCaptureCommand {
             ResourceAcquisitionFailedException {
         OneCamera.PhotoCaptureParameters.Flash flashMode = mFlashMode.get();
         if (flashMode == OneCamera.PhotoCaptureParameters.Flash.ON) {
+            mLog.i("running flash-on command: " + mFlashOnCommand);
             mFlashOnCommand.run(imageExposeCallback, imageSaver);
         } else if (flashMode == OneCamera.PhotoCaptureParameters.Flash.AUTO) {
+            mLog.i("running flash-auto command: " + mFlashAutoCommand);
             mFlashAutoCommand.run(imageExposeCallback, imageSaver);
         } else {
+            mLog.i("running flash-off command: " + mFlashOffCommand);
             mFlashOffCommand.run(imageExposeCallback, imageSaver);
         }
     }

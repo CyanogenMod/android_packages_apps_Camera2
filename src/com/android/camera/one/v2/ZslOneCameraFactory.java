@@ -196,7 +196,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 lifetime.add(cameraCommandExecutor);
 
                 // Create the picture-taker.
-                ZslPictureTakerFactory pictureTakerFactory = new ZslPictureTakerFactory(
+                ZslPictureTakerFactory pictureTakerFactory = ZslPictureTakerFactory.create(
+                        Loggers.tagFactory(),
                         mainThread,
                         cameraCommandExecutor,
                         imageSaverBuilder,
@@ -204,7 +205,9 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         basicCameraFactory.provideMeteredZoomedRequestBuilder(),
                         sharedImageReaderFactory.provideSharedImageReader(),
                         sharedImageReaderFactory.provideZSLStream(),
-                        sharedImageReaderFactory.provideMetadataPool(), flashSetting);
+                        sharedImageReaderFactory.provideMetadataPool(),
+                        flashSetting,
+                        rootBuilder);
                 BurstTaker burstTaker = new BurstTakerImpl(cameraCommandExecutor, frameServer,
                         basicCameraFactory.provideMeteredZoomedRequestBuilder(),
                         sharedImageReaderFactory.provideSharedImageReader(),

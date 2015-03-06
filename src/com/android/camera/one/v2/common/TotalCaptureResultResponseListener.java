@@ -19,6 +19,7 @@ package com.android.camera.one.v2.common;
 import android.hardware.camera2.TotalCaptureResult;
 
 import com.android.camera.async.Updatable;
+import com.android.camera.one.v2.camera2proxy.AndroidTotalCaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.core.ResponseListener;
 import com.android.camera.one.v2.core.ResponseListeners;
@@ -39,6 +40,6 @@ public class TotalCaptureResultResponseListener extends ResponseListener {
 
     @Override
     public void onCompleted(TotalCaptureResult result) {
-        mResults.update(new TotalCaptureResultProxy(result));
+        mResults.update(new AndroidTotalCaptureResultProxy(result));
     }
 }
