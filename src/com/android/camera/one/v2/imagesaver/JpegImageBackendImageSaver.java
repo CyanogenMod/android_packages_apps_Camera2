@@ -86,7 +86,8 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
             taskFlagsSet.add(ImageConsumer.ImageTaskFlags.CLOSE_ON_ALL_TASKS_RELEASE);
 
             try {
-                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation),
+                mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, new Rect
+                                (0, 0, image.getWidth(), image.getHeight())),
                         mExecutor, taskFlagsSet, mSession);
             } catch (InterruptedException e) {
                 // Impossible exception because receiveImage is nonblocking

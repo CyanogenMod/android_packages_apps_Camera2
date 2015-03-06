@@ -16,6 +16,8 @@
 
 package com.android.camera.processing.imagebackend;
 
+import android.graphics.Rect;
+
 import com.android.camera.app.OrientationManager;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
@@ -26,9 +28,20 @@ import com.android.camera.one.v2.camera2proxy.ImageProxy;
 public class ImageToProcess {
     public final ImageProxy proxy;
     public final OrientationManager.DeviceOrientation rotation;
+    public final Rect crop;
 
-    public ImageToProcess(ImageProxy proxy, OrientationManager.DeviceOrientation rotation) {
+    /**
+     * @param proxy The underlying image to process.
+     * @param imageRotation The amount to rotate the image (after cropping).
+     * @param crop The crop region of the image to save. Note that this is in
+     *            the coordinate-space of the original image, so the crop should
+     *            be performed *before* any rotation, and a crop rectangle of
+     *            (0, 0)-(proxy.width, proxy.height) is a no-op.
+     */
+    public ImageToProcess(ImageProxy proxy, OrientationManager.DeviceOrientation imageRotation,
+            Rect crop) {
         this.proxy = proxy;
-        this.rotation = rotation;
+        this.rotation = imageRotation;
+        this.crop = crop;
     }
 }
