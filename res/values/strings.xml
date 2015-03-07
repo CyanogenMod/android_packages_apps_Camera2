@@ -949,4 +949,7 @@
     <string name="pref_boolean_false">0</string>
     <!-- String representation of boolean true, allows for integer conversion. -->
     <string name="pref_boolean_true">1</string>
+
+    <!-- Shown to the user while an image/video is being saved to disk. -->
+    <string name="session_saving_image">Saving\u2026</string>
  </resources>

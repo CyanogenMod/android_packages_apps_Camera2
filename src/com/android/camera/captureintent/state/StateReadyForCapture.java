@@ -577,7 +577,7 @@ public final class StateReadyForCapture extends StateImpl {
                 }
 
                 @Override
-                public void onSessionFailed(Uri sessionUri, CharSequence reason,
+                public void onSessionFailed(Uri sessionUri, int failureMessageId,
                         boolean removeFromFilmstrip) {
                 }
 
@@ -586,7 +586,7 @@ public final class StateReadyForCapture extends StateImpl {
                 }
 
                 @Override
-                public void onSessionProgressText(Uri sessionUri, CharSequence message) {
+                public void onSessionProgressText(Uri sessionUri, int messageId) {
                 }
             };
 }

@@ -28,6 +28,7 @@ import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.session.CaptureSession;
+import com.android.camera2.R;
 
 class PictureTakerImpl implements PictureTaker {
     private final MainThread mMainExecutor;
@@ -73,9 +74,8 @@ class PictureTakerImpl implements PictureTaker {
                     failed = false;
                 } catch (Exception e) {
                     failureCallback.update(null);
-                    // TODO: add finishWithCancellation and remove from
-                    // filmstrip
-                    session.finishWithFailure("content", true);
+                    session.finishWithFailure(R.string.error_cannot_connect_camera,
+                            true /* remove from filmstrip */);
                     throw e;
                 }
             }

@@ -31,14 +31,14 @@ public interface SessionNotifier {
     public void notifyTaskDone(final Uri uri);
 
     /** A task has failed to process. */
-    public void notifyTaskFailed(final Uri uri, final CharSequence reason,
+    public void notifyTaskFailed(final Uri uri, final int failureMessageId,
             boolean removeFromFilmstrip);
 
     /** A task has progressed. */
     public void notifyTaskProgress(final Uri uri, final int progressPercent);
 
     /** A task's current progress message has changed. */
-    public void notifyTaskProgressText(final Uri uri, final CharSequence message);
+    public void notifyTaskProgressText(final Uri uri, final int messageId);
 
     /** The underlying session data has been updated. */
     public void notifySessionUpdated(final Uri uri);

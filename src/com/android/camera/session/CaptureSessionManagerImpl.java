@@ -103,14 +103,14 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
          * failed to process.
          */
         @Override
-        public void notifyTaskFailed(final Uri uri, final CharSequence reason,
+        public void notifyTaskFailed(final Uri uri, final int failureMessageId,
                 final boolean removeFromFilmstrip) {
             mMainHandler.execute(new Runnable() {
                 @Override
                 public void run() {
                     synchronized (mTaskListeners) {
                         for (SessionListener listener : mTaskListeners) {
-                            listener.onSessionFailed(uri, reason, removeFromFilmstrip);
+                            listener.onSessionFailed(uri, failureMessageId, removeFromFilmstrip);
                         }
                     }
                     finalizeSession(uri);
@@ -141,13 +141,13 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
          * changed its progress message.
          */
         @Override
-        public void notifyTaskProgressText(final Uri uri, final CharSequence message) {
+        public void notifyTaskProgressText(final Uri uri, final int messageId) {
             mMainHandler.execute(new Runnable() {
                 @Override
                 public void run() {
                     synchronized (mTaskListeners) {
                         for (SessionListener listener : mTaskListeners) {
-                            listener.onSessionProgressText(uri, message);
+                            listener.onSessionProgressText(uri, messageId);
                         }
                     }
                 }
@@ -235,8 +235,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     /** Used to fire events to the session listeners from the main thread. */
     private final MainThread mMainHandler;
 
-    /** Failed session messages. Uri -> message. */
-    private final HashMap<Uri, CharSequence> mFailedSessionMessages = new HashMap<>();
+    /** Failed session messages. Uri -> message ID. */
+    private final HashMap<Uri, Integer> mFailedSessionMessages = new HashMap<>();
 
     /** Listeners interested in task update events. */
     private final LinkedList<SessionListener> mTaskListeners = new LinkedList<SessionListener>();
@@ -312,8 +312,12 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
-    public CharSequence getErrorMessage(Uri uri) {
-        return mFailedSessionMessages.get(uri);
+    public int getErrorMessageId(Uri uri) {
+        Integer messageId = mFailedSessionMessages.get(uri);
+        if (messageId != null) {
+            return messageId;
+        }
+        return -1;
     }
 
     @Override
@@ -322,8 +326,8 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
     }
 
     @Override
-    public void putErrorMessage(Uri uri, CharSequence reason) {
-        mFailedSessionMessages.put(uri, reason);
+    public void putErrorMessage(Uri uri, int failureMessageId) {
+        mFailedSessionMessages.put(uri, failureMessageId);
     }
 
     @Override
@@ -337,7 +341,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
                         listener.onSessionQueued(session.getUri());
                         listener.onSessionProgress(session.getUri(), session.getProgress());
                         listener.onSessionProgressText(session.getUri(),
-                                session.getProgressMessage());
+                                session.getProgressMessageId());
                     }
                 }
             }

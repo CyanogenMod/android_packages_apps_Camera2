@@ -273,8 +273,8 @@ public class ProcessingService extends Service implements ProgressListener {
     }
 
     @Override
-    public void onStatusMessageChanged(CharSequence message) {
-        mNotificationBuilder.setContentText(message);
+    public void onStatusMessageChanged(int messageId) {
+        mNotificationBuilder.setContentText(messageId > 0 ? getString(messageId) : "");
         postNotification();
     }
 }

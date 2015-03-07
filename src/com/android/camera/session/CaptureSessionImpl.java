@@ -68,7 +68,7 @@ public class CaptureSessionImpl implements CaptureSession {
     /** The current progress of this session in percent. */
     private int mProgressPercent = 0;
     /** A message ID for the current progress state. */
-    private CharSequence mProgressMessage;
+    private int mProgressMessageId;
     /** A place holder for this capture session. */
     private PlaceholderManager.Session mPlaceHolderSession;
     private Uri mContentUri;
@@ -138,16 +138,16 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized CharSequence getProgressMessage() {
-        return mProgressMessage;
+    public synchronized int getProgressMessageId() {
+        return mProgressMessageId;
     }
 
     @Override
-    public synchronized void setProgressMessage(CharSequence message) {
-        mProgressMessage = message;
-        mSessionNotifier.notifyTaskProgressText(mUri, message);
+    public synchronized void setProgressMessage(int messageId) {
+        mProgressMessageId = messageId;
+        mSessionNotifier.notifyTaskProgressText(mUri, messageId);
         for (ProgressListener listener : mProgressListeners) {
-            listener.onStatusMessageChanged(message);
+            listener.onStatusMessageChanged(messageId);
         }
     }
 
@@ -168,7 +168,7 @@ public class CaptureSessionImpl implements CaptureSession {
             return;
         }
 
-        mProgressMessage = "";
+        mProgressMessageId = -1;
         mPlaceHolderSession = mPlaceholderManager.insertEmptyPlaceholder(mTitle, pictureSize,
                 mSessionStartMillis);
         mUri = mPlaceHolderSession.outputUri;
@@ -177,12 +177,12 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(Bitmap placeholder, CharSequence progressMessage) {
+    public synchronized void startSession(Bitmap placeholder, int progressMessageId) {
         if (mIsFinished) {
             return;
         }
 
-        mProgressMessage = progressMessage;
+        mProgressMessageId = progressMessageId;
         mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
                 mSessionStartMillis);
         mUri = mPlaceHolderSession.outputUri;
@@ -192,13 +192,12 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(byte[] placeholder, CharSequence progressMessage) {
+    public synchronized void startSession(byte[] placeholder, int progressMessageId) {
         if (mIsFinished) {
             return;
         }
 
-        mProgressMessage = progressMessage;
-
+        mProgressMessageId = progressMessageId;
         mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
                 mSessionStartMillis);
         mUri = mPlaceHolderSession.outputUri;
@@ -212,9 +211,9 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(Uri uri, CharSequence progressMessage) {
+    public synchronized void startSession(Uri uri, int progressMessageId) {
         mUri = uri;
-        mProgressMessage = progressMessage;
+        mProgressMessageId = progressMessageId;
         mPlaceHolderSession = mPlaceholderManager.convertToPlaceholder(uri);
 
         mSessionManager.putSession(mUri, this);
@@ -246,7 +245,7 @@ public class CaptureSessionImpl implements CaptureSession {
             Log.e(TAG, "IOException", e);
             // TODO: Replace with a sensisble description
             // Placeholder string R.string.reason_storage_failure
-            finishWithFailure("content", true);
+            finishWithFailure(-1, true);
         }
     }
 
@@ -339,19 +338,21 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public void finishWithFailure(CharSequence reason, boolean removeFromFilmstrip) {
+    public void finishWithFailure(int failureMessageId, boolean removeFromFilmstrip) {
         if (mPlaceHolderSession == null) {
             throw new IllegalStateException(
                     "Cannot call finish without calling startSession first.");
         }
-        mProgressMessage = reason;
-        mSessionManager.putErrorMessage(mUri, reason);
-        mSessionNotifier.notifyTaskFailed(mUri, reason, removeFromFilmstrip);
+        mProgressMessageId = failureMessageId;
+        mSessionManager.putErrorMessage(mUri, failureMessageId);
+        mSessionNotifier.notifyTaskFailed(mUri, failureMessageId, removeFromFilmstrip);
     }
 
     @Override
     public void addProgressListener(ProgressListener listener) {
-        listener.onStatusMessageChanged(mProgressMessage);
+        if (mProgressMessageId > 0) {
+            listener.onStatusMessageChanged(mProgressMessageId);
+        }
         listener.onProgressChanged(mProgressPercent);
         mProgressListeners.add(listener);
     }

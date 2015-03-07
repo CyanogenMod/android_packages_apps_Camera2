@@ -811,24 +811,26 @@ public class CameraActivity extends QuickActivity
         mCameraAppUI.getFilmstripBottomControls().hideProgress();
     }
 
-    private void showSessionProgress(CharSequence message) {
+    private void showSessionProgress(int messageId) {
         CameraAppUI.BottomPanel controls = mCameraAppUI.getFilmstripBottomControls();
-        controls.setProgressText(message);
+        controls.setProgressText(messageId > 0 ? getString(messageId) : "");
         controls.hideControls();
         controls.hideProgressError();
         controls.showProgress();
     }
 
-    private void showProcessError(CharSequence message) {
-        mCameraAppUI.getFilmstripBottomControls().showProgressError(message);
+    private void showProcessError(int messageId) {
+        mCameraAppUI.getFilmstripBottomControls().showProgressError(
+                messageId > 0 ? getString(messageId) : "");
     }
 
     private void updateSessionProgress(int progress) {
         mCameraAppUI.getFilmstripBottomControls().setProgress(progress);
     }
 
-    private void updateSessionProgressText(CharSequence message) {
-        mCameraAppUI.getFilmstripBottomControls().setProgressText(message);
+    private void updateSessionProgressText(int messageId) {
+        mCameraAppUI.getFilmstripBottomControls().setProgressText(
+                messageId > 0 ? getString(messageId) : "");
     }
 
     private void setupNfcBeamPush() {
@@ -934,14 +936,14 @@ public class CameraActivity extends QuickActivity
                 }
 
                 @Override
-                public void onSessionProgressText(final Uri uri, final CharSequence message) {
+                public void onSessionProgressText(final Uri uri, final int messageId) {
                     int currentIndex = mFilmstripController.getCurrentAdapterIndex();
                     if (currentIndex == -1) {
                         return;
                     }
                     if (uri.equals(
                             mDataAdapter.getItemAt(currentIndex).getData().getUri())) {
-                        updateSessionProgressText(message);
+                        updateSessionProgressText(messageId);
                     }
                 }
 
@@ -958,7 +960,8 @@ public class CameraActivity extends QuickActivity
                 }
 
                 @Override
-                public void onSessionFailed(Uri uri, CharSequence reason, boolean removeFromFilmstrip) {
+                public void onSessionFailed(Uri uri, int failureMessageId,
+                        boolean removeFromFilmstrip) {
                     Log.v(TAG, "onSessionFailed:" + uri);
 
                     int failedIndex = mDataAdapter.findByContentUri(uri);
@@ -966,7 +969,7 @@ public class CameraActivity extends QuickActivity
 
                     if (currentIndex == failedIndex) {
                         updateSessionProgress(0);
-                        showProcessError(reason);
+                        showProcessError(failureMessageId);
                         mDataAdapter.refresh(uri);
                     }
                     if (removeFromFilmstrip) {
@@ -2801,7 +2804,7 @@ public class CameraActivity extends QuickActivity
                 .getCaptureSessionManager();
 
         if (sessionManager.hasErrorMessage(contentUri)) {
-            showProcessError(sessionManager.getErrorMessage(contentUri));
+            showProcessError(sessionManager.getErrorMessageId(contentUri));
         } else {
             filmstripBottomPanel.hideProgressError();
             CaptureSession session = sessionManager.getSession(contentUri);
@@ -2812,8 +2815,8 @@ public class CameraActivity extends QuickActivity
                 if (sessionProgress < 0) {
                     hideSessionProgress();
                 } else {
-                    CharSequence progressMessage = session.getProgressMessage();
-                    showSessionProgress(progressMessage);
+                    int progressMessageId = session.getProgressMessageId();
+                    showSessionProgress(progressMessageId);
                     updateSessionProgress(sessionProgress);
                 }
             } else {

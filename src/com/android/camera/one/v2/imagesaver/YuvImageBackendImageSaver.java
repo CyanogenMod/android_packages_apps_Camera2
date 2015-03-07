@@ -34,6 +34,7 @@ import com.android.camera.processing.imagebackend.ImageProcessorProxyListener;
 import com.android.camera.processing.imagebackend.ImageToProcess;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.android.camera.session.CaptureSession;
+import com.android.camera2.R;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -154,7 +155,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                             // Don't use this thumbnail for the capture
                             // indicator.
                             mSession.updateThumbnail(bitmapIntermediateRotated);
-                            mSession.setProgressMessage("Saving image ...");
+                            mSession.setProgressMessage(R.string.session_saving_image);
                         }
                     });
                     break;
@@ -177,7 +178,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
 
     /**
      * Constructor
-     * 
+     *
      * @param executor Executor to run listener events on the ImageBackend
      * @param imageRotationCalculator the image rotation calculator to determine
      * @param crop the crop to apply. Note that crop must be done *before* any

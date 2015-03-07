@@ -51,9 +51,9 @@ public interface CaptureSession {
         /**
          * Called when the progress message is changed.
          *
-         * @param message The current progress message.
+         * @param messageId The current progress message ID.
          */
-        public void onStatusMessageChanged(CharSequence message);
+        public void onStatusMessageChanged(int messageId);
     }
 
     /** Returns the title/name of this session. */
@@ -79,14 +79,14 @@ public interface CaptureSession {
     /**
      * Returns the current progress message.
      */
-    public CharSequence getProgressMessage();
+    public int getProgressMessageId();
 
     /**
      * Changes the progress status message of this session.
      *
-     * @param message the new message
+     * @param messageId the ID of the new message
      */
-    public void setProgressMessage(CharSequence message);
+    public void setProgressMessage(int messageId);
 
     /**
      * For an ongoing session, this updates the currently displayed thumbnail.
@@ -116,33 +116,33 @@ public interface CaptureSession {
      * notifications.
      *
      * @param placeholder a valid encoded bitmap to be used as the placeholder.
-     * @param progressMessage the message to be used to the progress
+     * @param progressMessageId the message to be used to the progress
      *            notification initially. This can later be changed using
-     *            {@link #setProgressMessage(CharSequence)}.
+     *            {@link #setProgressMessage(int)}.
      */
-    public void startSession(byte[] placeholder, CharSequence progressMessage);
+    public void startSession(byte[] placeholder, int progressMessageId);
 
     /**
      * Starts the session by adding a placeholder to the filmstrip and adding
      * notifications.
      *
      * @param placeholder a valid bitmap to be used as the placeholder.
-     * @param progressMessage the message to be used to the progress
+     * @param progressMessageId the message to be used to the progress
      *            notification initially. This can later be changed using
-     *            {@link #setProgressMessage(CharSequence)}.
+     *            {@link #setProgressMessage(int)}.
      */
-    public void startSession(Bitmap placeholder, CharSequence progressMessage);
+    public void startSession(Bitmap placeholder, int progressMessageId);
 
     /**
      * Starts the session by marking the item as in-progress and adding
      * notifications.
      *
      * @param uri the URI of the item to be re-processed.
-     * @param progressMessage the message to be used to the progress
+     * @param progressMessageId the message to be used to the progress
      *            notification initially. This can later be changed using
-     *            {@link #setProgressMessage(CharSequence)}.
+     *            {@link #setProgressMessage(int)}.
      */
-    public void startSession(Uri uri, CharSequence progressMessage);
+    public void startSession(Uri uri, int progressMessageId);
 
     /**
      * Cancel the session without a final result. The session will be removed
@@ -176,7 +176,7 @@ public interface CaptureSession {
      * notification of finished state, {@link #finalize()} must be called to
      * fully complete the session.
      */
-    public void finishWithFailure(CharSequence reason, boolean removeFromFilmstrip);
+    public void finishWithFailure(int failureMessageId, boolean removeFromFilmstrip);
 
     /**
      * All processing complete, finalize the session and remove any resources.

@@ -92,12 +92,12 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public synchronized CharSequence getProgressMessage() {
-        return new String();
+    public synchronized int getProgressMessageId() {
+        return -1;
     }
 
     @Override
-    public synchronized void setProgressMessage(CharSequence message) {
+    public synchronized void setProgressMessage(int messageId) {
     }
 
     @Override
@@ -116,17 +116,17 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(Bitmap placeholder, CharSequence progressMessage) {
+    public synchronized void startSession(Bitmap placeholder, int progressMessageId) {
         throw new RuntimeException("Not supported.");
     }
 
     @Override
-    public synchronized void startSession(byte[] placeholder, CharSequence progressMessage) {
+    public synchronized void startSession(byte[] placeholder, int progressMessageId) {
         throw new RuntimeException("Not supported.");
     }
 
     @Override
-    public synchronized void startSession(Uri uri, CharSequence progressMessage) {
+    public synchronized void startSession(Uri uri, int progressMessageId) {
         throw new RuntimeException("Not supported.");
     }
 
@@ -166,7 +166,7 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public void finishWithFailure(CharSequence reason, boolean removeFromFilmstrip) {
+    public void finishWithFailure(int progressMessageId, boolean removeFromFilmstrip) {
         throw new RuntimeException("Not supported.");
     }
 

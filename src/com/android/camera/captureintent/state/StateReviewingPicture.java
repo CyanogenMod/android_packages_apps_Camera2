@@ -258,7 +258,7 @@ public class StateReviewingPicture extends StateImpl {
                 }
 
                 @Override
-                public void onSessionFailed(Uri sessionUri, CharSequence reason,
+                public void onSessionFailed(Uri sessionUri, int failureMessageId,
                         boolean removeFromFilmstrip) {
                 }
 
@@ -267,7 +267,7 @@ public class StateReviewingPicture extends StateImpl {
                 }
 
                 @Override
-                public void onSessionProgressText(Uri sessionUri, CharSequence message) {
+                public void onSessionProgressText(Uri sessionUri, int messageId) {
                 }
             };
 }

@@ -56,13 +56,13 @@ public interface CaptureSessionManager {
         public void onSessionDone(Uri mediaUri);
 
         /** Called when the session with the given Uri failed processing. */
-        public void onSessionFailed(Uri mediaUri, CharSequence reason, boolean removeFromFilmstrip);
+        public void onSessionFailed(Uri mediaUri, int failureMessageId, boolean removeFromFilmstrip);
 
         /** Called when the session with the given Uri has progressed. */
         public void onSessionProgress(Uri mediaUri, int progress);
 
         /** Called when the session with the given Uri has changed its progress text. */
-        public void onSessionProgressText(Uri mediaUri, CharSequence message);
+        public void onSessionProgressText(Uri mediaUri, int messageId);
 
         /**
          * Called when the thumbnail for the given session has changed and
@@ -146,10 +146,10 @@ public interface CaptureSessionManager {
     public boolean hasErrorMessage(Uri uri);
 
     /**
-     * @return If existant, returns the error message for the session with the
-     *         given URI.
+     * @return If existant, returns the error message ID for the session with the
+     *         given URI, -1 otherwise.
      */
-    public CharSequence getErrorMessage(Uri uri);
+    public int getErrorMessageId(Uri uri);
 
     /**
      * Removes any existing error messages for the session with the given URI.
@@ -157,5 +157,5 @@ public interface CaptureSessionManager {
     public void removeErrorMessage(Uri uri);
 
     /** Sets the error message for the session with the given URI. */
-    public void putErrorMessage(Uri uri, CharSequence reason);
+    public void putErrorMessage(Uri uri, int failureMessageId);
 }
