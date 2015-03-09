@@ -33,7 +33,6 @@ import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.ui.focus.FocusRing;
-import com.android.camera.widget.VideoRecordingHints;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraCapabilities;
 import com.android.ex.camera2.portability.CameraSettings;
@@ -50,7 +49,6 @@ public class VideoUI implements PreviewStatusListener {
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
-    private VideoRecordingHints mVideoHints;
     private TextView mRecordingTimeView;
     private LinearLayout mLabelsLinearLayout;
     private RotateLayout mRecordingTimeRect;
@@ -80,11 +78,7 @@ public class VideoUI implements PreviewStatusListener {
             = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapUp(MotionEvent ev) {
-            if (mVideoHints.getVisibility() == View.VISIBLE) {
-                mVideoHints.setVisibility(View.INVISIBLE);
-            } else {
-                mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
-            }
+            mController.onSingleTapUp(null, (int) ev.getX(), (int) ev.getY());
             return true;
         }
     };
@@ -102,7 +96,6 @@ public class VideoUI implements PreviewStatusListener {
         initializeMiscControls();
         mAnimationManager = new AnimationManager();
         mFocusRing = (FocusRing) mRootView.findViewById(R.id.focus_ring);
-        mVideoHints = (VideoRecordingHints) mRootView.findViewById(R.id.video_shooting_hints);
     }
 
     public void setPreviewSize(int width, int height) {
@@ -250,24 +243,18 @@ public class VideoUI implements PreviewStatusListener {
 
 
     /**
-     * Shows or hides video recording hints.
-     *
-     * @param show shows video recording hints when true, hides it otherwise.
-     */
-    public void showVideoRecordingHints(boolean show) {
-        mVideoHints.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    /**
      * @return The size of the available preview area.
      */
     public Point getPreviewScreenSize() {
         return new Point(mRootView.getMeasuredWidth(), mRootView.getMeasuredHeight());
     }
 
+    /**
+     * Adjust UI to an orientation change if necessary.
+     */
     public void onOrientationChanged(OrientationManager orientationManager,
                                      OrientationManager.DeviceOrientation deviceOrientation) {
-        mVideoHints.onOrientationChanged(orientationManager, deviceOrientation);
+        // do nothing.
     }
 
     private class ZoomChangeListener implements PreviewOverlay.OnZoomChangedListener {

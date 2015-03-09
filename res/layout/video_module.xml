@@ -27,11 +27,6 @@
             android:id="@+id/labels" />
     </com.android.camera.ui.RotateLayout>
 
-    <com.android.camera.widget.VideoRecordingHints
-        android:id="@+id/video_shooting_hints"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <ImageView
         android:id="@+id/review_image"
         android:layout_height="match_parent"
