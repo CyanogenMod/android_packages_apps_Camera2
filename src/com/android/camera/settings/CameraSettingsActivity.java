@@ -32,7 +32,18 @@ import android.preference.PreferenceScreen;
 import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 
+import com.android.camera.FatalErrorHandler;
+import com.android.camera.FatalErrorHandlerImpl;
+import com.android.camera.app.CameraServicesImpl;
 import com.android.camera.debug.Log;
+
+import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.OneCameraException;
+import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.config.OneCameraFeatureConfig;
+import com.android.camera.one.config.OneCameraFeatureConfigCreator;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
@@ -59,10 +70,45 @@ public class CameraSettingsActivity extends FragmentActivity {
      * back/up stack to operate correctly.
      */
     public static final String PREF_SCREEN_EXTRA = "pref_screen_extra";
+    public static final String HIDE_ADVANCED_SCREEN = "hide_advanced";
+    private OneCameraManager mCameraManager;
+    private Context mAppContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAppContext = getApplicationContext();
+        FatalErrorHandler fatalErrorHandler = new FatalErrorHandlerImpl(this);
+        boolean hideAdvancedScreen = false;
+
+        OneCameraFeatureConfig featureConfig = OneCameraFeatureConfigCreator.createDefault(
+                getContentResolver(), CameraServicesImpl.instance().getMemoryManager());
+        try {
+            mCameraManager = OneCameraManager.get(
+                    featureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
+        } catch (OneCameraException e) {
+            // Log error and continue. Modules requiring OneCamera should check
+            // and handle if null by showing error dialog or other treatment.
+            fatalErrorHandler.onGenericCameraAccessFailure();
+        }
+
+        // Check if manual exposure is available, so we can decide whether to
+        // display Advanced screen.
+        OneCameraCharacteristics frontCameraCharacteristics;
+        OneCameraCharacteristics backCameraCharacteristics;
+        try {
+            frontCameraCharacteristics = mCameraManager
+                    .getCameraCharacteristics(OneCamera.Facing.FRONT);
+            backCameraCharacteristics = mCameraManager
+                    .getCameraCharacteristics(OneCamera.Facing.BACK);
+            if (!frontCameraCharacteristics.isExposureCompensationSupported()
+                    && !backCameraCharacteristics.isExposureCompensationSupported()) {
+                hideAdvancedScreen = true;
+            }
+        } catch (OneCameraAccessException e) {
+            fatalErrorHandler.onGenericCameraAccessFailure();
+        }
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -72,6 +118,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         CameraSettingsFragment dialog = new CameraSettingsFragment();
         Bundle bundle = new Bundle(1);
         bundle.putString(PREF_SCREEN_EXTRA, prefKey);
+        bundle.putBoolean(HIDE_ADVANCED_SCREEN, hideAdvancedScreen);
         dialog.setArguments(bundle);
         getFragmentManager().beginTransaction().replace(android.R.id.content, dialog).commit();
     }
@@ -97,6 +144,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private String[] mCamcorderProfileNames;
         private CameraDeviceInfo mInfos;
         private String mPrefKey;
+        private boolean mHideAdvancedScreen;
         private boolean mGetSubPrefAsRoot = true;
 
         // Selected resolutions for the different cameras and sizes.
@@ -113,9 +161,18 @@ public class CameraSettingsActivity extends FragmentActivity {
             Bundle arguments = getArguments();
             if (arguments != null) {
                 mPrefKey = arguments.getString(PREF_SCREEN_EXTRA);
+                mHideAdvancedScreen = arguments.getBoolean(HIDE_ADVANCED_SCREEN);
             }
             Context context = this.getActivity().getApplicationContext();
             addPreferencesFromResource(R.xml.camera_preferences);
+            PreferenceScreen advancedScreen =
+                    (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
+
+            // If manual exposure not enabled, hide the Advanced screen.
+            if (mHideAdvancedScreen) {
+                PreferenceScreen root = (PreferenceScreen) findPreference("prefscreen_top");
+                root.removePreference(advancedScreen);
+            }
 
             // Allow the Helper to edit the full preference hierarchy, not the
             // sub tree we may show as root. See {@link #getPreferenceScreen()}.
@@ -149,7 +206,10 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             final PreferenceScreen advancedScreen =
                     (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
-            setPreferenceScreenIntent(advancedScreen);
+
+            if (!mHideAdvancedScreen) {
+                setPreferenceScreenIntent(advancedScreen);
+            }
 
             Preference helpPref = findPreference(PREF_LAUNCH_HELP);
             helpPref.setOnPreferenceClickListener(
