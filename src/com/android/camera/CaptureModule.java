@@ -428,7 +428,7 @@ public class CaptureModule extends CameraModule implements
                     new CaptureSession.CaptureSessionCreator() {
                         @Override
                         public CaptureSession createAndStartEmpty() {
-                            return createAndStartEmpty();
+                            return createAndStartCaptureSession();
                         }
                     },
                     deviceOrientation,
