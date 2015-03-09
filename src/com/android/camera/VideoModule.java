@@ -1331,7 +1331,6 @@ public class VideoModule extends CameraModule
         mUI.cancelAnimations();
         mUI.setSwipingEnabled(false);
         mUI.hidePassiveFocusIndicator();
-        mUI.showVideoRecordingHints(false);
         mAppController.getCameraAppUI().hideCaptureIndicator();
         mAppController.getCameraAppUI().setShouldSuppressCaptureIndicator(true);
 
@@ -1464,7 +1463,6 @@ public class VideoModule extends CameraModule
 
         mUI.setSwipingEnabled(true);
         mUI.showPassiveFocusIndicator();
-        mUI.showVideoRecordingHints(true);
         mAppController.getCameraAppUI().setShouldSuppressCaptureIndicator(false);
 
         boolean fail = false;

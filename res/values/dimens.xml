@@ -203,9 +203,6 @@
     <dimen name="mode_options_toggle_padding">12dp</dimen>
     <dimen name="mode_options_buttons_anim_delta_x">20dp</dimen>
 
-    <dimen name="video_hint_arrow_size">118dp</dimen>
-    <dimen name="video_hint_phone_graphic_height">66dp</dimen>
-    <dimen name="video_hint_phone_graphic_width">36dp</dimen>
     <dimen name="default_cling_width">120dp</dimen>
     <dimen name="settings_cling_width">160dp</dimen>
     <dimen name="settings_cling_triangle_height">15dp</dimen>
