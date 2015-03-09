@@ -433,7 +433,7 @@ public class FilmstripView extends ViewGroup {
          *                          regardless of the view type.
          */
         public void removeViewFromHierarchy(boolean force) {
-            if (force || !mData.getAttributes().isSticky()) {
+            if (force) {
                 mFilmstrip.removeView(mView);
                 mData.recycle(mView);
                 mFilmstrip.recycleView(mView, mIndex);
@@ -974,18 +974,10 @@ public class FilmstripView extends ViewGroup {
         }
 
         boolean stopScroll = false;
-        if (currentItem.getAdapterIndex() == 1 && mCenterX < currentItem.getCenterX()
-              && mAdapterIndexUserIsScrollingOver > 1 &&
-                mDataAdapter.getFilmstripItemAt(0).getAttributes().isSticky() &&
-                mController.isScrolling()) {
+        if (currentItem.getAdapterIndex() == 0 && mCenterX < currentItem.getCenterX()) {
+            // Stop at the first ViewItem.
             stopScroll = true;
-        } else {
-            if (currentItem.getAdapterIndex() == 0 && mCenterX < currentItem.getCenterX()) {
-                // Stop at the first ViewItem.
-                stopScroll = true;
-            }
-        }
-        if (currentItem.getAdapterIndex() == mDataAdapter.getTotalNumber() - 1
+        } else if (currentItem.getAdapterIndex() == mDataAdapter.getTotalNumber() - 1
                 && mCenterX > currentItem.getCenterX()) {
             // Stop at the end.
             stopScroll = true;
@@ -1047,10 +1039,6 @@ public class FilmstripView extends ViewGroup {
         Log.d(TAG, "[fling] Scroll to center.");
         mController.scrollToPosition(currentViewCenter,
               snapInTime, false);
-        if (isViewTypeSticky(currItem) && !mController.isScaling() && mScale != FULL_SCREEN_SCALE) {
-            // Now going to full screen camera
-            mController.goToFullScreen();
-        }
     }
 
     /**
@@ -1196,24 +1184,7 @@ public class FilmstripView extends ViewGroup {
             curr.setLeftPosition(currLeft);
         }
 
-        // Special case for the one immediately on the right of the camera
-        // preview.
-        boolean immediateRight =
-                (mViewItems[BUFFER_CENTER].getAdapterIndex() == 1 &&
-                mDataAdapter.getFilmstripItemAt(0).getAttributes().isSticky());
-
-        // Layout the current ViewItem first.
-        if (immediateRight) {
-            // Just do a simple layout without any special translation or
-            // fading. The implementation in Gallery does not push the first
-            // photo to the bottom of the camera preview. Simply place the
-            // photo on the right of the preview.
-            final ViewItem currItem = mViewItems[BUFFER_CENTER];
-            currItem.setVisibility(View.VISIBLE);
-            currItem.layoutWithTranslationX(mDrawArea, mCenterX, mScale);
-            currItem.setTranslationX(0f);
-            currItem.setAlpha(1f);
-        } else if (scaleFraction == 1f) {
+        if (scaleFraction == 1f) {
             final ViewItem currItem = mViewItems[BUFFER_CENTER];
             final int currCenterX = currItem.getCenterX();
             if (mCenterX < currCenterX) {
@@ -1267,11 +1238,6 @@ public class FilmstripView extends ViewGroup {
             }
 
             curr.layoutWithTranslationX(mDrawArea, mCenterX, mScale);
-            if (curr.getAdapterIndex() == 1 && isViewTypeSticky(curr)) {
-                // Special case for the one next to the camera preview.
-                curr.setAlpha(1f);
-                continue;
-            }
 
             if (scaleFraction == 1) {
                 // It's in full-screen mode.
@@ -1307,13 +1273,6 @@ public class FilmstripView extends ViewGroup {
         }
 
         stepIfNeeded();
-    }
-
-    private boolean isViewTypeSticky(ViewItem item) {
-        if (item == null) {
-            return false;
-        }
-        return mDataAdapter.getFilmstripItemAt(item.getAdapterIndex()).getAttributes().isSticky();
     }
 
     @Override
@@ -1502,10 +1461,6 @@ public class FilmstripView extends ViewGroup {
                 slideViewBack(mViewItems[i]);
             }
         }
-        if (isCurrentItemCentered() && isViewTypeSticky(mViewItems[BUFFER_CENTER])) {
-            // Special case for scrolling onto the camera preview after removal.
-            mController.goToFullScreen();
-        }
     }
 
     // returns -1 on failure.
@@ -1653,15 +1608,6 @@ public class FilmstripView extends ViewGroup {
 
     private boolean inZoomView() {
         return (mScale > FULL_SCREEN_SCALE);
-    }
-
-    private boolean isCameraPreview() {
-        return isViewTypeSticky(mViewItems[BUFFER_CENTER]);
-    }
-
-    private boolean inCameraFullscreen() {
-        return isItemAtIndexCentered(0) && inFullScreen()
-                && (isViewTypeSticky(mViewItems[BUFFER_CENTER]));
     }
 
     @Override
@@ -2007,13 +1953,6 @@ public class FilmstripView extends ViewGroup {
                             renderThumbnail(BUFFER_CENTER - 1);
                             renderThumbnail(BUFFER_CENTER + 2);
                         }
-
-                        if (isCurrentItemCentered()
-                                && isViewTypeSticky(mViewItems[BUFFER_CENTER])) {
-                            // Special case for the scrolling end on the camera
-                            // preview.
-                            goToFullScreen();
-                        }
                     }
                 };
 
@@ -2098,16 +2037,6 @@ public class FilmstripView extends ViewGroup {
         @Override
         public boolean inFullScreen() {
             return FilmstripView.this.inFullScreen();
-        }
-
-        @Override
-        public boolean isCameraPreview() {
-            return FilmstripView.this.isCameraPreview();
-        }
-
-        @Override
-        public boolean inCameraFullscreen() {
-            return FilmstripView.this.inCameraFullscreen();
         }
 
         @Override
@@ -2237,7 +2166,7 @@ public class FilmstripView extends ViewGroup {
             }
 
             float scaledVelocityX = velocityX / mScale;
-            if (inFullScreen() && isViewTypeSticky(item) && scaledVelocityX < 0) {
+            if (inFullScreen() && scaledVelocityX < 0) {
                 // Swipe left in camera preview.
                 goToFilmstrip();
             }
@@ -2385,10 +2314,6 @@ public class FilmstripView extends ViewGroup {
             stopScrolling(true);
             scrollToPosition(nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS * 2, false);
 
-            if (isViewTypeSticky(mViewItems[BUFFER_CENTER])) {
-                // Special case when moving from camera preview.
-                scaleTo(FILM_STRIP_SCALE, GEOMETRY_ADJUST_TIME_MS);
-            }
             return true;
         }
 
@@ -2414,10 +2339,6 @@ public class FilmstripView extends ViewGroup {
 
             final ViewItem currItem = mViewItems[BUFFER_CENTER];
             final ViewItem nextItem = mViewItems[BUFFER_CENTER + 1];
-            if (currItem.getAdapterIndex() == 0 && isViewTypeSticky(currItem) && nextItem != null) {
-                // Deal with the special case of swiping in camera preview.
-                scrollToPosition(nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, false);
-            }
 
             if (mScale == FILM_STRIP_SCALE) {
                 onLeaveFilmstrip();
@@ -2540,6 +2461,17 @@ public class FilmstripView extends ViewGroup {
 
         public boolean isZoomAnimationRunning() {
             return mZoomAnimator != null && mZoomAnimator.isRunning();
+        }
+
+        @Override
+        public boolean isVisible(FilmstripItem data) {
+            for (ViewItem viewItem : mViewItems) {
+                if (data != null && viewItem != null && viewItem.getVisibility() == VISIBLE
+                        && data.equals(viewItem.mData)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -2707,7 +2639,7 @@ public class FilmstripView extends ViewGroup {
             if (inFilmstrip()) {
                 mController.goToFullScreen();
                 return true;
-            } else if (mScale < FULL_SCREEN_SCALE || inCameraFullscreen()) {
+            } else if (mScale < FULL_SCREEN_SCALE) {
                 return false;
             }
             if (!mController.stopScrolling(false)) {
@@ -2787,31 +2719,14 @@ public class FilmstripView extends ViewGroup {
             }
 
             int currId = currItem.getAdapterIndex();
-            if (mCenterX > currItem.getCenterX() + CAMERA_PREVIEW_SWIPE_THRESHOLD && currId == 0 &&
-                    isViewTypeSticky(currItem) && mAdapterIndexUserIsScrollingOver == 0) {
+            if (mAdapterIndexUserIsScrollingOver == 0 && currId != 0) {
+                // Special case to go to filmstrip when the user scroll away
+                // from the camera preview and the current one is not the
+                // preview anymore.
                 mController.goToFilmstrip();
-                // Special case to go from camera preview to the next photo.
-                if (mViewItems[BUFFER_CENTER + 1] != null) {
-                    mController.scrollToPosition(
-                            mViewItems[BUFFER_CENTER + 1].getCenterX(),
-                            GEOMETRY_ADJUST_TIME_MS, false);
-                } else {
-                    // No next photo.
-                    scrollCurrentItemToCenter();
-                }
+                mAdapterIndexUserIsScrollingOver = currId;
             }
-            if (isCurrentItemCentered() && currId == 0 && isViewTypeSticky(currItem)) {
-                mController.goToFullScreen();
-            } else {
-                if (mAdapterIndexUserIsScrollingOver == 0 && currId != 0) {
-                    // Special case to go to filmstrip when the user scroll away
-                    // from the camera preview and the current one is not the
-                    // preview anymore.
-                    mController.goToFilmstrip();
-                    mAdapterIndexUserIsScrollingOver = currId;
-                }
-                scrollCurrentItemToCenter();
-            }
+            scrollCurrentItemToCenter();
             return false;
         }
 
@@ -2983,9 +2898,6 @@ public class FilmstripView extends ViewGroup {
                         }
                         mController.scrollToPosition(
                                 nextItem.getCenterX(), GEOMETRY_ADJUST_TIME_MS, true);
-                        if (isViewTypeSticky(currItem)) {
-                            mController.goToFilmstrip();
-                        }
                     }
                 }
             }
@@ -2999,9 +2911,6 @@ public class FilmstripView extends ViewGroup {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
-            if (inCameraFullscreen()) {
-                return false;
-            }
             hideZoomView();
 
             // This ensures that the item currently being manipulated
@@ -3020,10 +2929,6 @@ public class FilmstripView extends ViewGroup {
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
-            if (inCameraFullscreen()) {
-                return false;
-            }
-
             mScaleTrend = mScaleTrend * 0.3f + scale * 0.7f;
             float newScale = mScale * scale;
             if (mScale < FULL_SCREEN_SCALE && newScale < FULL_SCREEN_SCALE) {
