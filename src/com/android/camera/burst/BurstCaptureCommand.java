@@ -33,6 +33,7 @@ import com.android.camera.one.v2.core.CaptureStream;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.Request;
 import com.android.camera.one.v2.core.RequestBuilder;
+import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.core.ResponseListener;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
@@ -93,7 +94,7 @@ public class BurstCaptureCommand implements CameraCommand {
             Runnable restorePreviewCommand,
             int maxImageCount) {
         mFrameServer = frameServer;
-        mBuilderFactory = builder;
+        mBuilderFactory = new RequestTemplate(builder);
         mManagedImageReader = managedImageReader;
         mBurstInputSurface = burstInputSurface;
         mBurstLifetime = lifetime;
