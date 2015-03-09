@@ -65,12 +65,9 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"هذا العنصر مخزن محليًا ومتاح في وضع عدم الاتصال."</string>
     <string name="please_wait" msgid="1416313324505140068">"يُرجى الانتظار"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"خطأ في الكاميرا"</string>
-    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
-    <skip />
-    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
-    <skip />
-    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
-    <skip />
+    <string name="cannot_connect_camera" msgid="4311259792784598381">"يتعذر الاتصال بالكاميرا."</string>
+    <string name="camera_disabled" msgid="6963443549010040595">"تم تعطيل الكاميرا بسبب سياسات الأمان."</string>
+    <string name="media_storage_failure" msgid="1699400130652902305">"حدثت مشكلة أثناء حفظ الصورة أو الفيديو."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"أخفق تخزين الصورة."</string>
     <string name="wait" msgid="765601745709933047">"الرجاء الانتظار…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"‏أدرج بطاقة SD قبل استخدام الكاميرا."</string>
@@ -221,11 +218,16 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"قائمة الأوضاع"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"تبديل شريط الصور"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"شريط الصور"</string>
-    <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"تكبير"</string>
-    <string name="btn_zoom_plus" msgid="4645138949375961656">"Z+‎"</string>
-    <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"تصغير"</string>
-    <string name="btn_zoom_minus" msgid="5436240345362098272">"‎‎Z-‎"</string>
-    <string name="accessibility_zoom_announcement" msgid="6976673411698319811">"‏قيمة التكبير/التصغير هي %.1f"</string>
+    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
+    <skip />
+    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
+    <skip />
+    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
+    <skip />
+    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
+    <skip />
+    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
+    <skip />
     <string name="capital_on" msgid="1118214824959797269">"تشغيل"</string>
     <string name="capital_off" msgid="3020696135020167263">"إيقاف"</string>
     <string name="video_control_play" msgid="6895236811408921715">"تشغيل الفيديو"</string>
@@ -380,6 +382,4 @@
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"استشعار اقتصاص \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"٠"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"١"</string>
-    <!-- no translation found for session_saving_image (8932315404486416826) -->
-    <skip />
 </resources>
