@@ -65,9 +65,12 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"이 항목은 로컬에 저장되어 있으며 오프라인에서 사용할 수 있습니다."</string>
     <string name="please_wait" msgid="1416313324505140068">"잠시 기다려 주세요."</string>
     <string name="camera_error_title" msgid="6200558085072670067">"카메라 오류"</string>
-    <string name="cannot_connect_camera" msgid="4311259792784598381">"카메라에 연결할 수 없습니다."</string>
-    <string name="camera_disabled" msgid="6963443549010040595">"보안 정책으로 인해 카메라 사용이 중지되었습니다."</string>
-    <string name="media_storage_failure" msgid="1699400130652902305">"사진이나 동영상을 저장하는 중에 문제가 발생했습니다."</string>
+    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
+    <skip />
+    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
+    <skip />
+    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"사진을 저장하지 못했습니다."</string>
     <string name="wait" msgid="765601745709933047">"잠시 기다려 주세요..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"카메라를 사용하기 전에 SD 카드를 삽입하세요."</string>
@@ -218,16 +221,11 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"모드 목록"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"슬라이드 전환"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"슬라이드"</string>
-    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
-    <skip />
-    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
-    <skip />
-    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
-    <skip />
-    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
-    <skip />
+    <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"확대"</string>
+    <string name="btn_zoom_plus" msgid="4645138949375961656">"확대"</string>
+    <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"축소"</string>
+    <string name="btn_zoom_minus" msgid="5436240345362098272">"축소"</string>
+    <string name="accessibility_zoom_announcement" msgid="6976673411698319811">"현재 화면 배율은 %.1f입니다."</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
     <string name="video_control_play" msgid="6895236811408921715">"동영상 재생"</string>
@@ -382,4 +380,6 @@
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"잘린 센서 \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
+    <!-- no translation found for session_saving_image (8932315404486416826) -->
+    <skip />
 </resources>
