@@ -203,7 +203,8 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         sharedImageReaderFactory.provideZSLStream(),
                         sharedImageReaderFactory.provideMetadataPool(), flashSetting);
                 BurstTaker burstTaker = new BurstTakerImpl(cameraCommandExecutor, frameServer,
-                        rootBuilder, sharedImageReaderFactory.provideSharedImageReader(),
+                        basicCameraFactory.provideMeteredZoomedRequestBuilder(),
+                        sharedImageReaderFactory.provideSharedImageReader(),
                         burstFacade.getInputSurface(), basicCameraFactory.providePreviewStarter(),
                         // ImageReader#acquireLatestImage() requires two images
                         // as the margin so
