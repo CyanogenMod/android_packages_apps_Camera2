@@ -24,10 +24,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.android.camera.ButtonManager;
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraModule;
-import com.android.camera.FatalErrorHandler;
 import com.android.camera.app.AppController;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
@@ -42,18 +40,12 @@ import com.android.camera.captureintent.stateful.StateMachine;
 import com.android.camera.captureintent.stateful.StateMachineImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.hardware.HardwareSpec;
-import com.android.camera.one.OneCamera;
-import com.android.camera.one.OneCameraAccessException;
-import com.android.camera.one.OneCameraCharacteristics;
-import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.SettingsManager;
-import com.android.camera.stats.UsageStatistics;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgent;
-import com.google.common.logging.eventprotos;
 
 /**
  * The camera module that handles image capture intent.
@@ -143,7 +135,6 @@ public class CaptureIntentModule extends CameraModule {
     public void resume() {
         mModuleUI.onModuleResumed();
         mResourceConstructed.get().getAppController().addPreviewAreaSizeChangedListener(mModuleUI);
-        mResourceConstructed.get().getAppController().getCameraAppUI().onChangeCamera();
         mStateMachine.processEvent(new EventResume());
     }
 
@@ -177,88 +168,22 @@ public class CaptureIntentModule extends CameraModule {
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        final CameraFacingSetting cameraFacingSetting =
-                mResourceConstructed.get().getCameraFacingSetting();
-        final OneCameraCharacteristics characteristics;
-        try {
-            characteristics = mResourceConstructed.get().getCameraManager()
-                    .getCameraCharacteristics(cameraFacingSetting.getCameraFacing());
-        } catch (OneCameraAccessException ocae) {
-            mResourceConstructed.get().getFatalErrorHandler().onGenericCameraAccessFailure();
-            return null;
-        }
-
-        return new HardwareSpec() {
-            @Override
-            public boolean isFrontCameraSupported() {
-                return mResourceConstructed.get().getCameraManager()
-                        .hasCameraFacing(OneCamera.Facing.FRONT);
-            }
-
-            @Override
-            public boolean isHdrSupported() {
-                return false;
-            }
-
-            @Override
-            public boolean isHdrPlusSupported() {
-                return false;
-            }
-
-            @Override
-            public boolean isFlashSupported() {
-                return characteristics.isFlashSupported();
-            }
-        };
+        /**
+         * Instead of passively providing CameraAppUI the hardware spec here,
+         * {@link com.android.camera.captureintent.state.StateOpeningCamera}
+         * will actively specify hardware spec.
+         */
+        return null;
     }
 
     @Override
     public CameraAppUI.BottomBarUISpec getBottomBarSpec() {
-        CameraAppUI.BottomBarUISpec bottomBarSpec = new CameraAppUI.BottomBarUISpec();
-        /** Camera switch button UI spec. */
-        bottomBarSpec.enableCamera = true;
-        bottomBarSpec.cameraCallback = new ButtonManager.ButtonCallback() {
-            @Override
-            public void onStateChanged(int cameraId) {
-                mStateMachine.processEvent(new EventTapOnSwitchCameraButton());
-            }
-        };
-        /** Grid lines button UI spec. */
-        bottomBarSpec.enableGridLines = true;
-        /** HDR button UI spec. */
-        bottomBarSpec.enableHdr = false;
-        bottomBarSpec.hideHdr = true;
-        bottomBarSpec.hdrCallback = null;
-        /** Timer button UI spec. */
-        bottomBarSpec.enableSelfTimer = true;
-        bottomBarSpec.showSelfTimer = true;
-        /** Flash button UI spec. */
-        bottomBarSpec.enableFlash = true;
-        bottomBarSpec.hideFlash = false;
-
-        /** Intent image review UI spec. */
-        bottomBarSpec.showCancel = true;
-        bottomBarSpec.cancelCallback = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mStateMachine.processEvent(new EventTapOnCancelIntentButton());
-            }
-        };
-        bottomBarSpec.showDone = true;
-        bottomBarSpec.doneCallback = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mStateMachine.processEvent(new EventTapOnConfirmPhotoButton());
-            }
-        };
-        bottomBarSpec.showRetake = true;
-        bottomBarSpec.retakeCallback = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mStateMachine.processEvent(new EventTapOnRetakePhotoButton());
-            }
-        };
-        return bottomBarSpec;
+        /**
+         * Instead of passively providing CameraAppUI the bottom bar spec here,
+         * {@link com.android.camera.captureintent.state.StateOpeningCamera}
+         * will actively specify bottom bar spec.
+         */
+        return null;
     }
 
     @Override

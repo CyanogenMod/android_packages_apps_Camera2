@@ -19,7 +19,13 @@ package com.android.camera.captureintent.state;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
+import com.android.camera.ButtonManager;
+import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.event.EventTapOnCancelIntentButton;
+import com.android.camera.captureintent.event.EventTapOnConfirmPhotoButton;
+import com.android.camera.captureintent.event.EventTapOnRetakePhotoButton;
+import com.android.camera.captureintent.event.EventTapOnSwitchCameraButton;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
 import com.android.camera.captureintent.stateful.EventHandler;
@@ -29,6 +35,7 @@ import com.android.camera.captureintent.event.EventPause;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
+import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCaptureSetting;
@@ -36,6 +43,8 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.util.Size;
+
+import android.view.View;
 
 /**
  * Represents a state that the module is waiting for a camera to be opened.
@@ -122,6 +131,15 @@ public final class StateOpeningCamera extends StateImpl {
                                     mResourceConstructed,
                                     mResourceSurfaceTexture));
                         }
+
+                        mResourceConstructed.get().getMainThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mResourceConstructed.get().getModuleUI().applyModuleSpecs(
+                                        getHardwareSpec(), getBottomBarSpec());
+                            }
+                        });
+
                         return Optional.of((State) StateStartingPreview.from(
                                 StateOpeningCamera.this,
                                 mResourceConstructed,
@@ -192,5 +210,77 @@ public final class StateOpeningCamera extends StateImpl {
     @VisibleForTesting
     public boolean isPaused() {
         return mIsPaused;
+    }
+
+    private HardwareSpec getHardwareSpec() {
+        return new HardwareSpec() {
+            @Override
+            public boolean isFrontCameraSupported() {
+                return mResourceConstructed.get().getCameraManager()
+                        .hasCameraFacing(OneCamera.Facing.FRONT);
+            }
+
+            @Override
+            public boolean isHdrSupported() {
+                return false;
+            }
+
+            @Override
+            public boolean isHdrPlusSupported() {
+                return false;
+            }
+
+            @Override
+            public boolean isFlashSupported() {
+                return mCameraCharacteristics.isFlashSupported();
+            }
+        };
+    }
+
+    private CameraAppUI.BottomBarUISpec getBottomBarSpec() {
+        CameraAppUI.BottomBarUISpec bottomBarSpec = new CameraAppUI.BottomBarUISpec();
+        /** Camera switch button UI spec. */
+        bottomBarSpec.enableCamera = true;
+        bottomBarSpec.cameraCallback = new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int cameraId) {
+                getStateMachine().processEvent(new EventTapOnSwitchCameraButton());
+            }
+        };
+        /** Grid lines button UI spec. */
+        bottomBarSpec.enableGridLines = true;
+        /** HDR button UI spec. */
+        bottomBarSpec.enableHdr = false;
+        bottomBarSpec.hideHdr = true;
+        bottomBarSpec.hdrCallback = null;
+        /** Timer button UI spec. */
+        bottomBarSpec.enableSelfTimer = true;
+        bottomBarSpec.showSelfTimer = true;
+        /** Flash button UI spec. */
+        bottomBarSpec.enableFlash = mCameraCharacteristics.isFlashSupported();
+
+        /** Intent image review UI spec. */
+        bottomBarSpec.showCancel = true;
+        bottomBarSpec.cancelCallback = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getStateMachine().processEvent(new EventTapOnCancelIntentButton());
+            }
+        };
+        bottomBarSpec.showDone = true;
+        bottomBarSpec.doneCallback = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getStateMachine().processEvent(new EventTapOnConfirmPhotoButton());
+            }
+        };
+        bottomBarSpec.showRetake = true;
+        bottomBarSpec.retakeCallback = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getStateMachine().processEvent(new EventTapOnRetakePhotoButton());
+            }
+        };
+        return bottomBarSpec;
     }
 }
