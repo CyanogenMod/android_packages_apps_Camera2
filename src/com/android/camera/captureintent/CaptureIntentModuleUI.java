@@ -18,6 +18,7 @@ package com.android.camera.captureintent;
 
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
+import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.PreviewOverlay;
 import com.android.camera.ui.PreviewStatusListener;
@@ -98,6 +99,19 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
      */
     public RectF getPreviewRect() {
         return mPreviewRect;
+    }
+
+    /**
+     * Configures the bottom bar UI.
+     *
+     * @param hardwareSpec The hardware spec.
+     * @param bottomBarSpec The bottom bar spec.
+     */
+    public void applyModuleSpecs(
+            HardwareSpec hardwareSpec,
+            CameraAppUI.BottomBarUISpec bottomBarSpec) {
+        MainThread.checkMainThread();
+        mAppUI.applyModuleSpecs(hardwareSpec, bottomBarSpec);
     }
 
     /**
@@ -228,8 +242,9 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
         mIntentReviewImageView.setImageBitmap(null);
 
         mAppUI.transitionToIntentCaptureLayout();
-        mAppUI.showModeOptions();
+        mAppUI.syncModeOptionIndicators();
         mAppUI.enableModeOptions();
+        mAppUI.showModeOptions();
         mAppUI.setShutterButtonEnabled(true);
         mAppUI.setShouldSuppressCaptureIndicator(true);
     }

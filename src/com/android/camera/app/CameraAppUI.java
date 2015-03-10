@@ -1214,7 +1214,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onChangeCamera() {
         ModuleController moduleController = mController.getCurrentModuleController();
         applyModuleSpecs(moduleController.getHardwareSpec(), moduleController.getBottomBarSpec());
+        syncModeOptionIndicators();
+    }
 
+    /**
+     * Updates the mode option indicators according to the current settings.
+     */
+    public void syncModeOptionIndicators() {
         if (mIndicatorIconController != null) {
             // Sync the settings state with the indicator state.
             mIndicatorIconController.syncIndicators();
