@@ -16,6 +16,7 @@
 
 package com.android.camera.processing.imagebackend;
 
+import android.graphics.Rect;
 import com.android.camera.debug.Log;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
@@ -51,10 +52,11 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
     @Override
     public void run() {
         ImageToProcess img = mImage;
+        Rect safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
 
-        final TaskImage inputImage = calculateInputImage(img);
+        final TaskImage inputImage = calculateInputImage(img, safeCrop);
         final int subsample = calculateBestSubsampleFactor(
-                new Size(inputImage.width, inputImage.height),
+                new Size(safeCrop.width(), safeCrop.height()),
                 mTargetSize);
         final TaskImage resultImage = calculateResultImage(img, subsample);
         final int[] convertedImage;
@@ -66,7 +68,7 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
                     / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
                     + subsample);
 
-            convertedImage = runSelectedConversion(img.proxy, subsample);
+            convertedImage = runSelectedConversion(img.proxy, safeCrop, subsample);
 
             // Chain JPEG task
             TaskImageContainer jpegTask = new TaskCompressImageToJpeg(img, mExecutor,

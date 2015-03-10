@@ -16,6 +16,7 @@
 
 package com.android.camera.processing.imagebackend;
 
+import android.graphics.Rect;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
@@ -40,6 +41,8 @@ import java.util.concurrent.Executor;
  * <li>MAINTAIN_ASPECT_NO_INSET: a sub-sampled image without cropping (except to
  * maintain even values of width and height for the image</li>
  * </ol>
+ * This task does NOT implement rotation at the byte-level, since it is best
+ * implemented when displayed at the view level.
  */
 public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     public enum ThumbnailShape {
@@ -71,8 +74,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     protected final static Log.Tag TAG = new Log.Tag("TaskRGBPreview");
 
     protected final ThumbnailShape mThumbnailShape;
-
-    protected Size mTargetSize;
+    protected final Size mTargetSize;
 
     /**
      * Constructor
@@ -100,9 +102,9 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     }
 
     /**
-     * Simple helper function
+     * Return the closest minimal value of the parameter that is evenly divisible by two.
      */
-    private int quantizeBy2(int value) {
+    private static int quantizeBy2(int value) {
         return (value / 2) * 2;
     }
 
@@ -190,6 +192,27 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * NOTE: To get the size of the resultant bitmap, you need to call
      * inscribedCircleRadius(w, h) outside of this function. Runs in ~10-15ms
      * for 4K image with a subsample of 13. <br>
+     * <p>
+     * <b>Crop Treatment: </b>Since this class does a lot of memory offset
+     * calculation, it is critical that it doesn't poke strange memory locations on
+     * strange crop values. Crop is always applied before any rotation. Out-of-bound
+     * crop boundaries are accepted, but treated mathematically as intersection with
+     * the Image rectangle. If this intersection is null, the result is minimal 2x2
+     * images.
+     * <p>
+     * <b>Known Image Artifacts</b> Since this class produces bitmaps that are
+     * transient on the screen, the implementation is geared toward efficiency
+     * rather than image quality. The image created is a straight, dumb integer
+     * subsample of the YUV space with an acceptable color conversion, but w/o any
+     * sort of re-sampling. So, expect the usual aliasing noise. Furthermore, when a
+     * subsample factor of n is chosen, the resultant UV pixels will have the same
+     * subsampling, even though the RGBA artifact produces could produce an
+     * effective resample of (n/2) in the U,V color space. For cases where subsample
+     * is odd-valued, there will be pixel-to-pixel color bleeding, which may be
+     * apparent in sharp color edges.  But since our eyes are pretty bad at color
+     * edges anyway, it may be an acceptable trade-off for run-time efficiency on an
+     * image artifact that has a short lifetime on the screen.
+     * </p>
      * TODO: Implement horizontal alpha feathering of the edge of the image.
      *
      * @param img YUV420_888 Image to convert
@@ -197,44 +220,48 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * @return inscribed image as ARGB_8888
      */
     protected int[] colorInscribedDataCircleFromYuvImage(ImageProxy img, int subsample) {
+        Rect defaultCrop = new Rect(0, 0, img.getWidth(), img.getHeight());
+
+        return colorInscribedDataCircleFromYuvImage(img, defaultCrop, subsample);
+    }
+
+    protected int[] colorInscribedDataCircleFromYuvImage(ImageProxy img, Rect crop, int subsample) {
+        crop = guaranteedSafeCrop(img, crop);
         final List<ImageProxy.Plane> planeList = img.getPlanes();
         if (planeList.size() != 3) {
             throw new IllegalArgumentException("Incorrect number planes (" + planeList.size()
                     + ") in YUV Image Object");
         }
 
-        int inputWidth = img.getWidth();
-        int inputHeight = img.getHeight();
+        int inputWidth = crop.width();
+        int inputHeight = crop.height();
         int outputWidth = inputWidth / subsample;
         int outputHeight = inputHeight / subsample;
         int w = outputWidth;
         int h = outputHeight;
         int r = inscribedCircleRadius(w, h);
 
-        int inscribedXMin;
-        int inscribedXMax;
-        int inscribedYMin;
-        int inscribedYMax;
-        int inputVerticalOffset = 0;
-        int inputHorizontalOffset = 0;
+        final int inscribedXMin;
+        final int inscribedXMax;
+        final int inscribedYMin;
+        final int inscribedYMax;
+        // To minimize color bleeding, always quantize the start coordinates by 2.
+        final int inputVerticalOffset = quantizeBy2(crop.top);
+        final int inputHorizontalOffset = quantizeBy2(crop.left);
 
         // Set up input read boundaries.
         if (w > h) {
+            inscribedYMin = 0;
+            inscribedYMax = h;
             // since we're 2x2 blocks we need to quantize these values by 2
             inscribedXMin = quantizeBy2(w / 2 - r);
             inscribedXMax = quantizeBy2(w / 2 + r);
-            inscribedYMin = 0;
-            inscribedYMax = h;
-            inputVerticalOffset = 0;
-            inputHorizontalOffset = subsample / 2;
         } else {
             inscribedXMin = 0;
             inscribedXMax = w;
             // since we're 2x2 blocks we need to quantize these values by 2
             inscribedYMin = quantizeBy2(h / 2 - r);
             inscribedYMax = quantizeBy2(h / 2 + r);
-            inputVerticalOffset = subsample / 2;
-            inputHorizontalOffset = 0;
         }
 
         ByteBuffer buf0 = planeList.get(0).getBuffer();
@@ -269,10 +296,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     inputVerticalOffset);
             int offsetU = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
                     2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
-                    inputHorizontalOffset, inputVerticalOffset);
+                    inputHorizontalOffset / 2, inputVerticalOffset / 2);
             int offsetV = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
-                    2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
-                    inputHorizontalOffset, inputVerticalOffset);
+                    2 /* v Component downsampled by 2 */, vByteStride, vPixelStride,
+                    inputHorizontalOffset / 2, inputVerticalOffset / 2);
 
             // Parametrize the circle boundaries w.r.t. the y component.
             // Find the subsequence of pixels we need for each horizontal raster
@@ -462,7 +489,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     /**
      * Converts an Android Image to a subsampled image of ARGB_8888 data in a
      * super-optimized loop unroll. Guarantees only one subsampled pass over the
-     * YUV data.
+     * YUV data.  No crop is applied.
      *
      * @param img YUV420_888 Image to convert
      * @param subsample width/height subsample factor
@@ -472,14 +499,55 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      */
     protected int[] colorSubSampleFromYuvImage(ImageProxy img, int subsample,
             boolean enableSquareInscribe) {
+        Rect defaultCrop = new Rect(0, 0, img.getWidth(), img.getHeight());
+
+        return colorSubSampleFromYuvImage(img, defaultCrop, subsample, enableSquareInscribe);
+    }
+
+    /**
+     * Converts an Android Image to a subsampled image of ARGB_8888 data in a
+     * super-optimized loop unroll. Guarantees only one subsampled pass over the
+     * YUV data.
+     * <p>
+     * <b>Crop Treatment: </b>Since this class does a lot of memory offset
+     * calculation, it is critical that it doesn't poke strange memory locations on
+     * strange crop values. Crop is always applied before any rotation. Out-of-bound
+     * crop boundaries are accepted, but treated mathematically as intersection with
+     * the Image rectangle. If this intersection is null, the result is minimal 2x2
+     * images.
+     * <p>
+     * <b>Known Image Artifacts</b> Since this class produces bitmaps that are
+     * transient on the screen, the implementation is geared toward efficiency
+     * rather than image quality. The image created is a straight, dumb integer
+     * subsample of the YUV space with an acceptable color conversion, but w/o any
+     * sort of re-sampling. So, expect the usual aliasing noise. Furthermore, when a
+     * subsample factor of n is chosen, the resultant UV pixels will have the same
+     * subsampling, even though the RGBA artifact produces could produce an
+     * effective resample of (n/2) in the U,V color space. For cases where subsample
+     * is odd-valued, there will be pixel-to-pixel color bleeding, which may be
+     * apparent in sharp color edges.  But since our eyes are pretty bad at color
+     * edges anyway, it may be an acceptable trade-off for run-time efficiency on an
+     * image artifact that has a short lifetime on the screen.
+     * </p>
+     *
+     * @param img YUV420_888 Image to convert
+     * @param crop crop to be applied.
+     * @param subsample width/height subsample factor
+     * @param enableSquareInscribe true, output is an cropped square output;
+     *            false, output maintains aspect ratio of input image
+     * @return inscribed image as ARGB_8888
+     */
+    protected int[] colorSubSampleFromYuvImage(ImageProxy img, Rect crop, int subsample,
+            boolean enableSquareInscribe) {
+        crop = guaranteedSafeCrop(img, crop);
         final List<ImageProxy.Plane> planeList = img.getPlanes();
         if (planeList.size() != 3) {
             throw new IllegalArgumentException("Incorrect number planes (" + planeList.size()
                     + ") in YUV Image Object");
         }
 
-        int inputWidth = img.getWidth();
-        int inputHeight = img.getHeight();
+        int inputWidth = crop.width();
+        int inputHeight = crop.height();
         int outputWidth = inputWidth / subsample;
         int outputHeight = inputHeight / subsample;
 
@@ -494,20 +562,22 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
         int yPixelStride = planeList.get(0).getPixelStride() * subsample;
         int uPixelStride = planeList.get(1).getPixelStride() * subsample;
         int vPixelStride = planeList.get(2).getPixelStride() * subsample;
-        int outputPixelStride = outputWidth;
 
-        int len = outputWidth * outputHeight;
 
         // Set up default input read boundaries.
-        int inscribedXMin = 0;
-        int inscribedXMax = quantizeBy2(outputWidth);
-        int inscribedYMin = 0;
-        int inscribedYMax = quantizeBy2(outputHeight);
-        int inputVerticalOffset = 0;
-        int inputHorizontalOffset = 0;
+        final int outputPixelStride;
+        final int len;
+        final int inscribedXMin;
+        final int inscribedXMax;
+        final int inscribedYMin;
+        final int inscribedYMax;
+        final int inputVerticalOffset = quantizeBy2(crop.top);
+        final int inputHorizontalOffset = quantizeBy2(crop.left);
 
         if (enableSquareInscribe) {
             int r = inscribedCircleRadius(outputWidth, outputHeight);
+            len = r * r * 4;
+            outputPixelStride = r * 2;
 
             if (outputWidth > outputHeight) {
                 // since we're 2x2 blocks we need to quantize these values by 2
@@ -515,20 +585,20 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                 inscribedXMax = quantizeBy2(outputWidth / 2 + r);
                 inscribedYMin = 0;
                 inscribedYMax = outputHeight;
-                inputVerticalOffset = 0;
-                inputHorizontalOffset = subsample / 2;
             } else {
                 inscribedXMin = 0;
                 inscribedXMax = outputWidth;
                 // since we're 2x2 blocks we need to quantize these values by 2
                 inscribedYMin = quantizeBy2(outputHeight / 2 - r);
                 inscribedYMax = quantizeBy2(outputHeight / 2 + r);
-                inputVerticalOffset = subsample / 2;
-                inputHorizontalOffset = 0;
             }
-
-            len = r * r * 4;
-            outputPixelStride = r * 2;
+        } else {
+            outputPixelStride = outputWidth;
+            len = outputWidth * outputHeight;
+            inscribedXMin = 0;
+            inscribedXMax = quantizeBy2(outputWidth);
+            inscribedYMin = 0;
+            inscribedYMax = quantizeBy2(outputHeight);
         }
 
         int[] colors = new int[len];
@@ -549,10 +619,10 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     inputVerticalOffset);
             int offsetU = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
                     2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
-                    inputHorizontalOffset, inputVerticalOffset);
+                    inputHorizontalOffset / 2, inputVerticalOffset / 2);
             int offsetV = calculateMemoryOffsetFromPixelOffsets(inscribedXMin, j, subsample,
-                    2 /* U Component downsampled by 2 */, uByteStride, uPixelStride,
-                    inputHorizontalOffset, inputVerticalOffset);
+                    2 /* v Component downsampled by 2 */, vByteStride, vPixelStride,
+                    inputHorizontalOffset / 2, inputVerticalOffset / 2);
 
             // Take in horizontal lines by factor of two because of the u/v
             // component subsample
@@ -733,9 +803,9 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * @param img Specified ImageToProcess
      * @return Calculated specification
      */
-    protected TaskImage calculateInputImage(ImageToProcess img) {
-        return new TaskImage(img.rotation, img.proxy.getWidth(),
-                img.proxy.getHeight(), img.proxy.getFormat());
+    protected TaskImage calculateInputImage(ImageToProcess img, Rect cropApplied) {
+        return new TaskImage(img.rotation, img.proxy.getWidth(), img.proxy.getHeight(),
+                img.proxy.getFormat(), cropApplied);
     }
 
     /**
@@ -747,22 +817,22 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * @return Calculated Specification
      */
     protected TaskImage calculateResultImage(ImageToProcess img, int subsample) {
-        final TaskImage inputImage = calculateInputImage(img);
+        final Rect safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
         int resultWidth, resultHeight;
 
-        final int radius = inscribedCircleRadius(inputImage.width / subsample, inputImage.height
-                / subsample);
-
         if (mThumbnailShape == ThumbnailShape.MAINTAIN_ASPECT_NO_INSET) {
-            resultWidth = inputImage.width / subsample;
-            resultHeight = inputImage.height / subsample;
+            resultWidth = safeCrop.width() / subsample;
+            resultHeight = safeCrop.height() / subsample;
         } else {
+            final int radius = inscribedCircleRadius(safeCrop.width() / subsample, safeCrop.height()
+                    / subsample);
             resultWidth = 2 * radius;
             resultHeight = 2 * radius;
         }
 
         return new TaskImage(img.rotation, resultWidth, resultHeight,
-                TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888);
+                TaskImage.EXTRA_USER_DEFINED_FORMAT_ARGB_8888,
+                null /* Crop already applied */);
 
     }
 
@@ -774,16 +844,16 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
      * @param subsample Amount of image subsampling
      * @return an ARGB_888 packed array ready for Bitmap conversion
      */
-    protected int[] runSelectedConversion(ImageProxy img, int subsample) {
+    protected int[] runSelectedConversion(ImageProxy img, Rect crop, int subsample) {
         switch (mThumbnailShape) {
             case DEBUG_SQUARE_ASPECT_CIRCULAR_INSET:
                 return dummyColorInscribedDataCircleFromYuvImage(img, subsample);
             case SQUARE_ASPECT_CIRCULAR_INSET:
-                return colorInscribedDataCircleFromYuvImage(img, subsample);
+                return colorInscribedDataCircleFromYuvImage(img, crop, subsample);
             case SQUARE_ASPECT_NO_INSET:
-                return colorSubSampleFromYuvImage(img, subsample, true);
+                return colorSubSampleFromYuvImage(img, crop, subsample, true);
             case MAINTAIN_ASPECT_NO_INSET:
-                return colorSubSampleFromYuvImage(img, subsample, false);
+                return colorSubSampleFromYuvImage(img, crop, subsample, false);
             default:
                 return null;
         }
@@ -795,10 +865,11 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
     @Override
     public void run() {
         ImageToProcess img = mImage;
+        Rect safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
 
-        final TaskImage inputImage = calculateInputImage(img);
+        final TaskImage inputImage = calculateInputImage(img, safeCrop);
         final int subsample = calculateBestSubsampleFactor(
-                new Size(inputImage.width, inputImage.height),
+                new Size(safeCrop.width(), safeCrop.height()),
                 mTargetSize);
         final TaskImage resultImage = calculateResultImage(img, subsample);
         final int[] convertedImage;
@@ -811,7 +882,7 @@ public class TaskConvertImageToRGBPreview extends TaskImageContainer {
                     / subsample + " h=" + img.proxy.getHeight() / subsample + " of subsample "
                     + subsample);
 
-            convertedImage = runSelectedConversion(img.proxy, subsample);
+            convertedImage = runSelectedConversion(img.proxy, safeCrop, subsample);
         } finally {
             // Signal backend that reference has been released
             mImageTaskManager.releaseSemaphoreReference(img, mExecutor);
