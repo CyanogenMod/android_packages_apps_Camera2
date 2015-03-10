@@ -65,15 +65,20 @@ public class ExifUtil {
      *
      * @param image A {@link TaskImageContainer.TaskImage} from which to extract info from.
      * @param captureResult A {@link CaptureResultProxy} from which to extract info from.
+     * @param location optinally a location that should be added to the EXIF.
      */
     public void populateExif(Optional<TaskImageContainer.TaskImage> image,
-                             Optional<CaptureResultProxy> captureResult) {
+                             Optional<CaptureResultProxy> captureResult,
+                             Optional<Location> location) {
         addMakeAndModelToExif();
         if (image.isPresent()) {
             addImageDataToExif(image.get());
         }
         if (captureResult.isPresent()) {
             addCaptureResultToExif(mExif, captureResult.get());
+        }
+        if (location.isPresent()) {
+            addLocationToExif(location.get());
         }
     }
 

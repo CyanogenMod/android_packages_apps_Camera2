@@ -32,6 +32,7 @@ import android.hardware.camera2.DngCreator;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.location.Location;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
@@ -490,7 +491,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                 exif.setTag(directionTag);
             }
             new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
-                    Optional.of(new CaptureResultProxy(result)));
+                    Optional.of(new CaptureResultProxy(result)), Optional.<Location>absent());
         } catch (IOException e) {
             Log.w(TAG, "Could not read exif from gcam jpeg", e);
             exif = null;

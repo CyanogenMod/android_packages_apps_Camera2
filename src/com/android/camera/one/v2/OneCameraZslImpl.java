@@ -29,6 +29,7 @@ import android.hardware.camera2.CaptureResult.Key;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.location.Location;
 import android.media.CameraProfile;
 import android.media.Image;
 import android.media.ImageReader;
@@ -630,7 +631,7 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             exif.setTag(directionTag);
         }
         new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
-                Optional.of(new CaptureResultProxy(result)));
+                Optional.of(new CaptureResultProxy(result)), Optional.<Location>absent());
         session.saveAndFinish(acquireJpegBytes(image, degrees),
                 size.getWidth(), size.getHeight(), 0, exif, new OnMediaSavedListener() {
                         @Override

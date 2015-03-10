@@ -18,6 +18,7 @@ package com.android.camera.processing.imagebackend;
 
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
+import android.location.Location;
 import android.media.CameraProfile;
 import android.net.Uri;
 
@@ -262,13 +263,14 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     protected ExifInterface createExif(TaskImage image,
                                        ListenableFuture<TotalCaptureResultProxy> totalCaptureResultProxyFuture) {
         ExifInterface exif = new ExifInterface();
+        Optional<Location> location = Optional.fromNullable(mSession.getLocation());
 
         try {
             new ExifUtil(exif).populateExif(Optional.of(image),
-                    Optional.<CaptureResultProxy>of(totalCaptureResultProxyFuture.get()));
+                    Optional.<CaptureResultProxy>of(totalCaptureResultProxyFuture.get()), location);
         } catch (InterruptedException | ExecutionException e) {
             new ExifUtil(exif).populateExif(Optional.of(image),
-                    Optional.<CaptureResultProxy>absent());
+                    Optional.<CaptureResultProxy>absent(), location);
         }
 
         return exif;
