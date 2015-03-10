@@ -138,6 +138,10 @@ public class OneCameraManagerImpl extends OneCameraManager {
                         isFirstCallback = false;
                         device.close();
                         openCallback.onFailure();
+                    } else {
+                        // Ensures we handle the case where an error occurs
+                        // after the camera has been opened.
+                        fatalErrorHandler.onGenericCameraAccessFailure();
                     }
                 }
 
