@@ -16,6 +16,11 @@
 
 package com.android.camera.filmstrip;
 
+import android.view.View;
+
+import com.android.camera.app.CameraAppUI;
+import com.android.camera.data.FilmstripItem;
+
 /**
  * An interface which defines the controller of filmstrip.
  * A filmstrip has 4 states:
@@ -76,16 +81,6 @@ public interface FilmstripController {
      * @return Whether the filmstrip is in full-screen mode.
      */
     public boolean inFullScreen();
-
-    /**
-     * @return Whether the current view in filmstrip is camera preview.
-     */
-    public boolean isCameraPreview();
-
-    /**
-     * @return Whether the filmstrip is in full-screen camera preview.
-     */
-    public boolean inCameraFullscreen();
 
     /**
      * @return Whether the filmstrip is in scaling animation.
@@ -159,6 +154,19 @@ public interface FilmstripController {
      * Scales up to full-screen mode.
      */
     public void goToFullScreen();
+
+    /**
+     * Returns true if the supplied element is present and its view reports
+     * {@link View#VISIBLE}, such that it would be visible if onscreen. Note
+     * the filmstrip view itself might not be visible, if caller needs to check
+     * whether the filmstrip is visible, see
+     * {@link CameraAppUI#getFilmstripVisibility()}.
+     *
+     * @param data an item which can be present in the filmstrip.
+     * @return true if the view corresponding to the item has visibility of
+     *              {@link View#VISIBLE}, false otherwise.
+     */
+    public boolean isVisible(FilmstripItem data);
 
     /**
      * An interface which defines the FilmStripView UI action listener.

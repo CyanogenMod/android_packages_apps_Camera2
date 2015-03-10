@@ -34,7 +34,6 @@ public class FilmstripItemAttributes {
         IS_RENDERING,
         IS_IMAGE,
         IS_VIDEO,
-        IS_STICKY,
     }
 
     private final EnumSet<Attributes> mAttributes;
@@ -84,10 +83,6 @@ public class FilmstripItemAttributes {
 
     public boolean isVideo() {
         return mAttributes.contains(Attributes.IS_VIDEO);
-    }
-
-    public boolean isSticky() {
-        return mAttributes.contains(Attributes.IS_STICKY);
     }
 
     /**

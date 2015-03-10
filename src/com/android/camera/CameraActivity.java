@@ -904,17 +904,22 @@ public class CameraActivity extends QuickActivity
                         return;
                     }
 
-                    // Make the PhotoItem aware of the session placeholder, to
-                    // allow it to make a smooth transition to its content.
-                    newData.setSessionPlaceholderBitmap(
-                            Storage.getPlaceholderForSession(sessionUri));
-
                     final int pos = mDataAdapter.findByContentUri(sessionUri);
                     if (pos == -1) {
                         // We do not have a placeholder for this image, perhaps
                         // due to the activity crashing or being killed.
                         mDataAdapter.addOrUpdate(newData);
                     } else {
+                        // Make the PhotoItem aware of the session placeholder, to
+                        // allow it to make a smooth transition to its content if it
+                        // the session item is currently visible.
+                        FilmstripItem oldSessionData = mDataAdapter.getFilmstripItemAt(pos);
+                        if (mCameraAppUI.getFilmstripVisibility() == View.VISIBLE
+                                && mFilmstripController.isVisible(oldSessionData)) {
+                            Log.v(TAG, "session item visible, setting transition placeholder");
+                            newData.setSessionPlaceholderBitmap(
+                                    Storage.getPlaceholderForSession(sessionUri));
+                        }
                         mDataAdapter.updateItemAt(pos, newData);
                     }
                 }

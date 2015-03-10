@@ -2111,4 +2111,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void hideFilmstrip() {
         mFilmstripLayout.hideFilmstrip();
     }
+
+    public int getFilmstripVisibility() {
+        return mFilmstripLayout.getVisibility();
+    }
 }
