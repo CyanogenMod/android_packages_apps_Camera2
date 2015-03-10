@@ -30,6 +30,7 @@ import com.google.common.base.Optional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -257,7 +258,8 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
         // a simple linear search should yield the best performance over a
         // binary search.
         int pos = 0;
-        Comparator<FilmstripItem> comp = new NewestFirstComparator();
+        Comparator<FilmstripItem> comp = new NewestFirstComparator(
+                new Date());
         for (; pos < mFilmstripItems.size()
                 && comp.compare(item, mFilmstripItems.get(pos)) > 0; pos++) {
         }
@@ -426,7 +428,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
             // Photos should be sorted within photo/video by ID, which in most
             // cases should correlate well to the date taken/modified. This sort
             // operation makes all photos/videos sorted by date in one list.
-            l.sort(new NewestFirstComparator());
+            l.sort(new NewestFirstComparator(new Date()));
             Log.v(TAG, "sorted video/photo metadata");
 
             // Load enough metadata so it's already loaded when we open the filmstrip.
