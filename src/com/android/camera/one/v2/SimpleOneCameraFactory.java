@@ -135,6 +135,9 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                         new Provider<ExecutorService>() {
                             @Override
                             public ExecutorService get() {
+                                // Use a dynamically-expanding thread pool to
+                                // allow any number of commands to execute
+                                // simultaneously.
                                 return Executors.newCachedThreadPool();
                             }
                         });

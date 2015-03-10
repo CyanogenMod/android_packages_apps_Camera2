@@ -16,41 +16,27 @@
 
 package com.android.camera.one.v2.autofocus;
 
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.hardware.camera2.params.MeteringRectangle;
 
-import com.android.camera.app.OrientationManager;
-import com.android.camera.one.v2.AutoFocusHelper;
 import com.google.common.base.Supplier;
 
 /**
- * Computes the current AE metering rectangles based on the current
- * metering parameters and crop region.
+ * Computes the current AE metering rectangles based on the current metering
+ * parameters and crop region.
  */
 class AEMeteringRegion implements Supplier<MeteringRectangle[]> {
     private final Supplier<MeteringParameters> mMeteringParameters;
     private final Supplier<Rect> mCropRegion;
-    private final int mSensorOrientation;
 
     public AEMeteringRegion(Supplier<MeteringParameters> meteringParameters,
-                            Supplier<Rect> cropRegion,
-                            int sensorOrientation) {
+            Supplier<Rect> cropRegion) {
         mMeteringParameters = meteringParameters;
         mCropRegion = cropRegion;
-        mSensorOrientation = sensorOrientation;
     }
 
     @Override
     public MeteringRectangle[] get() {
-        MeteringParameters parameters = mMeteringParameters.get();
-        if (parameters.getMode() == MeteringParameters.Mode.POINT) {
-            Rect cropRegion = mCropRegion.get();
-            PointF point = parameters.getAEPoint();
-            return AutoFocusHelper.aeRegionsForNormalizedCoord(point.x, point.y, cropRegion,
-                    mSensorOrientation);
-        } else {
-            return AutoFocusHelper.getZeroWeightRegion();
-        }
+        return mMeteringParameters.get().getAERegions(mCropRegion.get());
     }
 }

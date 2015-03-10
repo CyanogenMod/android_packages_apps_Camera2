@@ -46,17 +46,25 @@ public class ResettingDelayedExecutor implements Executor, SafeCloseable {
         mClosed = false;
     }
 
+    /**
+     * Resets any pending executions.
+     */
+    public void reset() {
+        synchronized (mLock) {
+            // Cancel any existing, queued task before scheduling another.
+            if (mLatestRunRequest != null) {
+                mLatestRunRequest.cancel(false /* mayInterruptIfRunning */);
+            }
+        }
+    }
+
     @Override
     public void execute(Runnable runnable) {
         synchronized (mLock) {
             if (mClosed) {
                 return;
             }
-            // Cancel any existing, queued task before scheduling another.
-            if (mLatestRunRequest != null) {
-                boolean mayInterruptIfRunning = false;
-                mLatestRunRequest.cancel(mayInterruptIfRunning);
-            }
+            reset();
             mLatestRunRequest = mExecutor.schedule(runnable, mDelay, mDelayUnit);
         }
     }
