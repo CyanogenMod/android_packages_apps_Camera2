@@ -23,7 +23,7 @@ import com.android.camera.CameraActivity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.debug.Log;
-import com.android.camera.module.ModuleController;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
@@ -82,9 +82,14 @@ public class AppUpgrader extends SettingsUpgrader {
     private static final int CAMERA_SETTINGS_STRINGS_UPGRADE = 5;
 
     /**
+     * With this version we needed to convert the artificial 16:9 high
+     * resolution size on the N5 since we stored it with a swapped width/height.
+     */
+    public static final int NEEDS_N5_16by9_RESOLUTION_SWAP = 7;
+    /**
      * Increment this value whenever new AOSP UpgradeSteps need to be executed.
      */
-    public static final int APP_UPGRADE_VERSION = 6;
+    public static final int APP_UPGRADE_VERSION = 7;
 
     private final AppController mAppController;
 
@@ -151,6 +156,10 @@ public class AppUpgrader extends SettingsUpgrader {
 
         if (lastVersion < CAMERA_SETTINGS_SELECTED_MODULE_INDEX) {
             upgradeSelectedModeIndex(settingsManager, context);
+        }
+
+        if (lastVersion < NEEDS_N5_16by9_RESOLUTION_SWAP) {
+            updateN516by9ResolutionIfNeeded(settingsManager);
         }
     }
 
@@ -445,6 +454,30 @@ public class AppUpgrader extends SettingsUpgrader {
         if (startupModuleIndex == oldGcamIndex) {
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_STARTUP_MODULE_INDEX,
                     gcamIndex);
+        }
+    }
+
+    /**
+     * A targeted fix for b/19693226.
+     * <p>
+     * Since the N5 doesn't natively support a high resolution 16:9 size we need
+     * to artificially add it and then crop the result from the high-resolution
+     * 4:3 size. In version 2.4 we unfortunately swapped the dimensions of
+     * ResolutionUtil#NEXUS_5_LARGE_16_BY_9_SIZE, which now causes a few issues
+     * in 2.5. If we detect this case, we will swap the dimensions here to make
+     * sure they are the right way around going forward.
+     */
+    private void updateN516by9ResolutionIfNeeded(SettingsManager settingsManager) {
+        if (!ApiHelper.IS_NEXUS_5) {
+            return;
+        }
+
+        String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_PICTURE_SIZE_BACK);
+        if (pictureSize.equals("1836x3264")) {
+            Log.i(TAG, "Swapped dimensions on N5 16:9 resolution.");
+            settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_PICTURE_SIZE_BACK,
+                    "3264x1836");
         }
     }
 }
