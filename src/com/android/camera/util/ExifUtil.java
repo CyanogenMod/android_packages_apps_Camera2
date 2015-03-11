@@ -75,7 +75,7 @@ public class ExifUtil {
             addImageDataToExif(image.get());
         }
         if (captureResult.isPresent()) {
-            addCaptureResultToExif(mExif, captureResult.get());
+            addCaptureResultToExif(captureResult.get());
         }
         if (location.isPresent()) {
             addLocationToExif(location.get());
@@ -96,7 +96,7 @@ public class ExifUtil {
                 ExifInterface.getOrientationValueForRotation(image.orientation.getDegrees())));
     }
 
-    private void addCaptureResultToExif(ExifInterface exif, CaptureResultProxy result) {
+    private void addCaptureResultToExif(CaptureResultProxy result) {
         final Long NS_TO_S = 1000000000L; // Nanoseconds per second
         final Long SHUTTER_SPEED_VALUE_PRECISION = 100L;
         final Long F_NUMBER_PRECISION = 100L;
@@ -105,38 +105,70 @@ public class ExifUtil {
 
         // Exposure time
         Long exposureTimeNs = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-        addExifTag(ExifInterface.TAG_EXPOSURE_TIME, new Rational(exposureTimeNs, NS_TO_S));
+        addExifTag(ExifInterface.TAG_EXPOSURE_TIME, ratio(exposureTimeNs, NS_TO_S));
 
-         // Shutter speed value
-        double exposureTime = (double) exposureTimeNs / NS_TO_S;
-        double shutterSpeedValue = log2(exposureTime);
-        addExifTag(ExifInterface.TAG_SHUTTER_SPEED_VALUE, doubleToRational(shutterSpeedValue, SHUTTER_SPEED_VALUE_PRECISION));
+        // Shutter speed value
+        if (exposureTimeNs != null) {
+            Double exposureTime = (double) exposureTimeNs / NS_TO_S;
+            Double shutterSpeedValue = log2(exposureTime);
+            addExifTag(ExifInterface.TAG_SHUTTER_SPEED_VALUE, rational(shutterSpeedValue, SHUTTER_SPEED_VALUE_PRECISION));
+        }
 
         // ISO
         addExifTag(ExifInterface.TAG_ISO_SPEED_RATINGS, result.get(CaptureResult.SENSOR_SENSITIVITY));
 
         // F-stop number
-        float fNumber = result.get(CaptureResult.LENS_APERTURE);
-        addExifTag(ExifInterface.TAG_F_NUMBER, doubleToRational(fNumber, F_NUMBER_PRECISION));
+        Float fNumber = result.get(CaptureResult.LENS_APERTURE);
+        addExifTag(ExifInterface.TAG_F_NUMBER, rational(fNumber, F_NUMBER_PRECISION));
 
         // Aperture value
-        double apertureValue = 2 * log2(fNumber);
-        addExifTag(ExifInterface.TAG_APERTURE_VALUE, doubleToRational(apertureValue, APERTURE_VALUE_PRECISION));
+        if (fNumber != null) {
+            Double apertureValue = 2 * log2(fNumber);
+            addExifTag(ExifInterface.TAG_APERTURE_VALUE, rational(apertureValue, APERTURE_VALUE_PRECISION));
+        }
 
         // Focal length
-        float focalLength = result.get(CaptureResult.LENS_FOCAL_LENGTH);
-        addExifTag(ExifInterface.TAG_FOCAL_LENGTH, doubleToRational(focalLength, FOCAL_LENGTH_PRECISION));
+        Float focalLength = result.get(CaptureResult.LENS_FOCAL_LENGTH);
+        addExifTag(ExifInterface.TAG_FOCAL_LENGTH, rational(focalLength, FOCAL_LENGTH_PRECISION));
     }
 
     private void addExifTag(int tagId, Object val) {
-        mExif.setTag(mExif.buildTag(tagId, val));
+        if (val != null) {
+            mExif.setTag(mExif.buildTag(tagId, val));
+        }
     }
 
-    private Rational doubleToRational(double value, long precision) {
-        return new Rational((long) (value * precision), precision);
+    private Rational ratio(Long numerator, Long denominator) {
+        if (numerator != null && denominator != null) {
+            return new Rational(numerator, denominator);
+        }
+        return null;
+    }
+    private Rational rational(Float value, Long precision) {
+        if (value != null && precision != null) {
+            return new Rational((long) (value * precision), precision);
+        }
+        return null;
     }
 
-    private double log2(double value) {
-        return Math.log(value) / LOG_2;
+    private Rational rational(Double value, Long precision) {
+        if (value != null && precision != null) {
+            return new Rational((long) (value * precision), precision);
+        }
+        return null;
+    }
+
+    private Double log2(Float value) {
+        if (value != null) {
+            return Math.log(value) / LOG_2;
+        }
+        return null;
+    }
+
+    private Double log2(Double value) {
+        if (value != null) {
+            return Math.log(value) / LOG_2;
+        }
+        return null;
     }
 }
