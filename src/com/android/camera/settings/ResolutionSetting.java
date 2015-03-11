@@ -17,6 +17,8 @@
 package com.android.camera.settings;
 
 import android.content.ContentResolver;
+import android.graphics.ImageFormat;
+
 import com.android.camera.debug.Log;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera;
@@ -25,8 +27,6 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Size;
-
-import android.graphics.ImageFormat;
 
 import java.util.List;
 
@@ -70,10 +70,19 @@ public class ResolutionSetting {
         final String blacklist = cameraFacing == OneCamera.Facing.FRONT ? mResolutionBlackListFront
                 : mResolutionBlackListBack;
 
-        final List<Size> supportedPictureSizes =
-                ResolutionUtil.filterBlackListedSizes(
-                        cameraCharacteristics.getSupportedPictureSizes(ImageFormat.JPEG),
-                        blacklist);
+        // All resolutions supported by the camera.
+        List<Size> supportedPictureSizes = cameraCharacteristics
+                .getSupportedPictureSizes(ImageFormat.JPEG);
+
+        // Filter sizes which we are showing to the user in settings.
+        // This might also add some new resolution we support on some devices
+        // non-natively.
+        supportedPictureSizes = ResolutionUtil.getDisplayableSizesFromSupported(
+                supportedPictureSizes, cameraFacing == OneCamera.Facing.BACK);
+
+        // Filter the remaining sizes through our backlist.
+        supportedPictureSizes = ResolutionUtil.filterBlackListedSizes(supportedPictureSizes,
+                blacklist);
 
         final Size chosenPictureSize =
                 ResolutionUtil.getLargestPictureSize(aspectRatio, supportedPictureSizes);
