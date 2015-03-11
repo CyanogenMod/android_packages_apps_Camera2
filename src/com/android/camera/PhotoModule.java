@@ -533,7 +533,7 @@ public class PhotoModule
 
         // Force a re-check of the storage path
         if (mActivity.setStoragePath(mPreferences)) {
-            mActivity.updateStorageSpaceAndHint();
+            mActivity.updateStorageSpace();
         }
 
         // Power shutter
@@ -571,6 +571,7 @@ public class PhotoModule
     }
 
     private void onPreviewStarted() {
+        mActivity.updateStorageSpaceAndHint();
         setCameraState(IDLE);
         mFocusManager.onPreviewStarted();
         startFaceDetection();
