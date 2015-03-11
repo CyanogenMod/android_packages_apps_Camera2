@@ -65,9 +65,12 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"यो वस्तु स्थानिय रूपमा भन्डारण गरिएको छ र अफलाइन उपलब्ध छ।"</string>
     <string name="please_wait" msgid="1416313324505140068">"कृपया प्रतीक्षा गर्नुहोस्"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"क्यामेरा त्रुटि"</string>
-    <string name="cannot_connect_camera" msgid="4311259792784598381">"क्यामेरासँग जडान गर्न सकिएन।"</string>
-    <string name="camera_disabled" msgid="6963443549010040595">"सुरक्षा नीतिहरूका कारण क्यामरा निष्क्रिय गरिएको छ।"</string>
-    <string name="media_storage_failure" msgid="1699400130652902305">"तपाईँको तस्बिर वा भिडियो सुरक्षित गर्दा एउटा समस्या भयो।"</string>
+    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
+    <skip />
+    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
+    <skip />
+    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"तस्बिर भण्डारण विफलता।"</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा गर्नुहोस्..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"क्यामेराको उपयोग गर्नु अघि एउटा SD कार्ड भित्र राख्नुहोस्।"</string>
@@ -220,16 +223,11 @@
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"ढाँचाः सूची"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"टगल फिल्मस्ट्रिप"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"फिल्मस्ट्रिप"</string>
-    <!-- no translation found for accessibility_mode_zoom_plus (4967389173992713073) -->
-    <skip />
-    <!-- no translation found for btn_zoom_plus (4645138949375961656) -->
-    <skip />
-    <!-- no translation found for accessibility_mode_zoom_minus (8850636036927992409) -->
-    <skip />
-    <!-- no translation found for btn_zoom_minus (5436240345362098272) -->
-    <skip />
-    <!-- no translation found for accessibility_zoom_announcement (6976673411698319811) -->
-    <skip />
+    <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"ठुलो पार्नुहोस्"</string>
+    <string name="btn_zoom_plus" msgid="4645138949375961656">"Z+"</string>
+    <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"सानो पार्नुहोस्"</string>
+    <string name="btn_zoom_minus" msgid="5436240345362098272">"Z-"</string>
+    <string name="accessibility_zoom_announcement" msgid="6976673411698319811">"जूम मान %.1f छ"</string>
     <string name="capital_on" msgid="1118214824959797269">"ON"</string>
     <string name="capital_off" msgid="3020696135020167263">"OFF"</string>
     <string name="video_control_play" msgid="6895236811408921715">"भिडियो चलाउनुहोस्"</string>
@@ -386,4 +384,5 @@
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"क्रप गरिएको सेन्सर \n(१६:९)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"०"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"१"</string>
+    <string name="session_saving_image" msgid="8932315404486416826">"सुरक्षित गर्दै..."</string>
 </resources>
