@@ -31,13 +31,14 @@ import com.android.camera.util.CameraUtil;
  * Helper class to implement auto focus and 3A in camera2-based
  * {@link com.android.camera.one.OneCamera} implementations.
  */
+@Deprecated
 public class AutoFocusHelper {
     private static final Log.Tag TAG = new Log.Tag("OneCameraAFHelp");
 
     /** camera2 API metering region weight. */
     private static final int CAMERA2_REGION_WEIGHT = (int)
         (CameraUtil.lerp(MeteringRectangle.METERING_WEIGHT_MIN, MeteringRectangle.METERING_WEIGHT_MAX,
-                        Settings3A.getMeteringRegionWeight()));
+                        Settings3A.getGcamMeteringRegionFraction()));
 
     /** Zero weight 3A region, to reset regions per API. */
     private static final MeteringRectangle[] ZERO_WEIGHT_3A_REGION = new MeteringRectangle[]{

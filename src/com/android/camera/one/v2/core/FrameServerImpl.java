@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import android.hardware.camera2.CameraAccessException;
 
-import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 
 import java.util.List;
@@ -29,7 +28,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-class FrameServerImpl implements FrameServer {
+/**
+ * Implements a FrameServer by managing exclusive access to a single
+ * {@link FrameServer.Session}.
+ */
+public final class FrameServerImpl implements FrameServer {
     public class Session implements FrameServer.Session {
         private final Object mLock;
         private boolean mClosed;
@@ -49,7 +52,7 @@ class FrameServerImpl implements FrameServer {
                         throw new SessionClosedException();
                     }
 
-                    mCaptureSession.submitRequest(burstRequests, type == RequestType.REPEATING);
+                    mCaptureSession.submitRequest(burstRequests, type);
                 } catch (Exception e) {
                     for (Request r : burstRequests) {
                         r.abort();
@@ -70,10 +73,14 @@ class FrameServerImpl implements FrameServer {
         }
     }
 
-    private final TagDispatchCaptureSession mCaptureSession;
+    private final FrameServer.Session mCaptureSession;
     private final ReentrantLock mCameraLock;
 
-    public FrameServerImpl(TagDispatchCaptureSession captureSession) {
+    /**
+     * @param captureSession The underlying session to manage access to. Note
+     *            that this will never close the session.
+     */
+    public FrameServerImpl(FrameServer.Session captureSession) {
         mCaptureSession = captureSession;
         mCameraLock = new ReentrantLock(true);
     }

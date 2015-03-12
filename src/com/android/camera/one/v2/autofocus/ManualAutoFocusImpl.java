@@ -19,6 +19,7 @@ package com.android.camera.one.v2.autofocus;
 import android.graphics.PointF;
 
 import com.android.camera.async.Updatable;
+import com.android.camera.one.Settings3A;
 
 /**
  * A ManualAutoFocus implementation which updates metering parameters and runs
@@ -27,18 +28,24 @@ import com.android.camera.async.Updatable;
 class ManualAutoFocusImpl implements ManualAutoFocus {
     private final Updatable<MeteringParameters> mMeteringParameters;
     private final Runnable mAFScanRunnable;
+    private final int mSensorOrientation;
+    private final Settings3A mSettings3A;
 
     public ManualAutoFocusImpl(Updatable<MeteringParameters> meteringParameters,
-            Runnable afScanRunnable) {
+            Runnable afScanRunnable,
+            int sensorOrientation,
+            Settings3A settings3A) {
         mMeteringParameters = meteringParameters;
         mAFScanRunnable = afScanRunnable;
+        mSensorOrientation = sensorOrientation;
+        mSettings3A = settings3A;
     }
 
     @Override
     public void triggerFocusAndMeterAtPoint(float nx, float ny) {
         PointF point = new PointF(nx, ny);
-        mMeteringParameters.update(new MeteringParameters(point, point, MeteringParameters.Mode
-                .POINT));
+        mMeteringParameters.update(PointMeteringParameters.createForNormalizedCoordinates(
+                point /* afPoint */, point /* aePoint */, mSensorOrientation, mSettings3A));
         mAFScanRunnable.run();
     }
 }

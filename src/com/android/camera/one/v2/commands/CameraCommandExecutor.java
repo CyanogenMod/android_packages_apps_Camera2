@@ -26,8 +26,10 @@ import com.android.camera.debug.Logger;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.util.Provider;
+import com.google.common.util.concurrent.Futures;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
@@ -91,9 +93,13 @@ public class CameraCommandExecutor implements SafeCloseable {
         mClosed = false;
     }
 
-    public void execute(CameraCommand command) {
+    /**
+     * Executes the given command, returning a Future to indicate its status and
+     * allow (interruptible) cancellation.
+     */
+    public Future<?> execute(CameraCommand command) {
         if (mClosed) {
-            return;
+            return Futures.immediateFuture(null);
         }
         synchronized (mLock) {
             if (mExecutor == null) {
@@ -101,7 +107,7 @@ public class CameraCommandExecutor implements SafeCloseable {
                 mExecutor = mExecutorProvider.get();
             }
             checkNotNull(mExecutor);
-            mExecutor.execute(new CommandRunnable(command));
+            return mExecutor.submit(new CommandRunnable(command));
         }
     }
 

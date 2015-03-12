@@ -65,6 +65,7 @@ import java.util.Locale;
 /**
  * Collection of utility functions used in this package.
  */
+@Deprecated
 public class CameraUtil {
     private static final Log.Tag TAG = new Log.Tag("CameraUtil");
 

@@ -23,15 +23,16 @@ import android.hardware.camera2.params.MeteringRectangle;
 import com.android.camera.async.ConcurrentState;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.ResettingDelayedExecutor;
+import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
-import com.android.camera.one.v2.commands.RunnableCameraCommand;
+import com.android.camera.one.v2.commands.ResettingRunnableCameraCommand;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.google.common.base.Supplier;
 
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,11 +41,17 @@ import java.util.concurrent.TimeUnit;
  * provides a way of polling for the most up-to-date metering regions.
  */
 public class ManualAutoFocusFactory {
-    private static final int AF_HOLD_SEC = 3;
-
     private final ManualAutoFocus mManualAutoFocus;
     private final Supplier<MeteringRectangle[]> mAEMeteringRegion;
     private final Supplier<MeteringRectangle[]> mAFMeteringRegion;
+
+    private ManualAutoFocusFactory(ManualAutoFocus manualAutoFocus,
+            Supplier<MeteringRectangle[]> aeMeteringRegion,
+            Supplier<MeteringRectangle[]> afMeteringRegion) {
+        mManualAutoFocus = manualAutoFocus;
+        mAEMeteringRegion = aeMeteringRegion;
+        mAFMeteringRegion = afMeteringRegion;
+    }
 
     /**
      * @param lifetime The Lifetime for all created objects.
@@ -55,38 +62,45 @@ public class ManualAutoFocusFactory {
      * @param sensorOrientation The sensor orientation.
      * @param previewRunner A runnable to restart the preview.
      * @param rootBuilder The root request builder to use for all requests sent
-     *            to the FrameServer.
+     * @param threadPool The executor on which to schedule delayed tasks.
+     * @param afHoldSeconds The number of seconds to hold AF after a manual AF
+     *            sweep is triggered.
      */
-    public ManualAutoFocusFactory(Lifetime lifetime, FrameServer frameServer,
+    public static ManualAutoFocusFactory create(Lifetime lifetime, FrameServer frameServer,
             CameraCommandExecutor commandExecutor, Supplier<Rect> cropRegion,
             int sensorOrientation,
             Runnable previewRunner, RequestBuilder.Factory rootBuilder,
-            int templateType) {
+            int templateType, Settings3A settings3A,
+            ScheduledExecutorService threadPool,
+            int afHoldSeconds) {
         ConcurrentState<MeteringParameters> currentMeteringParameters = new ConcurrentState<>(
-                MeteringParameters.createGlobal());
-        mAEMeteringRegion = new AEMeteringRegion(currentMeteringParameters, cropRegion,
-                sensorOrientation);
-        mAFMeteringRegion = new AFMeteringRegion(currentMeteringParameters, cropRegion,
-                sensorOrientation);
+                GlobalMeteringParameters.create());
+        AEMeteringRegion aeMeteringRegion = new AEMeteringRegion(currentMeteringParameters,
+                cropRegion);
+        AFMeteringRegion afMeteringRegion = new AFMeteringRegion(currentMeteringParameters,
+                cropRegion);
 
-        RequestTemplate afRequestBuilder = new RequestTemplate(rootBuilder);
-        afRequestBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, mAEMeteringRegion);
-        afRequestBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, mAFMeteringRegion);
+        RequestTemplate afScanRequestBuilder = new RequestTemplate(rootBuilder);
+        afScanRequestBuilder.setParam(CaptureRequest.CONTROL_AE_REGIONS, aeMeteringRegion);
+        afScanRequestBuilder.setParam(CaptureRequest.CONTROL_AF_REGIONS, afMeteringRegion);
 
-        CameraCommand afScanCommand = new FullAFScanCommand(frameServer, afRequestBuilder,
+        CameraCommand afScanCommand = new FullAFScanCommand(frameServer, afScanRequestBuilder,
                 templateType);
 
         ResettingDelayedExecutor afHoldDelayedExecutor = new ResettingDelayedExecutor(
-                Executors.newScheduledThreadPool(1),
-                AF_HOLD_SEC, TimeUnit.SECONDS);
+                threadPool, afHoldSeconds, TimeUnit.SECONDS);
         lifetime.add(afHoldDelayedExecutor);
 
         CameraCommand afScanHoldResetCommand = new AFScanHoldResetCommand(afScanCommand,
                 afHoldDelayedExecutor, previewRunner, currentMeteringParameters);
 
-        Runnable afRunner = new RunnableCameraCommand(commandExecutor, afScanHoldResetCommand);
+        Runnable afRunner = new ResettingRunnableCameraCommand(commandExecutor,
+                afScanHoldResetCommand);
 
-        mManualAutoFocus = new ManualAutoFocusImpl(currentMeteringParameters, afRunner);
+        ManualAutoFocusImpl manualAutoFocus = new ManualAutoFocusImpl(currentMeteringParameters,
+                afRunner, sensorOrientation, settings3A);
+
+        return new ManualAutoFocusFactory(manualAutoFocus, aeMeteringRegion, afMeteringRegion);
     }
 
     public ManualAutoFocus provideManualAutoFocus() {

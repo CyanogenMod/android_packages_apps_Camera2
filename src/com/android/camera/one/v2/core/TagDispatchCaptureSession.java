@@ -16,12 +16,8 @@
 
 package com.android.camera.one.v2.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
@@ -33,6 +29,11 @@ import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
 import com.android.camera.one.v2.camera2proxy.CaptureRequestBuilderProxy;
 import com.google.common.annotations.VisibleForTesting;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Like {@link android.hardware.camera2.CameraCaptureSession}, but takes
  * {@link Request}s and dispatches to the appropriate {@link ResponseListener}
@@ -40,7 +41,7 @@ import com.google.common.annotations.VisibleForTesting;
  * at the same time.
  */
 @VisibleForTesting
-public class TagDispatchCaptureSession {
+public class TagDispatchCaptureSession implements FrameServer.Session {
     private static class CaptureCallback implements CameraCaptureSessionProxy.CaptureCallback {
         private final Map<Object, ResponseListener> mListeners;
 
@@ -121,16 +122,16 @@ public class TagDispatchCaptureSession {
      * {@link Request} will be overwritten.
      *
      * @param burstRequests The list of {@link Request}s to send.
-     * @param repeating Whether the request should be sent as a repeating
+     * @param requestType Whether the request should be sent as a repeating
      *            request.
      * @throws CameraAccessException See
-     *             {@link android.hardware.camera2.CameraCaptureSession#captureBurst}
-     *             and
-     *             {@link android.hardware.camera2.CameraCaptureSession#setRepeatingBurst}
+     *             {@link CameraCaptureSession#captureBurst} and
+     *             {@link CameraCaptureSession#setRepeatingBurst}.
      * @throws InterruptedException if interrupted while waiting to allocate
      *             resources necessary for each {@link Request}.
      */
-    public void submitRequest(List<Request> burstRequests, boolean repeating) throws
+    public void submitRequest(List<Request> burstRequests, FrameServer.RequestType requestType)
+            throws
             CameraAccessException, InterruptedException, CameraCaptureSessionClosedException,
             ResourceAcquisitionFailedException {
         try {
@@ -147,7 +148,7 @@ public class TagDispatchCaptureSession {
                 captureRequests.add(builder.build());
             }
 
-            if (repeating) {
+            if (requestType == FrameServer.RequestType.REPEATING) {
                 mCaptureSession.setRepeatingBurst(captureRequests, new
                         CaptureCallback(tagListenerMap), mCameraHandler);
             } else {
@@ -160,5 +161,9 @@ public class TagDispatchCaptureSession {
             }
             throw e;
         }
+    }
+
+    public void close() {
+        // Do nothing.
     }
 }

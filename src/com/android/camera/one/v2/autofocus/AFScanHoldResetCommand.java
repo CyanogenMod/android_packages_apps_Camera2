@@ -16,13 +16,11 @@
 
 package com.android.camera.one.v2.autofocus;
 
-import android.graphics.PointF;
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.async.ResettingDelayedExecutor;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
-import com.android.camera.one.v2.autofocus.MeteringParameters;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
@@ -36,8 +34,10 @@ class AFScanHoldResetCommand implements CameraCommand {
     private final Runnable mPreviewRunnable;
     private final Updatable<MeteringParameters> mMeteringParametersUpdatable;
 
-    public AFScanHoldResetCommand(CameraCommand afScanCommand, ResettingDelayedExecutor delayedExecutor,
-                                  Runnable previewRunnable, Updatable<MeteringParameters> meteringParametersUpdatable) {
+    public AFScanHoldResetCommand(CameraCommand afScanCommand,
+            ResettingDelayedExecutor delayedExecutor,
+            Runnable previewRunnable,
+            Updatable<MeteringParameters> meteringParametersUpdatable) {
         mAFScanCommand = afScanCommand;
         mDelayedExecutor = delayedExecutor;
         mPreviewRunnable = previewRunnable;
@@ -47,12 +47,14 @@ class AFScanHoldResetCommand implements CameraCommand {
     @Override
     public void run() throws CameraAccessException, InterruptedException,
             CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
+        // Reset any delayed preview-restart which may be pending execution as a
+        // result of a previous tap-to-focus.
+        mDelayedExecutor.reset();
         mAFScanCommand.run();
         mDelayedExecutor.execute(new Runnable() {
             public void run() {
-                // Reset metering regions and restart the preview
-                mMeteringParametersUpdatable.update(new MeteringParameters(new PointF(), new
-                        PointF(), MeteringParameters.Mode.GLOBAL));
+                // Reset metering regions and restart the preview.
+                mMeteringParametersUpdatable.update(GlobalMeteringParameters.create());
                 mPreviewRunnable.run();
             }
         });

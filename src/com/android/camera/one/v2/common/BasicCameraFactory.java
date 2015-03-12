@@ -26,16 +26,19 @@ import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.autofocus.ManualAutoFocusFactory;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.commands.PreviewCommand;
-import com.android.camera.one.v2.commands.RunnableCameraCommand;
+import com.android.camera.one.v2.commands.ResettingRunnableCameraCommand;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.concurrent.Executors;
 
 /**
  * Wires together functionality common to all cameras:
@@ -68,15 +71,15 @@ public class BasicCameraFactory {
      *            use for repeating requests.
      */
     public BasicCameraFactory(Lifetime lifetime,
-                              OneCameraCharacteristics cameraCharacteristics,
-                              FrameServer frameServer,
-                              RequestBuilder.Factory rootBuilder,
-                              CameraCommandExecutor cameraCommandExecutor,
-                              Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
-                              Observable<Integer> exposure,
-                              Observable<Float> zoom,
-                              Observable<Boolean> hdrSceneSetting,
-                              int templateType) {
+            OneCameraCharacteristics cameraCharacteristics,
+            FrameServer frameServer,
+            RequestBuilder.Factory rootBuilder,
+            CameraCommandExecutor cameraCommandExecutor,
+            Observable<OneCamera.PhotoCaptureParameters.Flash> flash,
+            Observable<Integer> exposure,
+            Observable<Float> zoom,
+            Observable<Boolean> hdrSceneSetting,
+            int templateType) {
         RequestTemplate previewBuilder = new RequestTemplate(rootBuilder);
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
@@ -86,9 +89,9 @@ public class BasicCameraFactory {
                 CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, exposure);
 
         previewBuilder.setParam(CaptureRequest.CONTROL_MODE,
-              new HdrSettingBasedControlMode(hdrSceneSetting,
-                    cameraCharacteristics.getSupportedHardwareLevel(),
-                    CaptureRequest.CONTROL_MODE_AUTO));
+                new HdrSettingBasedControlMode(hdrSceneSetting,
+                        cameraCharacteristics.getSupportedHardwareLevel(),
+                        CaptureRequest.CONTROL_MODE_AUTO));
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_SCENE_MODE, new HdrSettingBasedSceneMode(hdrSceneSetting));
 
@@ -99,7 +102,9 @@ public class BasicCameraFactory {
         PreviewCommand previewCommand = new PreviewCommand(frameServer, previewBuilder,
                 templateType);
 
-        mPreviewStarter = new RunnableCameraCommand(cameraCommandExecutor,
+        // Use a resetting command to ensure that many rapid settings changes do
+        // not result in many rapid (>30fps) requests to restart the preview.
+        mPreviewStarter = new ResettingRunnableCameraCommand(cameraCommandExecutor,
                 previewCommand);
 
         // Resend the repeating preview request when the zoom or flash state
@@ -116,15 +121,16 @@ public class BasicCameraFactory {
                 .sameThreadExecutor());
         lifetime.add(exposureCallback);
         SafeCloseable hdrCallback = hdrSceneSetting.addCallback(mPreviewStarter, MoreExecutors
-              .sameThreadExecutor());
+                .sameThreadExecutor());
         lifetime.add(hdrCallback);
 
         int sensorOrientation = cameraCharacteristics.getSensorOrientation();
 
-        ManualAutoFocusFactory manualAutoFocusFactory = new ManualAutoFocusFactory(new
+        ManualAutoFocusFactory manualAutoFocusFactory = ManualAutoFocusFactory.create(new
                 Lifetime(lifetime), frameServer, cameraCommandExecutor, cropRegion,
                 sensorOrientation, mPreviewStarter, previewBuilder,
-                templateType);
+                templateType, new Settings3A(), Executors.newScheduledThreadPool(1),
+                3 /* afHoldSeconds */);
         mManualAutoFocus = manualAutoFocusFactory.provideManualAutoFocus();
         Supplier<MeteringRectangle[]> aeRegions =
                 manualAutoFocusFactory.provideAEMeteringRegion();
