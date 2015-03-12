@@ -16,20 +16,24 @@
 
 package com.android.camera.captureintent.resource;
 
+import android.graphics.PointF;
+import android.view.Surface;
+
 import com.android.camera.async.RefCountBase;
 import com.android.camera.debug.Log;
+import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
-
-import android.graphics.PointF;
-import android.view.Surface;
 
 public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
     private static final Log.Tag TAG = new Log.Tag("ResOpenedCam");
 
     /** The camera object. */
     private final OneCamera mCamera;
+
+    /** The camera device key. */
+    private final CameraId mCameraId;
 
     /** The camera facing. */
     private final OneCamera.Facing mCameraFacing;
@@ -48,20 +52,23 @@ public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
      */
     public static RefCountBase<ResourceOpenedCamera> create(
             OneCamera camera,
+            CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
         ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCameraImpl(
-                camera, cameraFacing, cameraCharacteristics, pictureSize);
+                camera, cameraId, cameraFacing, cameraCharacteristics, pictureSize);
         return new RefCountBase<>(resourceOpenedCamera);
     }
 
     private ResourceOpenedCameraImpl(
             OneCamera camera,
+            CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
         mCamera = camera;
+        mCameraId = cameraId;
         mCameraFacing = cameraFacing;
         mCameraCharacteristics = cameraCharacteristics;
         mPictureSize = pictureSize;
@@ -78,6 +85,11 @@ public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
     @Override
     public OneCamera getCamera() {
         return mCamera;
+    }
+
+    @Override
+    public CameraId getCameraId() {
+        return mCameraId;
     }
 
     @Override

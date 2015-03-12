@@ -40,13 +40,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
     private static final Tag TAG = new Tag("Camera2Act");
 
-    private final CameraDeviceKey<String> mId;
+    private final CameraDeviceKey mId;
     private final CameraManager mCameraManager;
     private final HandlerFactory mHandlerFactory;
     private final Executor mBackgroundExecutor;
     private final Logger mLogger;
 
-    public Camera2Actions(CameraDeviceKey<String> id,
+    public Camera2Actions(CameraDeviceKey id,
           CameraManager cameraManager,
           Executor backgroundExecutor,
           HandlerFactory handlerFactory,
@@ -61,10 +61,10 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
 
     @Override
     public void executeOpen(SingleDeviceOpenListener<CameraDevice> openListener,
-          Lifetime deviceLifetime) {
+          Lifetime deviceLifetime) throws UnsupportedOperationException {
         mLogger.i("executeOpen(id: " + mId.getCameraId() + ")");
         mBackgroundExecutor.execute(new OpenCameraRunnable(mCameraManager,
-              mId.getCameraId(),
+              mId.getCameraId().getValue(),
               // TODO THIS IS BAD. If there are multiple requests to open,
               // we don't want to add the handler to the lifetime until after
               // the camera device is opened or the camera could be opened with
@@ -74,7 +74,8 @@ public class Camera2Actions implements SingleDeviceActions<CameraDevice> {
     }
 
     @Override
-    public void executeClose(SingleDeviceCloseListener closeListener, CameraDevice device) {
+    public void executeClose(SingleDeviceCloseListener closeListener, CameraDevice device)
+          throws UnsupportedOperationException {
         mLogger.i("executeClose(" + device.getId() + ")");
         mBackgroundExecutor.execute(new CloseCameraRunnable(device, closeListener, mLogger));
     }

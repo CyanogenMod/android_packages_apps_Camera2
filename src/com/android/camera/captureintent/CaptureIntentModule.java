@@ -31,15 +31,26 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.burst.BurstFacadeFactory;
-import com.android.camera.captureintent.event.*;
+import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
+import com.android.camera.captureintent.event.EventOnSurfaceTextureDestroyed;
+import com.android.camera.captureintent.event.EventOnSurfaceTextureUpdated;
+import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
+import com.android.camera.captureintent.event.EventPause;
+import com.android.camera.captureintent.event.EventResume;
+import com.android.camera.captureintent.event.EventTapOnCancelShutterButton;
+import com.android.camera.captureintent.event.EventTapOnPreview;
+import com.android.camera.captureintent.event.EventTapOnShutterButton;
+import com.android.camera.captureintent.event.EventZoomRatioChanged;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceConstructedImpl;
-import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.state.StateBackground;
+import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateMachine;
 import com.android.camera.captureintent.stateful.StateMachineImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.hardware.HardwareSpec;
+import com.android.camera.one.OneCameraException;
+import com.android.camera.one.OneCameraModule;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.TouchCoordinate;
@@ -63,7 +74,7 @@ public class CaptureIntentModule extends CameraModule {
     private final StateMachine mStateMachine;
 
     public CaptureIntentModule(AppController appController, Intent intent,
-            String settingScopeNamespace) {
+            String settingScopeNamespace) throws OneCameraException {
         super(appController);
         mModuleUI = new CaptureIntentModuleUI(
                 appController.getCameraAppUI(),
@@ -76,7 +87,8 @@ public class CaptureIntentModule extends CameraModule {
                 settingScopeNamespace,
                 MainThread.create(),
                 appController.getAndroidContext(),
-                appController.getCameraManager(),
+                appController.getCameraOpener(),
+                OneCameraModule.provideOneCameraManager(),
                 appController.getLocationManager(),
                 appController.getOrientationManager(),
                 appController.getSettingsManager(),

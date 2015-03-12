@@ -56,6 +56,9 @@ import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraException;
+import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.OneCameraModule;
 import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.settings.CameraPictureSizesCacher;
 import com.android.camera.settings.Keys;
@@ -197,6 +200,7 @@ public class PhotoModule
     private ContentResolver mContentResolver;
 
     private AppController mAppController;
+    private OneCameraManager mOneCameraManager;
 
     private final PostViewPictureCallback mPostViewPictureCallback =
             new PostViewPictureCallback();
@@ -402,6 +406,12 @@ public class PhotoModule
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mHeadingSensor = new HeadingSensor(AndroidServices.instance().provideSensorManager());
         mCountdownSoundPlayer = new SoundPlayer(mAppController.getAndroidContext());
+
+        try {
+            mOneCameraManager = OneCameraModule.provideOneCameraManager();
+        } catch (OneCameraException e) {
+            Log.e(TAG, "Hardware manager failed to open.");
+        }
 
         // TODO: Make this a part of app controller API.
         View cancelButton = mActivity.findViewById(R.id.shutter_cancel_button);
@@ -1431,6 +1441,7 @@ public class PhotoModule
             // No camera provider, the Activity is destroyed already.
             return;
         }
+
         requestCameraOpen();
 
         mJpegPictureCallbackTime = 0;
@@ -1949,10 +1960,12 @@ public class PhotoModule
                 mCameraDevice.getCameraId(), supported);
 
         OneCamera.Facing cameraFacing =
-                isCameraFrontFacing() ? OneCamera.Facing.FRONT : OneCamera.Facing.BACK;
+              isCameraFrontFacing() ? OneCamera.Facing.FRONT : OneCamera.Facing.BACK;
         Size pictureSize;
         try {
-            pictureSize = mAppController.getResolutionSetting().getPictureSize(cameraFacing);
+            pictureSize = mAppController.getResolutionSetting().getPictureSize(
+                  mAppController.getCameraProvider().getCurrentCameraId(),
+                  cameraFacing);
         } catch (OneCameraAccessException ex) {
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;

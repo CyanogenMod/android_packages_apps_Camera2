@@ -32,33 +32,30 @@ import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
+import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
-import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
-import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCaptureSetting;
-import com.android.camera.one.OneCameraCharacteristics;
-import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.OneCameraOpener;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
-
 import com.google.common.base.Optional;
 
 /**
- * The {@link OneCameraManager} implementation on top of Camera2 API.
+ * The {@link com.android.camera.one.OneCameraOpener} implementation on top of Camera2 API.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class OneCameraManagerImpl extends OneCameraManager {
-    private static final Tag TAG = new Tag("OneCameraMgrImpl2");
+public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
+    private static final Tag TAG = new Tag("OneCamera1Opnr");
 
     private final Context mContext;
     private final OneCameraFeatureConfig mFeatureConfig;
     private final CameraManager mCameraManager;
     private final DisplayMetrics mDisplayMetrics;
 
-    public static Optional<OneCameraManager> create(
+    public static Optional<OneCameraOpener> create(
             OneCameraFeatureConfig featureConfig,
             Context context,
             DisplayMetrics displayMetrics) {
@@ -72,20 +69,23 @@ public class OneCameraManagerImpl extends OneCameraManager {
             Log.e(TAG, "camera2.CameraManager is not available.");
             return Optional.absent();
         }
-        OneCameraManager oneCameraManager = new OneCameraManagerImpl(
-                featureConfig, context, cameraManager, displayMetrics);
-        return Optional.of(oneCameraManager);
+        OneCameraOpener oneCameraOpener = new Camera2OneCameraOpenerImpl(
+              featureConfig,
+              context,
+              cameraManager,
+              displayMetrics);
+        return Optional.of(oneCameraOpener);
     }
 
     /**
-     * Instantiates a new {@link OneCameraManager} for Camera2 API.
+     * Instantiates a new {@link com.android.camera.one.OneCameraOpener} for Camera2 API.
      *
      * @param cameraManager the underlying Camera2 camera manager.
      */
-    public OneCameraManagerImpl(OneCameraFeatureConfig featureConfig,
-            Context context,
-            CameraManager cameraManager,
-            DisplayMetrics displayMetrics) {
+    public Camera2OneCameraOpenerImpl(OneCameraFeatureConfig featureConfig,
+          Context context,
+          CameraManager cameraManager,
+          DisplayMetrics displayMetrics) {
         mFeatureConfig = featureConfig;
         mContext = context;
         mCameraManager = cameraManager;
@@ -94,6 +94,7 @@ public class OneCameraManagerImpl extends OneCameraManager {
 
     @Override
     public void open(
+            final CameraId cameraKey,
             final OneCameraCaptureSetting captureSetting,
             final Handler handler,
             final MainThread mainThread,
@@ -103,9 +104,9 @@ public class OneCameraManagerImpl extends OneCameraManager {
             final OpenCallback openCallback,
             final FatalErrorHandler fatalErrorHandler) {
         try {
-            final String cameraId = getCameraId(captureSetting.getCameraFacing());
-            Log.i(TAG, "Opening Camera ID " + cameraId);
-            mCameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
+            Log.i(TAG, "Opening Camera: " + cameraKey);
+
+            mCameraManager.openCamera(cameraKey.getValue(), new CameraDevice.StateCallback() {
                 // We may get multiple calls to StateCallback, but only the
                 // first callback indicates the status of the camera-opening
                 // operation. For example, we may receive onOpened() and later
@@ -189,71 +190,6 @@ public class OneCameraManagerImpl extends OneCameraManager {
                     openCallback.onFailure();
                 }
             });
-        }
-    }
-
-    @Override
-    public boolean hasCameraFacing(Facing facing) {
-        return getFirstCameraFacing(facing == Facing.FRONT ? CameraCharacteristics.LENS_FACING_FRONT
-                : CameraCharacteristics.LENS_FACING_BACK) != null;
-    }
-
-    @Override
-    public OneCameraCharacteristics getCameraCharacteristics(Facing facing)
-            throws OneCameraAccessException {
-        String cameraId = getCameraId(facing);
-        try {
-            CameraCharacteristics characteristics = mCameraManager
-                    .getCameraCharacteristics(cameraId);
-            return new OneCameraCharacteristicsImpl(characteristics);
-        } catch (CameraAccessException ex) {
-            throw new OneCameraAccessException("Unable to get camera characteristics", ex);
-        }
-    }
-
-    /** Returns the ID of the first camera facing the given direction. */
-    private String getCameraId(Facing facing) {
-        if (facing == Facing.FRONT) {
-            return getFirstFrontCameraId();
-        } else {
-            return getFirstBackCameraId();
-        }
-    }
-
-    /** Returns the ID of the first back-facing camera. */
-    public String getFirstBackCameraId() {
-        Log.d(TAG, "Getting First BACK Camera");
-        String cameraId = getFirstCameraFacing(CameraCharacteristics.LENS_FACING_BACK);
-        if (cameraId == null) {
-            throw new RuntimeException("No back-facing camera found.");
-        }
-        return cameraId;
-    }
-
-    /** Returns the ID of the first front-facing camera. */
-    public String getFirstFrontCameraId() {
-        Log.d(TAG, "Getting First FRONT Camera");
-        String cameraId = getFirstCameraFacing(CameraCharacteristics.LENS_FACING_FRONT);
-        if (cameraId == null) {
-            throw new RuntimeException("No front-facing camera found.");
-        }
-        return cameraId;
-    }
-
-    /** Returns the ID of the first camera facing the given direction. */
-    private String getFirstCameraFacing(int facing) {
-        try {
-            String[] cameraIds = mCameraManager.getCameraIdList();
-            for (String cameraId : cameraIds) {
-                CameraCharacteristics characteristics = mCameraManager
-                        .getCameraCharacteristics(cameraId);
-                if (characteristics.get(CameraCharacteristics.LENS_FACING) == facing) {
-                    return cameraId;
-                }
-            }
-            return null;
-        } catch (CameraAccessException ex) {
-            throw new RuntimeException("Unable to get camera ID", ex);
         }
     }
 }

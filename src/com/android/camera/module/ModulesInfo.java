@@ -27,6 +27,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.captureintent.CaptureIntentModule;
 import com.android.camera.debug.Log;
+import com.android.camera.one.OneCameraException;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.config.OneCameraFeatureConfig.HdrPlusSupportLevel;
 import com.android.camera.settings.SettingsScopeNamespaces;
@@ -247,9 +248,13 @@ public class ModulesInfo {
 
             @Override
             public ModuleController createModule(AppController app, Intent intent) {
-                return enableCaptureModule ?
-                        new CaptureIntentModule(app, intent, namespace) :
-                        new PhotoModule(app);
+                if(enableCaptureModule) {
+                    try {
+                        return new CaptureIntentModule(app, intent, namespace);
+                    } catch (OneCameraException ignored) {
+                    }
+                }
+                return new PhotoModule(app);
             }
         });
     }

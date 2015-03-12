@@ -22,8 +22,9 @@ import android.content.DialogInterface;
 import android.view.ViewGroup;
 
 import com.android.camera.exif.Rational;
-import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraManager;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.ResolutionUtil;
@@ -55,6 +56,9 @@ public class FirstRunDialog {
     /** The app controller. */
     private final AppController mAppController;
 
+    /** The hardware manager. */
+    private final OneCameraManager mOneCameraManager;
+
     /** The app context. */
     private final Context mContext;
 
@@ -73,14 +77,20 @@ public class FirstRunDialog {
     /**
      * Constructs a first run dialog.
      *
-     * @param appController The app controller.
      */
-    public FirstRunDialog(AppController appController, FirstRunDialogListener listener) {
-        mListener = listener;
+    public FirstRunDialog(
+          AppController appController,
+          Context androidContext,
+          ResolutionSetting resolutionSetting,
+          SettingsManager settingManager,
+          OneCameraManager hardwareManager,
+          FirstRunDialogListener listener) {
         mAppController = appController;
-        mContext = mAppController.getAndroidContext();
-        mResolutionSetting = mAppController.getResolutionSetting();
-        mSettingsManager = mAppController.getSettingsManager();
+        mContext = androidContext;
+        mResolutionSetting = resolutionSetting;
+        mSettingsManager = settingManager;
+        mOneCameraManager = hardwareManager;
+        mListener = listener;
     }
 
     /**
@@ -146,8 +156,10 @@ public class FirstRunDialog {
             public void onConfirm(Rational aspectRatio) {
                 // Change resolution setting based on the chosen aspect ratio.
                 try {
-                    mResolutionSetting.setPictureAspectRatio(OneCamera.Facing.BACK, aspectRatio);
-                    mResolutionSetting.setPictureAspectRatio(OneCamera.Facing.FRONT, aspectRatio);
+                    mResolutionSetting.setPictureAspectRatio(
+                          mOneCameraManager.findFirstCameraFacing(Facing.BACK), aspectRatio);
+                    mResolutionSetting.setPictureAspectRatio(
+                          mOneCameraManager.findFirstCameraFacing(Facing.FRONT), aspectRatio);
                 } catch (OneCameraAccessException ex) {
                     mListener.onCameraAccessException();
                     return;

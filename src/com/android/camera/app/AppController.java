@@ -32,7 +32,7 @@ import com.android.camera.ButtonManager;
 import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.module.ModuleController;
-import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.OneCameraOpener;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
@@ -83,11 +83,6 @@ public interface AppController {
      * @return  {@link android.app.Dialog} of the app.
      */
     public Dialog createDialog();
-
-    /**
-     * @return the current camera id.
-     */
-    public int getCurrentCameraId();
 
     /**
      * @return a String scope uniquely identifing the current module.
@@ -347,7 +342,7 @@ public interface AppController {
     /**
      * Returns the new camera API manager.
      */
-    public OneCameraManager getCameraManager();
+    public OneCameraOpener getCameraOpener();
 
     /**
      * Returns the {@link OrientationManagerImpl}.

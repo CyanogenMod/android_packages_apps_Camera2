@@ -31,12 +31,6 @@ import com.android.camera.captureintent.event.EventCameraBusy;
 import com.android.camera.captureintent.event.EventCameraQuickExpose;
 import com.android.camera.captureintent.event.EventCameraReady;
 import com.android.camera.captureintent.event.EventFastPictureBitmapAvailable;
-import com.android.camera.captureintent.resource.ResourceCaptureTools;
-import com.android.camera.captureintent.resource.ResourceCaptureToolsImpl;
-import com.android.camera.captureintent.resource.ResourceConstructed;
-import com.android.camera.captureintent.resource.ResourceOpenedCamera;
-import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
-import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureUpdated;
 import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
 import com.android.camera.captureintent.event.EventPause;
@@ -48,9 +42,16 @@ import com.android.camera.captureintent.event.EventTapOnShutterButton;
 import com.android.camera.captureintent.event.EventTapOnSwitchCameraButton;
 import com.android.camera.captureintent.event.EventTimerCountDownToZero;
 import com.android.camera.captureintent.event.EventZoomRatioChanged;
+import com.android.camera.captureintent.resource.ResourceCaptureTools;
+import com.android.camera.captureintent.resource.ResourceCaptureToolsImpl;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.resource.ResourceOpenedCamera;
+import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
+import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
+import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
@@ -60,7 +61,6 @@ import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.focus.FocusController;
-
 import com.google.common.base.Optional;
 
 /**
@@ -235,10 +235,12 @@ public final class StateReadyForCapture extends StateImpl {
 
                         OneCamera.Facing cameraFacing =
                                 resourceConstructed.getCameraFacingSetting().getCameraFacing();
+                        CameraId cameraId =  resourceConstructed.getOneCameraManager()
+                              .findFirstCameraFacing(cameraFacing);
                         OneCameraCharacteristics characteristics;
                         try {
-                            characteristics = resourceConstructed.getCameraManager()
-                                    .getCameraCharacteristics(cameraFacing);
+                            characteristics = resourceConstructed.getOneCameraManager()
+                                    .getOneCameraCharacteristics(cameraId);
                         } catch (OneCameraAccessException ex) {
                             return Optional.of((State) StateFatal.from(
                                     StateReadyForCapture.this,
@@ -250,6 +252,7 @@ public final class StateReadyForCapture extends StateImpl {
                                 mResourceCaptureTools.get().getResourceConstructed(),
                                 mResourceCaptureTools.get().getResourceSurfaceTexture(),
                                 cameraFacing,
+                                cameraId,
                                 characteristics));
                     }
                 };

@@ -43,7 +43,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy> {
     private static final Tag TAG = new Tag("PortCamAct");
 
-    private final CameraDeviceKey<Integer> mId;
+    private final CameraDeviceKey mId;
     private final HandlerFactory mHandlerFactory;
     private final ExecutorService mBackgroundRunner;
     private final Context mContext;
@@ -51,7 +51,7 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
     private final Logger mLogger;
 
     public PortabilityCameraActions(
-          CameraDeviceKey<Integer> id,
+          CameraDeviceKey id,
           Context context,
           CameraApi apiVersion,
           ExecutorService backgroundRunner,
@@ -69,12 +69,12 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
 
     @Override
     public void executeOpen(SingleDeviceOpenListener<CameraProxy> openListener,
-          Lifetime deviceLifetime) {
+          Lifetime deviceLifetime) throws UnsupportedOperationException {
         mLogger.i("executeOpen(id: " + mId.getCameraId() + ")");
         CameraAgent agent = CameraAgentFactory.getAndroidCameraAgent(mContext, mApiVersion);
         deviceLifetime.add(new CameraAgentRecycler(mApiVersion, mLogger));
 
-        mBackgroundRunner.execute(new OpenCameraRunnable(agent, mId.getCameraId(),
+        mBackgroundRunner.execute(new OpenCameraRunnable(agent, mId.getCameraId().getLegacyValue(),
               mHandlerFactory.create(deviceLifetime, "Camera2 Lifetime"),
               openListener, mLogger));
     }

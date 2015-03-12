@@ -30,12 +30,11 @@ import javax.annotation.concurrent.ThreadSafe;
  * immutable.
  */
 @ThreadSafe
-public final class CameraDeviceKey<T> {
+final class CameraDeviceKey {
     /**
      * Unified set of supported types.
      */
     public enum ApiType {
-        UNKNOWN,
         CAMERA_API1,
         CAMERA_API2,
         CAMERA_API_PORTABILITY_AUTO,
@@ -44,7 +43,7 @@ public final class CameraDeviceKey<T> {
     }
 
     private final ApiType mApiType;
-    private final T mCameraId;
+    private final CameraId mCameraId;
 
     /**
      * @return the api type for this instances.
@@ -56,20 +55,14 @@ public final class CameraDeviceKey<T> {
     /**
      * @return the typed cameraId for this instances.
      */
-    public T getCameraId() {
+    public CameraId getCameraId() {
         return mCameraId;
     }
 
     /**
-     * Create a camera device key without an explicit API version.
-     * Used for porting legacy code to use CameraDeviceKey where
-     * a version is not specified.
+     * Create a camera device key with an explicit API version.
      */
-    public CameraDeviceKey(T cameraId) {
-        this(ApiType.UNKNOWN, cameraId);
-    }
-
-    public CameraDeviceKey(ApiType apiType, T cameraId) {
+    public CameraDeviceKey(ApiType apiType, CameraId cameraId) {
         mApiType = apiType;
         mCameraId = cameraId;
     }
@@ -78,7 +71,7 @@ public final class CameraDeviceKey<T> {
     public String toString() {
         return "CameraDeviceKey{" +
               "mApiType: " + mApiType +
-              ", mCameraId: '" + mCameraId + "}";
+              ", mCameraId: " + mCameraId + "}";
     }
 
     @Override

@@ -17,6 +17,8 @@
 package com.android.camera.one;
 
 import com.android.camera.async.Observable;
+import com.android.camera.device.CameraId;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingObserver;
@@ -36,7 +38,8 @@ public class OneCameraCaptureSetting {
     private final boolean mIsHdrPlusEnabled;
 
     public static OneCameraCaptureSetting create(
-            OneCamera.Facing cameraFacing,
+            Facing facing,
+            CameraId cameraId,
             ResolutionSetting resolutionSetting,
             SettingsManager settingsManager,
             String cameraSettingScope,
@@ -48,8 +51,8 @@ public class OneCameraCaptureSetting {
         Observable<Boolean> hdrSceneSetting = SettingObserver.ofBoolean(
                 settingsManager, SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR);
         return new OneCameraCaptureSetting(
-                cameraFacing,
-                resolutionSetting.getPictureSize(cameraFacing),
+                facing,
+                resolutionSetting.getPictureSize(cameraId, facing),
                 flashSetting,
                 exposureSetting,
                 hdrSceneSetting,

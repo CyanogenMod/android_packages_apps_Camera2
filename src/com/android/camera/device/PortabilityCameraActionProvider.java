@@ -30,8 +30,7 @@ import java.util.concurrent.ExecutorService;
  * Provides a set of executable actions that can be used to open or close
  * a portability layer camera device object.
  */
-public class PortabilityCameraActionProvider implements
-      CameraDeviceActionProvider<CameraProxy, Integer> {
+public class PortabilityCameraActionProvider implements CameraDeviceActionProvider<CameraProxy> {
     private final HandlerFactory mHandlerFactory;
     private final ExecutorService mBackgroundRunner;
     private final Context mAppContext;
@@ -49,8 +48,7 @@ public class PortabilityCameraActionProvider implements
     }
 
     @Override
-    public SingleDeviceActions<CameraProxy> get(
-          CameraDeviceKey<Integer> key) {
+    public SingleDeviceActions<CameraProxy> get(CameraDeviceKey key) {
         return new PortabilityCameraActions(key, mAppContext, getApiFromKey(key),
               mBackgroundRunner, mHandlerFactory, mLogFactory);
     }

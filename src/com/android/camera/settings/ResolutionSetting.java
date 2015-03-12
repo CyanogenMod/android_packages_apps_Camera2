@@ -20,8 +20,10 @@ import android.content.ContentResolver;
 import android.graphics.ImageFormat;
 
 import com.android.camera.debug.Log;
+import com.android.camera.device.CameraId;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraManager;
@@ -42,7 +44,8 @@ public class ResolutionSetting {
     private final String mResolutionBlackListBack;
     private final String mResolutionBlackListFront;
 
-    public ResolutionSetting(SettingsManager settingsManager, OneCameraManager oneCameraManager,
+    public ResolutionSetting(SettingsManager settingsManager,
+            OneCameraManager oneCameraManager,
             ContentResolver contentResolver) {
         mSettingsManager = settingsManager;
         mOneCameraManager = oneCameraManager;
@@ -55,13 +58,15 @@ public class ResolutionSetting {
      * Changes the picture size settings for the cameras with specified facing.
      * Pick the largest picture size with the specified aspect ratio.
      *
-     * @param cameraFacing The specified direction that the camera is facing.
+     * @param cameraId The specific camera device.
      * @param aspectRatio The chosen aspect ratio.
      */
-    public void setPictureAspectRatio(OneCamera.Facing cameraFacing, Rational aspectRatio)
+    public void setPictureAspectRatio(CameraId cameraId, Rational aspectRatio)
             throws OneCameraAccessException {
         OneCameraCharacteristics cameraCharacteristics =
-                mOneCameraManager.getCameraCharacteristics(cameraFacing);
+                mOneCameraManager.getOneCameraCharacteristics(cameraId);
+
+        Facing cameraFacing = cameraCharacteristics.getCameraDirection();
 
         // Pick the largest picture size with the selected aspect ratio and save
         // the choice for front camera.
@@ -94,11 +99,11 @@ public class ResolutionSetting {
 
     /**
      * Reads the picture size setting for the cameras with specified facing.
-     *
-     * @param cameraFacing The specified direction that the camera is facing.
-     * @return The preferred picture size.
+     * This specifically avoids reading camera characteristics unless the size
+     * is blacklisted or is not cached to prevent a crash.
      */
-    public Size getPictureSize(OneCamera.Facing cameraFacing) throws OneCameraAccessException {
+    public Size getPictureSize(CameraId cameraId, Facing cameraFacing)
+          throws OneCameraAccessException {
         final String pictureSizeSettingKey = cameraFacing == OneCamera.Facing.FRONT ?
                 Keys.KEY_PICTURE_SIZE_FRONT : Keys.KEY_PICTURE_SIZE_BACK;
 
@@ -120,15 +125,18 @@ public class ResolutionSetting {
         // If a picture size is set, check whether it's blacklisted.
         if (isPictureSizeSettingSet) {
             pictureSize = SettingsUtil.sizeFromSettingString(
-                    mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL, pictureSizeSettingKey));
-            isPictureSizeBlacklisted = ResolutionUtil.isBlackListed(pictureSize, blacklist);
+                    mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL,
+                          pictureSizeSettingKey));
+            isPictureSizeBlacklisted = pictureSize == null ||
+                  ResolutionUtil.isBlackListed(pictureSize, blacklist);
         }
 
         if (!isPictureSizeSettingSet || isPictureSizeBlacklisted){
             final Rational aspectRatio = ResolutionUtil.ASPECT_RATIO_4x3;
 
-            final OneCameraCharacteristics cameraCharacteristics =
-                    mOneCameraManager.getCameraCharacteristics(cameraFacing);
+            OneCameraCharacteristics cameraCharacteristics =
+                  mOneCameraManager.getOneCameraCharacteristics(cameraId);
+
             final List<Size> supportedPictureSizes =
                     ResolutionUtil.filterBlackListedSizes(
                             cameraCharacteristics.getSupportedPictureSizes(ImageFormat.JPEG),
@@ -148,13 +156,13 @@ public class ResolutionSetting {
     /**
      * Obtains the preferred picture aspect ratio in terms of the picture size setting.
      *
-     * @param cameraFacing The specified direction that the camera is facing.
+     * @param cameraId The specific camera device.
      * @return The preferred picture aspect ratio.
      * @throws OneCameraAccessException
      */
-    public Rational getPictureAspectRatio(OneCamera.Facing cameraFacing)
+    public Rational getPictureAspectRatio(CameraId cameraId, Facing facing)
             throws OneCameraAccessException {
-        Size pictureSize = getPictureSize(cameraFacing);
+        Size pictureSize = getPictureSize(cameraId, facing);
         return new Rational(pictureSize.getWidth(), pictureSize.getHeight());
     }
 }
