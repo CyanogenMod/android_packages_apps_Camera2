@@ -22,7 +22,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
 
 import com.android.camera.one.Settings3A;
-import com.google.android.common.base.Preconditions;
+import com.google.common.base.Preconditions;
 
 final class PointMeteringParameters implements MeteringParameters {
     private final PointF mAFPoint;
