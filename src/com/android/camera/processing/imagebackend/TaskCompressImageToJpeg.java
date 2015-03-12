@@ -77,16 +77,11 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     /**
      * Encapsulates the required EXIF Tag parse for Image processing.
      *
-     * @param jpegData Binary data of the JPEG with EXIF flags
+     * @param exif EXIF data from which to extract data.
      * @return A Minimal Map from ExifInterface.Tag value to values required for Image processing
      */
-    public Map<Integer, Integer> exifGetMinimalTags(byte[] jpegData) {
-        if (jpegData == null) {
-            return null;
-        }
-
-        ExifInterface exif = Exif.getExif(jpegData);
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+    public Map<Integer, Integer> exifGetMinimalTags(ExifInterface exif) {
+        Map<Integer, Integer> map = new HashMap<>();
         map.put(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.getRotationForOrientationValue((short) Exif.getOrientation(exif)));
         map.put(ExifInterface.TAG_PIXEL_X_DIMENSION, exif.getTagIntValue(
@@ -107,6 +102,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         byte[] writeOut;
         int numBytes;
         ByteBuffer compressedData;
+        ExifInterface exifData = null;
 
         switch (img.proxy.getFormat()) {
             case ImageFormat.JPEG:
@@ -126,14 +122,20 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
                     // For JPEG, always use the EXIF orientation as ground
                     // truth on orientation, width and height.
-                    Map<Integer, Integer> minimalExifTags = exifGetMinimalTags(compressedData
-                            .array());
+                    Integer exifOrientation = null;
+                    Integer exifPixelXDimension = null;
+                    Integer exifPixelYDimension = null;
 
-                    Integer exifOrientation = minimalExifTags.get(ExifInterface.TAG_ORIENTATION);
-                    Integer exifPixelXDimension = minimalExifTags
-                            .get(ExifInterface.TAG_PIXEL_X_DIMENSION);
-                    Integer exifPixelYDimension = minimalExifTags
-                            .get(ExifInterface.TAG_PIXEL_Y_DIMENSION);
+                    if (compressedData.array() != null) {
+                        exifData = Exif.getExif(compressedData.array());
+                        Map<Integer, Integer> minimalExifTags = exifGetMinimalTags(exifData);
+
+                        exifOrientation = minimalExifTags.get(ExifInterface.TAG_ORIENTATION);
+                        exifPixelXDimension = minimalExifTags
+                                .get(ExifInterface.TAG_PIXEL_X_DIMENSION);
+                        exifPixelYDimension = minimalExifTags
+                                .get(ExifInterface.TAG_PIXEL_Y_DIMENSION);
+                    }
 
                     final DeviceOrientation exifDerivedRotation;
                     if (exifOrientation == null) {
@@ -234,7 +236,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         final TaskImage finalResult = resultImage;
 
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
-                resultImage.orientation.getDegrees(), createExif(resultImage, img.metadata),
+                resultImage.orientation.getDegrees(), createExif(Optional.fromNullable(exifData), resultImage, img.metadata),
                 new MediaSaver.OnMediaSavedListener() {
                     @Override
                     public void onMediaSaved(Uri uri) {
@@ -260,9 +262,14 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      * @param image Metadata for a jpeg image to create EXIF Interface
      * @return the created Exif Interface
      */
-    protected ExifInterface createExif(TaskImage image,
+    protected ExifInterface createExif(Optional<ExifInterface> exifData, TaskImage image,
                                        ListenableFuture<TotalCaptureResultProxy> totalCaptureResultProxyFuture) {
-        ExifInterface exif = new ExifInterface();
+        ExifInterface exif;
+        if (exifData.isPresent()) {
+            exif = exifData.get();
+        } else {
+            exif = new ExifInterface();
+        }
         Optional<Location> location = Optional.fromNullable(mSession.getLocation());
 
         try {
