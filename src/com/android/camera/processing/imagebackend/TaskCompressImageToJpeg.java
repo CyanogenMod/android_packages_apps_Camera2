@@ -24,7 +24,6 @@ import android.net.Uri;
 
 import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver;
-import com.android.camera.app.OrientationManager;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
@@ -144,7 +143,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                         // rotation.
                         exifDerivedRotation = DeviceOrientation.CLOCKWISE_0;
                     } else {
-                        exifDerivedRotation = OrientationManager.DeviceOrientation
+                        exifDerivedRotation = DeviceOrientation
                                 .from(exifOrientation);
                     }
 
@@ -236,8 +235,11 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         final TaskImage finalInput = inputImage;
         final TaskImage finalResult = resultImage;
 
+        final ExifInterface exif = createExif(Optional.fromNullable(exifData), resultImage,
+                img.metadata);
+        mSession.getCollector().decorateAtTimeWriteToDisk(exif);
         mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
-                resultImage.orientation.getDegrees(), createExif(Optional.fromNullable(exifData), resultImage, img.metadata),
+                resultImage.orientation.getDegrees(), exif,
                 new MediaSaver.OnMediaSavedListener() {
                     @Override
                     public void onMediaSaved(Uri uri) {
@@ -245,6 +247,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                                 TaskInfo.Destination.FINAL_IMAGE);
                     }
                 });
+        mSession.getCollector().photoCaptureDoneEvent();
     }
 
     /**

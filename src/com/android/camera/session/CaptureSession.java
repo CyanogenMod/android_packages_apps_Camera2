@@ -22,6 +22,7 @@ import android.net.Uri;
 
 import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.Size;
 
 /**
@@ -211,4 +212,10 @@ public interface CaptureSession {
      * Removes the given progress listener from this session.
      */
     public void removeProgressListener(ProgressListener listener);
+
+    /**
+     * Returns the associated StatsCollector Object
+     * @return
+     */
+    public CaptureSessionStatsCollector getCollector();
 }

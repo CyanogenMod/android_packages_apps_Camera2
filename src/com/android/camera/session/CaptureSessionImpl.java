@@ -26,6 +26,7 @@ import com.android.camera.app.MediaSaver;
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.FileUtil;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
@@ -74,6 +75,8 @@ public class CaptureSessionImpl implements CaptureSession {
     private Uri mContentUri;
     /** Whether this image was finished. */
     private volatile boolean mIsFinished;
+    /** Object that collects logging information through the capture session lifecycle */
+    private final CaptureSessionStatsCollector mCaptureSessionStatsCollector = new CaptureSessionStatsCollector();
 
     /**
      * Creates a new {@link CaptureSession}.
@@ -106,6 +109,11 @@ public class CaptureSessionImpl implements CaptureSession {
         mMediaSaver = mediaSaver;
         mStackSaver = stackSaver;
         mIsFinished = false;
+    }
+
+    @Override
+    public CaptureSessionStatsCollector getCollector() {
+        return mCaptureSessionStatsCollector;
     }
 
     @Override
