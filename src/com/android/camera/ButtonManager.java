@@ -416,8 +416,12 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Sets a button in its disabled (greyed out) state.
      */
     public void disableButton(int buttonId) {
-        MultiToggleImageButton button = getButtonOrError(buttonId);
-
+        View button;
+        if (buttonId == BUTTON_EXPOSURE_COMPENSATION) {
+            button = getImageButtonOrError(buttonId);
+        } else {
+            button = getButtonOrError(buttonId);
+        }
         // HDR and HDR+ buttons share the same button object,
         // but change actual image icons at runtime.
         // This extra check is to ensure the correct icons are used
@@ -425,9 +429,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         // e.g. app startup with front-facing camera.
         // b/18104680
         if (buttonId == BUTTON_HDR_PLUS) {
-            initializeHdrPlusButtonIcons(button, R.array.pref_camera_hdr_plus_icons);
+            initializeHdrPlusButtonIcons((MultiToggleImageButton) button, R.array.pref_camera_hdr_plus_icons);
         } else if (buttonId == BUTTON_HDR) {
-            initializeHdrButtonIcons(button, R.array.pref_camera_hdr_icons);
+            initializeHdrButtonIcons((MultiToggleImageButton) button, R.array.pref_camera_hdr_icons);
         }
 
         if (button.isEnabled()) {
@@ -443,7 +447,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Enables a button that has already been initialized.
      */
     public void enableButton(int buttonId) {
-        ImageButton button = getButtonOrError(buttonId);
+        ImageButton button;
+        // Manual exposure uses a regular image button instead of a
+        // MultiToggleImageButton, so it requires special handling.
+        // TODO: Redesign ButtonManager's button getter methods into one method.
+        if (buttonId == BUTTON_EXPOSURE_COMPENSATION) {
+            button = getImageButtonOrError(buttonId);
+        } else {
+            button = getButtonOrError(buttonId);
+        }
         if (!button.isEnabled()) {
             button.setEnabled(true);
             if (mListener != null) {

@@ -2052,18 +2052,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.initializePanoOrientationButtons(bottomBarSpec.panoOrientationCallback);
         }
 
-        boolean enableExposureCompensation = bottomBarSpec.enableExposureCompensation &&
-            !(bottomBarSpec.minExposureCompensation == 0 && bottomBarSpec.maxExposureCompensation == 0) &&
-            mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
-                        Keys.KEY_EXPOSURE_COMPENSATION_ENABLED);
-        if (enableExposureCompensation) {
+        // If manual exposure is enabled and HDR is not enabled, then show the
+        // exposure button.
+        // If manual exposure is enabled and HDR is enabled, then disable the
+        // exposure button.
+        // If manual exposure is not enabled, then hide the exposure button.
+        if (bottomBarSpec.enableExposureCompensation
+                && !(bottomBarSpec.minExposureCompensation == 0 && bottomBarSpec.maxExposureCompensation == 0)
+                && mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)) {
             buttonManager.initializePushButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION,
                     new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mModeOptionsOverlay.showExposureOptions();
-                }
-            });
+                        @Override
+                        public void onClick(View v) {
+                            mModeOptionsOverlay.showExposureOptions();
+                        }
+                    });
             buttonManager.setExposureCompensationParameters(
                 bottomBarSpec.minExposureCompensation,
                 bottomBarSpec.maxExposureCompensation,
@@ -2072,6 +2076,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.setExposureCompensationCallback(
                     bottomBarSpec.exposureCompensationSetCallback);
             buttonManager.updateExposureButtons();
+        } else if (mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)) {
+            buttonManager.disableButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);
         } else {
             buttonManager.hideButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);
             buttonManager.setExposureCompensationCallback(null);

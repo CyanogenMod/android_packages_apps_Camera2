@@ -736,14 +736,16 @@ public class CaptureModule extends CameraModule implements
             // Disable flash if this is a sticky gcam camera, or if
             // HDR is enabled.
             bottomBarSpec.enableFlash = false;
+            // Disable manual exposure if HDR is enabled.
+            bottomBarSpec.enableExposureCompensation = false;
         } else {
             // If we are not in HDR / GCAM mode, fallback on the
-            // flash supported property for this camera.
+            // flash supported property and manual exposure supported property
+            // for this camera.
             bottomBarSpec.enableFlash = mCameraCharacteristics.isFlashSupported();
+            bottomBarSpec.enableExposureCompensation = mCameraCharacteristics.isExposureCompensationSupported();
         }
 
-        bottomBarSpec.enableExposureCompensation =
-                mCameraCharacteristics.isExposureCompensationSupported();
         bottomBarSpec.minExposureCompensation =
                 mCameraCharacteristics.getMinExposureCompensation();
         bottomBarSpec.maxExposureCompensation =
