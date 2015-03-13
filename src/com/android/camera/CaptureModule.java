@@ -475,6 +475,11 @@ public class CaptureModule extends CameraModule implements
     }
 
     private void takePictureNow() {
+        if (mCamera == null) {
+            Log.i(TAG, "Not taking picture since Camera is closed.");
+            return;
+        }
+
         CaptureSession session = createAndStartCaptureSession();
         int orientation = mAppController.getOrientationManager().getDeviceOrientation()
                 .getDegrees();
