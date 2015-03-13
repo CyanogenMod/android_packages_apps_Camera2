@@ -94,6 +94,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     @Override
     public void run() {
         ImageToProcess img = mImage;
+        final Rect safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
 
         // For JPEG, it is the capture devices responsibility to get proper
         // orientation.
@@ -164,7 +165,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                             exifDerivedRotation,
                             imageWidth,
                             imageHeight,
-                            img.proxy.getFormat());
+                            img.proxy.getFormat(), safeCrop);
                     resultImage = inputImage; // Pass through
                 } finally {
                     // Release the image now that you have a usable copy in
@@ -181,7 +182,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 try {
                     inputImage = new TaskImage(img.rotation, img.proxy.getWidth(),
                             img.proxy.getHeight(),
-                            img.proxy.getFormat());
+                            img.proxy.getFormat(), safeCrop);
                     Size resultSize = getImageSizeForOrientation(img.crop.width(),
                             img.crop.height(),
                             img.rotation);
@@ -192,7 +193,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     resultImage = new TaskImage(
                             DeviceOrientation.CLOCKWISE_0, resultSize.getWidth(),
                             resultSize.getHeight(),
-                            ImageFormat.JPEG);
+                            ImageFormat.JPEG, null);
                     // Image rotation is already encoded into the bytes.
 
                     onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);

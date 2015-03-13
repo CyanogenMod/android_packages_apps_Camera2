@@ -16,46 +16,51 @@
 
 package com.android.camera.processing.imagebackend;
 
+import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
+import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
 
 import java.util.concurrent.Executor;
 
 /**
- * TaskImageContainer are the base class of tasks that wish to run with the ImageBackend class. It
- * contains the basic information required to interact with the ImageBackend class and the ability
- * to identify itself to the UI backend for updates on its progress.
+ * TaskImageContainer are the base class of tasks that wish to run with the
+ * ImageBackend class. It contains the basic information required to interact
+ * with the ImageBackend class and the ability to identify itself to the UI
+ * backend for updates on its progress.
  */
 public abstract class TaskImageContainer implements Runnable {
 
     /**
-     * Simple helper class to encapsulate uncompressed payloads.  Could be more complex in
-     * the future.
+     * Simple helper class to encapsulate uncompressed payloads. Could be more
+     * complex in the future.
      */
     static public class UncompressedPayload {
-        final public int [] data;
-        UncompressedPayload(int [] passData) {
+        final public int[] data;
+
+        UncompressedPayload(int[] passData) {
             data = passData;
         }
     }
 
-
     /**
-     * Simple helper class to encapsulate compressed payloads.  Could be more complex in
-     * the future.
+     * Simple helper class to encapsulate compressed payloads. Could be more
+     * complex in the future.
      */
     static public class CompressedPayload {
-        final public byte [] data;
-        CompressedPayload(byte [] passData) {
+        final public byte[] data;
+
+        CompressedPayload(byte[] passData) {
             data = passData;
         }
     }
 
     /**
-     * Simple helper class to encapsulate all necessary image information that is carried with the
-     * data to processing, so that tasks derived off of TaskImageContainer can properly coordinate
-     * and optimize its computation.
+     * Simple helper class to encapsulate all necessary image information that
+     * is carried with the data to processing, so that tasks derived off of
+     * TaskImageContainer can properly coordinate and optimize its computation.
      */
     static public class TaskImage {
         // Addendum to Android-defined image-format
@@ -65,28 +70,30 @@ public abstract class TaskImageContainer implements Runnable {
         public final OrientationManager.DeviceOrientation orientation;
 
         public final int height;
-
         public final int width;
-
         public final int format;
+        public final Rect cropApplied;
 
         TaskImage(OrientationManager.DeviceOrientation anOrientation, int aWidth, int aHeight,
-                int aFormat) {
+                int aFormat, Rect crop) {
             orientation = anOrientation;
             height = aHeight;
             width = aWidth;
             format = aFormat;
+            cropApplied = crop;
         }
 
     }
 
     /**
-     * Simple helper class to encapsulate input and resultant image specification.
-     * TasksImageContainer classes can be uniquely identified by triplet of its content (currently,
-     * the global timestamp of when the object was taken), the image specification of the input and
-     * the desired output image specification.  Added a field to specify the destination of the
-     * image artifact, since spawn tasks may created multiple un/compressed artifacts of
-     * different size that need to be routed to different components.
+     * Simple helper class to encapsulate input and resultant image
+     * specification. TasksImageContainer classes can be uniquely identified by
+     * triplet of its content (currently, the global timestamp of when the
+     * object was taken), the image specification of the input and the desired
+     * output image specification. Added a field to specify the destination of
+     * the image artifact, since spawn tasks may created multiple un/compressed
+     * artifacts of different size that need to be routed to different
+     * components.
      */
     static public class TaskInfo {
 
@@ -117,7 +124,8 @@ public abstract class TaskImageContainer implements Runnable {
 
         public final TaskImage result;
 
-        TaskInfo(long aContentId, TaskImage inputSpec, TaskImage outputSpec, Destination aDestination) {
+        TaskInfo(long aContentId, TaskImage inputSpec, TaskImage outputSpec,
+                Destination aDestination) {
             contentId = aContentId;
             input = inputSpec;
             result = outputSpec;
@@ -164,11 +172,13 @@ public abstract class TaskImageContainer implements Runnable {
      *
      * @param image Image reference that needs to be released.
      * @param Executor Executor to run the event handling
-     * @param imageTaskManager a reference to the ImageBackend, in case, you need to spawn other tasks
+     * @param imageTaskManager a reference to the ImageBackend, in case, you
+     *            need to spawn other tasks
      * @param preferredLane Priority that the derived task will run at
      * @param captureSession Session that handles image processing events
      */
-    public TaskImageContainer(ImageToProcess image, Executor Executor, ImageTaskManager imageTaskManager,
+    public TaskImageContainer(ImageToProcess image, Executor Executor,
+            ImageTaskManager imageTaskManager,
             ProcessingPriority preferredLane, CaptureSession captureSession) {
         mImage = image;
         mId = mImage.proxy.getTimestamp();
@@ -179,6 +189,39 @@ public abstract class TaskImageContainer implements Runnable {
     }
 
     /**
+     * Returns a crop rectangle whose points are a strict subset of the points
+     * specified by image rectangle. A Null Intersection returns Rectangle(0,0,0,0).
+     *
+     * @param image image to be cropped
+     * @param crop an arbitrary crop rectangle; if null, the crop is assumed to
+     *            be set of all points.
+     * @return the rectangle produced by the intersection of the image rectangle
+     *         with passed-in crop rectangle; a null intersection returns
+     *         Rect(0,0,0,0)
+     */
+    public Rect guaranteedSafeCrop(ImageProxy image, @Nullable Rect crop) {
+        if (crop == null) {
+            return new Rect(0, 0, image.getWidth(), image.getHeight());
+        }
+        Rect safeCrop = new Rect(crop);
+        if (crop.top > crop.bottom || crop.left > crop.right || crop.width() <= 0
+                || crop.height() <= 0) {
+            return new Rect(0, 0, 0, 0);
+        }
+
+        safeCrop.left = Math.max(safeCrop.left, 0);
+        safeCrop.top = Math.max(safeCrop.top, 0);
+        safeCrop.right = Math.max(Math.min(safeCrop.right, image.getWidth()), safeCrop.left);
+        safeCrop.bottom = Math.max(Math.min(safeCrop.bottom, image.getHeight()), safeCrop.top);
+
+        if (safeCrop.width() <= 0 || safeCrop.height() <= 0) {
+            return new Rect(0, 0, 0, 0);
+        }
+
+        return safeCrop;
+    }
+
+    /**
      * Basic listener function to signal ImageBackend that task has started.
      *
      * @param id Id for image content
@@ -186,7 +229,8 @@ public abstract class TaskImageContainer implements Runnable {
      * @param result Image specification for task result
      * @param aDestination Purpose of image processing artifact
      */
-    public void onStart(long id, TaskImage input, TaskImage result, TaskInfo.Destination aDestination) {
+    public void onStart(long id, TaskImage input, TaskImage result,
+            TaskInfo.Destination aDestination) {
         TaskInfo job = new TaskInfo(id, input, result, aDestination);
         final ImageProcessorListener listener = mImageTaskManager.getProxyListener();
         listener.onStart(job);
