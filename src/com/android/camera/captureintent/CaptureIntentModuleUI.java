@@ -39,7 +39,7 @@ import android.widget.ImageView;
 /**
  * Contains the UI for the ImageCaptureIntentModule.
  */
-public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaChangedListener {
+public class CaptureIntentModuleUI {
     public interface Listener {
         public void onZoomRatioChanged(float zoomRatio);
     }
@@ -63,6 +63,8 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
                 @Override
                 public void onPreviewAreaChanged(RectF previewArea) {
                     mPreviewRect = previewArea;
+                    mCountdownView.onPreviewAreaChanged(previewArea);
+                    mProgressOverlay.setBounds(previewArea);
                     FrameLayout.LayoutParams params =
                             (FrameLayout.LayoutParams) mIntentReviewImageView.getLayoutParams();
                     params.width = (int) previewArea.width();
@@ -252,12 +254,6 @@ public class CaptureIntentModuleUI implements PreviewStatusListener.PreviewAreaC
     public void freezeScreenUntilPreviewReady() {
         MainThread.checkMainThread();
         mAppUI.freezeScreenUntilPreviewReady();
-    }
-
-    @Override
-    public void onPreviewAreaChanged(RectF previewArea) {
-        mCountdownView.onPreviewAreaChanged(previewArea);
-        mProgressOverlay.setBounds(previewArea);
     }
 
     /** Set up listener to receive zoom changes from View and send to module. */

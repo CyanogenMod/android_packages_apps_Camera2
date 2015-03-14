@@ -134,14 +134,12 @@ public class CaptureIntentModule extends CameraModule {
     @Override
     public void resume() {
         mModuleUI.onModuleResumed();
-        mResourceConstructed.get().getAppController().addPreviewAreaSizeChangedListener(mModuleUI);
         mStateMachine.processEvent(new EventResume());
     }
 
     @Override
     public void pause() {
         mModuleUI.setCountdownFinishedListener(null);
-        mResourceConstructed.get().getAppController().removePreviewAreaSizeChangedListener(mModuleUI);
         mModuleUI.onModulePaused();
         mStateMachine.processEvent(new EventPause());
     }
