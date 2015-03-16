@@ -16,14 +16,18 @@
 
 package com.android.camera.processing.imagebackend;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.net.Uri;
 
+import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
+import com.android.camera.util.Size;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -173,6 +177,28 @@ public abstract class TaskJpegEncode extends TaskImageContainer {
 
         Log.e(TAG, "TIMER_END NV21 to Jpeg Conversion.");
         return postViewBytes.toByteArray();
+    }
+
+    /**
+     * Implement cropping through the decompression and re-compression of the JPEG using
+     * the built-in Android bitmap utilities.
+     *
+     * @param jpegData Compressed Image to be cropped
+     * @param crop Crop to be applied
+     * @param recompressionQuality Recompression quality value for cropped JPEG Image
+     * @return JPEG compressed byte array representing the cropped image
+     */
+    public byte[] decompressCropAndRecompressJpegData(final byte[] jpegData, Rect crop,
+            int recompressionQuality) {
+        Bitmap original = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+
+        final Bitmap croppedResult = Bitmap.createBitmap(original, crop.left, crop.top,
+                crop.width(), crop.height());;
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        croppedResult.compress(Bitmap.CompressFormat.JPEG, recompressionQuality, stream);
+        return stream.toByteArray();
     }
 
     /**

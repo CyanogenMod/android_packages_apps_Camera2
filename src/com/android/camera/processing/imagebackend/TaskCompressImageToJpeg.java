@@ -94,7 +94,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     public void run() {
         ImageToProcess img = mImage;
         mSession.getCollector().markProcessingTimeStart();
-        final Rect safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
+        final Rect safeCrop;
 
         // For JPEG, it is the capture devices responsibility to get proper
         // orientation.
@@ -150,13 +150,26 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
                     final int imageWidth;
                     final int imageHeight;
+                    // Crop coordinate space is in original sensor coordinates.  We need
+                    // to calculate the proper rotation of the crop to be applied to the
+                    // final JPEG artifact.
+                    final DeviceOrientation combinedRotationFromSensorToJpeg =
+                            addOrientation(img.rotation, exifDerivedRotation);
+
                     if (exifPixelXDimension == null || exifPixelYDimension == null) {
-                        Log.w(TAG, "Cannot parse EXIF for image dimensions, passing 0x0 dimensions");
+                        Log.w(TAG,
+                                "Cannot parse EXIF for image dimensions, passing 0x0 dimensions");
                         imageHeight = 0;
                         imageWidth = 0;
+                        // calculate crop from exif info with image proxy width/height
+                        safeCrop = guaranteedSafeCrop(img.proxy,
+                                rotateBoundingBox(img.crop, combinedRotationFromSensorToJpeg));
                     } else {
                         imageWidth = exifPixelXDimension;
                         imageHeight = exifPixelYDimension;
+                        // calculate crop from exif info with combined rotation
+                        safeCrop = guaranteedSafeCrop(imageWidth, imageHeight,
+                                rotateBoundingBox(img.crop, combinedRotationFromSensorToJpeg));
                     }
 
                     // Ignore the device rotation on ImageToProcess and use the EXIF from
@@ -166,7 +179,26 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                             imageWidth,
                             imageHeight,
                             img.proxy.getFormat(), safeCrop);
-                    resultImage = inputImage; // Pass through
+
+                    if(requiresCropOperation(img.proxy, safeCrop)) {
+                        // Crop the image
+                        resultImage = new TaskImage(
+                                exifDerivedRotation,
+                                safeCrop.width(),
+                                safeCrop.height(),
+                                img.proxy.getFormat(), null);
+
+                        byte[] croppedResult = decompressCropAndRecompressJpegData(
+                                compressedData.array(), safeCrop,
+                                getJpegCompressionQuality());
+
+                        compressedData = ByteBuffer.allocate(croppedResult.length);
+                        compressedData.put(ByteBuffer.wrap(croppedResult));
+                        compressedData.rewind();
+                    } else {
+                        // Pass-though the JPEG data
+                        resultImage = inputImage;
+                    }
                 } finally {
                     // Release the image now that you have a usable copy in
                     // local memory
@@ -179,6 +211,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                 numBytes = compressedData.limit();
                 break;
             case ImageFormat.YUV_420_888:
+                safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
                 try {
                     inputImage = new TaskImage(img.rotation, img.proxy.getWidth(),
                             img.proxy.getHeight(),

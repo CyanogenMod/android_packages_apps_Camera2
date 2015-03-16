@@ -86,8 +86,8 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
 
             try {
                 mImageBackend.receiveImage(new ImageToProcess(image, mImageRotation, metadata,
-                        new Rect(0, 0, image.getWidth(), image.getHeight())),
-                        mExecutor, taskFlagsSet, mSession, Optional.of(mImageProcessorListener));
+                        mCrop), mExecutor, taskFlagsSet, mSession,
+                        Optional.of(mImageProcessorListener));
             } catch (InterruptedException e) {
                 // Impossible exception because receiveImage is nonblocking
                 throw new RuntimeException(e);
@@ -157,6 +157,8 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
     private final ImageRotationCalculator mImageRotationCalculator;
     private final ImageBackend mImageBackend;
     private final Executor mExecutor;
+    private final Rect mCrop;
+
 
     /**
      * Constructor Instantiate a local instance executor for all JPEG ImageSaver
@@ -167,10 +169,11 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
      */
     public JpegImageBackendImageSaver(
             ImageRotationCalculator imageRotationCalculator,
-            ImageBackend imageBackend) {
+            ImageBackend imageBackend, Rect crop) {
         mImageRotationCalculator = imageRotationCalculator;
         mImageBackend = imageBackend;
         mExecutor = Executors.newSingleThreadExecutor();
+        mCrop = crop;
     }
 
     /**
@@ -183,10 +186,11 @@ public class JpegImageBackendImageSaver implements ImageSaver.Builder {
     @VisibleForTesting
     public JpegImageBackendImageSaver(
             ImageRotationCalculator imageRotationCalculator,
-            ImageBackend imageBackend, Executor executor) {
+            ImageBackend imageBackend, Executor executor, Rect crop) {
         mImageRotationCalculator = imageRotationCalculator;
         mImageBackend = imageBackend;
         mExecutor = executor;
+        mCrop = crop;
     }
 
     /**

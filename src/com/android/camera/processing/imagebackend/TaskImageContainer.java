@@ -173,7 +173,8 @@ public abstract class TaskImageContainer implements Runnable {
      *
      * @param image Image reference that needs to be released.
      * @param Executor Executor to run the event handling, if required.
-     * @param imageTaskManager a reference to the ImageBackend, in case, you need to spawn other tasks
+     * @param imageTaskManager a reference to the ImageBackend, in case, you
+     *            need to spawn other tasks
      * @param preferredLane Priority that the derived task will run at
      * @param captureSession Session that handles image processing events
      */
@@ -189,8 +190,30 @@ public abstract class TaskImageContainer implements Runnable {
     }
 
     /**
+     * Returns rotated crop rectangle in terms of absolute sensor crop
+     *
+     */
+    protected Rect rotateBoundingBox(Rect box, OrientationManager.DeviceOrientation orientation) {
+        if(orientation == OrientationManager.DeviceOrientation.CLOCKWISE_0 ||
+                orientation == OrientationManager.DeviceOrientation.CLOCKWISE_180) {
+            return new Rect(box);
+        } else {
+            // Switch x/y coordinates.
+            return new Rect(box.top, box.left, box.bottom, box.right);
+        }
+    }
+
+    protected OrientationManager.DeviceOrientation addOrientation(
+            OrientationManager.DeviceOrientation orientation1,
+            OrientationManager.DeviceOrientation orientation2) {
+        return OrientationManager.DeviceOrientation.from(orientation1.getDegrees()
+                + orientation2.getDegrees());
+    }
+
+    /**
      * Returns a crop rectangle whose points are a strict subset of the points
-     * specified by image rectangle. A Null Intersection returns Rectangle(0,0,0,0).
+     * specified by image rectangle. A Null Intersection returns
+     * Rectangle(0,0,0,0).
      *
      * @param image image to be cropped
      * @param crop an arbitrary crop rectangle; if null, the crop is assumed to
@@ -200,8 +223,27 @@ public abstract class TaskImageContainer implements Runnable {
      *         Rect(0,0,0,0)
      */
     public Rect guaranteedSafeCrop(ImageProxy image, @Nullable Rect crop) {
+        return guaranteedSafeCrop(image.getWidth(), image.getHeight(), crop);
+    }
+
+    /**
+     * Returns a crop rectangle whose points are a strict subset of the points
+     * specified by image rectangle. A Null Intersection returns Rectangle(0,0,0,0).
+     * Since sometimes the ImageProxy doesn't take into account rotation.  The Image
+     * is assumed to have its top-left corner at (0,0).
+     *
+     * @param width image width
+     * @param height image height
+     * @param crop an arbitrary crop rectangle; if null, the crop is assumed to
+     *            be set of all points.
+     * @return the rectangle produced by the intersection of the image rectangle
+     *         with passed-in crop rectangle; a null intersection returns
+     *         Rect(0,0,0,0)
+     */
+
+    public Rect guaranteedSafeCrop(int width, int height, @Nullable Rect crop) {
         if (crop == null) {
-            return new Rect(0, 0, image.getWidth(), image.getHeight());
+            return new Rect(0, 0, width, height);
         }
         Rect safeCrop = new Rect(crop);
         if (crop.top > crop.bottom || crop.left > crop.right || crop.width() <= 0
@@ -211,14 +253,30 @@ public abstract class TaskImageContainer implements Runnable {
 
         safeCrop.left = Math.max(safeCrop.left, 0);
         safeCrop.top = Math.max(safeCrop.top, 0);
-        safeCrop.right = Math.max(Math.min(safeCrop.right, image.getWidth()), safeCrop.left);
-        safeCrop.bottom = Math.max(Math.min(safeCrop.bottom, image.getHeight()), safeCrop.top);
+        safeCrop.right = Math.max(Math.min(safeCrop.right, width), safeCrop.left);
+        safeCrop.bottom = Math.max(Math.min(safeCrop.bottom, height), safeCrop.top);
 
         if (safeCrop.width() <= 0 || safeCrop.height() <= 0) {
             return new Rect(0, 0, 0, 0);
         }
 
         return safeCrop;
+    }
+
+    /**
+     * Returns whether the crop operation is required.
+     *
+     * @param image Image to be cropped
+     * @param crop Crop region
+     * @return whether the image needs any more processing to be cropped
+     *         properly.
+     */
+    public boolean requiresCropOperation(ImageProxy image, @Nullable Rect crop) {
+        if (crop == null) {
+            return false;
+        }
+
+        return !(crop.equals(new Rect(0, 0, image.getWidth(), image.getHeight())));
     }
 
     /**
