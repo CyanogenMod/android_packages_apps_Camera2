@@ -24,6 +24,7 @@ import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.SessionNotifier;
 import com.android.camera.session.StackSaver;
 import com.android.camera.session.TemporarySessionFile;
+import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.Size;
 
 import android.graphics.Bitmap;
@@ -37,6 +38,10 @@ import android.net.Uri;
 public class CaptureIntentSession implements CaptureSession {
     private static final Log.Tag TAG = new Log.Tag("CapIntSession");
 
+    /** For aggregation of capture information */
+    // TODO: Implement mCaptureSessionStatsCollector.decorateAtTimeCaptureRequest call.
+    private final CaptureSessionStatsCollector mCaptureSessionStatsCollector =
+            new CaptureSessionStatsCollector();
     /** The capture session manager responsible for this session. */
     private final CaptureSessionManager mSessionManager;
     /** Used to inform about session status updates. */
@@ -183,6 +188,11 @@ public class CaptureIntentSession implements CaptureSession {
     @Override
     public void removeProgressListener(CaptureSession.ProgressListener listener) {
         // Do nothing.
+    }
+
+    @Override
+    public CaptureSessionStatsCollector getCollector() {
+        return mCaptureSessionStatsCollector;
     }
 
     private boolean isStarted() {

@@ -147,6 +147,7 @@ public class CaptureModule extends CameraModule implements
     private boolean mHdrSceneEnabled = false;
     private boolean mHdrPlusEnabled = false;
     private final Object mSurfaceTextureLock = new Object();
+    private TouchCoordinate mLastShutterTouchCoordinate = null;
 
     private FocusController mFocusController;
     private OneCameraCharacteristics mCameraCharacteristics;
@@ -451,7 +452,7 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void onShutterCoordinate(TouchCoordinate coord) {
-        // TODO Auto-generated method stub
+        mLastShutterTouchCoordinate = coord;
     }
 
     @Override
@@ -474,6 +475,28 @@ public class CaptureModule extends CameraModule implements
         }
     }
 
+
+    private void decorateSessionAtCaptureTime(CaptureSession session) {
+        String flashSetting =
+                mSettingsManager.getString(mAppController.getCameraScope(),
+                        Keys.KEY_FLASH_MODE);
+        boolean gridLinesOn = Keys.areGridLinesOn(mSettingsManager);
+        float timerDuration = (float) mSettingsManager
+                .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
+
+        session.getCollector().decorateAtTimeCaptureRequest(
+                eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                session.getTitle() + ".jpg",
+                (mCameraFacing == Facing.FRONT),
+                mHdrPlusEnabled,
+                mZoomValue,
+                flashSetting,
+                gridLinesOn,
+                (float) timerDuration,
+                mLastShutterTouchCoordinate,
+                null /* TODO: Implement Volume Button Shutter Click Instrumentation */);
+    }
+
     private void takePictureNow() {
         if (mCamera == null) {
             Log.i(TAG, "Not taking picture since Camera is closed.");
@@ -490,6 +513,7 @@ public class CaptureModule extends CameraModule implements
                 session.getTitle(), orientation, session.getLocation(),
                 mContext.getExternalCacheDir(), this, mPictureSaverCallback,
                 mHeadingSensor.getCurrentHeading(), mZoomValue, 0);
+        decorateSessionAtCaptureTime(session);
         mCamera.takePicture(params, session);
     }
 
@@ -1304,6 +1328,10 @@ public class CaptureModule extends CameraModule implements
                     public void onCameraOpened(final OneCamera camera) {
                         Log.d(TAG, "onCameraOpened: " + camera);
                         mCamera = camera;
+
+                        // When camera is opened, the zoom is implicitly reset to 1.0f
+                        mZoomValue = 1.0f;
+
                         updatePreviewBufferDimension();
 
                         // If the surface texture is not destroyed, it may have
