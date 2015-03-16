@@ -65,12 +65,9 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Cet élément est stocké localement et accessible hors ligne."</string>
     <string name="please_wait" msgid="1416313324505140068">"Veuillez patienter..."</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Erreur de l\'appareil photo."</string>
-    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
-    <skip />
-    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
-    <skip />
-    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
-    <skip />
+    <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Impossible d\'établir une connexion avec l\'appareil photo."</string>
+    <string name="error_camera_disabled" msgid="5582398275657419692">"L\'appareil photo a été désactivé en raison des politiques de sécurité."</string>
+    <string name="error_media_storage_failure" msgid="7711687330673245629">"Un problème est survenu lors de l\'enregistrement de la photo ou de la vidéo."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Échec du stockage de la photo."</string>
     <string name="wait" msgid="765601745709933047">"Veuillez patienter…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Veuillez insérer une carte SD avant d\'utiliser l\'appareil photo."</string>

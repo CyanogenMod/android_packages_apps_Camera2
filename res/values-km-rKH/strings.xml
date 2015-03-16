@@ -65,12 +65,9 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"បាន​រក្សាទុក​ធាតុ​នេះ​ក្នុង​មូលដ្ឋាន​ និង​អាច​​ប្រើ​ក្រៅ​បណ្ដាញ​បាន។"</string>
     <string name="please_wait" msgid="1416313324505140068">"សូម​រង់ចាំ"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"ម៉ាស៊ីន​ថត​មាន​បញ្ហា"</string>
-    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
-    <skip />
-    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
-    <skip />
-    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
-    <skip />
+    <string name="error_cannot_connect_camera" msgid="2713059773224193128">"មិនអាចភ្ជាប់ទៅកាមេរ៉ាបានទេ។"</string>
+    <string name="error_camera_disabled" msgid="5582398275657419692">"បានបិទដំណើរការកាមេរ៉ា ដោយសារគោលការណ៍សុវត្ថិភាព។"</string>
+    <string name="error_media_storage_failure" msgid="7711687330673245629">"មានបញ្ហាក្នុងការរក្សាទុករូបថត ឬវីដេអូរបស់អ្នក។"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"បរាជ័យក្នុងការផ្ទុករូបថត។"</string>
     <string name="wait" msgid="765601745709933047">"សូម​រង់ចាំ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"បញ្ចូល​កាត​អេសឌី​មុន​នឹង​ប្រើ​ម៉ាស៊ីន​ថត។"</string>
@@ -380,6 +377,5 @@
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"ទំហំ​បាន​ច្រឹប \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
-    <!-- no translation found for session_saving_image (8932315404486416826) -->
-    <skip />
+    <string name="session_saving_image" msgid="8932315404486416826">"កំពុងរក្សាទុក..."</string>
 </resources>

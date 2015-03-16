@@ -65,12 +65,9 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"ဒီအရာကို စက်ပေါ်မှာသိမ်းဆည်းထားပြီး အွန်လိုင်းမရှိပဲ သုံးနိုင်ပါသည်"</string>
     <string name="please_wait" msgid="1416313324505140068">"ကျေးဇူးပြု၍ ခဏစောင့်ပါ…"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"ကင်မရာအမှား"</string>
-    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
-    <skip />
-    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
-    <skip />
-    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
-    <skip />
+    <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ကင်မရာနဲ့ ချိတ်ဆက်မရနိုင်"</string>
+    <string name="error_camera_disabled" msgid="5582398275657419692">"လုံခြုံရေးမူဝါဒကြောင့် ကင်မရာအား ပိတ်ထားပါသည်"</string>
+    <string name="error_media_storage_failure" msgid="7711687330673245629">"သင့်ဓာတ်ပုံ သို့မဟုတ်ဗီဒီယိုအား သိမ်းဆည်းရာတွင် ပြဿနာတစ်ခုရှိခဲ့သည်။"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"သ"</string>
     <string name="wait" msgid="765601745709933047">"ကျေးဇူးပြု၍ ခဏစောင့်ပါ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ကင်မရာမသုံးခင် SDကဒ်အရင် ထည့်ပါ"</string>

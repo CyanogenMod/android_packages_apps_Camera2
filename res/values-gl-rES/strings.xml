@@ -65,12 +65,9 @@
     <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"Este elemento está almacenado localmente e dispoñible sen conexión."</string>
     <string name="please_wait" msgid="1416313324505140068">"Agarda"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"Erro da cámara"</string>
-    <!-- no translation found for error_cannot_connect_camera (2713059773224193128) -->
-    <skip />
-    <!-- no translation found for error_camera_disabled (5582398275657419692) -->
-    <skip />
-    <!-- no translation found for error_media_storage_failure (7711687330673245629) -->
-    <skip />
+    <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Non se pode conectar coa cámara."</string>
+    <string name="error_camera_disabled" msgid="5582398275657419692">"A cámara desactivouse debido ás políticas de seguranza."</string>
+    <string name="error_media_storage_failure" msgid="7711687330673245629">"Produciuse un problema ao gardar a túa foto ou vídeo."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Produciuse un erro de almacenamento de fotos."</string>
     <string name="wait" msgid="765601745709933047">"Agarda..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Insire unha tarxeta SD antes de usar a cámara."</string>
