@@ -16,11 +16,14 @@
 
 package com.android.camera.one.v2.photo;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
+
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.Updatable;
+import com.android.camera.async.UpdatableCountDownLatch;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.core.FrameServer;
@@ -33,8 +36,6 @@ import com.android.camera.one.v2.sharedimagereader.imagedistributor.ImageStream;
 import java.util.Arrays;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.android.camera.one.v2.core.ResponseListeners.forFrameExposure;
 
 /**
  * Captures single images.
@@ -61,14 +62,21 @@ class SimpleImageCaptureCommand implements ImageCaptureCommand {
             ResourceAcquisitionFailedException {
         try (FrameServer.Session session = mFrameServer.createExclusiveSession();
                 ImageStream imageStream = mImageReader.createStream(1)) {
+            UpdatableCountDownLatch<Void> exposureLatch = new UpdatableCountDownLatch<>(1);
             RequestBuilder photoRequest = mBuilderFactory.create(CameraDevice
                     .TEMPLATE_STILL_CAPTURE);
             photoRequest.addStream(imageStream);
             MetadataFuture metadataFuture = new MetadataFuture();
             photoRequest.addResponseListener(metadataFuture);
             photoRequest.addResponseListener(forFrameExposure(imageExposureUpdatable));
+            photoRequest.addResponseListener(forFrameExposure(exposureLatch));
             session.submitRequest(Arrays.asList(photoRequest.build()),
                     FrameServer.RequestType.NON_REPEATING);
+
+            // Release the FrameServer session (allowing subsequent camera
+            // operations to occur) as soon as the image is exposed.
+            exposureLatch.await();
+            session.close();
 
             ImageProxy image = imageStream.getNext();
             imageSaver.addFullSizeImage(image, metadataFuture.getMetadata());
