@@ -1,5 +1,7 @@
 package com.android.camera.stats;
 
+import android.os.SystemClock;
+
 import com.google.common.annotations.VisibleForTesting;
 
 import com.android.camera.exif.ExifInterface;
@@ -14,8 +16,10 @@ import com.android.camera.ui.TouchCoordinate;
  */
 
 public class CaptureSessionStatsCollector {
-
+    /** Time when capture is completed in SystemClock.elapsedRealtime(). */
+    protected long mCaptureTimeMillis;
     protected final UsageStatistics mUsageStatistics;
+
     // Define all fields as Objects so that we know whether they were set or not.
     // A required field
     protected Integer mMode;
@@ -103,14 +107,22 @@ public class CaptureSessionStatsCollector {
     }
 
     /**
-     * Send capture event to the UsageStatistic singleton.
+     * Called when image processing time begins.
      */
-    public void photoCaptureDoneEvent(){
-        if(isValidForPhotoCaptureEvent()) {
+    public void markProcessingTimeStart() {
+        mCaptureTimeMillis = getElapsedRealTime();
+    }
+
+    /**
+     * Send capture event to the UsageStatistics singleton.
+     */
+    public void photoCaptureDoneEvent() {
+        Float processingTime = (getElapsedRealTime() - mCaptureTimeMillis) / 1000f;
+        if (isValidForPhotoCaptureEvent()) {
             mUsageStatistics.photoCaptureDoneEvent(
                     mMode, mFilename, mExifInterface, mIsFrontFacing,
                     mIsHdr, mZoom, mFlashSetting, mGridLinesOn, mTimerSeconds,
-                    mTouchCoordinate, mVolumeButtonShutter);
+                    processingTime, mTouchCoordinate, mVolumeButtonShutter);
         }
     }
 
@@ -140,6 +152,11 @@ public class CaptureSessionStatsCollector {
         return (mMode != null);
     }
 
-
+    /**
+     * Call to SystemClock.elapsedRealtime() that we can override for testing.
+     */
+    public long getElapsedRealTime() {
+        return SystemClock.elapsedRealtime();
+    }
 
 }
