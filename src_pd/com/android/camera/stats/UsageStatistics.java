@@ -65,7 +65,8 @@ public class UsageStatistics {
     public void photoCaptureDoneEvent(int mode, String fileRef, ExifInterface exifRef,
                                       boolean front, boolean isHDR, float zoom,
                                       String flashSetting, boolean gridLinesOn,
-                                      Float timerSeconds, TouchCoordinate touch,
+                                      Float timerSeconds, Float processingTime,
+                                      TouchCoordinate touch,
                                       Boolean volumeButtonShutter) {
     }
 

@@ -929,7 +929,7 @@ public class PhotoModule
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                     name.title + ".jpg", exif,
                     isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn,
-                    (float) mTimerDuration, mShutterTouchCoordinate, mVolumeButtonClickedFlag);
+                    (float) mTimerDuration, null, mShutterTouchCoordinate, mVolumeButtonClickedFlag);
             mShutterTouchCoordinate = null;
             mVolumeButtonClickedFlag = false;
 

@@ -93,6 +93,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
     @Override
     public void run() {
         ImageToProcess img = mImage;
+        mSession.getCollector().markProcessingTimeStart();
         final Rect safeCrop = guaranteedSafeCrop(img.proxy, img.crop);
 
         // For JPEG, it is the capture devices responsibility to get proper
