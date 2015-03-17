@@ -56,6 +56,7 @@ import com.android.camera.one.OneCamera.PhotoCaptureParameters.Flash;
 import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.ImageCaptureManager.ImageCaptureListener;
 import com.android.camera.one.v2.ImageCaptureManager.MetadataChangeListener;
+import com.android.camera.one.v2.camera2proxy.AndroidCaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
@@ -631,7 +632,8 @@ public class OneCameraZslImpl extends AbstractOneCamera {
             exif.setTag(directionTag);
         }
         new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
-                Optional.of(new CaptureResultProxy(result)), Optional.<Location>absent());
+                Optional.of((CaptureResultProxy) new AndroidCaptureResultProxy(result)),
+                Optional.<Location>absent());
         session.saveAndFinish(acquireJpegBytes(image, degrees),
                 size.getWidth(), size.getHeight(), 0, exif, new OnMediaSavedListener() {
                         @Override

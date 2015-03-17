@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,20 +25,37 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Interface for {@link android.hardware.camera2.CaptureResult}.
+ * Wraps a {@link android.hardware.camera2.CaptureResult} as a
+ * {@link CaptureResultProxy}.
  */
 @ParametersAreNonnullByDefault
-public interface CaptureResultProxy {
+public class AndroidCaptureResultProxy implements CaptureResultProxy {
+    final CaptureResult mCaptureResult;
+
+    public AndroidCaptureResultProxy(CaptureResult captureResult) {
+        mCaptureResult = captureResult;
+    }
+
     @Nullable
-    public <T> T get(CaptureResult.Key<T> key);
+    public <T> T get(CaptureResult.Key<T> key) {
+        return mCaptureResult.get(key);
+    }
 
     @Nonnull
-    public List<CaptureResult.Key<?>> getKeys();
+    public List<CaptureResult.Key<?>> getKeys() {
+        return mCaptureResult.getKeys();
+    }
 
     @Nonnull
-    public CaptureRequestProxy getRequest();
+    public CaptureRequestProxy getRequest() {
+        return new CaptureRequestProxy(mCaptureResult.getRequest());
+    }
 
-    public long getFrameNumber();
+    public long getFrameNumber() {
+        return mCaptureResult.getFrameNumber();
+    }
 
-    public int getSequenceId();
+    public int getSequenceId() {
+        return mCaptureResult.getSequenceId();
+    }
 }

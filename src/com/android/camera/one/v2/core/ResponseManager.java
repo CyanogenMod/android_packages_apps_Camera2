@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.camera2proxy;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+package com.android.camera.one.v2.core;
 
 /**
- * Interface for {@link android.hardware.camera2.TotalCaptureResult}.
+ * Allows adding response listeners to listen for metadata from all requests.
  */
-@ParametersAreNonnullByDefault
-public interface TotalCaptureResultProxy extends CaptureResultProxy {
-    @Nonnull
-    public List<CaptureResultProxy> getPartialResults();
+public interface ResponseManager {
+    public void addResponseListener(ResponseListener listener);
 }

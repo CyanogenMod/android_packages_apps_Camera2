@@ -186,7 +186,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                             frameServerComponent.provideFrameServer(),
                             meteredZoomedRequestBuilder, managedImageReader).providePictureTaker();
                 } else {
-                    pictureTaker = new PictureTakerFactory(mainExecutor,
+                    pictureTaker = PictureTakerFactory.create(Loggers.tagFactory(), mainExecutor,
                             cameraCommandExecutor, imageSaverBuilder,
                             frameServerComponent.provideFrameServer(),
                             meteredZoomedRequestBuilder, managedImageReader, flashSetting)

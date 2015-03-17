@@ -19,6 +19,7 @@ package com.android.camera.one.v2.photo;
 import android.hardware.camera2.CameraDevice;
 
 import com.android.camera.async.MainThread;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.FrameServer;
@@ -32,7 +33,11 @@ import java.util.Arrays;
 public final class PictureTakerFactory {
     private final PictureTakerImpl mPictureTaker;
 
-    public PictureTakerFactory(MainThread mainExecutor,
+    private PictureTakerFactory(PictureTakerImpl pictureTaker) {
+        mPictureTaker = pictureTaker;
+    }
+
+    public static PictureTakerFactory create(Logger.Factory logFactory, MainThread mainExecutor,
             CameraCommandExecutor commandExecutor,
             ImageSaver.Builder imageSaverBuilder,
             FrameServer frameServer,
@@ -47,8 +52,7 @@ public final class PictureTakerFactory {
                 Arrays.asList(rootRequestBuilder), true /* ae */, true /* af */);
 
         // When flash is OFF, wait for AF convergence, but not AE convergence
-        // (which can be very
-        // slow).
+        // (which can be very slow).
         ImageCaptureCommand flashOffCommand = new ConvergedImageCaptureCommand(
                 sharedImageReader, frameServer, rootRequestBuilder,
                 CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
@@ -62,10 +66,10 @@ public final class PictureTakerFactory {
                 CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG, CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG,
                 Arrays.asList(rootRequestBuilder), true /* ae */, true /* af */);
 
-        ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(flashMode,
+        ImageCaptureCommand flashBasedCommand = new FlashBasedPhotoCommand(logFactory, flashMode,
                 flashOnCommand, flashAutoCommand, flashOffCommand);
-        mPictureTaker = new PictureTakerImpl(mainExecutor, commandExecutor, imageSaverBuilder,
-                flashBasedCommand);
+        return new PictureTakerFactory(new PictureTakerImpl(mainExecutor, commandExecutor,
+                imageSaverBuilder, flashBasedCommand));
     }
 
     public PictureTaker providePictureTaker() {

@@ -39,7 +39,7 @@ import com.google.common.base.Suppliers;
  * builders which already have the latest zoom settings, preview surface,
  * metering regions, auto-focus state listener, etc. applied.
  */
-public class RequestTemplate implements RequestBuilder.Factory {
+public class RequestTemplate implements RequestBuilder.Factory, ResponseManager {
     private static class Parameter<T> {
         private final CaptureRequest.Key<T> key;
         private final Supplier<T> value;
@@ -83,9 +83,9 @@ public class RequestTemplate implements RequestBuilder.Factory {
     /**
      * Attaches the given ResponseListener to all derived RequestBuilders.
      */
-    public RequestTemplate addResponseListener(ResponseListener listener) {
+    @Override
+    public void addResponseListener(ResponseListener listener) {
         mResponseListeners.add(listener);
-        return this;
     }
 
     /**

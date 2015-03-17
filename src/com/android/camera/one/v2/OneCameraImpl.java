@@ -56,6 +56,7 @@ import com.android.camera.one.AbstractOneCamera;
 import com.android.camera.one.CameraDirectionProvider;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.Settings3A;
+import com.android.camera.one.v2.camera2proxy.AndroidCaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.AndroidImageProxy;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
@@ -232,7 +233,7 @@ public class OneCameraImpl extends AbstractOneCamera {
                     }
 
                     Float diopter = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
-                    if(diopter != null && mFocusDistanceListener != null) {
+                    if (diopter != null && mFocusDistanceListener != null) {
                         mFocusDistanceListener.onFocusDistance(diopter, mLensRange);
                     }
 
@@ -490,8 +491,9 @@ public class OneCameraImpl extends AbstractOneCamera {
                 exif.setTag(directionRefTag);
                 exif.setTag(directionTag);
             }
-            new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
-                    Optional.of(new CaptureResultProxy(result)), Optional.<Location>absent());
+            new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage> absent(),
+                    Optional.of((CaptureResultProxy) new AndroidCaptureResultProxy(result)),
+                    Optional.<Location> absent());
         } catch (IOException e) {
             Log.w(TAG, "Could not read exif from gcam jpeg", e);
             exif = null;
@@ -743,9 +745,8 @@ public class OneCameraImpl extends AbstractOneCamera {
 
     /*
      * Called when a capture that is in flight is completed.
-     *
      * @param capture the in-flight capture which needs to contain the received
-     *            image and capture data
+     * image and capture data
      */
     private void onCaptureCompleted(InFlightCapture capture) {
 
@@ -767,7 +768,8 @@ public class OneCameraImpl extends AbstractOneCamera {
             // Since this is not an HDR+ session, we will just save the
             // result.
             byte[] imageBytes = acquireJpegBytesAndClose(capture.image);
-            saveJpegPicture(imageBytes, capture.parameters, capture.session, capture.totalCaptureResult);
+            saveJpegPicture(imageBytes, capture.parameters, capture.session,
+                    capture.totalCaptureResult);
         }
         broadcastReadyState(true);
         capture.parameters.callback.onPictureTaken(capture.session);
