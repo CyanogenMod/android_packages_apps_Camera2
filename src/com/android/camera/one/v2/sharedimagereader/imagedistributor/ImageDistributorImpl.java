@@ -18,6 +18,8 @@ package com.android.camera.one.v2.sharedimagereader.imagedistributor;
 
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.BufferQueueController;
+import com.android.camera.debug.Log;
+import com.android.camera.debug.Logger;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ class ImageDistributorImpl implements ImageDistributor {
         }
     }
 
+    private final Logger mLogger;
+
     /**
      * Contains pairs mapping {@link BufferQueue}s of timestamps of images to
      * the {@link BufferQueueController} to receive images with those
@@ -70,7 +74,9 @@ class ImageDistributorImpl implements ImageDistributor {
      * synchronize all of the timestamp streams associated with each added
      * output stream.
      */
-    public ImageDistributorImpl(BufferQueue<Long> globalTimestampBufferQueue) {
+    public ImageDistributorImpl(Logger.Factory logFactory,
+            BufferQueue<Long> globalTimestampBufferQueue) {
+        mLogger = logFactory.create(new Log.Tag("ImgDistributorImpl"));
         mGlobalTimestampBufferQueue = globalTimestampBufferQueue;
         mDispatchTable = new HashSet<>();
     }
@@ -130,6 +136,30 @@ class ImageDistributorImpl implements ImageDistributor {
                 deadRecords.add(dispatchRecord);
             }
             Long requestedImageTimestamp = dispatchRecord.timestampBufferQueue.peekNext();
+            while (requestedImageTimestamp != null && requestedImageTimestamp < timestamp) {
+                // This branch should only run if there is an error in the
+                // camera framework/driver. (Technically, we could get here if
+                // an ImageStream was not registered with the ImageDistributor
+                // before the image arrived, or if the timestamp stream was not
+                // updated appropriately. Both of these conditions would be
+                // serious app-level bugs, however, and are less likely
+                // than a framework/driver error.)
+                // If the current image is newer than the image requested by a
+                // stream in the dispatch table, then the driver must have
+                // skipped the requested image.
+
+                mLogger.e(String.format("Image (%d) expected, but never received!  Instead, " +
+                        "received (%d)!  This is likely a camera driver error.",
+                        requestedImageTimestamp, timestamp), new RuntimeException());
+
+                // TODO There may be threads blocked, waiting to receive the
+                // requested image.
+                // This should propagate the absent-image through
+                // dispatchRecord.imageStream to avoid starvation.
+
+                dispatchRecord.timestampBufferQueue.discardNext();
+                requestedImageTimestamp = dispatchRecord.timestampBufferQueue.peekNext();
+            }
             if (requestedImageTimestamp == null) {
                 continue;
             }
