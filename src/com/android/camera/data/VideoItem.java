@@ -217,7 +217,8 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
 
     @Override
     public Optional<Bitmap> generateThumbnail(int boundingWidthPx, int boundingHeightPx) {
-        return Optional.of(FilmstripItemUtils.loadVideoThumbnail(getData().getFilePath()));
+        return Optional.fromNullable(FilmstripItemUtils.loadVideoThumbnail(
+                getData().getFilePath()));
     }
 
     @Override
