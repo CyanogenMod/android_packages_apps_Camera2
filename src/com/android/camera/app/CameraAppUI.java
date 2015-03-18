@@ -1878,7 +1878,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToCapture();
-        showModeOptions();
     }
 
     /**
@@ -1889,7 +1888,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         applyModuleSpecs(moduleController.getHardwareSpec(),
                 moduleController.getBottomBarSpec());
         mBottomBar.transitionToCancel();
-        hideModeOptions();
     }
 
     /**
