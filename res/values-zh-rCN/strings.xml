@@ -66,7 +66,7 @@
     <string name="please_wait" msgid="1416313324505140068">"请稍候"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"相机发生错误"</string>
     <string name="cannot_connect_camera" msgid="4311259792784598381">"无法连接到相机。"</string>
-    <string name="camera_disabled" msgid="6963443549010040595">"由于安全政策的限制，相机已被禁用。"</string>
+    <string name="camera_disabled" msgid="6963443549010040595">"由于安全规范的限制，相机已被禁用。"</string>
     <string name="wait" msgid="765601745709933047">"请稍候…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"使用相机前请先插入SD卡。"</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"正在准备SD卡…"</string>
