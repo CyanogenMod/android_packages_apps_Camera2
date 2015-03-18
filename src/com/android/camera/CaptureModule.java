@@ -511,7 +511,9 @@ public class CaptureModule extends CameraModule implements
                 gridLinesOn,
                 (float) timerDuration,
                 mLastShutterTouchCoordinate,
-                null /* TODO: Implement Volume Button Shutter Click Instrumentation */);
+                null /* TODO: Implement Volume Button Shutter Click Instrumentation */,
+                mCameraCharacteristics.getSensorInfoActiveArraySize()
+        );
     }
 
     private void takePictureNow() {

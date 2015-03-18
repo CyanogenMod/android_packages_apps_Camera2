@@ -1943,7 +1943,7 @@ public class VideoModule extends CameraModule
         UsageStatistics.instance().photoCaptureDoneEvent(
                 eventprotos.NavigationChange.Mode.VIDEO_STILL, title + ".jpeg", exif,
                 isCameraFrontFacing(), false, currentZoomValue(), flashSetting, gridLinesOn,
-                null, null, null, null);
+                null, null, null, null, null, null, null);
 
         getServices().getMediaSaver().addImage(data, title, dateTaken, loc, orientation, exif,
                 mOnPhotoSavedListener);
