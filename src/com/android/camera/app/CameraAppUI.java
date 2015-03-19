@@ -1965,29 +1965,22 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_CAMERA);
         }
 
-        if (bottomBarSpec.hideFlash) {
+        if (bottomBarSpec.hideFlash || !hardwareSpec.isFlashSupported()) {
             // Hide both flash and torch button in flash disable logic
             buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
             buttonManager.hideButton(ButtonManager.BUTTON_TORCH);
         } else {
-            if (hardwareSpec.isFlashSupported()) {
-                if (bottomBarSpec.enableFlash) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_FLASH,
-                        bottomBarSpec.flashCallback);
-                } else if (bottomBarSpec.enableTorchFlash) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
-                        bottomBarSpec.flashCallback);
-                } else if (bottomBarSpec.enableHdrPlusFlash) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
-                        bottomBarSpec.flashCallback);
-                } else {
-                    // Hide both flash and torch button in flash disable logic
-                    buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
-                    buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
-                }
+            if (bottomBarSpec.enableFlash) {
+                buttonManager.initializeButton(ButtonManager.BUTTON_FLASH,
+                    bottomBarSpec.flashCallback);
+            } else if (bottomBarSpec.enableTorchFlash) {
+                buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
+                    bottomBarSpec.flashCallback);
+            } else if (bottomBarSpec.enableHdrPlusFlash) {
+                buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
+                    bottomBarSpec.flashCallback);
             } else {
-                // Disable both flash and torch icon if not supported
-                // by the chosen camera hardware.
+                // Disable both flash and torch button in flash disable logic
                 buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
                 buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
             }
