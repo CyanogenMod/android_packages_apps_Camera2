@@ -371,7 +371,7 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public void finalize() {
+    public void finalizeSession() {
         mPlaceholderManager.removePlaceholder(mPlaceHolderSession);
     }
 

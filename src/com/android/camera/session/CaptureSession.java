@@ -167,14 +167,14 @@ public interface CaptureSession {
 
     /**
      * Finishes the session. Resources may be held during notification of
-     * finished state, {@link #finalize()} must be called to fully complete
+     * finished state, {@link #finalizeSession()} must be called to fully complete
      * the session.
      */
     public void finish();
 
     /**
      * Finish the session and indicate it failed. Resources may be held during
-     * notification of finished state, {@link #finalize()} must be called to
+     * notification of finished state, {@link #finalizeSession()} must be called to
      * fully complete the session.
      */
     public void finishWithFailure(int failureMessageId, boolean removeFromFilmstrip);
@@ -182,7 +182,7 @@ public interface CaptureSession {
     /**
      * All processing complete, finalize the session and remove any resources.
      */
-    public void finalize();
+    public void finalizeSession();
 
     /**
      * Returns the file to where the final output of this session should be

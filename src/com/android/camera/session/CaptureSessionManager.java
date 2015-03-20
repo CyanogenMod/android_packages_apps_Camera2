@@ -117,7 +117,7 @@ public interface CaptureSessionManager {
     /**
      * Removes the session with the given uri from the manager. This may not
      * remove temporary in memory resources from the session itself, see
-     * {@link CaptureSession#finalize()} to complete session removal.
+     * {@link CaptureSession#finalizeSession()} to complete session removal.
      */
     public CaptureSession removeSession(Uri sessionUri);
 

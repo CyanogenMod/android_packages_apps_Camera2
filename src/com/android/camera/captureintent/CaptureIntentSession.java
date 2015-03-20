@@ -176,7 +176,7 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public void finalize() {
+    public void finalizeSession() {
         // Do nothing.
     }
 

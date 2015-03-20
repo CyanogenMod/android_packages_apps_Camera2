@@ -359,7 +359,7 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             session = removeSession(uri);
         }
         if (session != null) {
-            session.finalize();
+            session.finalizeSession();
         }
     }
 }
