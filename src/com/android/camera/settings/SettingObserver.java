@@ -16,8 +16,6 @@
 
 package com.android.camera.settings;
 
-import com.android.camera.async.ExecutorCallback;
-import com.android.camera.async.FilteredUpdatable;
 import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
 

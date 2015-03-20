@@ -16,21 +16,17 @@
 
 package com.android.camera.captureintent.state;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
-
 import com.android.camera.async.RefCountBase;
-import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
-import com.android.camera.captureintent.resource.ResourceSurfaceTextureImpl;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
+import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
-
-import android.graphics.SurfaceTexture;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 
 /**
  * Represents a state that the surface texture is available to the module.
@@ -67,11 +63,15 @@ public final class StateForegroundWithSurfaceTexture extends StateImpl {
             // Pick a preview size with the right aspect ratio.
             final OneCamera.Facing cameraFacing =
                     mResourceConstructed.get().getCameraFacingSetting().getCameraFacing();
+
+            CameraId key = mResourceConstructed.get().getOneCameraManager()
+                  .findFirstCameraFacing(cameraFacing);
+
             final OneCameraCharacteristics characteristics =
-                    mResourceConstructed.get().getCameraManager().getCameraCharacteristics(
-                            cameraFacing);
+                    mResourceConstructed.get().getOneCameraManager().getOneCameraCharacteristics(
+                          key);
             return Optional.of((State) StateOpeningCamera.from(this, mResourceConstructed,
-                    mResourceSurfaceTexture, cameraFacing, characteristics));
+                    mResourceSurfaceTexture, cameraFacing, key, characteristics));
         } catch (OneCameraAccessException ex) {
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
         }

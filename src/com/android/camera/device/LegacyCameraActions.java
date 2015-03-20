@@ -35,14 +35,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LegacyCameraActions implements SingleDeviceActions<Camera> {
     private static final Tag TAG = new Tag("Camera1Act");
 
-    private final CameraDeviceKey<Integer> mId;
+    private final CameraDeviceKey mId;
     private final HandlerFactory mHandlerFactory;
     private final Logger mLogger;
 
     @Nullable
     private Handler mCameraHandler;
 
-    public LegacyCameraActions(CameraDeviceKey<Integer> id, HandlerFactory handlerFactory,
+    public LegacyCameraActions(CameraDeviceKey id, HandlerFactory handlerFactory,
           Logger.Factory logFactory) {
         mId = id;
         mHandlerFactory = handlerFactory;
@@ -51,20 +51,22 @@ public class LegacyCameraActions implements SingleDeviceActions<Camera> {
 
     @Override
     public void executeOpen(SingleDeviceOpenListener<Camera> openListener,
-          Lifetime deviceLifetime) {
+          Lifetime deviceLifetime) throws UnsupportedOperationException {
         mLogger.i("executeOpen(id: " + mId.getCameraId() + ")");
 
         mCameraHandler = mHandlerFactory.create(deviceLifetime, "LegacyCamera Handler");
-        mCameraHandler.post(new OpenCameraRunnable(openListener, mId.getCameraId(), mLogger));
+        mCameraHandler.post(new OpenCameraRunnable(openListener,
+              mId.getCameraId().getLegacyValue(), mLogger));
     }
 
     @Override
-    public void executeClose(SingleDeviceCloseListener closeListener, Camera device) {
+    public void executeClose(SingleDeviceCloseListener closeListener, Camera device)
+          throws UnsupportedOperationException {
         mLogger.i("executeClose(" + mId.getCameraId() + ")");
 
         Runnable closeCamera = new CloseCameraRunnable(closeListener,
               device,
-              mId.getCameraId(),
+              mId.getCameraId().getLegacyValue(),
               mLogger);
 
         if (mCameraHandler != null) {

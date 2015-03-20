@@ -101,12 +101,15 @@ import com.android.camera.data.SessionItem;
 import com.android.camera.data.VideoDataFactory;
 import com.android.camera.data.VideoItemFactory;
 import com.android.camera.debug.Log;
+import com.android.camera.device.ActiveCameraDeviceTracker;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.module.ModuleController;
 import com.android.camera.module.ModulesInfo;
 import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.OneCameraModule;
+import com.android.camera.one.OneCameraOpener;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.config.OneCameraFeatureConfigCreator;
 import com.android.camera.session.CaptureSession;
@@ -211,7 +214,8 @@ public class CameraActivity extends QuickActivity
     private PhotoItemFactory mPhotoItemFactory;
     private LocalFilmstripDataAdapter mDataAdapter;
 
-    private OneCameraManager mCameraManager;
+    private OneCameraOpener mOneCameraOpener;
+    private OneCameraManager mOneCameraManager;
     private SettingsManager mSettingsManager;
     private ResolutionSetting mResolutionSetting;
     private ModeListView mModeListView;
@@ -1022,11 +1026,6 @@ public class CameraActivity extends QuickActivity
     }
 
     @Override
-    public int getCurrentCameraId() {
-        return mCameraController.getCurrentCameraId();
-    }
-
-    @Override
     public String getModuleScope() {
         ModuleAgent agent = mModuleManager.getModuleAgent(mCurrentModeIndex);
         return MODULE_SCOPE_PREFIX + agent.getScopeNamespace();
@@ -1034,15 +1033,12 @@ public class CameraActivity extends QuickActivity
 
     @Override
     public String getCameraScope() {
-        int currentCameraId = getCurrentCameraId();
-        if (currentCameraId < 0) {
-            // if an unopen camera i.e. negative ID is returned, which we've observed in
-            // some automated scenarios, just return it as a valid separate scope
-            // this could cause user issues, so log a stack trace noting the call path
-            // which resulted in this scenario.
-            Log.w(TAG, "getting camera scope with no open camera, using id: " + currentCameraId);
-        }
-        return CAMERA_SCOPE_PREFIX + Integer.toString(currentCameraId);
+        // if an unopen camera i.e. negative ID is returned, which we've observed in
+        // some automated scenarios, just return it as a valid separate scope
+        // this could cause user issues, so log a stack trace noting the call path
+        // which resulted in this scenario.
+
+        return CAMERA_SCOPE_PREFIX + mCameraController.getCurrentCameraId().getValue();
     }
 
     @Override
@@ -1306,8 +1302,8 @@ public class CameraActivity extends QuickActivity
     }
 
     @Override
-    public OneCameraManager getCameraManager() {
-        return mCameraManager;
+    public OneCameraOpener getCameraOpener() {
+        return mOneCameraOpener;
     }
 
     private void removeItemAt(int index) {
@@ -1445,19 +1441,22 @@ public class CameraActivity extends QuickActivity
         }
         profile.mark("Glide.setup");
         try {
-            mCameraManager = OneCameraManager.get(
-                    mFeatureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
+            mOneCameraOpener = OneCameraModule.provideOneCameraOpener(
+                  mFeatureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
+            mOneCameraManager = OneCameraModule.provideOneCameraManager();
         } catch (OneCameraException e) {
             // Log error and continue start process while showing error dialog..
             Log.e(TAG, "Creating camera manager failed.", e);
             mFatalErrorHandler.onGenericCameraAccessFailure();
         }
         profile.mark("OneCameraManager.get");
+
         mCameraController = new CameraController(mAppContext, this, mMainHandler,
                 CameraAgentFactory.getAndroidCameraAgent(mAppContext,
                         CameraAgentFactory.CameraApi.API_1),
                 CameraAgentFactory.getAndroidCameraAgent(mAppContext,
-                        CameraAgentFactory.CameraApi.AUTO));
+                        CameraAgentFactory.CameraApi.AUTO),
+                ActiveCameraDeviceTracker.instance());
         mCameraController.setCameraExceptionHandler(
                 new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
 
@@ -1471,7 +1470,7 @@ public class CameraActivity extends QuickActivity
         appUpgrader.upgrade(mSettingsManager);
         Keys.setDefaults(mSettingsManager, mAppContext);
 
-        mResolutionSetting = new ResolutionSetting(mSettingsManager, mCameraManager,
+        mResolutionSetting = new ResolutionSetting(mSettingsManager, mOneCameraManager,
                 getContentResolver());
 
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
@@ -1658,7 +1657,12 @@ public class CameraActivity extends QuickActivity
 
         mMotionManager = getServices().getMotionManager();
 
-        mFirstRunDialog = new FirstRunDialog(this, new FirstRunDialog.FirstRunDialogListener() {
+        mFirstRunDialog = new FirstRunDialog(this,
+              getAndroidContext(),
+              mResolutionSetting,
+              mSettingsManager,
+              mOneCameraManager,
+              new FirstRunDialog.FirstRunDialogListener() {
             @Override
             public void onFirstRunStateReady() {
                 // Run normal resume tasks.

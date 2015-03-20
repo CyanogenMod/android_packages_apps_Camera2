@@ -16,13 +16,14 @@
 
 package com.android.camera.captureintent.resource;
 
+import android.graphics.PointF;
+import android.view.Surface;
+
 import com.android.camera.async.SafeCloseable;
+import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
-
-import android.graphics.PointF;
-import android.view.Surface;
 
 /**
  * Defines an interface that any implementation of this is responsible for
@@ -35,6 +36,13 @@ public interface ResourceOpenedCamera extends SafeCloseable {
      * @return A {@link com.android.camera.one.OneCamera} object.
      */
     public OneCamera getCamera();
+
+    /**
+     * Obtains key for this one camera object
+     *
+     * @return A {@link com.android.camera.one.OneCamera} object.
+     */
+    public CameraId getCameraId();
 
     /**
      * Obtains the facing of the opened camera.

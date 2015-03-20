@@ -10,13 +10,12 @@ package com.android.camera.device;
  * </code></pre>
  *
  * @param <TDevice> The type of camera device the actions produce.
- * @param <TDeviceId> The specific device id type the actions use.
  */
-public interface CameraDeviceActionProvider<TDevice, TDeviceId> {
+public interface CameraDeviceActionProvider<TDevice> {
 
     /**
      * Return a new set of device and api specific actions for the given
      * types.
      */
-    public SingleDeviceActions<TDevice> get(CameraDeviceKey<TDeviceId> key);
+    public SingleDeviceActions<TDevice> get(CameraDeviceKey key);
 }

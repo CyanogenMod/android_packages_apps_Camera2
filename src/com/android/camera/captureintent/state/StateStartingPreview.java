@@ -16,27 +16,27 @@
 
 package com.android.camera.captureintent.state;
 
-import com.google.common.base.Optional;
-
 import com.android.camera.CaptureModuleUtil;
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.event.EventOnStartPreviewFailed;
+import com.android.camera.captureintent.event.EventOnStartPreviewSucceeded;
+import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
+import com.android.camera.captureintent.event.EventPause;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceOpenedCamera;
 import com.android.camera.captureintent.resource.ResourceOpenedCameraImpl;
 import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
 import com.android.camera.captureintent.stateful.EventHandler;
-import com.android.camera.captureintent.event.EventOnStartPreviewFailed;
-import com.android.camera.captureintent.event.EventOnStartPreviewSucceeded;
-import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
-import com.android.camera.captureintent.event.EventPause;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
+import com.android.camera.device.CameraId;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 import java.util.List;
 
@@ -56,6 +56,7 @@ public final class StateStartingPreview extends StateImpl {
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera camera,
+          CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
@@ -64,6 +65,7 @@ public final class StateStartingPreview extends StateImpl {
                 resourceConstructed,
                 resourceSurfaceTexture,
                 camera,
+                cameraId,
                 cameraFacing,
                 cameraCharacteristics,
                 pictureSize);
@@ -74,6 +76,7 @@ public final class StateStartingPreview extends StateImpl {
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera camera,
+            CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
             Size pictureSize) {
@@ -83,7 +86,7 @@ public final class StateStartingPreview extends StateImpl {
         mResourceSurfaceTexture = resourceSurfaceTexture;
         mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
         mResourceOpenedCamera = ResourceOpenedCameraImpl.create(
-                camera, cameraFacing, cameraCharacteristics, pictureSize);
+                camera, cameraId, cameraFacing, cameraCharacteristics, pictureSize);
         registerEventHandlers();
     }
 
@@ -153,7 +156,8 @@ public final class StateStartingPreview extends StateImpl {
                     .getCameraCharacteristics().getSupportedPreviewSizes();
             final Rational pictureAspectRatio =
                     mResourceConstructed.get().getResolutionSetting().getPictureAspectRatio(
-                            mResourceOpenedCamera.get().getCameraFacing());
+                          mResourceOpenedCamera.get().getCameraId(),
+                          mResourceOpenedCamera.get().getCameraFacing());
             previewSize = CaptureModuleUtil.getOptimalPreviewSize(
                     supportedPreviewSizes.toArray(new Size[(supportedPreviewSizes.size())]),
                     pictureAspectRatio.toDouble(),

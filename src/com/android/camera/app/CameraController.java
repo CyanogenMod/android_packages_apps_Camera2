@@ -21,11 +21,16 @@ import android.os.Handler;
 
 import com.android.camera.CameraDisabledException;
 import com.android.camera.debug.Log;
+import com.android.camera.device.ActiveCameraDeviceTracker;
+import com.android.camera.device.CameraId;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GservicesHelper;
 import com.android.ex.camera2.portability.CameraAgent;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
 import com.android.ex.camera2.portability.CameraExceptionHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A class which implements {@link com.android.camera.app.CameraProvider} used
@@ -36,10 +41,12 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     private static final Log.Tag TAG = new Log.Tag("CameraController");
     private static final int EMPTY_REQUEST = -1;
     private final Context mContext;
-    private CameraAgent.CameraOpenCallback mCallbackReceiver;
     private final Handler mCallbackHandler;
     private final CameraAgent mCameraAgent;
     private final CameraAgent mCameraAgentNg;
+    private final ActiveCameraDeviceTracker mActiveCameraDeviceTracker;
+
+    private CameraAgent.CameraOpenCallback mCallbackReceiver;
 
     /** The one for the API that is currently in use (deprecated one by default). */
     private CameraDeviceInfo mInfo;
@@ -66,9 +73,15 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
      *                        {@code null} or the same object as
      *                        {@code cameraManager}, the new API will not be
      *                        exposed and requests for it will get the old one.
+     * @param activeCameraDeviceTracker Tracks the active device across multiple
+     *                                  api versions and implementations.
      */
-    public CameraController(Context context, CameraAgent.CameraOpenCallback callbackReceiver,
-            Handler handler, CameraAgent cameraManager, CameraAgent cameraManagerNg) {
+    public CameraController(@Nonnull Context context,
+          @Nullable CameraAgent.CameraOpenCallback callbackReceiver,
+          @Nonnull Handler handler,
+          @Nonnull CameraAgent cameraManager,
+          @Nonnull CameraAgent cameraManagerNg,
+          @Nonnull ActiveCameraDeviceTracker activeCameraDeviceTracker) {
         mContext = context;
         mCallbackReceiver = callbackReceiver;
         mCallbackHandler = handler;
@@ -76,6 +89,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         // If the new implementation is the same as the old, the
         // CameraAgentFactory decided this device doesn't support the new API.
         mCameraAgentNg = cameraManagerNg != cameraManager ? cameraManagerNg : null;
+        mActiveCameraDeviceTracker = activeCameraDeviceTracker;
         mInfo = mCameraAgent.getCameraDeviceInfo();
         if (mInfo == null && mCallbackReceiver != null) {
             mCallbackReceiver.onDeviceOpenFailure(-1, "GETTING_CAMERA_INFO");
@@ -99,13 +113,8 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     }
 
     @Override
-    public int getCurrentCameraId() {
-        if (mCameraProxy != null) {
-            return mCameraProxy.getCameraId();
-        } else {
-            Log.v(TAG, "getCurrentCameraId without an open camera... returning requested id");
-            return mRequestingCameraId;
-        }
+    public CameraId getCurrentCameraId() {
+        return mActiveCameraDeviceTracker.getActiveOrPreviousCamera();
     }
 
     @Override
@@ -220,6 +229,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
             return;
         }
         mRequestingCameraId = id;
+        mActiveCameraDeviceTracker.onCameraOpening(CameraId.fromLegacyId(id));
 
         // Only actually use the new API if it's supported on this device.
         useNewApi = mCameraAgentNg != null && useNewApi;
@@ -227,7 +237,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
 
         if (mCameraProxy == null) {
             // No camera yet.
-            checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
+            checkAndOpenCamera(cameraManager, id, mCallbackHandler, this);
         } else if (mCameraProxy.getCameraId() != id || mUsingNewApi != useNewApi) {
             boolean syncClose = GservicesHelper.useCamera2ApiThroughPortabilityLayer(mContext
                     .getContentResolver());
@@ -239,7 +249,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
                 // if using API2 ensure API1 usage is also synced
                 mCameraAgent.closeCamera(mCameraProxy, syncClose);
             }
-            checkAndOpenCamera(mContext, cameraManager, id, mCallbackHandler, this);
+            checkAndOpenCamera(cameraManager, id, mCallbackHandler, this);
         } else {
             // The same camera, just do a reconnect.
             Log.v(TAG, "reconnecting to use the existing camera");
@@ -278,6 +288,8 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
                         + currentId + ":" + mRequestingCameraId + ":" + id);
             }
         }
+
+        mActiveCameraDeviceTracker.onCameraClosed(CameraId.fromLegacyId(id));
         mRequestingCameraId = EMPTY_REQUEST;
     }
 
@@ -301,7 +313,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
         mUsingNewApi = false;
     }
 
-    private static void checkAndOpenCamera(Context context, CameraAgent cameraManager,
+    private static void checkAndOpenCamera(CameraAgent cameraManager,
             final int cameraId, Handler handler, final CameraAgent.CameraOpenCallback cb) {
         Log.v(TAG, "checkAndOpenCamera");
         try {

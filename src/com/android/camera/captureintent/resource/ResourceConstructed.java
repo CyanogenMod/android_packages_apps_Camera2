@@ -16,6 +16,10 @@
 
 package com.android.camera.captureintent.resource;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+
 import com.android.camera.FatalErrorHandler;
 import com.android.camera.SoundPlayer;
 import com.android.camera.app.AppController;
@@ -26,13 +30,10 @@ import com.android.camera.async.SafeCloseable;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.one.OneCameraManager;
+import com.android.camera.one.OneCameraOpener;
 import com.android.camera.settings.CameraFacingSetting;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingsManager;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
 
 /**
  * Defines an interface that any implementation of this should retain basic
@@ -78,11 +79,19 @@ public interface ResourceConstructed extends SafeCloseable {
     public Context getContext();
 
     /**
+     * Obtains the hardware manager that provides the ability to query for
+     * hardware specific characteristics.
+     *
+     * @return  An {@link com.android.camera.one.OneCameraManager} object.
+     */
+    public OneCameraManager getOneCameraManager();
+
+    /**
      * Obtains the camera manager that controls camera devices.
      *
-     * @return An {@link com.android.camera.one.OneCameraManager} object.
+     * @return An {@link com.android.camera.one.OneCameraOpener} object.
      */
-    public OneCameraManager getCameraManager();
+    public OneCameraOpener getOneCameraOpener();
 
     /**
      * Obtains the location manager that is able to report device current

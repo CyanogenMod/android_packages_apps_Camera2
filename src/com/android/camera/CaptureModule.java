@@ -47,6 +47,8 @@ import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
+import com.android.camera.device.ActiveCameraDeviceTracker;
+import com.android.camera.device.CameraId;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HeadingSensor;
 import com.android.camera.module.ModuleController;
@@ -59,8 +61,10 @@ import com.android.camera.one.OneCamera.PhotoCaptureParameters;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
-import com.android.camera.one.v2.OneCameraManagerImpl;
+import com.android.camera.one.OneCameraModule;
+import com.android.camera.one.OneCameraOpener;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.remote.RemoteCameraModule;
@@ -134,7 +138,11 @@ public class CaptureModule extends CameraModule implements
     /** Module UI. */
     private CaptureModuleUI mUI;
     /** The camera manager used to open cameras. */
-    private OneCameraManager mCameraManager;
+    private OneCameraOpener mOneCameraOpener;
+    /** The manager to query for camera device information */
+    private OneCameraManager mOneCameraManager;
+    /** Shared tracking object for currently active camera across both Api's. */
+    private ActiveCameraDeviceTracker mActiveCameraDeviceTracker;
     /** The currently opened camera device, or null if the camera is closed. */
     private OneCamera mCamera;
     /** The selected picture size. */
@@ -340,6 +348,7 @@ public class CaptureModule extends CameraModule implements
         mMainThread = MainThread.create();
         mAppController = appController;
         mContext = mAppController.getAndroidContext();
+        mActiveCameraDeviceTracker = ActiveCameraDeviceTracker.instance();
         mSettingsManager = mAppController.getSettingsManager();
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
@@ -372,7 +381,8 @@ public class CaptureModule extends CameraModule implements
 
     private void updateCameraCharacteristics() {
         try {
-            mCameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
+            CameraId cameraId = mOneCameraManager.findFirstCameraFacing(mCameraFacing);
+            mCameraCharacteristics = mOneCameraManager.getOneCameraCharacteristics(cameraId);
         } catch (OneCameraAccessException ocae) {
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;
@@ -386,7 +396,13 @@ public class CaptureModule extends CameraModule implements
         HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
         thread.start();
         mCameraHandler = new Handler(thread.getLooper());
-        mCameraManager = mAppController.getCameraManager();
+        mOneCameraOpener = mAppController.getCameraOpener();
+
+        try {
+            mOneCameraManager = OneCameraModule.provideOneCameraManager();
+        } catch (OneCameraException e) {
+            Log.e(TAG, "Unable to provide a OneCameraManager. ", e);
+        }
         mDisplayRotation = CameraUtil.getDisplayRotation();
         mCameraFacing = getFacingFromCameraId(
               mSettingsManager.getInteger(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID));
@@ -419,7 +435,8 @@ public class CaptureModule extends CameraModule implements
     public void onShutterButtonLongPressed() {
         try {
             OneCameraCharacteristics cameraCharacteristics;
-            cameraCharacteristics = mCameraManager.getCameraCharacteristics(mCameraFacing);
+            CameraId cameraId = mOneCameraManager.findFirstCameraFacing(mCameraFacing);
+            cameraCharacteristics = mOneCameraManager.getOneCameraCharacteristics(cameraId);
             DeviceOrientation deviceOrientation = mAppController.getOrientationManager()
                     .getDeviceOrientation();
             ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl
@@ -627,8 +644,6 @@ public class CaptureModule extends CameraModule implements
         mAppController.addPreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         mAppController.addPreviewAreaSizeChangedListener(mUI);
 
-        mAppController.getCameraAppUI().onChangeCamera();
-
         guard.mark();
         getServices().getRemoteShutterListener().onModuleReady(this);
         guard.mark("getRemoteShutterListener.onModuleReady");
@@ -713,7 +728,7 @@ public class CaptureModule extends CameraModule implements
             // facing.
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, true);
             settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,
-                    getBackFacingCameraId());
+                  (String) mOneCameraManager.findFirstCameraFacing(Facing.BACK).getValue());
         }
     }
 
@@ -995,17 +1010,6 @@ public class CaptureModule extends CameraModule implements
     }
 
     /**
-     * TODO: Remove this method once we are in pure CaptureModule land.
-     */
-    private String getBackFacingCameraId() {
-        if (!(mCameraManager instanceof OneCameraManagerImpl)) {
-            throw new IllegalStateException("This should never be called with Camera API V1");
-        }
-        OneCameraManagerImpl manager = (OneCameraManagerImpl) mCameraManager;
-        return manager.getFirstBackCameraId();
-    }
-
-    /**
      * @return Depending on whether we're in sticky-HDR mode or not, return the
      *         proper callback to be used for when the HDR/HDR+ button is
      *         pressed.
@@ -1272,7 +1276,7 @@ public class CaptureModule extends CameraModule implements
 
         guard.mark("Acquired mCameraOpenCloseLock");
 
-        if (mCameraManager == null) {
+        if (mOneCameraOpener == null) {
             Log.e(TAG, "no available OneCameraManager, showing error dialog");
             mCameraOpenCloseLock.release();
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
@@ -1295,11 +1299,14 @@ public class CaptureModule extends CameraModule implements
         // Only enable GCam on the back camera
         boolean useHdr = mHdrPlusEnabled && mCameraFacing == Facing.BACK;
 
+        CameraId cameraId = mOneCameraManager.findFirstCameraFacing(mCameraFacing);
+        mActiveCameraDeviceTracker.onCameraOpening(cameraId);
+
         OneCameraCaptureSetting captureSetting;
         // Read the preferred picture size from the setting.
         try {
             captureSetting = OneCameraCaptureSetting.create(
-                    mCameraFacing, mAppController.getResolutionSetting(), mSettingsManager,
+                    mCameraFacing, cameraId, mAppController.getResolutionSetting(), mSettingsManager,
                     mAppController.getCameraScope(), useHdr);
         } catch (OneCameraAccessException ex) {
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
@@ -1307,105 +1314,112 @@ public class CaptureModule extends CameraModule implements
         }
         mPictureSize = captureSetting.getCaptureSize();
 
-        mCameraManager.open(captureSetting, mCameraHandler, mainThread,
-                imageRotationCalculator, mBurstController, mSoundPlayer,
-                new OpenCallback() {
-                    @Override
-                    public void onFailure() {
-                        Log.e(TAG, "Could not open camera.");
-                        mCamera = null;
-                        mCameraOpenCloseLock.release();
-                        mAppController.getFatalErrorHandler().onCameraOpenFailure();
-                    }
+        mOneCameraOpener.open(cameraId, captureSetting, mCameraHandler, mainThread,
+              imageRotationCalculator, mBurstController, mSoundPlayer,
+              new OpenCallback() {
+                  @Override
+                  public void onFailure() {
+                      Log.e(TAG, "Could not open camera.");
+                      mCamera = null;
+                      mCameraOpenCloseLock.release();
+                      mAppController.getFatalErrorHandler().onCameraOpenFailure();
+                  }
 
-                    @Override
-                    public void onCameraClosed() {
-                        mCamera = null;
-                        mCameraOpenCloseLock.release();
-                    }
+                  @Override
+                  public void onCameraClosed() {
+                      mCamera = null;
+                      mCameraOpenCloseLock.release();
+                  }
 
-                    @Override
-                    public void onCameraOpened(final OneCamera camera) {
-                        Log.d(TAG, "onCameraOpened: " + camera);
-                        mCamera = camera;
+                  @Override
+                  public void onCameraOpened(final OneCamera camera) {
+                      Log.d(TAG, "onCameraOpened: " + camera);
+                      mCamera = camera;
 
-                        // When camera is opened, the zoom is implicitly reset to 1.0f
-                        mZoomValue = 1.0f;
+                      // When camera is opened, the zoom is implicitly reset to 1.0f
+                      mZoomValue = 1.0f;
 
-                        updatePreviewBufferDimension();
+                      updatePreviewBufferDimension();
 
-                        // If the surface texture is not destroyed, it may have
-                        // the last frame lingering. We need to hold off setting
-                        // transform until preview is started.
-                        updatePreviewBufferSize();
-                        mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
-                        Log.d(TAG, "starting preview ...");
+                      // If the surface texture is not destroyed, it may have
+                      // the last frame lingering. We need to hold off setting
+                      // transform until preview is started.
+                      updatePreviewBufferSize();
+                      mState = ModuleState.WATCH_FOR_NEXT_FRAME_AFTER_PREVIEW_STARTED;
+                      Log.d(TAG, "starting preview ...");
 
-                        // TODO: make mFocusController final and remove null
-                        // check.
-                        if (mFocusController != null) {
-                            camera.setFocusDistanceListener(mFocusController);
-                        }
+                      // TODO: make mFocusController final and remove null
+                      // check.
+                      if (mFocusController != null) {
+                          camera.setFocusDistanceListener(mFocusController);
+                      }
 
-                        // TODO: Consider rolling these two calls into one.
-                        camera.startPreview(new Surface(getPreviewSurfaceTexture()),
-                                new CaptureReadyCallback() {
-                                    @Override
-                                    public void onSetupFailed() {
-                                        // We must release this lock here,
-                                        // before posting to the main handler
-                                        // since we may be blocked in pause(),
-                                        // getting ready to close the camera.
-                                        mCameraOpenCloseLock.release();
-                                        Log.e(TAG, "Could not set up preview.");
-                                        mMainThread.execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (mCamera == null) {
-                                                    Log.d(TAG, "Camera closed, aborting.");
-                                                    return;
-                                                }
-                                                mCamera.close();
-                                                mCamera = null;
-                                                // TODO: Show an error message
-                                                // and exit.
+                      mMainThread.execute(new Runnable() {
+                          @Override
+                          public void run() {
+                              mAppController.getCameraAppUI().onChangeCamera();
+                          }
+                      });
+
+                      // TODO: Consider rolling these two calls into one.
+                      camera.startPreview(new Surface(getPreviewSurfaceTexture()),
+                            new CaptureReadyCallback() {
+                                @Override
+                                public void onSetupFailed() {
+                                    // We must release this lock here,
+                                    // before posting to the main handler
+                                    // since we may be blocked in pause(),
+                                    // getting ready to close the camera.
+                                    mCameraOpenCloseLock.release();
+                                    Log.e(TAG, "Could not set up preview.");
+                                    mMainThread.execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (mCamera == null) {
+                                                Log.d(TAG, "Camera closed, aborting.");
+                                                return;
                                             }
-                                        });
-                                    }
+                                            mCamera.close();
+                                            mCamera = null;
+                                            // TODO: Show an error message
+                                            // and exit.
+                                        }
+                                    });
+                                }
 
-                                    @Override
-                                    public void onReadyForCapture() {
-                                        // We must release this lock here,
-                                        // before posting to the main handler
-                                        // since we may be blocked in pause(),
-                                        // getting ready to close the camera.
-                                        mCameraOpenCloseLock.release();
-                                        mMainThread.execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Log.d(TAG, "Ready for capture.");
-                                                if (mCamera == null) {
-                                                    Log.d(TAG, "Camera closed, aborting.");
-                                                    return;
-                                                }
-                                                onPreviewStarted();
-                                                // May be overridden by
-                                                // subsequent call to
-                                                // onReadyStateChanged().
-                                                onReadyStateChanged(true);
-                                                mCamera.setReadyStateChangedListener(
-                                                        CaptureModule.this);
-                                                // Enable zooming after preview
-                                                // has started.
-                                                mUI.initializeZoom(mCamera.getMaxZoom());
-                                                mCamera.setFocusStateListener(CaptureModule.this);
+                                @Override
+                                public void onReadyForCapture() {
+                                    // We must release this lock here,
+                                    // before posting to the main handler
+                                    // since we may be blocked in pause(),
+                                    // getting ready to close the camera.
+                                    mCameraOpenCloseLock.release();
+                                    mMainThread.execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.d(TAG, "Ready for capture.");
+                                            if (mCamera == null) {
+                                                Log.d(TAG, "Camera closed, aborting.");
+                                                return;
                                             }
-                                        });
-                                    }
-                                });
-                        }
-                }, mAppController.getFatalErrorHandler());
-        guard.stop("mCameraManager.open()");
+                                            onPreviewStarted();
+                                            // May be overridden by
+                                            // subsequent call to
+                                            // onReadyStateChanged().
+                                            onReadyStateChanged(true);
+                                            mCamera.setReadyStateChangedListener(
+                                                  CaptureModule.this);
+                                            // Enable zooming after preview
+                                            // has started.
+                                            mUI.initializeZoom(mCamera.getMaxZoom());
+                                            mCamera.setFocusStateListener(CaptureModule.this);
+                                        }
+                                    });
+                                }
+                            });
+                  }
+              }, mAppController.getFatalErrorHandler());
+        guard.stop("mOneCameraOpener.open()");
     }
 
     private void closeCamera() {
@@ -1439,13 +1453,6 @@ public class CaptureModule extends CameraModule implements
         cancelCountDown();
         mAppController.freezeScreenUntilPreviewReady();
         initSurfaceTextureConsumer();
-    }
-
-    private int getPreviewOrientation(int deviceOrientationDegrees) {
-        // Important: Camera2 buffers are already rotated to the natural
-        // orientation of the device (at least for the back-camera).
-
-        return (360 - deviceOrientationDegrees) % 360;
     }
 
     /**

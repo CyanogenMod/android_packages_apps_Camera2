@@ -15,14 +15,14 @@ import javax.annotation.concurrent.GuardedBy;
  * requests) The object is no longer useful and a new instance should
  * be created.
  */
-public class CameraDeviceLifecycle<TDevice, TDeviceId> implements
-      SingleDeviceLifecycle<TDevice, CameraDeviceKey<TDeviceId>> {
+public class CameraDeviceLifecycle<TDevice> implements
+      SingleDeviceLifecycle<TDevice, CameraDeviceKey> {
 
     private final Object mLock;
-    private final CameraDeviceKey<TDeviceId> mDeviceKey;
+    private final CameraDeviceKey mDeviceKey;
 
     @GuardedBy("mLock")
-    private final SingleDeviceStateMachine<TDevice, CameraDeviceKey<TDeviceId>> mDeviceState;
+    private final SingleDeviceStateMachine<TDevice, CameraDeviceKey> mDeviceState;
 
     @Nullable
     @GuardedBy("mLock")
@@ -30,15 +30,15 @@ public class CameraDeviceLifecycle<TDevice, TDeviceId> implements
 
     // TODO: Consider passing in parent lifetime to ensure this is
     // ALWAYS shut down.
-    public CameraDeviceLifecycle(CameraDeviceKey<TDeviceId> cameraDeviceKey,
-          SingleDeviceStateMachine<TDevice, CameraDeviceKey<TDeviceId>> deviceState) {
+    public CameraDeviceLifecycle(CameraDeviceKey cameraDeviceKey,
+          SingleDeviceStateMachine<TDevice, CameraDeviceKey> deviceState) {
         mDeviceKey = cameraDeviceKey;
         mDeviceState = deviceState;
         mLock = new Object();
     }
 
     @Override
-    public CameraDeviceKey<TDeviceId> getId() {
+    public CameraDeviceKey getId() {
         return mDeviceKey;
     }
 

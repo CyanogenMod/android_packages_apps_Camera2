@@ -34,16 +34,14 @@ import android.view.MenuItem;
 
 import com.android.camera.FatalErrorHandler;
 import com.android.camera.FatalErrorHandlerImpl;
-import com.android.camera.app.CameraServicesImpl;
 import com.android.camera.debug.Log;
-
-import com.android.camera.one.OneCamera;
+import com.android.camera.device.CameraId;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
-import com.android.camera.one.config.OneCameraFeatureConfig;
-import com.android.camera.one.config.OneCameraFeatureConfigCreator;
+import com.android.camera.one.OneCameraModule;
 import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
@@ -71,22 +69,17 @@ public class CameraSettingsActivity extends FragmentActivity {
      */
     public static final String PREF_SCREEN_EXTRA = "pref_screen_extra";
     public static final String HIDE_ADVANCED_SCREEN = "hide_advanced";
-    private OneCameraManager mCameraManager;
-    private Context mAppContext;
+    private OneCameraManager mOneCameraManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAppContext = getApplicationContext();
         FatalErrorHandler fatalErrorHandler = new FatalErrorHandlerImpl(this);
         boolean hideAdvancedScreen = false;
 
-        OneCameraFeatureConfig featureConfig = OneCameraFeatureConfigCreator.createDefault(
-                getContentResolver(), CameraServicesImpl.instance().getMemoryManager());
         try {
-            mCameraManager = OneCameraManager.get(
-                    featureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
+            mOneCameraManager = OneCameraModule.provideOneCameraManager();
         } catch (OneCameraException e) {
             // Log error and continue. Modules requiring OneCamera should check
             // and handle if null by showing error dialog or other treatment.
@@ -98,10 +91,12 @@ public class CameraSettingsActivity extends FragmentActivity {
         OneCameraCharacteristics frontCameraCharacteristics;
         OneCameraCharacteristics backCameraCharacteristics;
         try {
-            frontCameraCharacteristics = mCameraManager
-                    .getCameraCharacteristics(OneCamera.Facing.FRONT);
-            backCameraCharacteristics = mCameraManager
-                    .getCameraCharacteristics(OneCamera.Facing.BACK);
+            CameraId frontCameraId = mOneCameraManager.findFirstCameraFacing(Facing.FRONT);
+            CameraId backCamera = mOneCameraManager.findFirstCameraFacing(Facing.BACK);
+            frontCameraCharacteristics = mOneCameraManager
+                    .getOneCameraCharacteristics(frontCameraId);
+            backCameraCharacteristics = mOneCameraManager
+                    .getOneCameraCharacteristics(backCamera);
             if (!frontCameraCharacteristics.isExposureCompensationSupported()
                     && !backCameraCharacteristics.isExposureCompensationSupported()) {
                 hideAdvancedScreen = true;

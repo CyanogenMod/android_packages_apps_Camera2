@@ -27,6 +27,8 @@ import android.view.View.OnLayoutChangeListener;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
+import com.android.camera.device.CameraId;
+import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.CameraUtil;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
@@ -321,7 +323,15 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         }
 
         Matrix matrix;
-        int cameraId = mCameraProvider.getCurrentCameraId();
+        CameraId cameraKey = mCameraProvider.getCurrentCameraId();
+        int cameraId = -1;
+
+        try {
+            cameraId = cameraKey.getLegacyValue();
+        } catch (UnsupportedOperationException ignored) {
+            Log.e(TAG, "TransformViewHelper does not support Camera API2");
+        }
+
         if (cameraId >= 0) {
             CameraDeviceInfo.Characteristics info = mCameraProvider.getCharacteristics(cameraId);
             matrix = info.getPreviewTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),

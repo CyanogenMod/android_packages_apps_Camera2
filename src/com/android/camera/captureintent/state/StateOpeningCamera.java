@@ -16,12 +16,14 @@
 
 package com.android.camera.captureintent.state;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
+import android.view.View;
 
 import com.android.camera.ButtonManager;
 import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.RefCountBase;
+import com.android.camera.captureintent.event.EventOnOpenCameraFailed;
+import com.android.camera.captureintent.event.EventOnOpenCameraSucceeded;
+import com.android.camera.captureintent.event.EventPause;
 import com.android.camera.captureintent.event.EventTapOnCancelIntentButton;
 import com.android.camera.captureintent.event.EventTapOnConfirmPhotoButton;
 import com.android.camera.captureintent.event.EventTapOnRetakePhotoButton;
@@ -29,12 +31,10 @@ import com.android.camera.captureintent.event.EventTapOnSwitchCameraButton;
 import com.android.camera.captureintent.resource.ResourceConstructed;
 import com.android.camera.captureintent.resource.ResourceSurfaceTexture;
 import com.android.camera.captureintent.stateful.EventHandler;
-import com.android.camera.captureintent.event.EventOnOpenCameraFailed;
-import com.android.camera.captureintent.event.EventOnOpenCameraSucceeded;
-import com.android.camera.captureintent.event.EventPause;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
+import com.android.camera.device.CameraId;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
@@ -43,8 +43,8 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.util.Size;
-
-import android.view.View;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 
 /**
  * Represents a state that the module is waiting for a camera to be opened.
@@ -55,6 +55,7 @@ public final class StateOpeningCamera extends StateImpl {
     private final RefCountBase<ResourceConstructed> mResourceConstructed;
     private final RefCountBase<ResourceSurfaceTexture> mResourceSurfaceTexture;
     private final OneCamera.Facing mCameraFacing;
+    private final CameraId mCameraId;
     private final OneCameraCharacteristics mCameraCharacteristics;
 
     /** The desired picture size. */
@@ -85,15 +86,17 @@ public final class StateOpeningCamera extends StateImpl {
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera.Facing cameraFacing,
+            CameraId cameraId,
             OneCameraCharacteristics cameraCharacteristics) {
         return new StateOpeningCamera(previousState, resourceConstructed,
-                resourceSurfaceTexture, cameraFacing, cameraCharacteristics);
+                resourceSurfaceTexture, cameraFacing, cameraId, cameraCharacteristics);
     }
 
     private StateOpeningCamera(State previousState,
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera.Facing cameraFacing,
+            CameraId cameraId,
             OneCameraCharacteristics cameraCharacteristics) {
         super(previousState);
         mResourceConstructed = resourceConstructed;
@@ -101,6 +104,7 @@ public final class StateOpeningCamera extends StateImpl {
         mResourceSurfaceTexture = resourceSurfaceTexture;
         mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
         mCameraFacing = cameraFacing;
+        mCameraId = cameraId;
         mCameraCharacteristics = cameraCharacteristics;
         mIsPaused = false;
         registerEventHandlers();
@@ -145,6 +149,7 @@ public final class StateOpeningCamera extends StateImpl {
                                 mResourceConstructed,
                                 mResourceSurfaceTexture,
                                 camera,
+                                mCameraId,
                                 mCameraFacing,
                                 mCameraCharacteristics,
                                 mPictureSize));
@@ -176,6 +181,7 @@ public final class StateOpeningCamera extends StateImpl {
         try {
             captureSetting = OneCameraCaptureSetting.create(
                     mCameraFacing,
+                    mCameraId,
                     mResourceConstructed.get().getResolutionSetting(),
                     mResourceConstructed.get().getAppController().getSettingsManager(),
                     mResourceConstructed.get().getAppController().getCameraScope(),
@@ -189,7 +195,8 @@ public final class StateOpeningCamera extends StateImpl {
         final ImageRotationCalculator imageRotationCalculator = ImageRotationCalculatorImpl.from(
                 mResourceConstructed.get().getOrientationManager(), mCameraCharacteristics);
 
-        mResourceConstructed.get().getCameraManager().open(
+        mResourceConstructed.get().getOneCameraOpener().open(
+                mCameraId,
                 captureSetting,
                 mResourceConstructed.get().getCameraHandler(),
                 mResourceConstructed.get().getMainThread(),
@@ -216,8 +223,8 @@ public final class StateOpeningCamera extends StateImpl {
         return new HardwareSpec() {
             @Override
             public boolean isFrontCameraSupported() {
-                return mResourceConstructed.get().getCameraManager()
-                        .hasCameraFacing(OneCamera.Facing.FRONT);
+                return mResourceConstructed.get()
+                      .getOneCameraManager().hasCameraFacing(OneCamera.Facing.FRONT);
             }
 
             @Override

@@ -4,6 +4,7 @@ import com.android.camera.async.Lifetime;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
+import com.android.camera.one.OneCameraException;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -262,11 +263,14 @@ public class SingleDeviceStateMachine<TDevice, TKey> implements SingleDeviceClos
         }
     }
 
-
     @GuardedBy("mLock")
     private void executeOpen() {
         mDeviceState = DeviceState.OPENING;
-        mDeviceActions.executeOpen(this, mDeviceLifetime);
+        try {
+            mDeviceActions.executeOpen(this, mDeviceLifetime);
+        } catch (Exception e) {
+            onDeviceOpenException(e);
+        }
         // TODO: Consider adding a timeout to the open call so that requests
         // are not left un-resolved.
     }
@@ -298,7 +302,12 @@ public class SingleDeviceStateMachine<TDevice, TKey> implements SingleDeviceClos
             mDeviceState = DeviceState.CLOSING;
             mTargetState = TargetState.CLOSED;
             closeRequest();
-            mDeviceActions.executeClose(this, device);
+
+            try {
+                mDeviceActions.executeClose(this, device);
+            } catch (Exception e) {
+                onDeviceClosingException(e);
+            }
         } else {
             shutdown();
         }

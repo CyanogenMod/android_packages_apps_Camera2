@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 
@@ -425,7 +426,7 @@ public class ResolutionUtil {
      *            sizes that should not be available on the device.
      * @return Whether the given size is blacklisted.
      */
-    public static boolean isBlackListed(Size size, String blacklistString) {
+    public static boolean isBlackListed(@Nonnull Size size, @Nonnull String blacklistString) {
         String[] blacklistStringArray = blacklistString.split(",");
         if (blacklistStringArray.length == 0) {
             return false;
@@ -434,7 +435,7 @@ public class ResolutionUtil {
         return isBlackListed(size, blacklistedSizes);
     }
 
-    private static boolean isBlackListed(Size size, Set<String> blacklistedSizes) {
+    private static boolean isBlackListed(@Nonnull Size size, @Nonnull Set<String> blacklistedSizes) {
         String sizeStr = size.getWidth() + "x" + size.getHeight();
         return blacklistedSizes.contains(sizeStr);
     }
