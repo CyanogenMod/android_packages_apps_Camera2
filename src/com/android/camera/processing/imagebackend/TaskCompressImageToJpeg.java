@@ -116,6 +116,14 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                     // copy in a non-direct buffer.
                     ByteBuffer origBuffer = img.proxy.getPlanes().get(0).getBuffer();
                     compressedData = ByteBuffer.allocate(origBuffer.limit());
+
+                    // On memory allocation failure, fail gracefully.
+                    if (compressedData == null) {
+                        // TODO: Put memory allocation failure code here.
+                        mSession.finishWithFailure(-1, true);
+                        return;
+                    }
+
                     origBuffer.rewind();
                     compressedData.put(origBuffer);
                     origBuffer.rewind();
@@ -233,6 +241,13 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
                     compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
                             * resultImage.height);
+
+                    // On memory allocation failure, fail gracefully.
+                    if (compressedData == null) {
+                        // TODO: Put memory allocation failure code here.
+                        mSession.finishWithFailure(-1, true);
+                        return;
+                    }
 
                     // Do the actual compression here.
                     numBytes = compressJpegFromYUV420Image(
