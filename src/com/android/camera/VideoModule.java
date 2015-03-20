@@ -1370,6 +1370,7 @@ public class VideoModule extends CameraModule
                         mMediaRecorder.start(); // Recording is now started
                     } catch (RuntimeException e) {
                         Log.e(TAG, "Could not start media recorder. ", e);
+                        mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
                         releaseMediaRecorder();
                         // If start fails, frameworks will not lock the camera for us.
                         mCameraDevice.lock();
