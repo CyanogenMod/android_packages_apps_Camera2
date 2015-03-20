@@ -23,6 +23,8 @@ import android.os.Build;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
+import com.android.camera.one.OneCamera;
+
 /**
  * Contains the logic for which Camera API and features should be enabled on the
  * current device.
@@ -122,7 +124,10 @@ public class OneCameraFeatureConfig {
     /**
      * @return The general support level for HDR+ on this device.
      */
-    public HdrPlusSupportLevel getHdrPlusSupportLevel() {
+    public HdrPlusSupportLevel getHdrPlusSupportLevel(OneCamera.Facing cameraFacing) {
+        if (cameraFacing == OneCamera.Facing.FRONT) {
+            return HdrPlusSupportLevel.NONE;
+        }
         return mHdrPlusSupportLevel;
     }
 

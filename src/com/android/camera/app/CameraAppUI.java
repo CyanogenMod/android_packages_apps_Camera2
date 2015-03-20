@@ -1991,16 +1991,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
         } else {
             if (hardwareSpec.isHdrPlusSupported()) {
-                if (bottomBarSpec.enableHdr && Keys.isCameraBackFacing(settingsManager,
-                                                                       mController.getModuleScope())) {
+                if (bottomBarSpec.enableHdr) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
                             bottomBarSpec.hdrCallback);
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
                 }
             } else if (hardwareSpec.isHdrSupported()) {
-                if (bottomBarSpec.enableHdr && Keys.isCameraBackFacing(settingsManager,
-                                                                       mController.getModuleScope())) {
+                if (bottomBarSpec.enableHdr) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
                             bottomBarSpec.hdrCallback);
                 } else {

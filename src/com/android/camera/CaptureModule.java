@@ -65,6 +65,7 @@ import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.OneCameraModule;
 import com.android.camera.one.OneCameraOpener;
+import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
 import com.android.camera.remote.RemoteCameraModule;
@@ -747,7 +748,9 @@ public class CaptureModule extends CameraModule implements
 
             @Override
             public boolean isHdrPlusSupported() {
-                return GcamHelper.hasGcamCapture(mAppController.getCameraFeatureConfig());
+                OneCameraFeatureConfig featureConfig = mAppController.getCameraFeatureConfig();
+                return featureConfig.getHdrPlusSupportLevel(mCameraFacing) !=
+                        OneCameraFeatureConfig.HdrPlusSupportLevel.NONE;
             }
 
             @Override
@@ -764,7 +767,8 @@ public class CaptureModule extends CameraModule implements
         bottomBarSpec.enableGridLines = true;
         bottomBarSpec.enableCamera = true;
         bottomBarSpec.cameraCallback = getCameraCallback();
-        bottomBarSpec.enableHdr = hardwareSpec.isHdrSupported() || hardwareSpec.isHdrPlusSupported();
+        bottomBarSpec.enableHdr =
+                hardwareSpec.isHdrSupported() || hardwareSpec.isHdrPlusSupported();
         bottomBarSpec.hdrCallback = getHdrButtonCallback();
         bottomBarSpec.enableSelfTimer = true;
         bottomBarSpec.showSelfTimer = true;
@@ -805,6 +809,7 @@ public class CaptureModule extends CameraModule implements
                     }
                 };
 
+        Log.v(TAG, ">>>>>>>> bottomBarSpec.enableHdr=" + bottomBarSpec.enableHdr);
         return bottomBarSpec;
     }
 
