@@ -474,7 +474,7 @@ public class AppUpgrader extends SettingsUpgrader {
 
         String pictureSize = settingsManager.getString(SettingsManager.SCOPE_GLOBAL,
                 Keys.KEY_PICTURE_SIZE_BACK);
-        if (pictureSize.equals("1836x3264")) {
+        if ("1836x3264".equals(pictureSize)) {
             Log.i(TAG, "Swapped dimensions on N5 16:9 resolution.");
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_PICTURE_SIZE_BACK,
                     "3264x1836");
