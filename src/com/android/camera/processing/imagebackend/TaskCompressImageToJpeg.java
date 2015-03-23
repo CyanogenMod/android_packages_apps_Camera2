@@ -25,6 +25,7 @@ import android.net.Uri;
 import com.android.camera.Exif;
 import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
+import com.android.camera.async.Listenable;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
@@ -296,7 +297,27 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                                 TaskInfo.Destination.FINAL_IMAGE);
                     }
                 });
-        mSession.getCollector().photoCaptureDoneEvent();
+
+        final ListenableFuture<TotalCaptureResultProxy> requestMetadata = img.metadata;
+        // If TotalCaptureResults are available add them to the capture event.
+        // Otherwise, do NOT wait for them, since we'd be stalling the ImageBackend
+        if (requestMetadata.isDone()) {
+            try {
+                mSession.getCollector()
+                        .decorateAtTimeOfCaptureRequestAvailable(requestMetadata.get());
+            } catch (InterruptedException e) {
+                Log.e(TAG,
+                        "CaptureResults not added to photoCaptureDoneEvent event due to Interrupted Exception.");
+            } catch (ExecutionException e) {
+                Log.w(TAG,
+                        "CaptureResults not added to photoCaptureDoneEvent event due to Execution Exception.");
+            } finally {
+                mSession.getCollector().photoCaptureDoneEvent();
+            }
+        } else {
+            Log.w(TAG, "CaptureResults unavailable to photoCaptureDoneEvent event.");
+            mSession.getCollector().photoCaptureDoneEvent();
+        }
     }
 
     /**

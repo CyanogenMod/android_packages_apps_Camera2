@@ -1,10 +1,15 @@
 package com.android.camera.stats;
 
+import android.graphics.Rect;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.params.Face;
 import android.os.SystemClock;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
+import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.ui.TouchCoordinate;
 
 /**
@@ -37,6 +42,9 @@ public class CaptureSessionStatsCollector {
     protected Float mTimerSeconds;
     protected TouchCoordinate mTouchCoordinate;
     protected Boolean mVolumeButtonShutter;
+    protected Face[] mFaces;
+    protected Float mLensFocusDistance;
+    protected Rect mActiveSensorSize;
 
     /**
      * Constructor
@@ -54,6 +62,18 @@ public class CaptureSessionStatsCollector {
     }
 
     /**
+     * Decorate the collector when the CaptureResult becomes available, which happens sometime
+     * after picture is taken.  In the current implementation, we query this structure for
+     * two fields: 1) CaptureResult.STATISTICS_FACES and 2) CaptureResult.LENS_FOCUS_DISTANCE
+     *
+     * @param captureResult CaptureResults to be queried for capture event information
+     */
+    public void decorateAtTimeOfCaptureRequestAvailable(CaptureResultProxy captureResult) {
+        mFaces = captureResult.get(CaptureResult.STATISTICS_FACES);
+        mLensFocusDistance = captureResult.get(CaptureResult.LENS_FOCUS_DISTANCE);
+    }
+
+    /**
      * Accumulate the information that should be available at the time of the Capture Request.
      * If you are unable to deliver one of these parameters, you may want to think again.
      *
@@ -67,6 +87,8 @@ public class CaptureSessionStatsCollector {
      * @param timerSeconds value of the countdown timer
      * @param touchCoordinate the last shutter touch coordinate
      * @param volumeButtonShutter whether the volume button was used to initialize the request.
+     * @param activeSensorSize size of the active sensor array, to be used for the coordinate
+     *                         space of the face array
      */
     public void decorateAtTimeCaptureRequest(
             final int mode,
@@ -78,7 +100,8 @@ public class CaptureSessionStatsCollector {
             final boolean gridLinesOn,
             final float timerSeconds,
             final TouchCoordinate touchCoordinate,
-            final Boolean volumeButtonShutter
+            final Boolean volumeButtonShutter,
+            final Rect activeSensorSize
     ) {
         mMode = mode;
         mFilename = filename;
@@ -90,6 +113,7 @@ public class CaptureSessionStatsCollector {
         mTimerSeconds = timerSeconds;
         mTouchCoordinate = touchCoordinate;
         mVolumeButtonShutter = volumeButtonShutter;
+        mActiveSensorSize = activeSensorSize;
     }
 
     /**
@@ -122,7 +146,8 @@ public class CaptureSessionStatsCollector {
             mUsageStatistics.photoCaptureDoneEvent(
                     mMode, mFilename, mExifInterface, mIsFrontFacing,
                     mIsHdr, mZoom, mFlashSetting, mGridLinesOn, mTimerSeconds,
-                    processingTime, mTouchCoordinate, mVolumeButtonShutter);
+                    processingTime, mTouchCoordinate, mVolumeButtonShutter,
+                    mFaces, mLensFocusDistance, mActiveSensorSize);
         }
     }
 
