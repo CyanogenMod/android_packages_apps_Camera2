@@ -19,7 +19,15 @@ package com.android.camera.data;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.opengl.EGL14;
+import android.opengl.EGLConfig;
+import android.opengl.EGLContext;
+import android.opengl.EGLDisplay;
+import android.opengl.EGLSurface;
+import android.opengl.GLES20;
 
+import com.android.camera.debug.Log;
+import com.android.camera.debug.Log.Tag;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.bumptech.glide.DrawableRequestBuilder;
@@ -37,19 +45,45 @@ import com.bumptech.glide.load.resource.transcode.BitmapToGlideDrawableTranscode
  * Manage common glide image requests for the camera filmstrip.
  */
 public final class GlideFilmstripManager {
+    private static final Tag TAG = new Tag("GlideFlmMgr");
+
     /** Default placeholder to display while images load */
     public static final int DEFAULT_PLACEHOLDER_RESOURCE = R.color.photo_placeholder;
 
-    // GL max texture size: keep the longest edge of a bitmap below this value.
-    // This is the default for android K and below.
-    public static final Size MAX_GL_TEXTURE_SIZE = new Size(2048, 2048);
+    // This is the default GL texture size for K and below, it may be bigger,
+    // it should not be smaller than this.
+    private static final int DEFAULT_MAX_GL_TEXTURE_SIZE = 2048;
+    private static Size MAX_GL_TEXTURE_SIZE;
+    public static Size getMaxGlTextureSize() {
+        if (MAX_GL_TEXTURE_SIZE == null) {
+            Integer size = computeEglMaxTextureSize();
+            if (size == null) {
+                // Fallback to the default 2048 if a size is not found.
+                MAX_GL_TEXTURE_SIZE = new Size(DEFAULT_MAX_GL_TEXTURE_SIZE,
+                      DEFAULT_MAX_GL_TEXTURE_SIZE);
+            } else {
+                MAX_GL_TEXTURE_SIZE = new Size(size, size);
+            }
+        }
+
+        return MAX_GL_TEXTURE_SIZE;
+    }
+
     public static final Size MEDIASTORE_THUMB_SIZE = new Size(512, 384);
     public static final Size TINY_THUMB_SIZE = new Size(256, 256);
 
-    // Estimated number of pixels that can be used to generate a thumbnail
-    // smoothly.
-    public static final int MAXIMUM_SMOOTH_PIXELS = 1024 * 1024;
-    public static final int MAXIMUM_FULL_RES_PIXELS = 2048 * 2048;
+    // Estimated memory bandwidth for N5 and N6 is about 500MB/s
+    // 500MBs * 1000000(Bytes per MB) / 4 (RGBA pixel) / 1000 (milli per S)
+    // Give a 20% margin for error and real conditions.
+    private static final int EST_PIXELS_PER_MILLI = 100000;
+
+    // Estimated number of bytes that can be used to usually display a thumbnail
+    // in under a frame at 60fps (16ms).
+    public static final int MAXIMUM_SMOOTH_PIXELS = EST_PIXELS_PER_MILLI * 10 /* millis */;
+
+    // Estimated number of bytes that can be used to generate a large thumbnail in under
+    // (about) 3 frames at 60fps (16ms).
+    public static final int MAXIMUM_FULL_RES_PIXELS = EST_PIXELS_PER_MILLI * 45 /* millis */;
     public static final int JPEG_COMPRESS_QUALITY = 90;
 
     private final GenericRequestBuilder<Uri, ?, ?, GlideDrawable> mTinyImageBuilder;
@@ -83,10 +117,10 @@ public final class GlideFilmstripManager {
     /**
      * Create a full size drawable request for a given width and height that is
      * as large as we can reasonably load into a view without causing massive
-     * jank problems or blank frames due to overly large
+     * jank problems or blank frames due to overly large 
      */
     public final DrawableRequestBuilder<Uri> loadFull(Uri uri, Key key, Size original) {
-        Size size = clampSize(original, MAXIMUM_FULL_RES_PIXELS, MAX_GL_TEXTURE_SIZE);
+        Size size = clampSize(original, MAXIMUM_FULL_RES_PIXELS, getMaxGlTextureSize());
 
         return mLargeImageBuilder
               .clone()
@@ -101,7 +135,7 @@ public final class GlideFilmstripManager {
      * pixels.
      */
     public DrawableRequestBuilder<Uri> loadScreen(Uri uri, Key key, Size original) {
-        Size size = clampSize(original, MAXIMUM_SMOOTH_PIXELS, MAX_GL_TEXTURE_SIZE);
+        Size size = clampSize(original, MAXIMUM_SMOOTH_PIXELS, getMaxGlTextureSize());
         return mLargeImageBuilder
               .clone()
               .load(uri)
@@ -116,12 +150,12 @@ public final class GlideFilmstripManager {
      * If the Uri points at an animated gif, the gif will not play.
      */
     public GenericRequestBuilder<Uri, ?, ?, GlideDrawable> loadMediaStoreThumb(Uri uri, Key key) {
-        Size size = clampSize(MEDIASTORE_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, MAX_GL_TEXTURE_SIZE);
+        Size size = clampSize(MEDIASTORE_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, getMaxGlTextureSize());
         return mTinyImageBuilder
               .clone()
               .load(uri)
               .signature(key)
-              // This attempts to ensure we load the cached media store version.
+                    // This attempts to ensure we load the cached media store version.
               .override(size.width(), size.height());
     }
 
@@ -132,7 +166,7 @@ public final class GlideFilmstripManager {
      * If the Uri points at an animated gif, the gif will not play.
      */
     public GenericRequestBuilder<Uri, ?, ?, GlideDrawable> loadTinyThumb(Uri uri, Key key) {
-        Size size = clampSize(TINY_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, MAX_GL_TEXTURE_SIZE);
+        Size size = clampSize(TINY_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS,  getMaxGlTextureSize());
         return mTinyImageBuilder
               .clone()
               .load(uri)
@@ -142,11 +176,11 @@ public final class GlideFilmstripManager {
 
     /**
      * Given a size, compute a value such that it will downscale the original size
-     * to fit within the maxSize bounding box and be less than the provided area.
+     * to fit within the maxSize bounding box and to be less than the provided area.
      *
      * This will never upscale sizes.
      */
-    private Size clampSize(Size original, double maxArea, Size maxSize) {
+    private static Size clampSize(Size original, double maxArea, Size maxSize) {
         if (original.getWidth() * original.getHeight() < maxArea &&
               original.getWidth() < maxSize.getWidth() &&
               original.getHeight() < maxSize.getHeight()) {
@@ -170,7 +204,7 @@ public final class GlideFilmstripManager {
         return new Size(width, height);
     }
 
-    private Size computeFitWithinSize(Size original, Size maxSize) {
+    private static Size computeFitWithinSize(Size original, Size maxSize) {
         double widthRatio = (double) maxSize.width() / original.width();
         double heightRatio = (double) maxSize.height() / original.height();
 
@@ -181,5 +215,68 @@ public final class GlideFilmstripManager {
         return new Size(
               Math.min((int) Math.round(original.width() * ratio), maxSize.width()),
               Math.min((int) Math.round(original.height() * ratio), maxSize.height()));
+    }
+
+    /**
+     * Ridiculous way to read the devices maximum texture size because no other
+     * way is provided.
+     */
+    private static Integer computeEglMaxTextureSize() {
+        EGLDisplay eglDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
+        int[] _ = new int[2];
+        EGL14.eglInitialize(eglDisplay, _, 0, _, 1);
+
+        int[] configAttr = {
+              EGL14.EGL_COLOR_BUFFER_TYPE, EGL14.EGL_RGB_BUFFER,
+              EGL14.EGL_LEVEL, 0,
+              EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
+              EGL14.EGL_SURFACE_TYPE, EGL14.EGL_PBUFFER_BIT,
+              EGL14.EGL_NONE
+        };
+        EGLConfig[] eglConfigs = new EGLConfig[1];
+        int[] configCount = new int[1];
+        EGL14.eglChooseConfig(eglDisplay, configAttr, 0,
+              eglConfigs, 0, 1, configCount, 0);
+
+        if (configCount[0] == 0) {
+            Log.w(TAG, "No EGL configurations found!");
+            return null;
+        }
+        EGLConfig eglConfig = eglConfigs[0];
+
+        // Create a tiny surface
+        int[] eglSurfaceAttributes = {
+              EGL14.EGL_WIDTH, 64,
+              EGL14.EGL_HEIGHT, 64,
+              EGL14.EGL_NONE
+        };
+        //
+        EGLSurface eglSurface = EGL14.eglCreatePbufferSurface(eglDisplay, eglConfig,
+              eglSurfaceAttributes, 0);
+
+        int[] eglContextAttributes = {
+              EGL14.EGL_CONTEXT_CLIENT_VERSION, 2,
+              EGL14.EGL_NONE
+        };
+
+        // Create an EGL context.
+        EGLContext eglContext = EGL14.eglCreateContext(eglDisplay, eglConfig, EGL14.EGL_NO_CONTEXT,
+              eglContextAttributes, 0);
+        EGL14.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+        // Actually read the Gl_MAX_TEXTURE_SIZE into the array.
+        int[] maxSize = new int[1];
+        GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+        int result = maxSize[0];
+
+        // Tear down the surface, context, and display.
+        EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE,
+              EGL14.EGL_NO_CONTEXT);
+        EGL14.eglDestroySurface(eglDisplay, eglSurface);
+        EGL14.eglDestroyContext(eglDisplay, eglContext);
+        EGL14.eglTerminate(eglDisplay);
+
+        // Return the computed max size.
+        return result;
     }
 }
