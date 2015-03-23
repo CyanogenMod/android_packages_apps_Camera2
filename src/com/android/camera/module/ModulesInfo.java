@@ -27,6 +27,7 @@ import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManager;
 import com.android.camera.captureintent.CaptureIntentModule;
 import com.android.camera.debug.Log;
+import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraException;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.config.OneCameraFeatureConfig.HdrPlusSupportLevel;
@@ -65,7 +66,8 @@ public class ModulesInfo {
         }
         if (GcamHelper.hasGcamAsSeparateModule(config)) {
             registerGcamModule(moduleManager, res.getInteger(R.integer.camera_mode_gcam),
-                    SettingsScopeNamespaces.PHOTO, config.getHdrPlusSupportLevel());
+                    SettingsScopeNamespaces.PHOTO,
+                    config.getHdrPlusSupportLevel(OneCamera.Facing.BACK));
         }
         int imageCaptureIntentModuleId = res.getInteger(R.integer.camera_mode_capture_intent);
         registerCaptureIntentModule(moduleManager, imageCaptureIntentModuleId,

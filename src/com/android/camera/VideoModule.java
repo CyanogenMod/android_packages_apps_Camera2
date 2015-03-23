@@ -545,7 +545,7 @@ public class VideoModule extends CameraModule
     public HardwareSpec getHardwareSpec() {
         return (mCameraSettings != null ?
                 new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
-                        mAppController.getCameraFeatureConfig()) : null);
+                        mAppController.getCameraFeatureConfig(), isCameraFrontFacing()) : null);
     }
 
     @Override
