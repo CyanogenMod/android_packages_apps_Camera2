@@ -1428,14 +1428,14 @@ public class CameraActivity extends QuickActivity
             // for displaying images.
             glide.setMemoryCategory(MemoryCategory.HIGH);
 
-            Size glTextureSize = GlideFilmstripManager.getMaxGlTextureSize();
+            Size maxDisplaySize = GlideFilmstripManager.getMaxImageDisplaySize();
 
             // Prefill glides bitmap pool to prevent excessive jank
             // when loading large images.
             glide.preFillBitmapPool(
                 new PreFillType.Builder(
-                      glTextureSize.width(),
-                      glTextureSize.height())
+                      maxDisplaySize.width(),
+                      maxDisplaySize.height())
                   .setWeight(5),
                   // It's more important for jank and GC to have
                   // A larger weight of max texture size images than

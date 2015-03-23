@@ -52,21 +52,29 @@ public final class GlideFilmstripManager {
 
     // This is the default GL texture size for K and below, it may be bigger,
     // it should not be smaller than this.
-    private static final int DEFAULT_MAX_GL_TEXTURE_SIZE = 2048;
-    private static Size MAX_GL_TEXTURE_SIZE;
-    public static Size getMaxGlTextureSize() {
-        if (MAX_GL_TEXTURE_SIZE == null) {
+    private static final int DEFAULT_MAX_IMAGE_DISPLAY_SIZE = 2048;
+
+    // Some phones have massive GL_Texture sizes. Prevent images from doing
+    // overly large allocations by capping the texture size.
+    private static final int MAX_GL_TEXTURE_SIZE = 4096;
+    private static Size MAX_IMAGE_DISPLAY_SIZE;
+    public static Size getMaxImageDisplaySize() {
+        if (MAX_IMAGE_DISPLAY_SIZE == null) {
             Integer size = computeEglMaxTextureSize();
             if (size == null) {
                 // Fallback to the default 2048 if a size is not found.
-                MAX_GL_TEXTURE_SIZE = new Size(DEFAULT_MAX_GL_TEXTURE_SIZE,
-                      DEFAULT_MAX_GL_TEXTURE_SIZE);
+                MAX_IMAGE_DISPLAY_SIZE = new Size(DEFAULT_MAX_IMAGE_DISPLAY_SIZE,
+                      DEFAULT_MAX_IMAGE_DISPLAY_SIZE);
+            } else if (size > MAX_GL_TEXTURE_SIZE) {
+                // Cap the display size to prevent Out of memory problems during
+                // pre-allocation of huge bitmaps.
+                MAX_IMAGE_DISPLAY_SIZE = new Size(MAX_GL_TEXTURE_SIZE, MAX_GL_TEXTURE_SIZE);
             } else {
-                MAX_GL_TEXTURE_SIZE = new Size(size, size);
+                MAX_IMAGE_DISPLAY_SIZE = new Size(size, size);
             }
         }
 
-        return MAX_GL_TEXTURE_SIZE;
+        return MAX_IMAGE_DISPLAY_SIZE;
     }
 
     public static final Size MEDIASTORE_THUMB_SIZE = new Size(512, 384);
@@ -117,10 +125,10 @@ public final class GlideFilmstripManager {
     /**
      * Create a full size drawable request for a given width and height that is
      * as large as we can reasonably load into a view without causing massive
-     * jank problems or blank frames due to overly large 
+     * jank problems or blank frames due to overly large textures.
      */
     public final DrawableRequestBuilder<Uri> loadFull(Uri uri, Key key, Size original) {
-        Size size = clampSize(original, MAXIMUM_FULL_RES_PIXELS, getMaxGlTextureSize());
+        Size size = clampSize(original, MAXIMUM_FULL_RES_PIXELS, getMaxImageDisplaySize());
 
         return mLargeImageBuilder
               .clone()
@@ -135,7 +143,7 @@ public final class GlideFilmstripManager {
      * pixels.
      */
     public DrawableRequestBuilder<Uri> loadScreen(Uri uri, Key key, Size original) {
-        Size size = clampSize(original, MAXIMUM_SMOOTH_PIXELS, getMaxGlTextureSize());
+        Size size = clampSize(original, MAXIMUM_SMOOTH_PIXELS, getMaxImageDisplaySize());
         return mLargeImageBuilder
               .clone()
               .load(uri)
@@ -150,7 +158,7 @@ public final class GlideFilmstripManager {
      * If the Uri points at an animated gif, the gif will not play.
      */
     public GenericRequestBuilder<Uri, ?, ?, GlideDrawable> loadMediaStoreThumb(Uri uri, Key key) {
-        Size size = clampSize(MEDIASTORE_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, getMaxGlTextureSize());
+        Size size = clampSize(MEDIASTORE_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, getMaxImageDisplaySize());
         return mTinyImageBuilder
               .clone()
               .load(uri)
@@ -166,7 +174,7 @@ public final class GlideFilmstripManager {
      * If the Uri points at an animated gif, the gif will not play.
      */
     public GenericRequestBuilder<Uri, ?, ?, GlideDrawable> loadTinyThumb(Uri uri, Key key) {
-        Size size = clampSize(TINY_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS,  getMaxGlTextureSize());
+        Size size = clampSize(TINY_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS,  getMaxImageDisplaySize());
         return mTinyImageBuilder
               .clone()
               .load(uri)
