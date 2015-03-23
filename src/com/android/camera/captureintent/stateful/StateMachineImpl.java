@@ -111,7 +111,8 @@ public class StateMachineImpl implements StateMachine {
                 }
             }
         } catch (Exception ex) {
-            Log.e(TAG, "Failed to process event: " + ex);
+            Log.e(TAG, "Failed to process event: " + event);
+            throw ex;
         } finally {
             mStateLock.unlock();
         }

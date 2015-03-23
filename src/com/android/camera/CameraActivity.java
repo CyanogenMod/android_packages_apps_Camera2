@@ -185,9 +185,6 @@ public class CameraActivity extends QuickActivity
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
-    public static final String MODULE_SCOPE_PREFIX = "_preferences_module_";
-    public static final String CAMERA_SCOPE_PREFIX = "_preferences_camera_";
-
     private static final int MSG_CLEAR_SCREEN_ON_FLAG = 2;
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000; // 2 mins.
     /** Load metadata for 10 items ahead of our current. */
@@ -215,6 +212,7 @@ public class CameraActivity extends QuickActivity
     private PhotoItemFactory mPhotoItemFactory;
     private LocalFilmstripDataAdapter mDataAdapter;
 
+    private ActiveCameraDeviceTracker mActiveCameraDeviceTracker;
     private OneCameraOpener mOneCameraOpener;
     private OneCameraManager mOneCameraManager;
     private SettingsManager mSettingsManager;
@@ -1029,7 +1027,7 @@ public class CameraActivity extends QuickActivity
     @Override
     public String getModuleScope() {
         ModuleAgent agent = mModuleManager.getModuleAgent(mCurrentModeIndex);
-        return MODULE_SCOPE_PREFIX + agent.getScopeNamespace();
+        return SettingsManager.getModuleSettingScope(agent.getScopeNamespace());
     }
 
     @Override
@@ -1039,7 +1037,8 @@ public class CameraActivity extends QuickActivity
         // this could cause user issues, so log a stack trace noting the call path
         // which resulted in this scenario.
 
-        return CAMERA_SCOPE_PREFIX + mCameraController.getCurrentCameraId().getValue();
+        return SettingsManager.getCameraSettingScope(
+                mCameraController.getCurrentCameraId().getValue());
     }
 
     @Override
@@ -1445,9 +1444,14 @@ public class CameraActivity extends QuickActivity
                       GlideFilmstripManager.MEDIASTORE_THUMB_SIZE.height()));
         }
         profile.mark("Glide.setup");
+
+        mActiveCameraDeviceTracker = ActiveCameraDeviceTracker.instance();
         try {
             mOneCameraOpener = OneCameraModule.provideOneCameraOpener(
-                  mFeatureConfig, mAppContext, ResolutionUtil.getDisplayMetrics(this));
+                    mFeatureConfig,
+                    mAppContext,
+                    mActiveCameraDeviceTracker,
+                    ResolutionUtil.getDisplayMetrics(this));
             mOneCameraManager = OneCameraModule.provideOneCameraManager();
         } catch (OneCameraException e) {
             // Log error and continue start process while showing error dialog..
@@ -1461,7 +1465,7 @@ public class CameraActivity extends QuickActivity
                         CameraAgentFactory.CameraApi.API_1),
                 CameraAgentFactory.getAndroidCameraAgent(mAppContext,
                         CameraAgentFactory.CameraApi.AUTO),
-                ActiveCameraDeviceTracker.instance());
+                mActiveCameraDeviceTracker);
         mCameraController.setCameraExceptionHandler(
                 new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
 

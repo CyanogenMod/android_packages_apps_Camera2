@@ -176,7 +176,6 @@ public final class StateOpeningCamera extends StateImpl {
             Log.e(TAG, "mCameraCharacteristics is null");
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
         }
-
         OneCameraCaptureSetting captureSetting;
         try {
             captureSetting = OneCameraCaptureSetting.create(
