@@ -142,6 +142,7 @@ import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.QuickActivity;
 import com.android.camera.util.ReleaseHelper;
+import com.android.camera.util.Size;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
@@ -1427,12 +1428,14 @@ public class CameraActivity extends QuickActivity
             // for displaying images.
             glide.setMemoryCategory(MemoryCategory.HIGH);
 
+            Size glTextureSize = GlideFilmstripManager.getMaxGlTextureSize();
+
             // Prefill glides bitmap pool to prevent excessive jank
             // when loading large images.
             glide.preFillBitmapPool(
                 new PreFillType.Builder(
-                      GlideFilmstripManager.MAX_GL_TEXTURE_SIZE.width(),
-                      GlideFilmstripManager.MAX_GL_TEXTURE_SIZE.height())
+                      glTextureSize.width(),
+                      glTextureSize.height())
                   .setWeight(5),
                   // It's more important for jank and GC to have
                   // A larger weight of max texture size images than
