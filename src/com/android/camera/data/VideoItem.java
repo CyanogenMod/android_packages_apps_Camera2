@@ -192,8 +192,7 @@ public class VideoItem extends FilmstripItemBase<VideoItemData> {
 
     @Override
     public void renderThumbnail(@Nonnull View view) {
-        mGlideManager.loadScreen(mData.getUri(), generateSignature(mData),
-              mSuggestedWidthPx, mSuggestedHeightPx)
+        mGlideManager.loadScreen(mData.getUri(), generateSignature(mData), mSuggestedSize)
               .thumbnail(mGlideManager.loadMediaStoreThumb(mData.getUri(),
                     generateSignature(mData)))
               .into(getViewHolder(view).mVideoView);
