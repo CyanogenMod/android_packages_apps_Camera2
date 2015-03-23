@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.GenericRequestBuilder;
@@ -39,16 +40,17 @@ public final class GlideFilmstripManager {
     /** Default placeholder to display while images load */
     public static final int DEFAULT_PLACEHOLDER_RESOURCE = R.color.photo_placeholder;
 
-    // GL max texture size: keep bitmaps below this value.
-    public static final int MAXIMUM_TEXTURE_SIZE = 2048;
+    // GL max texture size: keep the longest edge of a bitmap below this value.
+    // This is the default for android K and below.
+    public static final Size MAX_GL_TEXTURE_SIZE = new Size(2048, 2048);
+    public static final Size MEDIASTORE_THUMB_SIZE = new Size(512, 384);
+    public static final Size TINY_THUMB_SIZE = new Size(256, 256);
+
+    // Estimated number of pixels that can be used to generate a thumbnail
+    // smoothly.
     public static final int MAXIMUM_SMOOTH_PIXELS = 1024 * 1024;
-
-    public static final int MEDIASTORE_THUMB_WIDTH = 512;
-    public static final int MEDIASTORE_THUMB_HEIGHT = 384;
-
-    public static final int TINY_THUMBNAIL_SIZE = 256;
-
-    private static final int JPEG_COMPRESS_QUALITY = 90;
+    public static final int MAXIMUM_FULL_RES_PIXELS = 2048 * 2048;
+    public static final int JPEG_COMPRESS_QUALITY = 90;
 
     private final GenericRequestBuilder<Uri, ?, ?, GlideDrawable> mTinyImageBuilder;
     private final DrawableRequestBuilder<Uri> mLargeImageBuilder;
@@ -81,22 +83,16 @@ public final class GlideFilmstripManager {
     /**
      * Create a full size drawable request for a given width and height that is
      * as large as we can reasonably load into a view without causing massive
-     * jank problems.
+     * jank problems or blank frames due to overly large
      */
-    public final DrawableRequestBuilder<Uri> loadFull(Uri uri, Key key, int width,
-          int height) {
-        // compute a ratio such that viewWidth and viewHeight are less than
-        // MAXIMUM_SMOOTH_TEXTURE_SIZE but maintain their aspect ratio.
-        float downscaleRatio = downscaleRatioToFit(width, height,
-              (double) MAXIMUM_TEXTURE_SIZE * MAXIMUM_TEXTURE_SIZE);
+    public final DrawableRequestBuilder<Uri> loadFull(Uri uri, Key key, Size original) {
+        Size size = clampSize(original, MAXIMUM_FULL_RES_PIXELS, MAX_GL_TEXTURE_SIZE);
 
         return mLargeImageBuilder
               .clone()
               .load(uri)
               .signature(key)
-              .override(
-                    Math.round(width * downscaleRatio),
-                    Math.round(height * downscaleRatio));
+              .override(size.width(), size.height());
     }
 
     /**
@@ -104,19 +100,13 @@ public final class GlideFilmstripManager {
      * smaller than loadFull, but is intended be large enough to fill the screen
      * pixels.
      */
-    public DrawableRequestBuilder<Uri> loadScreen(Uri uri, Key key, int width,
-          int height) {
-        // compute a ratio such that viewWidth and viewHeight are less than
-        // MAXIMUM_SMOOTH_TEXTURE_SIZE but maintain their aspect ratio.
-        float downscaleRatio = downscaleRatioToFit(width, height, MAXIMUM_SMOOTH_PIXELS);
-
+    public DrawableRequestBuilder<Uri> loadScreen(Uri uri, Key key, Size original) {
+        Size size = clampSize(original, MAXIMUM_SMOOTH_PIXELS, MAX_GL_TEXTURE_SIZE);
         return mLargeImageBuilder
               .clone()
               .load(uri)
               .signature(key)
-              .override(
-                    Math.round(width * downscaleRatio),
-                    Math.round(height * downscaleRatio));
+              .override(size.width(), size.height());
     }
 
     /**
@@ -126,12 +116,13 @@ public final class GlideFilmstripManager {
      * If the Uri points at an animated gif, the gif will not play.
      */
     public GenericRequestBuilder<Uri, ?, ?, GlideDrawable> loadMediaStoreThumb(Uri uri, Key key) {
+        Size size = clampSize(MEDIASTORE_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, MAX_GL_TEXTURE_SIZE);
         return mTinyImageBuilder
               .clone()
               .load(uri)
               .signature(key)
               // This attempts to ensure we load the cached media store version.
-              .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
+              .override(size.width(), size.height());
     }
 
     /**
@@ -141,17 +132,54 @@ public final class GlideFilmstripManager {
      * If the Uri points at an animated gif, the gif will not play.
      */
     public GenericRequestBuilder<Uri, ?, ?, GlideDrawable> loadTinyThumb(Uri uri, Key key) {
+        Size size = clampSize(TINY_THUMB_SIZE, MAXIMUM_SMOOTH_PIXELS, MAX_GL_TEXTURE_SIZE);
         return mTinyImageBuilder
               .clone()
               .load(uri)
               .signature(key)
-              .override(TINY_THUMBNAIL_SIZE, TINY_THUMBNAIL_SIZE);
+              .override(size.width(), size.height());
     }
 
-    private float downscaleRatioToFit(int width, int height, double area) {
-        // Compute a ratio that will keep the area of the image within the fit size parameter.
+    /**
+     * Given a size, compute a value such that it will downscale the original size
+     * to fit within the maxSize bounding box and be less than the provided area.
+     *
+     * This will never upscale sizes.
+     */
+    private Size clampSize(Size original, double maxArea, Size maxSize) {
+        if (original.getWidth() * original.getHeight() < maxArea &&
+              original.getWidth() < maxSize.getWidth() &&
+              original.getHeight() < maxSize.getHeight()) {
+            // In several cases, the size is smaller than the max, and the area is
+            // smaller than the max area.
+            return original;
+        }
 
-        float ratio = (float) Math.sqrt(area / (height * width));
-        return Math.min(ratio, 1.0f);
+        // Compute a ratio that will keep the number of pixels in the image (hence,
+        // the number of bytes that can be copied into memory) under the maxArea.
+        double ratio = Math.min(Math.sqrt(maxArea / original.area()), 1.0f);
+        int width = (int) Math.round(original.width() * ratio);
+        int height = (int) Math.round(original.height() * ratio);
+
+        // If that ratio results in an image where the edge length is still too large,
+        // constrain based on max edge length instead.
+        if (width > maxSize.width() || height > maxSize.height()) {
+            return computeFitWithinSize(original, maxSize);
+        }
+
+        return new Size(width, height);
+    }
+
+    private Size computeFitWithinSize(Size original, Size maxSize) {
+        double widthRatio = (double) maxSize.width() / original.width();
+        double heightRatio = (double) maxSize.height() / original.height();
+
+        double ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+
+        // This rounds and ensures that (even with rounding and int conversion)
+        // that the returned size is never larger than maxSize.
+        return new Size(
+              Math.min((int) Math.round(original.width() * ratio), maxSize.width()),
+              Math.min((int) Math.round(original.height() * ratio), maxSize.height()));
     }
 }

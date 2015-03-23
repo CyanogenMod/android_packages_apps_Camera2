@@ -49,8 +49,7 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
     protected final FilmstripItemAttributes mAttributes;
     protected final DateFormat mDateFormatter = DateFormat.getDateTimeInstance();
 
-    protected int mSuggestedWidthPx;
-    protected int mSuggestedHeightPx;
+    protected Size mSuggestedSize;
 
     public FilmstripItemBase(Context context, GlideFilmstripManager glideManager, T data,
           FilmstripItemAttributes attributes) {
@@ -61,8 +60,7 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
 
         mMetaData = new Metadata();
 
-        mSuggestedWidthPx = GlideFilmstripManager.TINY_THUMBNAIL_SIZE;
-        mSuggestedHeightPx = GlideFilmstripManager.TINY_THUMBNAIL_SIZE;
+        mSuggestedSize = GlideFilmstripManager.TINY_THUMB_SIZE;
     }
 
     @Override
@@ -81,8 +79,7 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
     @Override
     public void setSuggestedSize(int widthPx, int heightPx) {
         if (widthPx > 0 && heightPx > 0) {
-            mSuggestedWidthPx = widthPx;
-            mSuggestedHeightPx = heightPx;
+            mSuggestedSize = new Size(widthPx, heightPx);
         } else {
             Log.w(TAG, "Suggested size was set to a zero area value!");
         }

@@ -194,8 +194,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
     private DrawableRequestBuilder<Uri> renderScreenSize(Uri uri) {
         DrawableRequestBuilder<Uri> request =
-              mGlideManager.loadScreen(uri, generateSignature(mData),
-                    mSuggestedWidthPx, mSuggestedHeightPx);
+              mGlideManager.loadScreen(uri, generateSignature(mData), mSuggestedSize);
 
         // If we have a non-null placeholder, use that and do NOT ever render a
         // tiny thumbnail to prevent un-intended "flash of low resolution image"
@@ -212,8 +211,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
 
     private DrawableRequestBuilder<Uri> renderFullSize(Uri uri) {
         Size size = mData.getDimensions();
-        return mGlideManager.loadFull(uri, generateSignature(mData), size.getWidth(),
-              size.getHeight())
+        return mGlideManager.loadFull(uri, generateSignature(mData), size)
               .thumbnail(renderScreenSize(uri));
     }
 

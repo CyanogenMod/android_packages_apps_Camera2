@@ -1430,14 +1430,16 @@ public class CameraActivity extends QuickActivity
             // Prefill glides bitmap pool to prevent excessive jank
             // when loading large images.
             glide.preFillBitmapPool(
-                new PreFillType.Builder(GlideFilmstripManager.MAXIMUM_TEXTURE_SIZE)
+                new PreFillType.Builder(
+                      GlideFilmstripManager.MAX_GL_TEXTURE_SIZE.width(),
+                      GlideFilmstripManager.MAX_GL_TEXTURE_SIZE.height())
                   .setWeight(5),
                   // It's more important for jank and GC to have
                   // A larger weight of max texture size images than
                   // media store sized images.
                 new PreFillType.Builder(
-                      GlideFilmstripManager.MEDIASTORE_THUMB_WIDTH,
-                      GlideFilmstripManager.MEDIASTORE_THUMB_HEIGHT));
+                      GlideFilmstripManager.MEDIASTORE_THUMB_SIZE.width(),
+                      GlideFilmstripManager.MEDIASTORE_THUMB_SIZE.height()));
         }
         profile.mark("Glide.setup");
         try {
