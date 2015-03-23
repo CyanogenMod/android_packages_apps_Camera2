@@ -114,6 +114,13 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     }
 
     @Override
+    public List<FaceDetectMode> getSupportedFaceDetectModes() {
+        List<FaceDetectMode> oneModes = new ArrayList<>(1);
+        oneModes.add(FaceDetectMode.NONE);
+        return oneModes;
+    }
+
+    @Override
     public LinearScale getLensFocusRange() {
         // Diopter range is not supported on legacy camera devices.
         return LensRangeCalculator.getNoOp();

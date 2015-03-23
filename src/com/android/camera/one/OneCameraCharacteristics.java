@@ -34,6 +34,10 @@ public interface OneCameraCharacteristics {
         FULL, LIMITED, LEGACY
     }
 
+    public enum FaceDetectMode {
+        FULL, SIMPLE, NONE
+    }
+
     /**
      * Gets the supported picture sizes for the given image format.
      *
@@ -81,6 +85,11 @@ public interface OneCameraCharacteristics {
      * @return The supported hardware level.
      */
     public SupportedHardwareLevel getSupportedHardwareLevel();
+
+    /**
+     * @return The supported face detection modes.
+     */
+    public List<FaceDetectMode> getSupportedFaceDetectModes();
 
     /**
      * A converter from the physical focus range of the camera to a ratio.

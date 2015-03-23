@@ -95,11 +95,13 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
             final OneCameraCharacteristics characteristics,
             final OneCameraFeatureConfig.CaptureSupportLevel supportLevel,
             final MainThread mainExecutor,
-            Size pictureSize, final ImageSaver.Builder imageSaverBuilder,
+            final Size pictureSize,
+            final ImageSaver.Builder imageSaverBuilder,
             final Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             final Observable<Integer> exposureSetting,
             final Observable<Boolean> hdrSceneSetting,
-            final BurstFacade burstFacade, FatalErrorHandler fatalErrorHandler) {
+            final BurstFacade burstFacade,
+            final FatalErrorHandler fatalErrorHandler) {
         final Lifetime lifetime = new Lifetime();
 
         final ImageReaderProxy imageReader = new CloseWhenDoneImageReader(new LoggingImageReader(

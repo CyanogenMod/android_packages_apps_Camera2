@@ -33,10 +33,10 @@ import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+import com.google.android.camera2.CameraMetadata;
 import com.google.common.primitives.Floats;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -136,6 +136,28 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
             default:
                 throw new IllegalStateException("Invalid value for INFO_SUPPORTED_HARDWARE_LEVEL");
         }
+    }
+
+    @Override
+    public List<FaceDetectMode> getSupportedFaceDetectModes() {
+        int[] modes = mCameraCharacteristics.get(
+              CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES);
+
+        List<FaceDetectMode> oneModes = new ArrayList<>(modes.length);
+
+        for(int i=0; i < modes.length; i++) {
+            if (modes[i] == CameraMetadata.STATISTICS_FACE_DETECT_MODE_FULL) {
+                oneModes.add(FaceDetectMode.FULL);
+            }
+            if (modes[i] == CameraMetadata.STATISTICS_FACE_DETECT_MODE_SIMPLE) {
+                oneModes.add(FaceDetectMode.SIMPLE);
+            }
+            if (modes[i] == CameraMetadata.STATISTICS_FACE_DETECT_MODE_OFF) {
+                oneModes.add(FaceDetectMode.NONE);
+            }
+        }
+
+        return oneModes;
     }
 
     @Override

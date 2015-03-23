@@ -20,28 +20,44 @@ import android.annotation.TargetApi;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Build.VERSION_CODES;
 
+import com.android.camera.one.OneCameraCharacteristics.FaceDetectMode;
+import com.android.camera.one.OneCameraCharacteristics.SupportedHardwareLevel;
 import com.google.common.base.Supplier;
 
 /**
- * Computes the current scene mode to use based on the current hdr setting.
+ * Computes the current scene mode to use based on the HDR and face detect modes.
  */
 @TargetApi(VERSION_CODES.LOLLIPOP)
-public class HdrSettingBasedSceneMode implements Supplier<Integer> {
+public class ControlSceneModeSelector implements Supplier<Integer> {
     // API 21 omitted this constant officially, but kept it around as a hidden constant
     // MR1 brings it back officially as the same int value.
     public static final int CONTROL_SCENE_MODE_HDR = 0x12;
 
     private final Supplier<Boolean> mHdrSetting;
+    private final Supplier<FaceDetectMode> mFaceDetectMode;
+    private final SupportedHardwareLevel mSupportedHardwareLevel;
 
-    public HdrSettingBasedSceneMode(Supplier<Boolean> hdrSetting) {
+    public ControlSceneModeSelector(Supplier<Boolean> hdrSetting,
+          Supplier<FaceDetectMode> faceDetectMode,
+          SupportedHardwareLevel supportedHardwareLevel) {
         mHdrSetting = hdrSetting;
+        mFaceDetectMode = faceDetectMode;
+        mSupportedHardwareLevel = supportedHardwareLevel;
     }
 
     @Override
     public Integer get() {
-        if (mHdrSetting.get()) {
-            return CONTROL_SCENE_MODE_HDR;
+        if (mSupportedHardwareLevel == SupportedHardwareLevel.LEGACY) {
+            if (mHdrSetting.get()) {
+                return CONTROL_SCENE_MODE_HDR;
+            }
         }
+
+        if (mFaceDetectMode.get() == FaceDetectMode.FULL ||
+              mFaceDetectMode.get() == FaceDetectMode.SIMPLE) {
+            return CaptureRequest.CONTROL_SCENE_MODE_FACE_PRIORITY;
+        }
+
         return CaptureRequest.CONTROL_SCENE_MODE_DISABLED;
     }
 }

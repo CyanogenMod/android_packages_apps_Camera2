@@ -18,24 +18,25 @@ package com.android.camera.one.v2.common;
 
 import android.hardware.camera2.CaptureRequest;
 
+import com.android.camera.one.OneCameraCharacteristics.FaceDetectMode;
 import com.android.camera.one.OneCameraCharacteristics.SupportedHardwareLevel;
 import com.google.common.base.Supplier;
 
 /**
- * Computes the current control mode to use based on the current hdr setting
- * and supported hardware level for the device.
+ * Select a control mode based on the HdrSettings and face detection modes.
  */
-public class HdrSettingBasedControlMode implements Supplier<Integer> {
+public class ControlModeSelector implements Supplier<Integer> {
     private final Supplier<Boolean> mHdrSetting;
+    private final Supplier<FaceDetectMode> mFaceDetectMode;
     private final SupportedHardwareLevel mSupportedHardwareLevel;
-    private final Integer mDefaultControlMode;
 
-    public HdrSettingBasedControlMode(Supplier<Boolean> hdrSetting,
-          SupportedHardwareLevel supportedHardwareLevel,
-          Integer defaultControlMode) {
+    public ControlModeSelector(
+          Supplier<Boolean> hdrSetting,
+          Supplier<FaceDetectMode> faceDetectMode,
+          SupportedHardwareLevel supportedHardwareLevel) {
         mHdrSetting = hdrSetting;
+        mFaceDetectMode = faceDetectMode;
         mSupportedHardwareLevel = supportedHardwareLevel;
-        mDefaultControlMode = defaultControlMode;
     }
 
     @Override
@@ -46,6 +47,11 @@ public class HdrSettingBasedControlMode implements Supplier<Integer> {
             }
         }
 
-        return mDefaultControlMode;
+        if (mFaceDetectMode.get() == FaceDetectMode.FULL ||
+              mFaceDetectMode.get() == FaceDetectMode.SIMPLE) {
+            return CaptureRequest.CONTROL_MODE_USE_SCENE_MODE;
+        }
+
+        return CaptureRequest.CONTROL_MODE_AUTO;
     }
 }

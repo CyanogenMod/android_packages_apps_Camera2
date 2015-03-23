@@ -16,16 +16,18 @@
 
 package com.android.camera.one.v2.common;
 
+import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
+import android.os.Build.VERSION_CODES;
 
-import com.android.camera.app.OrientationManager;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
+import com.android.camera.one.OneCameraCharacteristics.FaceDetectMode;
 import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.autofocus.ManualAutoFocusFactory;
@@ -35,7 +37,9 @@ import com.android.camera.one.v2.commands.ResettingRunnableCameraCommand;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
+import com.android.camera.one.v2.face.FaceDetect;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.concurrent.Executors;
@@ -54,11 +58,11 @@ import java.util.concurrent.Executors;
  * varies depending on hardware capability.
  * </p>
  */
+@TargetApi(VERSION_CODES.LOLLIPOP)
 public class BasicCameraFactory {
     private final ManualAutoFocus mManualAutoFocus;
     private final RequestBuilder.Factory mMeteredZoomedRequestBuilder;
     private final Runnable mPreviewStarter;
-    private OrientationManager.DeviceOrientation mSensorOrientation;
 
     /**
      * @param lifetime The lifetime of all created objects and their associated
@@ -88,12 +92,20 @@ public class BasicCameraFactory {
         previewBuilder.setParam(
                 CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, exposure);
 
+        Supplier<FaceDetectMode> faceDetectMode = Suppliers.ofInstance(
+              FaceDetect.getHighestFaceDetectMode(cameraCharacteristics));
+
         previewBuilder.setParam(CaptureRequest.CONTROL_MODE,
-                new HdrSettingBasedControlMode(hdrSceneSetting,
-                        cameraCharacteristics.getSupportedHardwareLevel(),
-                        CaptureRequest.CONTROL_MODE_AUTO));
+                new ControlModeSelector(hdrSceneSetting,
+                      faceDetectMode,
+                      cameraCharacteristics.getSupportedHardwareLevel()));
         previewBuilder.setParam(
-                CaptureRequest.CONTROL_SCENE_MODE, new HdrSettingBasedSceneMode(hdrSceneSetting));
+                CaptureRequest.CONTROL_SCENE_MODE, new ControlSceneModeSelector(
+                    hdrSceneSetting,
+                    faceDetectMode,
+                    cameraCharacteristics.getSupportedHardwareLevel()));
+        previewBuilder.setParam(CaptureRequest.STATISTICS_FACE_DETECT_MODE,
+              new StatisticsFaceDetectMode(faceDetectMode));
 
         Supplier<Rect> cropRegion = new ZoomedCropRegion(
                 cameraCharacteristics.getSensorInfoActiveArraySize(), zoom);
