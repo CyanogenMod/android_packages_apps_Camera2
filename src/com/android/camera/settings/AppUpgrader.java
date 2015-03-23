@@ -402,8 +402,8 @@ public class AppUpgrader extends SettingsUpgrader {
                     settingsManager.openPreferences(
                             OLD_CAMERA_PREFERENCES_PREFIX + cameraIds[i]);
             SharedPreferences newCameraPreferences =
-                    settingsManager.openPreferences(CameraActivity.CAMERA_SCOPE_PREFIX
-                            + cameraIds[i]);
+                    settingsManager.openPreferences(
+                            SettingsManager.getCameraSettingScope(cameraIds[i]));
 
             copyPreferences(oldCameraPreferences, newCameraPreferences);
         }
@@ -424,7 +424,7 @@ public class AppUpgrader extends SettingsUpgrader {
                         app.getModuleManager().getModuleAgent(moduleIds[i]);
                 if (agent != null) {
                     SharedPreferences newModulePreferences = settingsManager.openPreferences(
-                            CameraActivity.MODULE_SCOPE_PREFIX + agent.getScopeNamespace());
+                            SettingsManager.getModuleSettingScope(agent.getScopeNamespace()));
 
                     copyPreferences(oldModulePreferences, newModulePreferences);
                 }

@@ -32,6 +32,7 @@ import com.android.camera.async.MainThread;
 import com.android.camera.burst.BurstFacade;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
+import com.android.camera.device.ActiveCameraDeviceTracker;
 import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.OpenCallback;
@@ -52,12 +53,14 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
 
     private final Context mContext;
     private final OneCameraFeatureConfig mFeatureConfig;
+    private final ActiveCameraDeviceTracker mActiveCameraDeviceTracker;
     private final CameraManager mCameraManager;
     private final DisplayMetrics mDisplayMetrics;
 
     public static Optional<OneCameraOpener> create(
             OneCameraFeatureConfig featureConfig,
             Context context,
+            ActiveCameraDeviceTracker activeCameraDeviceTracker,
             DisplayMetrics displayMetrics) {
         if (!ApiHelper.HAS_CAMERA_2_API) {
             return Optional.absent();
@@ -70,10 +73,11 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
             return Optional.absent();
         }
         OneCameraOpener oneCameraOpener = new Camera2OneCameraOpenerImpl(
-              featureConfig,
-              context,
-              cameraManager,
-              displayMetrics);
+                featureConfig,
+                context,
+                cameraManager,
+                activeCameraDeviceTracker,
+                displayMetrics);
         return Optional.of(oneCameraOpener);
     }
 
@@ -83,12 +87,14 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
      * @param cameraManager the underlying Camera2 camera manager.
      */
     public Camera2OneCameraOpenerImpl(OneCameraFeatureConfig featureConfig,
-          Context context,
-          CameraManager cameraManager,
-          DisplayMetrics displayMetrics) {
+            Context context,
+            CameraManager cameraManager,
+            ActiveCameraDeviceTracker activeCameraDeviceTracker,
+            DisplayMetrics displayMetrics) {
         mFeatureConfig = featureConfig;
         mContext = context;
         mCameraManager = cameraManager;
+        mActiveCameraDeviceTracker = activeCameraDeviceTracker;
         mDisplayMetrics = displayMetrics;
     }
 
@@ -105,6 +111,8 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
             final FatalErrorHandler fatalErrorHandler) {
         try {
             Log.i(TAG, "Opening Camera: " + cameraKey);
+
+            mActiveCameraDeviceTracker.onCameraOpening(cameraKey);
 
             mCameraManager.openCamera(cameraKey.getValue(), new CameraDevice.StateCallback() {
                 // We may get multiple calls to StateCallback, but only the

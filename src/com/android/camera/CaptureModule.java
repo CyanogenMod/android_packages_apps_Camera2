@@ -141,8 +141,6 @@ public class CaptureModule extends CameraModule implements
     private OneCameraOpener mOneCameraOpener;
     /** The manager to query for camera device information */
     private OneCameraManager mOneCameraManager;
-    /** Shared tracking object for currently active camera across both Api's. */
-    private ActiveCameraDeviceTracker mActiveCameraDeviceTracker;
     /** The currently opened camera device, or null if the camera is closed. */
     private OneCamera mCamera;
     /** The selected picture size. */
@@ -348,7 +346,6 @@ public class CaptureModule extends CameraModule implements
         mMainThread = MainThread.create();
         mAppController = appController;
         mContext = mAppController.getAndroidContext();
-        mActiveCameraDeviceTracker = ActiveCameraDeviceTracker.instance();
         mSettingsManager = mAppController.getSettingsManager();
         mStickyGcamCamera = stickyHdr;
         mLocationManager = mAppController.getLocationManager();
@@ -1300,14 +1297,14 @@ public class CaptureModule extends CameraModule implements
         boolean useHdr = mHdrPlusEnabled && mCameraFacing == Facing.BACK;
 
         CameraId cameraId = mOneCameraManager.findFirstCameraFacing(mCameraFacing);
-        mActiveCameraDeviceTracker.onCameraOpening(cameraId);
+        final String settingScope = SettingsManager.getCameraSettingScope(cameraId.getValue());
 
         OneCameraCaptureSetting captureSetting;
         // Read the preferred picture size from the setting.
         try {
             captureSetting = OneCameraCaptureSetting.create(
                     mCameraFacing, cameraId, mAppController.getResolutionSetting(), mSettingsManager,
-                    mAppController.getCameraScope(), useHdr);
+                    settingScope, useHdr);
         } catch (OneCameraAccessException ex) {
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;

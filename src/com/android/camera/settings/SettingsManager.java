@@ -83,6 +83,9 @@ public class SettingsManager {
     private SharedPreferences mCustomPreferences;
     private final DefaultsStore mDefaultsStore = new DefaultsStore();
 
+    public static final String MODULE_SCOPE_PREFIX = "_preferences_module_";
+    public static final String CAMERA_SCOPE_PREFIX = "_preferences_camera_";
+
     /**
      * A List of OnSettingChangedListener's, maintained to compare to new
      * listeners and prevent duplicate registering.
@@ -151,6 +154,14 @@ public class SettingsManager {
                 preferences.unregisterOnSharedPreferenceChangeListener(listener);
             }
         }
+    }
+
+    public static String getCameraSettingScope(String cameraIdValue) {
+        return CAMERA_SCOPE_PREFIX + cameraIdValue;
+    }
+
+    public static String getModuleSettingScope(String moduleScopeNamespace) {
+        return CAMERA_SCOPE_PREFIX + moduleScopeNamespace;
     }
 
     /**

@@ -43,7 +43,7 @@ public class CameraFacingSetting {
             String moduleSettingScope) {
         mSettingsManager = settingsManager;
 
-        mSettingScope = CameraActivity.MODULE_SCOPE_PREFIX + moduleSettingScope;
+        mSettingScope = SettingsManager.getModuleSettingScope(moduleSettingScope);
 
         mCameraFacingSettingKey = Keys.KEY_CAMERA_ID;
         mCameraFacingBackValue =

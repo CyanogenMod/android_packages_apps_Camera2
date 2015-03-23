@@ -19,6 +19,7 @@ package com.android.camera.one;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import com.android.camera.device.ActiveCameraDeviceTracker;
 import com.android.camera.one.config.OneCameraFeatureConfig;
 import com.android.camera.one.v1.LegacyOneCameraManagerImpl;
 import com.android.camera.one.v1.LegacyOneCameraOpenerImpl;
@@ -40,11 +41,12 @@ public final class OneCameraModule {
      *             access the camera.
      */
     public static OneCameraOpener provideOneCameraOpener(
-          OneCameraFeatureConfig featureConfig,
-          Context context,
-          DisplayMetrics displayMetrics) throws OneCameraException {
+            OneCameraFeatureConfig featureConfig,
+            Context context,
+            ActiveCameraDeviceTracker activeCameraDeviceTracker,
+            DisplayMetrics displayMetrics) throws OneCameraException {
         Optional<OneCameraOpener> manager = Camera2OneCameraOpenerImpl.create(
-              featureConfig, context, displayMetrics);
+              featureConfig, context, activeCameraDeviceTracker, displayMetrics);
         if (!manager.isPresent()) {
             manager = LegacyOneCameraOpenerImpl.create();
         }
