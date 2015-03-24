@@ -16,10 +16,11 @@
 
 package com.android.camera.one.v2.autofocus;
 
+import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
+
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CaptureRequest;
 
-import com.android.camera.async.UpdatableCountDownLatch;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.FrameServer;
@@ -27,9 +28,6 @@ import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-
-import static com.android.camera.one.v2.core.ResponseListeners.forPartialMetadata;
 
 /**
  * Performs a full auto focus scan.
@@ -69,28 +67,25 @@ class FullAFScanCommand implements CameraCommand {
         try {
             AFTriggerResult afScanResult = new AFTriggerResult();
 
-            // Build a request to send a repeating AF_IDLE
-            RequestBuilder idleBuilder = mBuilderFactory.create(mTemplateType);
-            idleBuilder.addResponseListener(forPartialMetadata(afScanResult));
-            idleBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
-                    .CONTROL_MODE_AUTO);
-            idleBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
-                    .CONTROL_AF_MODE_AUTO);
-            idleBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
-
-            // Build a request to send a single AF_TRIGGER
-            RequestBuilder triggerBuilder = mBuilderFactory.create(mTemplateType);
-            triggerBuilder.addResponseListener(forPartialMetadata(afScanResult));
-            triggerBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
-                    .CONTROL_MODE_AUTO);
-            triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
-                    .CONTROL_AF_MODE_AUTO);
-            triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CaptureRequest.CONTROL_AF_TRIGGER_START);
-
+            // Start a repeating sequence of idle requests
+            RequestBuilder idleBuilder = createAFIdleRequest(afScanResult);
             session.submitRequest(Arrays.asList(idleBuilder.build()),
                     FrameServer.RequestType.REPEATING);
+
+            // Workaround for Nexus 6:
+            // Sending an AF_TRIGGER_START, followed immediately by another
+            // AF_TRIGGER_START may result in the driver deadlocking in its AF
+            // state machine, in certain cases
+            // (it's easy to reproduce this issue in relatively dark scenes
+            // ~1-3inches from the device with AF_MODE_ON_ALWAYS_FLASH).
+            // So, to avoid triggering this issue, always send an
+            // AF_TRIGGER_CANCEL before *every* AF_TRIGGER_START.
+            RequestBuilder cancelBuilder = createAFCancelRequest(afScanResult);
+            session.submitRequest(Arrays.asList(cancelBuilder.build()),
+                    FrameServer.RequestType.NON_REPEATING);
+
+            // Build a request to send a single AF_TRIGGER
+            RequestBuilder triggerBuilder = createAFTriggerRequest(afScanResult);
             session.submitRequest(Arrays.asList(triggerBuilder.build()),
                     FrameServer.RequestType.NON_REPEATING);
 
@@ -102,5 +97,44 @@ class FullAFScanCommand implements CameraCommand {
         } finally {
             session.close();
         }
+    }
+
+    private RequestBuilder createAFIdleRequest(AFTriggerResult triggerResultListener) throws
+            CameraAccessException {
+        RequestBuilder idleBuilder = mBuilderFactory.create(mTemplateType);
+        idleBuilder.addResponseListener(forPartialMetadata(triggerResultListener));
+        idleBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
+                .CONTROL_MODE_AUTO);
+        idleBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
+                .CONTROL_AF_MODE_AUTO);
+        idleBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
+                CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+        return idleBuilder;
+    }
+
+    private RequestBuilder createAFTriggerRequest(AFTriggerResult afScanResult) throws
+            CameraAccessException {
+        RequestBuilder triggerBuilder = mBuilderFactory.create(mTemplateType);
+        triggerBuilder.addResponseListener(forPartialMetadata(afScanResult));
+        triggerBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
+                .CONTROL_MODE_AUTO);
+        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
+                .CONTROL_AF_MODE_AUTO);
+        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
+                CaptureRequest.CONTROL_AF_TRIGGER_START);
+        return triggerBuilder;
+    }
+
+    private RequestBuilder createAFCancelRequest(AFTriggerResult afScanResult) throws
+            CameraAccessException {
+        RequestBuilder triggerBuilder = mBuilderFactory.create(mTemplateType);
+        triggerBuilder.addResponseListener(forPartialMetadata(afScanResult));
+        triggerBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
+                .CONTROL_MODE_AUTO);
+        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
+                .CONTROL_AF_MODE_AUTO);
+        triggerBuilder.setParam(CaptureRequest.CONTROL_AF_TRIGGER,
+                CaptureRequest.CONTROL_AF_TRIGGER_CANCEL);
+        return triggerBuilder;
     }
 }
