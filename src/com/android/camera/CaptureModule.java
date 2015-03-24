@@ -154,6 +154,11 @@ public class CaptureModule extends CameraModule implements
     private boolean mHdrSceneEnabled = false;
     private boolean mHdrPlusEnabled = false;
     private final Object mSurfaceTextureLock = new Object();
+    /**
+     * Flag that is used when Fatal Error Handler is running and the app should
+     * not continue execution
+     */
+    private boolean mShowErrorAndFinish;
     private TouchCoordinate mLastShutterTouchCoordinate = null;
 
     private FocusController mFocusController;
@@ -377,14 +382,16 @@ public class CaptureModule extends CameraModule implements
         guard.stop();
     }
 
-    private void updateCameraCharacteristics() {
+    private boolean updateCameraCharacteristics() {
         try {
             CameraId cameraId = mOneCameraManager.findFirstCameraFacing(mCameraFacing);
-            mCameraCharacteristics = mOneCameraManager.getOneCameraCharacteristics(cameraId);
-        } catch (OneCameraAccessException ocae) {
+            if (cameraId != null && cameraId.getValue() != null) {
+                mCameraCharacteristics = mOneCameraManager.getOneCameraCharacteristics(cameraId);
+                return mCameraCharacteristics != null;
+            }
+        } catch (OneCameraAccessException ignored) { }
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
-            return;
-        }
+            return false;
     }
 
     @Override
@@ -404,7 +411,10 @@ public class CaptureModule extends CameraModule implements
         mDisplayRotation = CameraUtil.getDisplayRotation();
         mCameraFacing = getFacingFromCameraId(
               mSettingsManager.getInteger(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID));
-        updateCameraCharacteristics();
+        mShowErrorAndFinish = !updateCameraCharacteristics();
+        if (mShowErrorAndFinish) {
+            return;
+        }
         mUI = new CaptureModuleUI(activity, mAppController.getModuleLayoutRoot(), mUIListener);
         mAppController.setPreviewStatusListener(mPreviewStatusListener);
         synchronized (mSurfaceTextureLock) {
@@ -636,6 +646,9 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void resume() {
+        if (mShowErrorAndFinish) {
+            return;
+        }
         Profile guard = mProfiler.create("CaptureModule.resume").start();
 
         // We'll transition into 'ready' once the preview is started.
@@ -690,6 +703,9 @@ public class CaptureModule extends CameraModule implements
 
     @Override
     public void pause() {
+        if (mShowErrorAndFinish) {
+            return;
+        }
         mPaused = true;
         mHeadingSensor.deactivate();
 
@@ -1103,7 +1119,7 @@ public class CaptureModule extends CameraModule implements
 
                     Log.d(TAG, "Start to switch camera. cameraId=" + cameraId);
                     mCameraFacing = getFacingFromCameraId(cameraId);
-                    updateCameraCharacteristics();
+                    mShowErrorAndFinish = !updateCameraCharacteristics();
                     switchCamera();
                 }
             };
@@ -1453,6 +1469,9 @@ public class CaptureModule extends CameraModule implements
      * Re-initialize the camera if e.g. the HDR mode or facing property changed.
      */
     private void switchCamera() {
+        if (mShowErrorAndFinish) {
+            return;
+        }
         if (mPaused) {
             return;
         }
