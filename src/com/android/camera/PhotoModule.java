@@ -29,9 +29,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.media.AudioManager;
 import android.media.CameraProfile;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -128,10 +126,6 @@ public class PhotoModule
     private static final int UPDATE_PARAM_PREFERENCE = 4;
     private static final int UPDATE_PARAM_ALL = -1;
 
-    // This is the delay before we execute onResume tasks when coming
-    // from the lock screen, to allow time for onPause to execute.
-    private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
-
     private static final String DEBUG_IMAGE_PREFIX = "DEBUG_";
 
     private CameraActivity mActivity;
@@ -197,8 +191,6 @@ public class PhotoModule
     // The display rotation in degrees. This is only valid when mCameraState is
     // not PREVIEW_STOPPED.
     private int mDisplayRotation;
-    // The value for android.hardware.Camera.setDisplayOrientation.
-    private int mCameraDisplayOrientation;
     // The value for UI components like indicators.
     private int mDisplayOrientation;
     // The value for cameradevice.CameraSettings.setPhotoRotationDegrees.
@@ -225,8 +217,6 @@ public class PhotoModule
             ApiHelper.HAS_AUTO_FOCUS_MOVE_CALLBACK
                     ? new AutoFocusMoveCallback()
                     : null;
-
-    private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
 
     private long mFocusStartTime;
     private long mShutterCallbackTime;
@@ -264,6 +254,9 @@ public class PhotoModule
     private final float[] mR = new float[16];
     private int mHeading = -1;
 
+    /** Used to detect motion. We use this to release focus lock early. */
+    private MotionManager mMotionManager;
+
     /** True if all the parameters needed to start preview is ready. */
     private boolean mCameraPreviewParamsReady = false;
 
@@ -277,13 +270,6 @@ public class PhotoModule
                 }
             };
     private boolean mShouldResizeTo16x9 = false;
-
-    private final Runnable mResumeTaskRunnable = new Runnable() {
-        @Override
-        public void run() {
-            onResumeTasks();
-        }
-    };
 
     /**
      * We keep the flash setting before entering scene modes (HDR)
@@ -328,6 +314,10 @@ public class PhotoModule
     }
 
     private void checkDisplayRotation() {
+        // Need to just be a no-op for the quick resume-pause scenario.
+        if (mPaused) {
+            return;
+        }
         // Set the display orientation if display rotation has changed.
         // Sometimes this happens when the device is held upside
         // down and camera app is opened. Rotation animation will
@@ -471,6 +461,7 @@ public class PhotoModule
         }
         mAppController.getCameraAppUI().transitionToCapture();
         mAppController.getCameraAppUI().showModeOptions();
+        mAppController.setShutterEnabled(true);
     }
 
     @Override
@@ -1073,7 +1064,7 @@ public class PhotoModule
             mJpegPictureCallbackTime = 0;
 
             final ExifInterface exif = Exif.getExif(originalJpegData);
-
+            final NamedEntity name = mNamedImages.getNextNameEntity();
             if (mShouldResizeTo16x9) {
                 final ResizeBundle dataBundle = new ResizeBundle();
                 dataBundle.jpegData = originalJpegData;
@@ -1088,17 +1079,17 @@ public class PhotoModule
 
                     @Override
                     protected void onPostExecute(ResizeBundle result) {
-                        saveFinalPhoto(result.jpegData, result.exif, camera);
+                        saveFinalPhoto(result.jpegData, name, result.exif, camera);
                     }
                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, dataBundle);
 
             } else {
-                saveFinalPhoto(originalJpegData, exif, camera);
+                saveFinalPhoto(originalJpegData, name, exif, camera);
             }
         }
 
-        void saveFinalPhoto(final byte[] jpegData, final ExifInterface exif, CameraProxy camera) {
-
+        void saveFinalPhoto(final byte[] jpegData, NamedEntity name, final ExifInterface exif,
+                CameraProxy camera) {
             int orientation = Exif.getOrientation(exif);
 
             float zoomValue = 1.0f;
@@ -1112,7 +1103,7 @@ public class PhotoModule
             boolean gridLinesOn = Keys.areGridLinesOn(mActivity.getSettingsManager());
             UsageStatistics.instance().photoCaptureDoneEvent(
                     eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
-                    mNamedImages.mQueue.lastElement().title + ".jpg", exif,
+                    name.title + ".jpg", exif,
                     isCameraFrontFacing(), hdrOn, zoomValue, flashSetting, gridLinesOn,
                     (float) mTimerDuration, mShutterTouchCoordinate, mVolumeButtonClickedFlag);
             mShutterTouchCoordinate = null;
@@ -1137,7 +1128,6 @@ public class PhotoModule
                         height = s.width();
                     }
                 }
-                NamedEntity name = mNamedImages.getNextNameEntity();
                 String title = (name == null) ? null : name.title;
                 long date = (name == null) ? -1 : name.date;
 
@@ -1179,6 +1169,7 @@ public class PhotoModule
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
+                    Log.v(TAG, "showing UI");
                     mUI.showCapturedImageForReview(jpegData, orientation, mMirror);
                 } else {
                     onCaptureDone();
@@ -1280,12 +1271,15 @@ public class PhotoModule
 
     @Override
     public boolean capture() {
+        Log.i(TAG, "capture");
         // If we are already in the middle of taking a snapshot or the image
         // save request is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
-                || mCameraState == SWITCHING_CAMERA || !mAppController.isShutterEnabled()) {
+                || mCameraState == SWITCHING_CAMERA) {
             return false;
         }
+        setCameraState(SNAPSHOT_IN_PROGRESS);
+
         mCaptureStartTime = System.currentTimeMillis();
 
         mPostViewPictureCallbackTime = 0;
@@ -1309,9 +1303,10 @@ public class PhotoModule
         mJpegRotation = info.getJpegOrientation(orientation);
         mCameraDevice.setJpegOrientation(mJpegRotation);
 
-        // We don't want user to press the button again while taking a
-        // multi-second HDR photo.
-        mAppController.setShutterEnabled(false);
+        Log.v(TAG, "capture orientation (screen:device:used:jpeg) " +
+                mDisplayRotation + ":" + mOrientation + ":" +
+                orientation + ":" + mJpegRotation);
+
         mCameraDevice.takePicture(mHandler,
                 new ShutterCallback(!animateBefore),
                 mRawPictureCallback, mPostViewPictureCallback,
@@ -1320,7 +1315,6 @@ public class PhotoModule
         mNamedImages.nameNewImage(mCaptureStartTime);
 
         mFaceDetectionStarted = false;
-        setCameraState(SNAPSHOT_IN_PROGRESS);
         return true;
     }
 
@@ -1413,6 +1407,7 @@ public class PhotoModule
 
     @Override
     public void onCaptureDone() {
+        Log.i(TAG, "onCaptureDone");
         if (mPaused) {
             return;
         }
@@ -1514,7 +1509,8 @@ public class PhotoModule
     @Override
     public void onShutterButtonClick() {
         if (mPaused || (mCameraState == SWITCHING_CAMERA)
-                || (mCameraState == PREVIEW_STOPPED)) {
+                || (mCameraState == PREVIEW_STOPPED)
+                || !mAppController.isShutterEnabled()) {
             mVolumeButtonClickedFlag = false;
             return;
         }
@@ -1528,6 +1524,8 @@ public class PhotoModule
         }
         Log.d(TAG, "onShutterButtonClick: mCameraState=" + mCameraState +
                 " mVolumeButtonClickedFlag=" + mVolumeButtonClickedFlag);
+
+        mAppController.setShutterEnabled(false);
 
         int countDownDuration = mActivity.getSettingsManager()
             .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
@@ -1574,11 +1572,7 @@ public class PhotoModule
 
     @Override
     public void onCountDownFinished() {
-        if (mIsImageCaptureIntent) {
-            mAppController.getCameraAppUI().transitionToIntentReviewLayout();
-        } else {
-            mAppController.getCameraAppUI().transitionToCapture();
-        }
+        mAppController.getCameraAppUI().transitionToCapture();
         mAppController.getCameraAppUI().showModeOptions();
         if (mPaused) {
             return;
@@ -1586,11 +1580,9 @@ public class PhotoModule
         focusAndCapture();
     }
 
-    private void onResumeTasks() {
-        if (mPaused) {
-            return;
-        }
-        Log.v(TAG, "Executing onResumeTasks.");
+    @Override
+    public void resume() {
+        mPaused = false;
 
         mCountdownSoundPlayer.loadSound(R.raw.timer_final_second);
         mCountdownSoundPlayer.loadSound(R.raw.timer_increment);
@@ -1672,9 +1664,9 @@ public class PhotoModule
                     new FocusOverlayManager(mAppController, defaultFocusModes,
                             mCameraCapabilities, this, mMirror, mActivity.getMainLooper(),
                             mUI.getFocusUI());
-            MotionManager motionManager = getServices().getMotionManager();
-            if (motionManager != null) {
-                motionManager.addListener(mFocusManager);
+            mMotionManager = getServices().getMotionManager();
+            if (mMotionManager != null) {
+                mMotionManager.addListener(mFocusManager);
             }
         }
         mAppController.addPreviewAreaSizeChangedListener(mFocusManager);
@@ -1690,27 +1682,9 @@ public class PhotoModule
     }
 
     @Override
-    public void resume() {
-        mPaused = false;
-
-        // Add delay on resume from lock screen only, in order to to speed up
-        // the onResume --> onPause --> onResume cycle from lock screen.
-        // Don't do always because letting go of thread can cause delay.
-        if (isResumeFromLockscreen()) {
-            Log.v(TAG, "On resume, from lock screen.");
-            // Note: onPauseAfterSuper() will delete this runnable, so we will
-            // at most have 1 copy queued up.
-            mHandler.postDelayed(mResumeTaskRunnable, ON_RESUME_TASKS_DELAY_MSEC);
-        } else {
-            Log.v(TAG, "On resume.");
-            onResumeTasks();
-        }
-    }
-
-    @Override
     public void pause() {
+        Log.v(TAG, "pause");
         mPaused = true;
-        mHandler.removeCallbacks(mResumeTaskRunnable);
         getServices().getRemoteShutterListener().onModuleExit();
         SessionStatsCollector.instance().sessionActive(false);
 
@@ -1735,7 +1709,8 @@ public class PhotoModule
         // (e.g. onResume -> onPause -> onResume).
         stopPreview();
         cancelCountDown();
-        mCountdownSoundPlayer.release();
+        mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
+        mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
 
         mNamedImages = null;
         // If we are in an image capture intent and has taken
@@ -1744,6 +1719,11 @@ public class PhotoModule
 
         // Remove the messages and runnables in the queue.
         mHandler.removeCallbacksAndMessages(null);
+
+        if (mMotionManager != null) {
+            mMotionManager.removeListener(mFocusManager);
+            mMotionManager = null;
+        }
 
         closeCamera();
         mActivity.enableKeepScreenOn(false);
@@ -1763,7 +1743,7 @@ public class PhotoModule
 
     @Override
     public void destroy() {
-        // TODO: implement this.
+        mCountdownSoundPlayer.release();
     }
 
     @Override
@@ -1889,7 +1869,6 @@ public class PhotoModule
             stopFaceDetection();
             mCameraDevice.setZoomChangeListener(null);
             mCameraDevice.setFaceDetectionCallback(null, null);
-            mCameraDevice.setErrorCallback(null, null);
 
             mFaceDetectionStarted = false;
             mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
@@ -1904,7 +1883,6 @@ public class PhotoModule
         Characteristics info =
                 mActivity.getCameraProvider().getCharacteristics(mCameraId);
         mDisplayOrientation = info.getPreviewOrientation(mDisplayRotation);
-        mCameraDisplayOrientation = mDisplayOrientation;
         mUI.setDisplayOrientation(mDisplayOrientation);
         if (mFocusManager != null) {
             mFocusManager.setDisplayOrientation(mDisplayOrientation);
@@ -1913,6 +1891,8 @@ public class PhotoModule
         if (mCameraDevice != null) {
             mCameraDevice.setDisplayOrientation(mDisplayRotation);
         }
+        Log.v(TAG, "setDisplayOrientation (screen:preview) " +
+                mDisplayRotation + ":" + mDisplayOrientation);
     }
 
     /** Only called by UI thread. */
@@ -1962,7 +1942,6 @@ public class PhotoModule
             return;
         }
 
-        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
         setDisplayOrientation();
 
         if (!mSnapshotOnIdle) {
@@ -1974,9 +1953,14 @@ public class PhotoModule
             }
             mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
         }
-        setCameraParameters(UPDATE_PARAM_ALL);
 
+        // Nexus 4 must have picture size set to > 640x480 before other
+        // parameters are set in setCameraParameters, b/18227551. This call to
+        // updateParametersPictureSize should occur before setCameraParameters
+        // to address the issue.
         updateParametersPictureSize();
+
+        setCameraParameters(UPDATE_PARAM_ALL);
 
         mCameraDevice.setPreviewTexture(mActivity.getCameraAppUI().getSurfaceTexture());
 
@@ -2455,43 +2439,5 @@ public class PhotoModule
                 focusAndCapture();
             }
         });
-    }
-
-    /**
-     * This class manages the loading/releasing/playing of the sounds needed for
-     * countdown timer.
-     */
-    private class CountdownSoundPlayer {
-        private SoundPool mSoundPool;
-        private int mTimerIncrement;
-        private int mTimerFinalSecond;
-
-        void loadSounds() {
-            // Load the sounds.
-            if (mSoundPool == null) {
-                mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
-                mTimerIncrement = mSoundPool.load(mAppController.getAndroidContext(), R.raw.timer_increment, 1);
-                mTimerFinalSecond = mSoundPool.load(mAppController.getAndroidContext(), R.raw.timer_final_second, 1);
-            }
-        }
-
-        void onRemainingSecondsChanged(int newVal) {
-            if (mSoundPool == null) {
-                Log.e(TAG, "Cannot play sound - they have not been loaded.");
-                return;
-            }
-            if (newVal == 1) {
-                mSoundPool.play(mTimerFinalSecond, 1.0f, 1.0f, 0, 0, 1.0f);
-            } else if (newVal == 2 || newVal == 3) {
-                mSoundPool.play(mTimerIncrement, 1.0f, 1.0f, 0, 0, 1.0f);
-            }
-        }
-
-        void release() {
-            if (mSoundPool != null) {
-                mSoundPool.release();
-                mSoundPool = null;
-            }
-        }
     }
 }

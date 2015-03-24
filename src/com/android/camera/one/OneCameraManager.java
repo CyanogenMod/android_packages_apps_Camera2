@@ -20,7 +20,6 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -30,6 +29,7 @@ import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 
 /**
@@ -66,24 +66,37 @@ public abstract class OneCameraManager {
     /**
      * Creates a camera manager that is based on Camera2 API, if available, or
      * otherwise uses the portability layer API.
+     *
+     * @throws OneCameraException Thrown if an error occurred while trying to
+     *             access the camera.
      */
-    public static OneCameraManager get(CameraActivity activity) {
+    public static OneCameraManager get(CameraActivity activity) throws OneCameraException {
         return create(activity);
     }
 
     /**
      * Creates a new camera manager that is based on Camera2 API, if available,
      * or otherwise uses the portability API.
+     *
+     * @throws OneCameraException Thrown if an error occurred while trying to
+     *             access the camera.
      */
-    private static OneCameraManager create(CameraActivity activity) {
+    private static OneCameraManager create(CameraActivity activity) throws OneCameraException {
         DisplayMetrics displayMetrics = getDisplayMetrics(activity);
-        CameraManager cameraManager = (CameraManager) activity
-                .getSystemService(Context.CAMERA_SERVICE);
-        int maxMemoryMB = activity.getServices().getMemoryManager()
-                .getMaxAllowedNativeMemoryAllocation();
+        CameraManager cameraManager = null;
+
+        try {
+            cameraManager = ApiHelper.HAS_CAMERA_2_API ? (CameraManager) activity
+                    .getSystemService(Context.CAMERA_SERVICE) : null;
+        } catch (IllegalStateException ex) {
+            cameraManager = null;
+            Log.e(TAG, "Could not get camera service v2", ex);
+        }
         if (cameraManager != null && isCamera2Supported(cameraManager)) {
+            int maxMemoryMB = activity.getServices().getMemoryManager()
+                    .getMaxAllowedNativeMemoryAllocation();
             return new com.android.camera.one.v2.OneCameraManagerImpl(
-                    activity.getApplicationContext(), cameraManager, maxMemoryMB,
+                    activity.getAndroidContext(), cameraManager, maxMemoryMB,
                     displayMetrics, activity.getSoundPlayer());
         } else {
             return new com.android.camera.one.v1.OneCameraManagerImpl();
@@ -98,13 +111,20 @@ public abstract class OneCameraManager {
      *         HAL (such as the Nexus 4, 7 or 10), this method returns false. It
      *         only returns true, if Camera2 is fully supported through newer
      *         HALs.
+     * @throws OneCameraException Thrown if an error occurred while trying to
+     *             access the camera.
      */
-    private static boolean isCamera2Supported(CameraManager cameraManager) {
-        if (Build.VERSION.SDK_INT < 21) {
+    private static boolean isCamera2Supported(CameraManager cameraManager)
+            throws OneCameraException {
+        if (!ApiHelper.HAS_CAMERA_2_API) {
             return false;
         }
         try {
-            final String id = cameraManager.getCameraIdList()[0];
+            String[] cameraIds = cameraManager.getCameraIdList();
+            if (cameraIds.length == 0) {
+                throw new OneCameraException("Camera 2 API supported but no devices available.");
+            }
+            final String id = cameraIds[0];
             // TODO: We should check for all the flags we need to ensure the
             // device is capable of taking Camera2 API shots. For now, let's
             // accept all device that are either 'partial' or 'full' devices

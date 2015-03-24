@@ -263,7 +263,7 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"延时拍摄功能已关闭，要设置时间间隔，请先开启该功能。"</string>
     <string name="set_duration" msgid="1638453882581604341">"设置倒数时间（秒）"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"拍照倒计时中"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"要记住照片拍摄地点吗？"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"是否记住照片拍摄地点？"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"为您的照片和视频标明拍摄地点。\n\n其他应用在查看您拍摄的照片时将可以使用这些信息。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"不用了"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"好"</string>
@@ -354,9 +354,9 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"要重新聚焦，请触摸此处"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"高级"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"手动曝光"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"在“设置”中，您可以更改分辨率和画质，并尝试开启高级功能。"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"在“设置”中，您可以更改分辨率和画质，也可以尝试使用高级功能。"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"选择照片尺寸"</string>
-    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"以后，您可以在“设置”中更改照片尺寸。"</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"以后，您可以在“设置”中更改此设置。"</string>
     <string name="share_to" msgid="5144911209144798122">"分享到"</string>
     <string name="edit_with" msgid="615569327230783971">"编辑方式"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"下一页"</string>

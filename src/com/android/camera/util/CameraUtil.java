@@ -40,7 +40,6 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
-import android.util.FloatMath;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -301,6 +300,7 @@ public class CameraUtil {
         // appearing, so check to ensure that the activity is not shutting down
         // before attempting to attach a dialog to the window manager.
         if (!activity.isFinishing()) {
+            Log.e(TAG, "Show fatal error dialog");
             new AlertDialog.Builder(activity)
                     .setCancelable(false)
                     .setTitle(R.string.camera_error_title)
@@ -513,7 +513,15 @@ public class CameraUtil {
     public static int getOptimalPreviewSizeIndex(Context context,
             List<Size> sizes, double targetRatio) {
         // Use a very small tolerance because we want an exact match.
-        final double ASPECT_TOLERANCE = 0.01;
+        final double ASPECT_TOLERANCE;
+        // HTC 4:3 ratios is over .01 from true 4:3, targeted fix for those
+        // devices here, see b/18241645
+        if (ApiHelper.IS_HTC && targetRatio > 1.3433 && targetRatio < 1.35) {
+            Log.w(TAG, "4:3 ratio out of normal tolerance, increasing tolerance to 0.02");
+            ASPECT_TOLERANCE = 0.02;
+        } else {
+            ASPECT_TOLERANCE = 0.01;
+        }
         if (sizes == null) {
             return -1;
         }
@@ -552,7 +560,7 @@ public class CameraUtil {
         // Cannot find the one match the aspect ratio. This should not happen.
         // Ignore the requirement.
         if (optimalSizeIndex == -1) {
-            Log.w(TAG, "No preview size match the aspect ratio");
+            Log.w(TAG, "No preview size match the aspect ratio. available sizes: " + sizes);
             minDiff = Double.MAX_VALUE;
             for (int i = 0; i < sizes.size(); i++) {
                 Size size = sizes.get(i);
@@ -562,12 +570,24 @@ public class CameraUtil {
                 }
             }
         }
+
         return optimalSizeIndex;
     }
 
-    /** Returns the largest picture size which matches the given aspect ratio. */
+    /**
+     * Returns the largest picture size which matches the given aspect ratio,
+     * except for the special WYSIWYG case where the picture size exactly matches
+     * the target size.
+     *
+     * @param sizes        a list of candidate sizes, available for use
+     * @param targetWidth  the ideal width of the video snapshot
+     * @param targetHeight the ideal height of the video snapshot
+     * @return the Optimal Video Snapshot Picture Size
+     */
     public static com.android.ex.camera2.portability.Size getOptimalVideoSnapshotPictureSize(
-            List<com.android.ex.camera2.portability.Size> sizes, double targetRatio) {
+            List<com.android.ex.camera2.portability.Size> sizes, int targetWidth,
+            int targetHeight) {
+
         // Use a very small tolerance because we want an exact match.
         final double ASPECT_TOLERANCE = 0.001;
         if (sizes == null) {
@@ -576,7 +596,17 @@ public class CameraUtil {
 
         com.android.ex.camera2.portability.Size optimalSize = null;
 
+        //  WYSIWYG Override
+        //  We assume that physical display constraints have already been
+        //  imposed on the variables sizes
+        for (com.android.ex.camera2.portability.Size size : sizes) {
+            if (size.height() == targetHeight && size.width() == targetWidth) {
+                return size;
+            }
+        }
+
         // Try to find a size matches aspect ratio and has the largest width
+        final double targetRatio = (double) targetWidth / targetHeight;
         for (com.android.ex.camera2.portability.Size size : sizes) {
             double ratio = (double) size.width() / size.height();
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
@@ -903,7 +933,7 @@ public class CameraUtil {
         float sigma = len;
         float sum = 0;
         for (int i = 0; i <= mid; i++) {
-            float ex = FloatMath.exp(-(i - mid) * (i - mid) / (mid * mid))
+            float ex = (float) Math.exp(-(i - mid) * (i - mid) / (mid * mid))
                     / (2 * sigma * sigma);
             int symmetricIndex = len - 1 - i;
             mask[i] = ex;

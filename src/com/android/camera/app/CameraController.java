@@ -24,8 +24,8 @@ import com.android.camera.debug.Log;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GservicesHelper;
 import com.android.ex.camera2.portability.CameraAgent;
-import com.android.ex.camera2.portability.CameraAgent.CameraExceptionCallback;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
+import com.android.ex.camera2.portability.CameraExceptionHandler;
 
 /**
  * A class which implements {@link com.android.camera.app.CameraProvider} used
@@ -83,11 +83,10 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     }
 
     @Override
-    public void setCameraDefaultExceptionCallback(CameraExceptionCallback callback,
-            Handler handler) {
-        mCameraAgent.setCameraDefaultExceptionCallback(callback, handler);
+    public void setCameraExceptionHandler(CameraExceptionHandler exceptionHandler) {
+        mCameraAgent.setCameraExceptionHandler(exceptionHandler);
         if (mCameraAgentNg != null) {
-            mCameraAgentNg.setCameraDefaultExceptionCallback(callback, handler);
+            mCameraAgentNg.setCameraExceptionHandler(exceptionHandler);
         }
     }
 
@@ -161,7 +160,6 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     public void onCameraOpened(CameraAgent.CameraProxy camera) {
         Log.v(TAG, "onCameraOpened");
         if (mRequestingCameraId != camera.getCameraId()) {
-            // Not requesting any camera or not waiting for this one.
             return;
         }
         mCameraProxy = camera;
@@ -283,10 +281,6 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
      * TODO: Make this method package private.
      */
     public void closeCamera(boolean synced) {
-        if (mCameraProxy == null) {
-            Log.v(TAG, "No camera open, not closing");
-            return;
-        }
         Log.v(TAG, "Closing camera");
         mCameraProxy = null;
         if (mUsingNewApi) {

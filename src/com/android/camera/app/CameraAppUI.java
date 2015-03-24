@@ -27,7 +27,6 @@ import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.util.CameraPerformanceTracker;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TextureView;
@@ -511,8 +510,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private TextureView mTextureView;
     private FrameLayout mModuleUI;
     private ShutterButton mShutterButton;
-    private View mLetterBoxer1;
-    private View mLetterBoxer2;
     private BottomBar mBottomBar;
     private ModeOptionsOverlay mModeOptionsOverlay;
     private IndicatorIconController mIndicatorIconController;
@@ -549,6 +546,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private boolean mAccessibilityEnabled;
     private final View mAccessibilityAffordances;
 
+    private boolean mDisableAllUserInteractions;
     /**
      * Provides current preview frame and the controls/overlay from the module that
      * are shown on top of the preview.
@@ -1027,7 +1025,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             @Override
             public void run() {
                 mModeTransitionView.hideModeCover(null);
-                showShimmyDelayed();
+                if (!mDisableAllUserInteractions) {
+                    showShimmyDelayed();
+                }
             }
         };
         mModeCoverState = COVER_SHOWN;
@@ -1234,9 +1234,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         addShutterListener(mModeOptionsOverlay);
         addShutterListener(this);
 
-        mLetterBoxer1 = mCameraRootView.findViewById(R.id.leftLetterBoxer1);
-        mLetterBoxer2 = mCameraRootView.findViewById(R.id.leftLetterBoxer2);
-
         mGridLines = (GridLines) mCameraRootView.findViewById(R.id.grid_lines);
         mTextureViewHelper.addPreviewAreaSizeChangedListener(mGridLines);
 
@@ -1351,6 +1348,30 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         hideModeCover();
     }
 
+    @Override
+    public void onShutterButtonClick() {
+        /*
+         * Set the mode options toggle unclickable, generally
+         * throughout the app, whenever the shutter button is clicked.
+         *
+         * This could be done in the OnShutterButtonListener of the
+         * ModeOptionsOverlay, but since it is very important that we
+         * can clearly see when the toggle becomes clickable again,
+         * keep all of that logic at this level.
+         */
+        disableModeOptions();
+    }
+
+    @Override
+    public void onShutterCoordinate(TouchCoordinate coord) {
+        // Do nothing.
+    }
+
+    @Override
+    public void onShutterButtonFocus(boolean pressed) {
+        // noop
+    }
+
     /**
      * Set the mode options toggle clickable.
      */
@@ -1366,31 +1387,30 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * method when a capture is "completed".  Unfortunately this differs
          * per module implementation.
          */
-        mModeOptionsOverlay.setToggleClickable(true);
+        if (!mDisableAllUserInteractions) {
+            mModeOptionsOverlay.setToggleClickable(true);
+        }
     }
 
-    @Override
-    public void onShutterButtonClick() {
-        /*
-         * Set the mode options toggle unclickable, generally
-         * throughout the app, whenever the shutter button is clicked.
-         *
-         * This could be done in the OnShutterButtonListener of the
-         * ModeOptionsOverlay, but since it is very important that we
-         * can clearly see when the toggle becomes clickable again,
-         * keep all of that logic at this level.
-         */
+    /**
+     * Set the mode options toggle not clickable.
+     */
+    public void disableModeOptions() {
         mModeOptionsOverlay.setToggleClickable(false);
     }
 
-    @Override
-    public void onShutterCoordinate(TouchCoordinate coord) {
-        // Do nothing.
-    }
-
-    @Override
-    public void onShutterButtonFocus(boolean pressed) {
-        // noop
+    public void setDisableAllUserInteractions(boolean disable) {
+        if (disable) {
+            disableModeOptions();
+            setShutterButtonEnabled(false);
+            setSwipeEnabled(false);
+            mModeListView.hideAnimated();
+        } else {
+            enableModeOptions();
+            setShutterButtonEnabled(true);
+            setSwipeEnabled(true);
+        }
+        mDisableAllUserInteractions = disable;
     }
 
     /**
@@ -1715,13 +1735,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     }
 
     public void setShutterButtonEnabled(final boolean enabled) {
-        mBottomBar.post(new Runnable() {
-
-            @Override
-            public void run() {
-                mBottomBar.setShutterButtonEnabled(enabled);
-            }
-        });
+        if (!mDisableAllUserInteractions) {
+            mBottomBar.post(new Runnable() {
+                @Override
+                public void run() {
+                    mBottomBar.setShutterButtonEnabled(enabled);
+                }
+            });
+        }
     }
 
     public void setShutterButtonImportantToA11y(boolean important) {
@@ -1749,49 +1770,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void addShutterListener(ShutterButton.OnShutterButtonListener listener) {
         mShutterButton.addOnShutterButtonListener(listener);
-    }
-
-
-    /**
-     * This adds letterboxing around the preview, one on each side
-     *
-     * @param width the width in pixels of each letterboxing cover
-     */
-    public void addLetterboxing(int width) {
-        FrameLayout.LayoutParams params1 = (FrameLayout.LayoutParams) mLetterBoxer1
-                .getLayoutParams();
-        FrameLayout.LayoutParams params2 = (FrameLayout.LayoutParams) mLetterBoxer2
-                .getLayoutParams();
-
-        if (mCameraRootView.getWidth() < mCameraRootView.getHeight()) {
-            params1.width = width;
-            params1.height = mCameraRootView.getHeight();
-            params1.gravity = Gravity.LEFT;
-            mLetterBoxer1.setVisibility(View.VISIBLE);
-
-            params2.width = width;
-            params2.height = mCameraRootView.getHeight();
-            params2.gravity = Gravity.RIGHT;
-            mLetterBoxer2.setVisibility(View.VISIBLE);
-        } else {
-            params1.height = width;
-            params1.width = mCameraRootView.getWidth();
-            params1.gravity = Gravity.TOP;
-            mLetterBoxer1.setVisibility(View.VISIBLE);
-
-            params2.height = width;
-            params2.width = mCameraRootView.getWidth();
-            params2.gravity = Gravity.BOTTOM;
-            mLetterBoxer2.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Remove the letter boxing strips if they happen to be present.
-     */
-    public void hideLetterboxing() {
-        mLetterBoxer1.setVisibility(View.GONE);
-        mLetterBoxer2.setVisibility(View.GONE);
     }
 
     /**
@@ -1899,7 +1877,9 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         boolean isSamsung4k = mController.getSettingsManager().getBoolean(
             SettingsManager.SCOPE_GLOBAL, Keys.KEY_VIDEOCAMERA_SAMSUNG4K_MODE);
         if (bottomBarSpec.hideFlash || !flashBackCamera) {
+            // Hide both flash and torch button in flash disable logic
             buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
+            buttonManager.hideButton(ButtonManager.BUTTON_TORCH);
         } else {
             if (hardwareSpec.isFlashSupported()) {
                 if (bottomBarSpec.enableFlash) {
@@ -1916,11 +1896,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
                         bottomBarSpec.flashCallback);
                 } else {
+                    // Hide both flash and torch button in flash disable logic
                     buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                    buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
                 }
             } else {
-                // Disable flash icon if not supported by the hardware.
+                // Disable both flash and torch icon if not supported
+                // by the chosen camera hardware.
                 buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
             }
         }
 

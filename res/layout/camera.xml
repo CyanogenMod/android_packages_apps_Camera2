@@ -55,7 +55,6 @@
         android:visibility="invisible" />
 
     <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/intent_review_imageview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -101,21 +100,4 @@
             android:text="@string/btn_filmstrip_toggle"
             android:contentDescription="@string/accessibility_filmstrip_toggle"/>
     </LinearLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@android:color/black"
-        android:id="@+id/leftLetterBoxer1"
-        android:visibility="gone"
-        />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@android:color/black"
-        android:id="@+id/leftLetterBoxer2"
-        android:visibility="gone"
-        />
-
 </FrameLayout>

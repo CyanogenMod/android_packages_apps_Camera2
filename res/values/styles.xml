@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
     <!-- Camera resources below -->
     <style name="Theme.ProxyLauncher" parent="@android:Theme.Translucent.NoTitleBar">
     </style>
@@ -204,20 +204,30 @@
       <item name="android:layout_margin">6dp</item>
       <item name="android:background">@null</item>
     </style>
-    <style name="Theme.CameraSettings" parent="@android:style/Theme.Holo">
+    <style name="Theme.CameraSettings" parent="@android:style/Theme.Holo.Light.DarkActionBar">
        <item name="android:windowFullscreen">true</item>
+       <item name="android:actionBarStyle">@style/Settings.ActionBar</item>
     </style>
+    <style name="Settings.ActionBar" parent="android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/main_color_global</item>
+    </style>
+
     <style name="start_up_dialog_content">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="fullscreen_dialog_title">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-regular</item>
+        <item name="android:textColor">@color/dialog_text_color</item>
     </style>
     <style name="BlueButton">
         <item name="android:layout_width">144dp</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:background">@drawable/button_cling</item>
-        <item name="android:fontFamily">sans-serif-regular</item>
-        <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/blue_button_text_color</item>
         <item name="android:padding">12dp</item>
     </style>
 </resources>

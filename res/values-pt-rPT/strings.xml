@@ -357,7 +357,7 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avançadas"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposição manual"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Em Definições, altere a resolução e a qualidade ou experimente as funcionalidades avançadas."</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolha o tamanho da fotografia"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolher tamanho da fotografia"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Pode alterar esta opção mais tarde em Definições."</string>
     <string name="share_to" msgid="5144911209144798122">"Partilhar com"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar com"</string>

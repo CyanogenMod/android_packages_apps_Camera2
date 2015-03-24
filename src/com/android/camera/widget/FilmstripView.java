@@ -21,6 +21,7 @@ import android.animation.AnimatorSet;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -42,6 +43,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.data.LocalData.ActionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.DataAdapter;
 import com.android.camera.filmstrip.FilmstripController;
@@ -52,11 +54,39 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Queue;
 
 public class FilmstripView extends ViewGroup {
+    /**
+     * An action callback to be used for actions on the local media data items.
+     */
+    public static class ActionCallbackImpl implements ActionCallback {
+        private final WeakReference<Activity> mActivity;
+
+        /**
+         * The given activity is used to start intents. It is wrapped in a weak
+         * reference to prevent leaks.
+         */
+        public ActionCallbackImpl(Activity activity) {
+            mActivity = new WeakReference<Activity>(activity);
+        }
+
+        /**
+         * Fires an intent to play the video with the given URI and title.
+         */
+        @Override
+        public void playVideo(Uri uri, String title) {
+            Activity activity = mActivity.get();
+            if (activity != null) {
+              CameraUtil.playVideo(activity, uri, title);
+            }
+        }
+    }
+
+
     private static final Log.Tag TAG = new Log.Tag("FilmstripView");
 
     private static final int BUFFER_SIZE = 5;
@@ -87,6 +117,7 @@ public class FilmstripView extends ViewGroup {
     private static final int DECELERATION_FACTOR = 4;
 
     private CameraActivity mActivity;
+    private ActionCallback mActionCallback;
     private FilmstripGestureRecognizer mGestureRecognizer;
     private FilmstripGestureRecognizer.Listener mGestureListener;
     private DataAdapter mDataAdapter;
@@ -585,6 +616,7 @@ public class FilmstripView extends ViewGroup {
     private void init(CameraActivity cameraActivity) {
         setWillNotDraw(false);
         mActivity = cameraActivity;
+        mActionCallback = new ActionCallbackImpl(mActivity);
         mScale = 1.0f;
         mDataIdOnUserScrolling = 0;
         mController = new MyController(cameraActivity);
@@ -792,6 +824,12 @@ public class FilmstripView extends ViewGroup {
     }
 
     private ViewItem buildItemFromData(int dataID) {
+        if (mActivity.isDestroyed()) {
+            // Loading item data is call from multiple AsyncTasks and the
+            // activity may be finished when buildItemFromData is called.
+            Log.d(TAG, "Activity destroyed, don't load data");
+            return null;
+        }
         ImageData data = mDataAdapter.getImageData(dataID);
         if (data == null) {
             return null;
@@ -807,7 +845,8 @@ public class FilmstripView extends ViewGroup {
 
         data.prepare();
         View recycled = getRecycledView(dataID);
-        View v = mDataAdapter.getView(mActivity, recycled, dataID);
+        View v = mDataAdapter.getView(mActivity.getAndroidContext(), recycled, dataID,
+                mActionCallback);
         if (v == null) {
             return null;
         }
@@ -1215,18 +1254,22 @@ public class FilmstripView extends ViewGroup {
                 // It's in full-screen mode.
                 fadeAndScaleRightViewItem(itemID);
             } else {
-                if (curr.getVisibility() == INVISIBLE) {
-                    curr.setVisibility(VISIBLE);
-                }
+                boolean setToVisible = (curr.getVisibility() == INVISIBLE);
+
                 if (itemID == mCurrentItem + 1) {
                     curr.setAlpha(1f - scaleFraction);
                 } else {
                     if (scaleFraction == 0f) {
                         curr.setAlpha(1f);
                     } else {
-                        curr.setVisibility(INVISIBLE);
+                        setToVisible = false;
                     }
                 }
+
+                if (setToVisible) {
+                    curr.setVisibility(VISIBLE);
+                }
+
                 curr.setTranslationX(
                         (mViewItem[mCurrentItem].getLeftPosition() - curr.getLeftPosition()) *
                                 scaleFraction);
@@ -1364,15 +1407,20 @@ public class FilmstripView extends ViewGroup {
             // The end of the filmstrip might have been changed.
             // The mCenterX might be out of the bound.
             ViewItem currItem = mViewItem[mCurrentItem];
-            if (currItem.getId() == mDataAdapter.getTotalNumber() - 1
-                    && mCenterX > currItem.getCenterX()) {
-                int adjustDiff = currItem.getCenterX() - mCenterX;
-                mCenterX = currItem.getCenterX();
-                for (int i = 0; i < BUFFER_SIZE; i++) {
-                    if (mViewItem[i] != null) {
-                        mViewItem[i].translateXScaledBy(adjustDiff);
+            if(currItem!=null) {
+                if (currItem.getId() == mDataAdapter.getTotalNumber() - 1
+                        && mCenterX > currItem.getCenterX()) {
+                    int adjustDiff = currItem.getCenterX() - mCenterX;
+                    mCenterX = currItem.getCenterX();
+                    for (int i = 0; i < BUFFER_SIZE; i++) {
+                        if (mViewItem[i] != null) {
+                            mViewItem[i].translateXScaledBy(adjustDiff);
+                        }
                     }
                 }
+            } else {
+                // CurrItem should NOT be NULL, but if is, at least don't crash.
+                Log.w(TAG,"Caught invalid update in removal animation.");
             }
         } else {
             // fill the removed place by right shift
@@ -1473,6 +1521,10 @@ public class FilmstripView extends ViewGroup {
                         getMeasuredWidth(), getMeasuredHeight());
         final int offsetX = dim.x + mViewGapInPixel;
         ViewItem viewItem = buildItemFromData(dataID);
+        if (viewItem == null) {
+            Log.w(TAG, "unable to build inserted item from data");
+            return;
+        }
 
         if (insertedItemId >= mCurrentItem) {
             if (insertedItemId == mCurrentItem) {
@@ -1887,7 +1939,7 @@ public class FilmstripView extends ViewGroup {
 
         MyController(Context context) {
             TimeInterpolator decelerateInterpolator = new DecelerateInterpolator(1.5f);
-            mScroller = new MyScroller(mActivity,
+            mScroller = new MyScroller(mActivity.getAndroidContext(),
                     new Handler(mActivity.getMainLooper()),
                     mScrollerListener, decelerateInterpolator);
             mCanStopScroll = true;

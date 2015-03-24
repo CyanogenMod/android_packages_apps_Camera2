@@ -264,7 +264,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Define la duración en segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Cuenta atrás para hacer una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"¿Recordar ubicaciones de las fotos?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiquetar tus fotos y vídeos con las ubicaciones donde se han realizado\n\nOtras aplicaciones pueden acceder a esta información y a imágenes guardadas."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiqueta tus fotos y vídeos con las ubicaciones donde se han realizado.\n\nOtras aplicaciones pueden acceder a esta información y a imágenes guardadas."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gracias"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÁS OPCIONES"</string>
@@ -355,7 +355,7 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avanzado"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposición manual"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Cambia la resolución y la calidad en Ajustes o prueba las funciones avanzadas."</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"Selecciona un tamaño de foto"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"Selecciona el tamaño de foto"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Puedes cambiar esta opción más tarde en Ajustes."</string>
     <string name="share_to" msgid="5144911209144798122">"Compartir en"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar con"</string>

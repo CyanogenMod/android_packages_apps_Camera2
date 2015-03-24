@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 
+import com.android.camera.data.LocalData.ActionCallback;
 import com.android.camera.filmstrip.ImageData;
 
 /**
@@ -66,7 +67,6 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
         } else if (dataID == totalNumber) {
             return mLastData;
         }
-
         return null;
     }
 
@@ -112,16 +112,15 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
     }
 
     @Override
-    public View getView(Context context, View recycled, int dataID) {
+    public View getView(Context context, View recycled, int dataID, ActionCallback actionCallback) {
         int totalNumber = mAdapter.getTotalNumber();
 
         if (dataID < totalNumber) {
-            return mAdapter.getView(context, recycled, dataID);
+            return mAdapter.getView(context, recycled, dataID, actionCallback);
         } else if (dataID == totalNumber) {
-            return mLastData.getView(context, recycled,
-                    mSuggestedWidth, mSuggestedHeight, 0, null, false);
+            return mLastData.getView(context, recycled, mSuggestedWidth, mSuggestedHeight, 0, null,
+                    false, actionCallback);
         }
-
         return null;
     }
 
@@ -134,7 +133,6 @@ public class FixedLastDataAdapter extends AbstractLocalDataAdapterWrapper {
         } else if (dataId == totalNumber) {
             return mLastData.getItemViewType().ordinal();
         }
-
         return -1;
    }
 

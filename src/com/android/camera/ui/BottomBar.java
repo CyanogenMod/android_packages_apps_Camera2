@@ -18,6 +18,7 @@ package com.android.camera.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -75,9 +77,7 @@ public class BottomBar extends FrameLayout {
     private final float mCircleRadius;
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
 
-    // for Android L, these backgrounds are RippleDrawables (ISA LayerDrawable)
-    // pre-L, they're plain old LayerDrawables
-    private final LayerDrawable[] mShutterButtonBackgrounds;
+    private final Drawable.ConstantState[] mShutterButtonBackgroundConstantStates;
     // a reference to the shutter background's first contained drawable
     // if it's an animated circle drawable (for video mode)
     private AnimatedCircleDrawable mAnimatedCircleDrawable;
@@ -100,25 +100,11 @@ public class BottomBar extends FrameLayout {
         TypedArray ar = context.getResources()
                 .obtainTypedArray(R.array.shutter_button_backgrounds);
         int len = ar.length();
-
-        mShutterButtonBackgrounds = new LayerDrawable[len];
+        mShutterButtonBackgroundConstantStates = new Drawable.ConstantState[len];
         for (int i = 0; i < len; i++) {
             int drawableId = ar.getResourceId(i, -1);
-            LayerDrawable shutterBackground = mShutterButtonBackgrounds[i] =
-                    (LayerDrawable) context.getResources().getDrawable(drawableId).mutate();
-
-            // the background for video has a circle_item drawable placeholder
-            // that gets replaced by an AnimatedCircleDrawable for the cool
-            // shrink-down-to-a-circle effect
-            // all other modes need not do this replace
-            Drawable d = shutterBackground.findDrawableByLayerId(R.id.circle_item);
-            if (d != null) {
-                Drawable animatedCircleDrawable =
-                        new AnimatedCircleDrawable((int) mCircleRadius);
-                animatedCircleDrawable.setLevel(DRAWABLE_MAX_LEVEL);
-                shutterBackground
-                        .setDrawableByLayerId(R.id.circle_item, animatedCircleDrawable);
-            }
+            mShutterButtonBackgroundConstantStates[i] =
+                    context.getResources().getDrawable(drawableId).getConstantState();
         }
         ar.recycle();
     }
@@ -146,11 +132,18 @@ public class BottomBar extends FrameLayout {
 
     private void setCancelBackgroundColor(int alpha, int color) {
         LayerDrawable layerDrawable = (LayerDrawable) mCancelButton.getBackground();
-        ColorDrawable colorDrawable = (ColorDrawable) layerDrawable.getDrawable(0);
-        if (!ApiHelper.isLOrHigher()) {
-            colorDrawable.setColor(color);
+        Drawable d = layerDrawable.getDrawable(0);
+        if (d instanceof AnimatedCircleDrawable) {
+            AnimatedCircleDrawable animatedCircleDrawable = (AnimatedCircleDrawable) d;
+            animatedCircleDrawable.setColor(color);
+            animatedCircleDrawable.setAlpha(alpha);
+        } else if (d instanceof ColorDrawable) {
+            ColorDrawable colorDrawable = (ColorDrawable) d;
+            if (!ApiHelper.isLOrHigher()) {
+                colorDrawable.setColor(color);
+            }
+            colorDrawable.setAlpha(alpha);
         }
-        colorDrawable.setAlpha(alpha);
     }
 
     private void setCaptureButtonUp() {
@@ -222,6 +215,32 @@ public class BottomBar extends FrameLayout {
             }
         });
 
+        extendTouchAreaToMatchParent(R.id.done_button);
+    }
+
+    private void extendTouchAreaToMatchParent(int id) {
+        final View button = findViewById(id);
+        final View parent = (View) button.getParent();
+
+        parent.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect parentRect = new Rect();
+                parent.getHitRect(parentRect);
+                Rect buttonRect = new Rect();
+                button.getHitRect(buttonRect);
+
+                int widthDiff = parentRect.width() - buttonRect.width();
+                int heightDiff = parentRect.height() - buttonRect.height();
+
+                buttonRect.left -= widthDiff/2;
+                buttonRect.right += widthDiff/2;
+                buttonRect.top -= heightDiff/2;
+                buttonRect.bottom += heightDiff/2;
+
+                parent.setTouchDelegate(new TouchDelegate(buttonRect, button));
+            }
+        });
     }
 
     /**
@@ -347,9 +366,33 @@ public class BottomBar extends FrameLayout {
         }
     }
 
+    private LayerDrawable applyCircleDrawableToShutterBackground(LayerDrawable shutterBackground) {
+        // the background for video has a circle_item drawable placeholder
+        // that gets replaced by an AnimatedCircleDrawable for the cool
+        // shrink-down-to-a-circle effect
+        // all other modes need not do this replace
+        Drawable d = shutterBackground.findDrawableByLayerId(R.id.circle_item);
+        if (d != null) {
+            Drawable animatedCircleDrawable =
+                    new AnimatedCircleDrawable((int) mCircleRadius);
+            animatedCircleDrawable.setLevel(DRAWABLE_MAX_LEVEL);
+            shutterBackground
+                    .setDrawableByLayerId(R.id.circle_item, animatedCircleDrawable);
+        }
+
+        return shutterBackground;
+    }
+
+    private LayerDrawable newDrawableFromConstantState(Drawable.ConstantState constantState) {
+        return (LayerDrawable) constantState.newDrawable(getContext().getResources());
+    }
+
     private void setupShutterBackgroundForModeIndex(int index) {
-        LayerDrawable shutterBackground = mShutterButtonBackgrounds[index];
+        LayerDrawable shutterBackground = applyCircleDrawableToShutterBackground(
+                newDrawableFromConstantState(mShutterButtonBackgroundConstantStates[index]));
         mShutterButton.setBackground(shutterBackground);
+        mCancelButton.setBackground(applyCircleDrawableToShutterBackground(
+                newDrawableFromConstantState(mShutterButtonBackgroundConstantStates[index])));
 
         Drawable d = shutterBackground.getDrawable(0);
         mAnimatedCircleDrawable = null;

@@ -38,6 +38,7 @@ import com.android.camera.util.CameraUtil;
 import com.android.camera.util.UsageStatistics;
 import com.android.ex.camera2.portability.CameraCapabilities;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,17 +134,33 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
         public void setFocusParameters();
     }
 
-    private class MainHandler extends Handler {
-        public MainHandler(Looper looper) {
+    /**
+     * TODO: Refactor this so that we either don't need a handler or make
+     * mListener not be the activity.
+     */
+    private static class MainHandler extends Handler {
+        /**
+         * The outer mListener at the moment is actually the CameraActivity,
+         * which we would leak if we didn't break the GC path here using a
+         * WeakReference.
+         */
+        final WeakReference<FocusOverlayManager> mManager;
+        public MainHandler(FocusOverlayManager manager, Looper looper) {
             super(looper);
+            mManager = new WeakReference<FocusOverlayManager>(manager);
         }
 
         @Override
         public void handleMessage(Message msg) {
+            FocusOverlayManager manager = mManager.get();
+            if (manager == null) {
+                return;
+            }
+
             switch (msg.what) {
                 case RESET_TOUCH_FOCUS: {
-                    cancelAutoFocus();
-                    mListener.startFaceDetection();
+                    manager.cancelAutoFocus();
+                    manager.mListener.startFaceDetection();
                     break;
                 }
             }
@@ -155,7 +172,7 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
             Listener listener, boolean mirror, Looper looper, FocusUI ui) {
         mAppController = appController;
         mSettingsManager = appController.getSettingsManager();
-        mHandler = new MainHandler(looper);
+        mHandler = new MainHandler(this, looper);
         mMatrix = new Matrix();
         mDefaultFocusModes = new ArrayList<CameraCapabilities.FocusMode>(defaultFocusModes);
         updateCapabilities(capabilities);

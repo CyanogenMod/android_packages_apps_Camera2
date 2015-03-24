@@ -24,6 +24,7 @@ import android.media.CamcorderProfile;
 import android.util.SparseArray;
 
 import com.android.camera.debug.Log;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Callback;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
@@ -353,7 +354,8 @@ public class SettingsUtil {
      */
     private static int getNextSupportedVideoQualityIndex(int cameraId, int start) {
         for (int i = start + 1; i < sVideoQualities.length; ++i) {
-            if (CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
+            if (isVideoQualitySupported(sVideoQualities[i])
+                    && CamcorderProfile.hasProfile(cameraId, sVideoQualities[i])) {
                 // We found a new supported quality.
                 return i;
             }
@@ -368,6 +370,19 @@ public class SettingsUtil {
         // We previously found a larger supported size. In this edge case, just
         // return the same index as the previous size.
         return start;
+    }
+
+    /**
+     * @return Whether the given {@link CamcorderProfile} is supported on the
+     *         current device/OS version.
+     */
+    private static boolean isVideoQualitySupported(int videoQuality) {
+        // 4k is only supported on L or higher but some devices falsely report
+        // to have support for it on K, see b/18172081.
+        if (!ApiHelper.isLOrHigher() && videoQuality == CamcorderProfile.QUALITY_2160P) {
+            return false;
+        }
+        return true;
     }
 
     /**

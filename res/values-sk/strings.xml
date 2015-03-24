@@ -335,7 +335,7 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Predvolený fotoaparát"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Pomocník a spätná väzba"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Spracovanie HDR+…"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"Licencie open source"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Otvorený zdroj – licencie"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Všeobecné nastavenia"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Rozlíšenie a kvalita"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"O aplikácii"</string>
@@ -354,9 +354,9 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Klepnutím tu môžete obrázky znova zaostriť"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Rozšírené"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ručná expozícia"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"V nastaveniach môžete zmeniť rozlíšenie a kvalitu alebo vyskúšať pokročilé funkcie."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"V sekcii Nastavenia zmeňte rozlíšenie a kvalitu alebo skúste použiť pokročilé funkcie."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Výber veľkosti fotky"</string>
-    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Svoju voľbu môžete neskôr zmeniť v nastaveniach."</string>
+    <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Pomer strán môžete neskôr zmeniť v Nastaveniach."</string>
     <string name="share_to" msgid="5144911209144798122">"Zdieľať na stránkach"</string>
     <string name="edit_with" msgid="615569327230783971">"Upraviť pomocou"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ĎALEJ"</string>

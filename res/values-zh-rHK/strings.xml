@@ -281,7 +281,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"設定"</string>
     <string name="mode_camera" msgid="279763925715250603">"相機"</string>
     <string name="mode_video" msgid="8633929034048169139">"影片"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"拍攝 Photo Sphere 全景相片"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"延時攝影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"廣角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"全景相片"</string>
@@ -333,7 +333,7 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"前置鏡頭相片"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"前置鏡頭影片"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"預設相機"</string>
-    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"說明和意見反映"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"說明與意見反映"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"正在處理 HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"開放原始碼授權"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"一般設定"</string>
@@ -357,7 +357,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"您可以在 [設定] 中變更解像度和畫質，或嘗試使用進階功能。"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"選擇相片尺寸"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"您可以稍後在 [設定] 中變更這項設定。"</string>
-    <string name="share_to" msgid="5144911209144798122">"分享："</string>
+    <string name="share_to" msgid="5144911209144798122">"在以下選擇器分享："</string>
     <string name="edit_with" msgid="615569327230783971">"使用以下選擇器編輯："</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"下一頁"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"好，我明白了"</string>

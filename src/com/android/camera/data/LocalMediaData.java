@@ -16,7 +16,6 @@
 
 package com.android.camera.data;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -32,7 +31,6 @@ import android.widget.ImageView;
 
 import com.android.camera.Storage;
 import com.android.camera.debug.Log;
-import com.android.camera.util.CameraUtil;
 import com.android.camera2.R;
 import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -219,7 +217,8 @@ public abstract class LocalMediaData implements LocalData {
 
     @Override
     public View getView(Context context, View recycled, int thumbWidth, int thumbHeight,
-            int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress) {
+            int placeHolderResourceId, LocalDataAdapter adapter, boolean isInProgress,
+            ActionCallback actionCallback) {
         final ImageView imageView;
         if (recycled != null) {
             imageView = (ImageView) recycled;
@@ -334,8 +333,10 @@ public abstract class LocalMediaData implements LocalData {
 
         static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        private static final String QUERY_ORDER = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC, "
-                + MediaStore.Images.ImageColumns._ID + " DESC";
+        // Sort all data by ID. This must be aligned with
+        // {@link CameraDataAdapter.QueryTask} which relies on the highest ID
+        // being first in any data returned.
+        private static final String QUERY_ORDER = MediaStore.Images.ImageColumns._ID + " DESC";
         /**
          * These values should be kept in sync with column IDs (COL_*) above.
          */
@@ -536,32 +537,50 @@ public abstract class LocalMediaData implements LocalData {
                 return;
             }
 
-            BitmapRequestBuilder<Uri, Bitmap> request = Glide.with(context)
+            final int overrideWidth;
+            final int overrideHeight;
+            final BitmapRequestBuilder<Uri, Bitmap> thumbnailRequest;
+            if (full) {
+                // Load up to the maximum size Bitmap we can render.
+                overrideWidth = Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE);
+                overrideHeight = Math.min(getHeight(), MAXIMUM_TEXTURE_SIZE);
+
+                // Load two thumbnails, first the small low quality thumb from the media store,
+                // then a medium quality thumbWidth/thumbHeight image. Using two thumbnails ensures
+                // we don't flicker to grey while we load the maximum size image.
+                thumbnailRequest = loadUri(context)
+                    .override(thumbWidth, thumbHeight)
+                    .fitCenter()
+                    .thumbnail(loadMediaStoreThumb(context));
+            } else {
+                // Load a medium quality thumbWidth/thumbHeight image.
+                overrideWidth = thumbWidth;
+                overrideHeight = thumbHeight;
+
+                // Load a single small low quality thumbnail from the media store.
+                thumbnailRequest = loadMediaStoreThumb(context);
+            }
+
+            loadUri(context)
+                .placeholder(placeHolderResourceId)
+                .fitCenter()
+                .override(overrideWidth, overrideHeight)
+                .thumbnail(thumbnailRequest)
+                .into(imageView);
+        }
+
+        /** Loads a thumbnail with a size targeted to use MediaStore.Images.Thumbnails. */
+        private BitmapRequestBuilder<Uri, Bitmap> loadMediaStoreThumb(Context context) {
+            return loadUri(context)
+                .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT);
+        }
+
+        /** Loads an image using a MediaStore Uri with our default options. */
+        private BitmapRequestBuilder<Uri, Bitmap> loadUri(Context context) {
+            return Glide.with(context)
                 .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds, mOrientation)
                 .asBitmap()
-                .encoder(JPEG_ENCODER)
-                .placeholder(placeHolderResourceId)
-                .fitCenter();
-            if (full) {
-                request.thumbnail(Glide.with(context)
-                        .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
-                            mOrientation)
-                        .asBitmap()
-                        .encoder(JPEG_ENCODER)
-                        .override(thumbWidth, thumbHeight)
-                        .fitCenter())
-                    .override(Math.min(getWidth(), MAXIMUM_TEXTURE_SIZE),
-                        Math.min(getHeight(), MAXIMUM_TEXTURE_SIZE));
-            } else {
-                request.thumbnail(Glide.with(context)
-                        .loadFromMediaStore(getUri(), mMimeType, mDateModifiedInSeconds,
-                            mOrientation)
-                        .asBitmap()
-                        .encoder(JPEG_ENCODER)
-                        .override(MEDIASTORE_THUMB_WIDTH, MEDIASTORE_THUMB_HEIGHT))
-                    .override(thumbWidth, thumbHeight);
-            }
-            request.into(imageView);
+                .encoder(JPEG_ENCODER);
         }
 
         @Override
@@ -824,7 +843,8 @@ public abstract class LocalMediaData implements LocalData {
         @Override
         public View getView(final Context context, View recycled,
                 int thumbWidth, int thumbHeight, int placeHolderResourceId,
-                LocalDataAdapter adapter, boolean isInProgress) {
+                LocalDataAdapter adapter, boolean isInProgress,
+                final ActionCallback actionCallback) {
 
             final VideoViewHolder viewHolder;
             final View result;
@@ -847,9 +867,7 @@ public abstract class LocalMediaData implements LocalData {
             viewHolder.mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: refactor this into activities to avoid this class
-                    // conversion.
-                    CameraUtil.playVideo((Activity) context, getUri(), mTitle);
+                    actionCallback.playVideo(getUri(), mTitle);
                 }
             });
 

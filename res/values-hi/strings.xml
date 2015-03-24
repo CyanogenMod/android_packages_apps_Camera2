@@ -26,10 +26,10 @@
     <string name="share_panorama" msgid="3558466186935359444">"पैनोरामा को साझा करें"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"फ़ोटो के रूप में साझा करें"</string>
     <string name="deleted" msgid="2036165115527228127">"हटाया गया"</string>
-    <string name="undo" msgid="5110048345890050107">"वापस लाएं"</string>
+    <string name="undo" msgid="5110048345890050107">"पूर्ववत करें"</string>
     <string name="details" msgid="4404020741542549488">"विवरण"</string>
     <string name="close" msgid="4826166926297479820">"बंद करें"</string>
-    <string name="show_on_map" msgid="8542853913632649160">"मानचित्र पर दिखाएं"</string>
+    <string name="show_on_map" msgid="8542853913632649160">"नक्शे पर दिखाएं"</string>
     <string name="rotate_left" msgid="2618440058490662604">"बाएं घुमाएं"</string>
     <string name="rotate_right" msgid="4896096424267838355">"दाएं घुमाएं"</string>
     <string name="edit" msgid="2776879395749004347">"संपादित करें"</string>
@@ -76,7 +76,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"कैमरा चुनें"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"पीछे का कैमरा"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"सामने का कैमरा"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"स्थान जोड़ें"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"स्थान सहेजें"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"स्थान"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"काउंटडाउन टाइमर"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -163,7 +163,7 @@
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"पिछले पैनोरामा की प्रतीक्षा की जा रही है"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"सहेजा जा रहा है…"</string>
     <string name="pano_review_rendering" msgid="2743087719999377155">"पैनोरामा रेंडर हो रहा है"</string>
-    <string name="tap_to_focus" msgid="3519718196270593468">"फ़ोकस करने के लिए स्‍पर्श करें."</string>
+    <string name="tap_to_focus" msgid="3519718196270593468">"फ़ोकस करने हेतु स्‍पर्श करें."</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"प्रभाव"</string>
     <string name="effect_none" msgid="3102797925086872636">"कोई नहीं"</string>
     <string name="effect_goofy_face_squeeze" msgid="1362021544829311452">"पिचका हुआ"</string>
@@ -188,7 +188,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"फ़ोटो पर स्‍विच करें"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"वीडियो पर स्विच करें"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"पैनोरामा पर स्विच करें"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"360 डिग्री पैनोरमा पर जाएं"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphere पर स्‍विच करें"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"उच्‍च गुणवत्ता पर स्विच करें"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"फिर से फ़ोकस पर स्विच करें"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"समीक्षा ना करें"</string>
@@ -206,7 +206,7 @@
     <string name="video_date_content_description" msgid="2151884014634284456">"%s को लिया गया वीडियो"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"%s को लिया गया पैनोरामा"</string>
     <string name="photosphere_date_content_description" msgid="4183741743409007876">"%s को लिया गया 360 डिग्री पैनोरामा"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"%s को लिया गया लैंस ब्लर"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"%s को लिया गया लेंस ब्लर"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"मीडिया प्रोसेस हो रहा है"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"मोड सूची टॉगल करें"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"मोड सूची"</string>
@@ -263,7 +263,7 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"समय अंतराल सुविधा बंद है. समय अंतराल सेट करने के लिए इसे चालू करें."</string>
     <string name="set_duration" msgid="1638453882581604341">"अवधि को सेकंड में सेट करें"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"फ़ोटो लेने के लिए उल्टी गिनती कर रहा है"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"फ़ोटो का स्थान याद रखना हैं?"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"फ़ोटो के स्थान याद रखना हैं?"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"अपने फ़ोटो और वीडियो को उन स्थानों के साथ टैग करें जहां वे लिए गए हैं.\n\nअन्य ऐप्लिकेशन आपके सहेजे गए चित्रों सहित इस जानकारी का उपयोग कर सकते हैं."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"नहीं,रहने दें"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"हां"</string>
@@ -274,23 +274,23 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ज़ूम करें"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"घुमाएं"</string>
     <string name="photo_editor" msgid="1521994560971367225">"फ़ोटो संपादक"</string>
-    <string name="crop_save" msgid="2841974981340098579">"जोड़ें"</string>
+    <string name="crop_save" msgid="2841974981340098579">"सहेजें"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"चित्र लोड नहीं हो सकता!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"फ़िल्मस्ट्रिप दृश्य"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"वॉलपेपर सेट हो रहा है"</string>
     <string name="mode_settings" msgid="2021937261522670921">"सेटिंग"</string>
     <string name="mode_camera" msgid="279763925715250603">"कैमरा"</string>
     <string name="mode_video" msgid="8633929034048169139">"वीडियो"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"360 डिग्री पैनोरमा"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"समय अंतराल"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"वाइड एंगल"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"पैनोरामा"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"लैंस ब्लर"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"लेंस ब्लर"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"कैमरा मोड में स्विच करें"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"वीडियो कैमरे में स्विच करें"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"360 डिग्री पैनोरमा मोड पर जाएं"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Photo Sphere मोड में स्विच करें"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"पैनोरामा मोड में स्विच करें"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"लैंस ब्लर मोड में स्विच करें"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"लेंस ब्लर मोड में स्विच करें"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"सेटिंग खोलें"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"सेटिंग बंद करें"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus बंद"</string>
@@ -352,17 +352,17 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s मेगापिक्सेल"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s मेगापिक्सेल"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"फिर से फ़ोकस करने के लिए, यहां स्पर्श करें"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"वरीयताएं"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"उन्नत"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"मैन्युअल एक्सपोज़र"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"सेटिंग में, रिज़ॉल्यूशन बदलें, या अतिरिक्त सुविधाओं को आज़माएं."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"सेटिंग में, रिज़ॉल्यूशन और गुणवत्ता बदलें, या उन्नत सुविधाओं को आज़माएं."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"फ़ोटो आकार चुनें"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"आप इसे बाद में सेटिंग में बदल सकते हैं."</string>
     <string name="share_to" msgid="5144911209144798122">"इनसे साझा करें:"</string>
     <string name="edit_with" msgid="615569327230783971">"इससे संपादित करें:"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"आगे"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ठीक है, समझ लिया"</string>
-    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"पूर्ण आकार \n(4:3)"</string>
-    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"काटा गया \n(16:9)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"पूर्ण सेंसर \n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"काटा गया सेंसर \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>

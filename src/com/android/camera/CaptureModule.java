@@ -19,7 +19,6 @@ package com.android.camera;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -140,13 +139,6 @@ public class CaptureModule extends CameraModule
     private static final String PHOTO_MODULE_STRING_ID = "PhotoModule";
     /** Enable additional debug output. */
     private static final boolean DEBUG = true;
-    /**
-     * This is the delay before we execute onResume tasks when coming from the
-     * lock screen, to allow time for onPause to execute.
-     * <p>
-     * TODO: Make sure this value is in sync with what we see on L.
-     */
-    private static final int ON_RESUME_TASKS_DELAY_MSEC = 20;
 
     /** Timeout for camera open/close operations. */
     private static final int CAMERA_OPEN_CLOSE_TIMEOUT_MILLIS = 2500;
@@ -243,16 +235,6 @@ public class CaptureModule extends CameraModule
     /** Whether the module is paused right now. */
     private boolean mPaused;
 
-    /** Whether this module was resumed from lockscreen capture intent. */
-    private boolean mIsResumeFromLockScreen = false;
-
-    private final Runnable mResumeTaskRunnable = new Runnable() {
-        @Override
-        public void run() {
-            onResumeTasks();
-        }
-    };
-
     /** Main thread handler. */
     private Handler mMainHandler;
     /** Handler thread for camera-related operations. */
@@ -306,7 +288,6 @@ public class CaptureModule extends CameraModule
     @Override
     public void init(CameraActivity activity, boolean isSecureCamera, boolean isCaptureIntent) {
         Log.d(TAG, "init");
-        mIsResumeFromLockScreen = isResumeFromLockscreen(activity);
         mMainHandler = new Handler(activity.getMainLooper());
         HandlerThread thread = new HandlerThread("CaptureModule.mCameraHandler");
         thread.start();
@@ -387,17 +368,15 @@ public class CaptureModule extends CameraModule
         params.heading = mHeading;
         params.debugDataFolder = mDebugDataDir;
         params.location = location;
+        params.zoom = mZoomValue;
+        params.timerSeconds = mTimerDuration > 0 ? (float) mTimerDuration : null;
 
         mCamera.takePicture(params, session);
     }
 
     @Override
     public void onCountDownFinished() {
-        if (mIsImageCaptureIntent) {
-            mAppController.getCameraAppUI().transitionToIntentReviewLayout();
-        } else {
-            mAppController.getCameraAppUI().transitionToCapture();
-        }
+        mAppController.getCameraAppUI().transitionToCapture();
         mAppController.getCameraAppUI().showModeOptions();
         if (mPaused) {
             return;
@@ -480,8 +459,9 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void onRemoteShutterPress() {
+        Log.d(TAG, "onRemoteShutterPress");
         // TODO: Check whether shutter is enabled.
-        onShutterButtonClick();
+        takePictureNow();
     }
 
     @Override
@@ -530,21 +510,6 @@ public class CaptureModule extends CameraModule
 
     @Override
     public void resume() {
-        // Add delay on resume from lock screen only, in order to to speed up
-        // the onResume --> onPause --> onResume cycle from lock screen.
-        // Don't do always because letting go of thread can cause delay.
-        if (mIsResumeFromLockScreen) {
-            Log.v(TAG, "Delayng onResumeTasks from lock screen. " + System.currentTimeMillis());
-            // Note: onPauseAfterSuper() will delete this runnable, so we will
-            // at most have 1 copy queued up.
-            mMainHandler.postDelayed(mResumeTaskRunnable, ON_RESUME_TASKS_DELAY_MSEC);
-        } else {
-            onResumeTasks();
-        }
-    }
-
-    private void onResumeTasks() {
-        Log.d(TAG, "onResumeTasks + " + System.currentTimeMillis());
         mPaused = false;
         mAppController.getCameraAppUI().onChangeCamera();
         mAppController.addPreviewAreaSizeChangedListener(this);
@@ -581,9 +546,10 @@ public class CaptureModule extends CameraModule
     @Override
     public void pause() {
         mPaused = true;
+        getServices().getRemoteShutterListener().onModuleExit();
         cancelCountDown();
-        resetTextureBufferSize();
         closeCamera();
+        resetTextureBufferSize();
         mCountdownSoundPlayer.unloadSound(R.raw.timer_final_second);
         mCountdownSoundPlayer.unloadSound(R.raw.timer_increment);
         // Remove delayed resume trigger, if it hasn't been executed yet.
@@ -883,8 +849,8 @@ public class CaptureModule extends CameraModule
     }
 
     @Override
-    public void onThumbnailResult(Bitmap bitmap) {
-        // TODO
+    public void onThumbnailResult(byte[] jpegData) {
+        getServices().getRemoteShutterListener().onPictureTaken(jpegData);
     }
 
     @Override
@@ -1172,7 +1138,6 @@ public class CaptureModule extends CameraModule
                     - centerY);
 
             mAppController.updatePreviewTransform(mPreviewTranformationMatrix);
-            mAppController.getCameraAppUI().hideLetterboxing();
             // if (mGcamProxy != null) {
             // mGcamProxy.postSetAspectRatio(mFinalAspectRatio);
             // }
@@ -1237,6 +1202,12 @@ public class CaptureModule extends CameraModule
             }
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting to acquire camera-open lock.", e);
+        }
+        if (mCamera != null) {
+            // If the camera is already open, do nothing.
+            Log.d(TAG, "Camera already open, not re-opening.");
+            mCameraOpenCloseLock.release();
+            return;
         }
         mCameraManager.open(mCameraFacing, useHdr, getPictureSizeFromSettings(),
                 new OpenCallback() {
@@ -1327,8 +1298,8 @@ public class CaptureModule extends CameraModule
         }
         try {
             if (mCamera != null) {
-                mCamera.setFocusStateListener(null);
                 mCamera.close(null);
+                mCamera.setFocusStateListener(null);
                 mCamera = null;
             }
         } finally {

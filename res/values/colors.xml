@@ -82,12 +82,13 @@
     <color name="mode_list_settings_icon_background">#26000000</color>
     <color name="mode_list_settings_icon_pressed_background">#99000000</color>
 
-    <color name="camera_mode_color">#2979ff</color>
-    <color name="video_mode_color">#dd2c00</color>
-    <color name="refocus_mode_color">#00c853</color>
-    <color name="photosphere_mode_color">#aa00ff</color>
-    <color name="panorama_mode_color">#ffbc00</color>
+    <color name="camera_mode_color">#4285f4</color>
+    <color name="video_mode_color">#db4437</color>
+    <color name="refocus_mode_color">#0f9d58</color>
+    <color name="photosphere_mode_color">#ab47bc</color>
+    <color name="panorama_mode_color">#ff9e00</color>
     <color name="mode_cover_default_color">#191919</color>
+    <color name="main_color_global">#00acc1</color>
 
     <color name="bottombar_unpressed">#191919</color>
     <color name="bottombar_pressed">#262626</color>
@@ -99,11 +100,13 @@
 
     <color name="grid_line">#33FFFFFF</color>
     <color name="focus_outer_ring_color">#4CFFFFFF</color>
-    <color name="fullscreen_dialog_background_color">#FFFDD835</color>
+    <color name="fullscreen_dialog_background_color">@color/main_color_global</color>
     <color name="dialog_button_color">#FF76A7F9</color>
-    <color name="dialog_text_color">#DF000000</color>
+    <color name="dialog_text_color">@android:color/black</color>
 
     <color name="settings_cling_color">#2962FF</color>
 
     <color name="mode_icon_hover_highlight">#2DFFFFFF</color>
+    
+    <color name="blue_button_text_color">#00838F</color>
 </resources>

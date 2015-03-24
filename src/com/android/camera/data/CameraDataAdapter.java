@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.view.View;
 
 import com.android.camera.Storage;
+import com.android.camera.data.LocalData.ActionCallback;
 import com.android.camera.debug.Log;
 import com.android.camera.filmstrip.ImageData;
 import com.android.camera.util.Callback;
@@ -125,14 +126,15 @@ public class CameraDataAdapter implements LocalDataAdapter {
     }
 
     @Override
-    public View getView(Context context, View recycled, int dataID) {
+    public View getView(Context context, View recycled, int dataID,
+            ActionCallback actionCallback) {
         if (dataID >= mImages.size() || dataID < 0) {
             return null;
         }
 
         return mImages.get(dataID).getView(
                 context, recycled, mSuggestedWidth, mSuggestedHeight,
-                mPlaceHolderResourceId, this, /* inProgress */ false);
+                mPlaceHolderResourceId, this, /* inProgress */ false, actionCallback);
     }
 
     @Override
@@ -178,7 +180,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         int pos = findDataByContentUri(uri);
         if (pos != -1) {
             // a duplicate one, just do a substitute.
-            Log.v(TAG, "found duplicate data");
+            Log.v(TAG, "found duplicate data: " + uri);
             updateData(pos, newData);
             return false;
         } else {
@@ -337,6 +339,7 @@ public class CameraDataAdapter implements LocalDataAdapter {
         @Override
         protected List<LocalData> doInBackground(ContentResolver... contentResolvers) {
             if (mMinPhotoId != LocalMediaData.QUERY_ALL_MEDIA_ID) {
+                Log.v(TAG, "updating media metadata with photos newer than id: " + mMinPhotoId);
                 final ContentResolver cr = contentResolvers[0];
                 return LocalMediaData.PhotoData.query(cr, LocalMediaData.PhotoData.CONTENT_URI,
                         mMinPhotoId);
@@ -346,11 +349,19 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
         @Override
         protected void onPostExecute(List<LocalData> newPhotoData) {
+            if (newPhotoData == null) {
+                Log.w(TAG, "null data returned from new photos query");
+                return;
+            }
+            Log.v(TAG, "new photos query return num items: " + newPhotoData.size());
             if (!newPhotoData.isEmpty()) {
                 LocalData newestPhoto = newPhotoData.get(0);
                 // We may overlap with another load task or a query task, in which case we want
                 // to be sure we never decrement the oldest seen id.
-                mLastPhotoId = Math.max(mLastPhotoId, newestPhoto.getContentId());
+                long newLastPhotoId = newestPhoto.getContentId();
+                Log.v(TAG, "updating last photo id (old:new) " +
+                        mLastPhotoId + ":" + newLastPhotoId);
+                mLastPhotoId = Math.max(mLastPhotoId, newLastPhotoId);
             }
             // We may add data that is already present, but if we do, it will be deduped in addData.
             // addData does not dedupe session items, so we ignore them here
@@ -404,12 +415,27 @@ public class CameraDataAdapter implements LocalDataAdapter {
 
             long lastPhotoId = LocalMediaData.QUERY_ALL_MEDIA_ID;
             if (!photoData.isEmpty()) {
+                // This relies on {@link LocalMediaData.QUERY_ORDER} returning
+                // items sorted descending by ID, as such we can just pull the
+                // ID from the first item in the result to establish the last
+                // (max) photo ID.
                 lastPhotoId = photoData.get(0).getContentId();
             }
 
-            l.addAll(photoData);
-            l.addAll(videoData);
+            if (photoData != null) {
+                Log.v(TAG, "retrieved photo metadata, number of items: " + photoData.size());
+                l.addAll(photoData);
+            }
+            if (videoData != null) {
+                Log.v(TAG, "retrieved video metadata, number of items: " + videoData.size());
+                l.addAll(videoData);
+            }
+            Log.v(TAG, "sorting video/photo metadata");
+            // Photos should be sorted within photo/video by ID, which in most
+            // cases should correlate well to the date taken/modified. This sort
+            // operation makes all photos/videos sorted by date in one list.
             l.sort(new LocalData.NewestFirstComparator());
+            Log.v(TAG, "sorted video/photo metadata");
 
             // Load enough metadata so it's already loaded when we open the filmstrip.
             for (int i = 0; i < MAX_METADATA && i < l.size(); i++) {

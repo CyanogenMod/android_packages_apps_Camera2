@@ -16,6 +16,10 @@
 
 package com.android.camera.debug;
 
+import android.os.Build;
+
+import com.android.camera.util.ReleaseHelper;
+
 public class Log {
     /**
      * All Camera logging using this class will use this tag prefix.
@@ -123,13 +127,22 @@ public class Log {
                 // than the desired output level. This applies to all tags.
                 return LogHelper.getOverrideLevel() <= level;
             } else {
-                // The prefix can be used as an override tag to see all camera logs
-                return android.util.Log.isLoggable(CAMERA_LOGTAG_PREFIX, level)
-                        || android.util.Log.isLoggable(tag.toString(), level);
+                return ReleaseHelper.shouldLogVerbose() ||
+                        isDebugOsBuild() || shouldLog(tag, level);
             }
         } catch (IllegalArgumentException ex) {
             e(TAG, "Tag too long:" + tag);
             return false;
         }
+    }
+
+    private static boolean shouldLog(Tag tag, int level) {
+        // The prefix can be used as an override tag to see all camera logs
+        return android.util.Log.isLoggable(CAMERA_LOGTAG_PREFIX, level)
+                || android.util.Log.isLoggable(tag.toString(), level);
+    }
+
+    private static boolean isDebugOsBuild() {
+        return "userdebug".equals(Build.TYPE) || "eng".equals(Build.TYPE);
     }
 }

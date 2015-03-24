@@ -22,20 +22,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/remember_location_title"
-        android:textSize="22sp"
-        android:textColor="@color/dialog_text_color"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="28dp" />
+        style="@style/fullscreen_dialog_title"
+        android:layout_margin="28dp" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/geo_opt_in_graphic"
-        android:layout_marginBottom="56dp"/>
+        android:layout_marginBottom="28dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginRight="44dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
         <CheckBox
@@ -44,15 +42,17 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/remember_location_prompt"
             android:textColor="@color/dialog_text_color"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:lineSpacingExtra="1.9sp" />
     </LinearLayout>
 
     <Button
         android:id="@+id/confirm_button"
         style="@style/BlueButton"
         android:text="@string/startup_dialog_button_next"
-        android:layout_marginBottom="28dp"
-        android:layout_marginTop="28dp"/>
+        android:layout_marginBottom="18dp"
+        android:layout_marginTop="18dp" />
 </LinearLayout>

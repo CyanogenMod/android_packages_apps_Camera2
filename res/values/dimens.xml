@@ -14,7 +14,6 @@
      limitations under the License.
 -->
 <resources>
-    <dimen name="hint_y_offset">64dp</dimen>
     <dimen name="pano_mosaic_surface_height">240dp</dimen>
     <dimen name="pano_review_button_width">70dp</dimen>
     <dimen name="pano_review_button_height">45dp</dimen>
@@ -180,7 +179,7 @@
     <dimen name="camera_controls_padding_start">36dp</dimen>
     <dimen name="camera_controls_padding_end">36dp</dimen>
 
-    <dimen name="mode_transition_view_icon_size">144dp</dimen>
+    <dimen name="mode_transition_view_icon_size">64dp</dimen>
     <dimen name="flash_circle_size_after_shrink">36dp</dimen>
 
     <dimen name="mode_options_height">72dp</dimen>

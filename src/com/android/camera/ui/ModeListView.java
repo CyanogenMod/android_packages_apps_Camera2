@@ -276,6 +276,15 @@ public class ModeListView extends FrameLayout
             // Do nothing.
         }
 
+        /**
+         * Hide the mode drawer (with animation, if supported)
+         * and switch to fully hidden state.
+         * Default is to simply call {@link #hide()}.
+         */
+        public void hideAnimated() {
+            hide();
+        }
+
         /***************GestureListener implementation*****************/
         @Override
         public boolean onDown(MotionEvent e) {
@@ -742,6 +751,16 @@ public class ModeListView extends FrameLayout
             mCurrentStateManager.setCurrentState(new FullyHiddenState());
         }
 
+        @Override
+        public void hideAnimated() {
+            cancelAnimation();
+            animateListToWidth(0).addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mCurrentStateManager.setCurrentState(new FullyHiddenState());
+                }
+            });
+        }
     }
 
     /**
@@ -1440,6 +1459,20 @@ public class ModeListView extends FrameLayout
     }
 
     /**
+     * Hide the mode list immediately (provided the current state allows it).
+     */
+    public void hide() {
+        mCurrentStateManager.getCurrentState().hide();
+    }
+
+    /**
+     * Hide the mode list with an animation.
+     */
+    public void hideAnimated() {
+        mCurrentStateManager.getCurrentState().hideAnimated();
+    }
+
+    /**
      * Resets the visible width of all the mode selectors to 0.
      */
     private void resetModeSelectors() {
@@ -1895,7 +1928,7 @@ public class ModeListView extends FrameLayout
     private class PeepholeAnimationEffect extends AnimationEffects {
 
         private final static int UNSET = -1;
-        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 300;
+        private final static int PEEP_HOLE_ANIMATION_DURATION_MS = 500;
 
         private final Paint mMaskPaint = new Paint();
         private final RectF mBackgroundDrawArea = new RectF();

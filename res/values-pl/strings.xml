@@ -76,7 +76,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Wybierz aparat"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Tylny"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Przedni"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Zapisuj lokalizacje"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Zapisz lokalizacje"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"LOKALIZACJA"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Samowyzwalacz"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -263,7 +263,7 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funkcja filmu poklatkowego jest wyłączona. Włącz ją, by ustawić odstęp czasu."</string>
     <string name="set_duration" msgid="1638453882581604341">"Ustaw czas w sekundach"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odliczam czas do zrobienia zdjęcia"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Zapisywać lokalizacje zdjęć?"</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Zapamiętywać lokalizacje zdjęć?"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"Dodawaj do moich zdjęć i filmów tagi lokalizacji, w których zostały one zrobione lub nagrane.\n\nInne aplikacje mają dostęp do tych informacji oraz zapisanych zdjęć i filmów."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, dziękuję"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Tak"</string>

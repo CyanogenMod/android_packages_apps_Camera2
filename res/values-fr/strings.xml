@@ -361,8 +361,8 @@
     <string name="edit_with" msgid="615569327230783971">"Modifier avec"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"SUIVANT"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK"</string>
-    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Format 4:3\n(complet)"</string>
-    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Format 16:9\n(rogné)"</string>
+    <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Capteur complet\n(4:3)"</string>
+    <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Capteur rogné\n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>
     <string name="pref_boolean_true" msgid="4131945223998878009">"1"</string>
 </resources>

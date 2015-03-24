@@ -30,8 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/remember_location_title"
-            android:textSize="22sp"
-            android:textColor="@color/dialog_text_color"
+            style="@style/fullscreen_dialog_title"
+            android:layout_marginLeft="28dp"
+            android:layout_marginRight="28dp"
             android:layout_marginBottom="28dp" />
         <ImageView
             android:layout_width="wrap_content"
@@ -52,13 +53,15 @@
             <CheckBox
                 android:id="@+id/check_box"
                 android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginBottom="104dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="72dp"
                 android:gravity="top"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="@string/remember_location_prompt"
                 android:textColor="@color/dialog_text_color"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:lineSpacingExtra="1.9sp" />
             <Button
                 android:id="@+id/confirm_button"
                 style="@style/BlueButton"

@@ -129,8 +129,6 @@ public class VideoModule extends CameraModule
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
 
-    private final CameraErrorCallback mErrorCallback = new CameraErrorCallback();
-
     // Preference must be read before starting preview. We check this before starting
     // preview.
     private boolean mPreferenceRead;
@@ -604,6 +602,7 @@ public class VideoModule extends CameraModule
                     mCameraCapabilities.supports(CameraCapabilities.Feature.METERING_AREA);
         }
         readVideoPreferences();
+        updateDesiredPreviewSize();
         resizeForPreviewAspectRatio();
         initializeFocusManager();
         // TODO: Having focus overlay manager caching the parameters is prone to error,
@@ -700,8 +699,14 @@ public class VideoModule extends CameraModule
         boolean stop = mMediaRecorderRecording;
 
         if (stop) {
+            // CameraAppUI mishandles mode option enable/disable
+            // for video, override that
+            mAppController.getCameraAppUI().enableModeOptions();
             onStopVideoRecording();
         } else {
+            // CameraAppUI mishandles mode option enable/disable
+            // for video, override that
+            mAppController.getCameraAppUI().disableModeOptions();
             startVideoRecording();
         }
         mAppController.setShutterEnabled(false);
@@ -780,17 +785,28 @@ public class VideoModule extends CameraModule
         }
         mProfile = CamcorderProfile.get(mCameraId, quality);
         mPreferenceRead = true;
+    }
+
+    /**
+     * Calculates and sets local class variables for Desired Preview sizes.
+     * This function should be called after every change in preview camera
+     * resolution and/or before the preview starts. Note that these values still
+     * need to be pushed to the CameraSettings to actually change the preview
+     * resolution.  Does nothing when camera pointer is null.
+     */
+    private void updateDesiredPreviewSize() {
         if (mCameraDevice == null) {
             return;
         }
+
         mCameraSettings = mCameraDevice.getSettings();
         Point desiredPreviewSize = getDesiredPreviewSize(mAppController.getAndroidContext(),
                 mCameraSettings, mCameraCapabilities, mProfile, mUI.getPreviewScreenSize());
         mDesiredPreviewWidth = desiredPreviewSize.x;
         mDesiredPreviewHeight = desiredPreviewSize.y;
         mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
-        Log.v(TAG, "mDesiredPreviewWidth=" + mDesiredPreviewWidth +
-                ". mDesiredPreviewHeight=" + mDesiredPreviewHeight);
+        Log.v(TAG, "Updated DesiredPreview=" + mDesiredPreviewWidth + "x"
+                + mDesiredPreviewHeight);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -802,7 +818,9 @@ public class VideoModule extends CameraModule
      * com.android.camera.cameradevice.CameraCapabilities#getPreferredPreviewSizeForVideo()}
      * but also considers the current preview area size on screen and make sure
      * the final preview size will not be smaller than 1/2 of the current
-     * on screen preview area in terms of their short sides.</p>
+     * on screen preview area in terms of their short sides.  This function has
+     * highest priority of WYSIWYG, 1:1 matching as its best match, even if
+     * there's a larger preview that meets the condition above. </p>
      *
      * @return The preferred preview size or {@code null} if the camera is not
      *         opened yet.
@@ -832,6 +850,19 @@ public class VideoModule extends CameraModule
                 it.remove();
             }
         }
+
+        // Take highest priority for WYSIWYG when the preview exactly matches
+        // video frame size.  The variable sizes is assumed to be filtered
+        // for sizes beyond the UI size.
+        for (Size size : sizes) {
+            if (size.width() == profile.videoFrameWidth
+                    && size.height() == profile.videoFrameHeight) {
+                Log.v(TAG, "Selected =" + size.width() + "x" + size.height()
+                           + " on WYSIWYG Priority");
+                return new Point(profile.videoFrameWidth, profile.videoFrameHeight);
+            }
+        }
+
         Size optimalSize = CameraUtil.getOptimalPreviewSize(context, sizes,
                 (double) profile.videoFrameWidth / profile.videoFrameHeight);
         return new Point(optimalSize.width(), optimalSize.height());
@@ -911,7 +942,6 @@ public class VideoModule extends CameraModule
             return;
         }
 
-        mCameraDevice.setErrorCallback(mHandler, mErrorCallback);
         if (mPreviewing == true) {
             stopPreview();
         }
@@ -995,7 +1025,6 @@ public class VideoModule extends CameraModule
             return;
         }
         mCameraDevice.setZoomChangeListener(null);
-        mCameraDevice.setErrorCallback(null, null);
         mActivity.getCameraProvider().releaseCamera(mCameraDevice.getCameraId());
         mCameraDevice = null;
         mPreviewing = false;
@@ -1607,6 +1636,9 @@ public class VideoModule extends CameraModule
     private void setCameraParameters() {
         SettingsManager settingsManager = mActivity.getSettingsManager();
 
+        // Update Desired Preview size in case video camera resolution has changed.
+        updateDesiredPreviewSize();
+
         mCameraSettings.setPreviewSize(new Size(mDesiredPreviewWidth, mDesiredPreviewHeight));
         // This is required for Samsung SGH-I337 and probably other Samsung S4 versions
         if (Build.BRAND.toLowerCase().contains("samsung")) {
@@ -1641,7 +1673,7 @@ public class VideoModule extends CameraModule
         // here we determine the picture size based on the preview size.
         List<Size> supported = mCameraCapabilities.getSupportedPhotoSizes();
         Size optimalSize = CameraUtil.getOptimalVideoSnapshotPictureSize(supported,
-                (double) mDesiredPreviewWidth / mDesiredPreviewHeight);
+                mDesiredPreviewWidth, mDesiredPreviewHeight);
         Size original = new Size(mCameraSettings.getCurrentPhotoSize());
         if (!original.equals(optimalSize)) {
             mCameraSettings.setPhotoSize(optimalSize);

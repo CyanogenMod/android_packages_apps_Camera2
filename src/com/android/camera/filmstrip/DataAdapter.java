@@ -19,6 +19,8 @@ package com.android.camera.filmstrip;
 import android.content.Context;
 import android.view.View;
 
+import com.android.camera.data.LocalData.ActionCallback;
+
 /**
  * An interface which defines the interactions between the
  * {@link ImageData} and the
@@ -85,7 +87,7 @@ public interface DataAdapter {
      * @return The view representing the image data. Null if unavailable or
      *         the {@code dataID} is out of range.
      */
-    public View getView(Context context, View recycled, int dataID);
+    public View getView(Context context, View recycled, int dataID, ActionCallback actionCallback);
 
     /** Returns a unique identifier for the view created by this data so that the view
      * can be reused.
