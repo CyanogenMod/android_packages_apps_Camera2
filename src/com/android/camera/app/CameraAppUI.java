@@ -352,7 +352,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          */
         public boolean enablePanoOrientation;
 
+        /**
+         * Set true if manual exposure compensation should be visible.
+         *
+         * This option is not constrained by hardware limitations.
+         * For example, this is false in HDR+ mode.
+         */
         public boolean enableExposureCompensation;
+
+        /**
+         * Set true if the device supports exposure compensation.
+         */
+        public boolean isExposureCompensationSupported;
 
         /** Intent UI */
 
@@ -2052,11 +2063,14 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             buttonManager.initializePanoOrientationButtons(bottomBarSpec.panoOrientationCallback);
         }
 
-        // If manual exposure is enabled and HDR is not enabled, then show the
-        // exposure button.
-        // If manual exposure is enabled and HDR is enabled, then disable the
-        // exposure button.
-        // If manual exposure is not enabled, then hide the exposure button.
+
+
+        // If manual exposure is enabled both in SettingsManager and
+        // BottomBarSpec,then show the exposure button.
+        // If manual exposure is disabled in the BottomBarSpec (eg. HDR+
+        // enabled), but the device has the feature, then disable the exposure
+        // button.
+        // Otherwise, hide the button.
         if (bottomBarSpec.enableExposureCompensation
                 && !(bottomBarSpec.minExposureCompensation == 0 && bottomBarSpec.maxExposureCompensation == 0)
                 && mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
@@ -2069,15 +2083,16 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                         }
                     });
             buttonManager.setExposureCompensationParameters(
-                bottomBarSpec.minExposureCompensation,
-                bottomBarSpec.maxExposureCompensation,
-                bottomBarSpec.exposureCompensationStep);
+                    bottomBarSpec.minExposureCompensation,
+                    bottomBarSpec.maxExposureCompensation,
+                    bottomBarSpec.exposureCompensationStep);
 
             buttonManager.setExposureCompensationCallback(
                     bottomBarSpec.exposureCompensationSetCallback);
             buttonManager.updateExposureButtons();
         } else if (mController.getSettingsManager().getBoolean(SettingsManager.SCOPE_GLOBAL,
-                Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)) {
+                Keys.KEY_EXPOSURE_COMPENSATION_ENABLED)
+                && bottomBarSpec.isExposureCompensationSupported) {
             buttonManager.disableButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);
         } else {
             buttonManager.hideButton(ButtonManager.BUTTON_EXPOSURE_COMPENSATION);

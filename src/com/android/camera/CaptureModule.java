@@ -724,6 +724,9 @@ public class CaptureModule extends CameraModule implements
         bottomBarSpec.hdrCallback = getHdrButtonCallback();
         bottomBarSpec.enableSelfTimer = true;
         bottomBarSpec.showSelfTimer = true;
+        bottomBarSpec.isExposureCompensationSupported = mCameraCharacteristics
+                .isExposureCompensationSupported();
+        bottomBarSpec.enableExposureCompensation = bottomBarSpec.isExposureCompensationSupported;
 
         // We must read the key from the settings because the button callback
         // is not executed until after this method is called.
@@ -743,7 +746,6 @@ public class CaptureModule extends CameraModule implements
             // flash supported property and manual exposure supported property
             // for this camera.
             bottomBarSpec.enableFlash = mCameraCharacteristics.isFlashSupported();
-            bottomBarSpec.enableExposureCompensation = mCameraCharacteristics.isExposureCompensationSupported();
         }
 
         bottomBarSpec.minExposureCompensation =
