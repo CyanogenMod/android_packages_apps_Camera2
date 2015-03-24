@@ -87,10 +87,24 @@ public class OneCameraFeatureConfigCreator {
                     return CaptureSupportLevel.LEGACY_JPEG;
                 }
 
-                // On a non-LEGACY device prior to Lollipop MR1 we fall back to
-                // LIMITED_JPEG due to Nexus 5 and 6 HAL bugs.
-                if (!ApiHelper.isLMr1OrHigher() && (ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6)) {
+                // No matter if L or L MR1, the N5 does not currently support
+                // ZSL due to HAL bugs. The latest one causes random preview
+                // freezes even on MR1, see b/19565931.
+                if (ApiHelper.IS_NEXUS_5) {
                     return CaptureSupportLevel.LIMITED_JPEG;
+                }
+
+                if (ApiHelper.IS_NEXUS_6) {
+                    if (ApiHelper.isLMr1OrHigher()) {
+                        // Although front-facing cameras on the N6 (and N5) are not advertised as
+                        // FULL, they can do ZSL. We might want to change the check for ZSL
+                        // according to b/19625916.
+                        return CaptureSupportLevel.ZSL;
+                    } else {
+                        // On a non-LEGACY N6 (or N5) prior to Lollipop MR1 we fall back to
+                        // LIMITED_JPEG due to HAL bugs.
+                        return CaptureSupportLevel.LIMITED_JPEG;
+                    }
                 }
 
                 // On FULL devices starting with L-MR1 we can run ZSL.
