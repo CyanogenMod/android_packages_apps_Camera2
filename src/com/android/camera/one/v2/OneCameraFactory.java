@@ -37,5 +37,6 @@ public interface OneCameraFactory {
             Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             Observable<Integer> exposureSetting,
             Observable<Boolean> hdrSceneSetting,
-            BurstFacade burstController, FatalErrorHandler fatalErrorHandler);
+            BurstFacade burstController,
+            FatalErrorHandler fatalErrorHandler);
 }

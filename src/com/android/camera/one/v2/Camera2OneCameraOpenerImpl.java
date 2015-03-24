@@ -36,6 +36,7 @@ import com.android.camera.device.ActiveCameraDeviceTracker;
 import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCamera.OpenCallback;
+import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraOpener;
 import com.android.camera.one.config.OneCameraFeatureConfig;
@@ -176,7 +177,10 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
                                     soundPlayer, fatalErrorHandler);
                             openCallback.onCameraOpened(oneCamera);
                         } catch (CameraAccessException e) {
-                            Log.d(TAG, "Could not get camera characteristics");
+                            Log.d(TAG, "Could not get camera characteristics", e);
+                            openCallback.onFailure();
+                        } catch (OneCameraAccessException e) {
+                            Log.d(TAG, "Could not create OneCamera", e);
                             openCallback.onFailure();
                         }
                     }

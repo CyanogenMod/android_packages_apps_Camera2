@@ -158,6 +158,10 @@ public final class StateStartingPreview extends StateImpl {
             // Pick a preview size with the right aspect ratio.
             final List<Size> supportedPreviewSizes = mResourceOpenedCamera.get()
                     .getCameraCharacteristics().getSupportedPreviewSizes();
+            if (supportedPreviewSizes.isEmpty()) {
+                return Optional.of((State) StateFatal.from(this, mResourceConstructed));
+            }
+
             final Rational pictureAspectRatio =
                     mResourceConstructed.get().getResolutionSetting().getPictureAspectRatio(
                           mResourceOpenedCamera.get().getCameraId(),
