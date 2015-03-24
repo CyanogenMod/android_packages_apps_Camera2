@@ -22,6 +22,7 @@ import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.util.Range;
@@ -33,7 +34,6 @@ import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
-import com.google.android.camera2.CameraMetadata;
 import com.google.common.primitives.Floats;
 
 import java.util.ArrayList;
