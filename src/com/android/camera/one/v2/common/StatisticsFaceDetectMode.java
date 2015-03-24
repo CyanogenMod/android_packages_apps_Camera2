@@ -16,12 +16,14 @@
 
 package com.android.camera.one.v2.common;
 
+import android.hardware.camera2.CameraMetadata;
+
 import com.android.camera.one.OneCameraCharacteristics.FaceDetectMode;
-import com.google.android.camera2.CameraMetadata;
 import com.google.common.base.Supplier;
 
 /**
- * Created by codelogic on 3/23/15.
+ * Supply the face detection mode based on the OneCamera face detect
+ * mode.
  */
 public class StatisticsFaceDetectMode implements Supplier<Integer> {
     private final Supplier<FaceDetectMode> mFaceDetectMode;
