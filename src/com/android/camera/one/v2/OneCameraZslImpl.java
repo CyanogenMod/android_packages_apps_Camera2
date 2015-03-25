@@ -43,7 +43,6 @@ import android.support.v4.util.Pools;
 import android.view.Surface;
 
 import com.android.camera.CaptureModuleUtil;
-import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.exif.ExifInterface;
@@ -69,6 +68,9 @@ import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.ListenerCombiner;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.nio.ByteBuffer;
 import java.security.InvalidParameterException;
@@ -634,13 +636,20 @@ public class OneCameraZslImpl extends AbstractOneCamera {
         new ExifUtil(exif).populateExif(Optional.<TaskImageContainer.TaskImage>absent(),
                 Optional.of((CaptureResultProxy) new AndroidCaptureResultProxy(result)),
                 Optional.<Location>absent());
-        session.saveAndFinish(acquireJpegBytes(image, degrees),
-                size.getWidth(), size.getHeight(), 0, exif, new OnMediaSavedListener() {
-                        @Override
-                    public void onMediaSaved(Uri uri) {
-                        captureParams.callback.onPictureSaved(uri);
-                    }
-                });
+        ListenableFuture<Optional<Uri>> futureUri = session.saveAndFinish(
+                acquireJpegBytes(image, degrees),
+                size.getWidth(), size.getHeight(), 0, exif);
+        Futures.addCallback(futureUri, new FutureCallback<Optional<Uri>>() {
+            @Override
+            public void onSuccess(Optional<Uri> uriOptional) {
+                captureParams.callback.onPictureSaved(uriOptional.orNull());
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                captureParams.callback.onPictureSaved(null);
+            }
+        });
     }
 
     /**

@@ -23,9 +23,7 @@ import android.media.CameraProfile;
 import android.net.Uri;
 
 import com.android.camera.Exif;
-import com.android.camera.app.MediaSaver;
 import com.android.camera.app.OrientationManager.DeviceOrientation;
-import com.android.camera.async.Listenable;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
@@ -36,6 +34,8 @@ import com.android.camera.util.ExifUtil;
 import com.android.camera.util.JpegUtilNative;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.nio.ByteBuffer;
@@ -288,15 +288,21 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         final ExifInterface exif = createExif(Optional.fromNullable(exifData), resultImage,
                 img.metadata);
         mSession.getCollector().decorateAtTimeWriteToDisk(exif);
-        mSession.saveAndFinish(writeOut, resultImage.width, resultImage.height,
-                resultImage.orientation.getDegrees(), exif,
-                new MediaSaver.OnMediaSavedListener() {
-                    @Override
-                    public void onMediaSaved(Uri uri) {
-                        onUriResolved(mId, finalInput, finalResult, uri,
-                                TaskInfo.Destination.FINAL_IMAGE);
-                    }
-                });
+        ListenableFuture<Optional<Uri>> futureUri = mSession.saveAndFinish(writeOut,
+                resultImage.width, resultImage.height, resultImage.orientation.getDegrees(), exif);
+        Futures.addCallback(futureUri, new FutureCallback<Optional<Uri>>() {
+            @Override
+            public void onSuccess(Optional<Uri> uriOptional) {
+                if (uriOptional.isPresent()) {
+                    onUriResolved(mId, finalInput, finalResult, uriOptional.get(),
+                            TaskInfo.Destination.FINAL_IMAGE);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+            }
+        });
 
         final ListenableFuture<TotalCaptureResultProxy> requestMetadata = img.metadata;
         // If TotalCaptureResults are available add them to the capture event.
