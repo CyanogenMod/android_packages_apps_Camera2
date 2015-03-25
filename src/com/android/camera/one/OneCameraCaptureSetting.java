@@ -17,20 +17,22 @@
 package com.android.camera.one;
 
 import com.android.camera.async.Observable;
+import com.android.camera.async.Observables;
 import com.android.camera.device.CameraId;
+import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.SettingObserver;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
+import com.google.common.base.Function;
 
 /**
  * Contains related settings to configure a camera for a particular type of
  * capture.
  */
 public class OneCameraCaptureSetting {
-    private final OneCamera.Facing mCameraFacing;
     private final Size mCaptureSize;
     private final Observable<OneCamera.PhotoCaptureParameters.Flash> mFlashSetting;
     private final Observable<Integer> mExposureSetting;
@@ -38,21 +40,24 @@ public class OneCameraCaptureSetting {
     private final boolean mIsHdrPlusEnabled;
 
     public static OneCameraCaptureSetting create(
-            Facing facing,
-            CameraId cameraId,
-            ResolutionSetting resolutionSetting,
+            Size pictureSize,
             SettingsManager settingsManager,
+            final HardwareSpec hardwareSpec,
             String cameraSettingScope,
-            boolean isHdrPlusEnabled) throws OneCameraAccessException {
+            boolean isHdrPlusEnabled) {
         Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting = new FlashSetting(
                 SettingObserver.ofString(settingsManager, cameraSettingScope, Keys.KEY_FLASH_MODE));
         Observable<Integer> exposureSetting = SettingObserver.ofInteger(
                 settingsManager, cameraSettingScope, Keys.KEY_EXPOSURE);
-        Observable<Boolean> hdrSceneSetting = SettingObserver.ofBoolean(
-                settingsManager, SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR);
+        Observable<Boolean> hdrSceneSetting;
+        if (hardwareSpec.isHdrSupported()) {
+            hdrSceneSetting = SettingObserver.ofBoolean(settingsManager,
+                    SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR);
+        } else {
+            hdrSceneSetting = Observables.of(false);
+        }
         return new OneCameraCaptureSetting(
-                facing,
-                resolutionSetting.getPictureSize(cameraId, facing),
+                pictureSize,
                 flashSetting,
                 exposureSetting,
                 hdrSceneSetting,
@@ -60,22 +65,16 @@ public class OneCameraCaptureSetting {
     }
 
     private OneCameraCaptureSetting(
-            OneCamera.Facing cameraFacing,
             Size captureSize,
             Observable<OneCamera.PhotoCaptureParameters.Flash> flashSetting,
             Observable<Integer> exposureSetting,
             Observable<Boolean> hdrSceneSetting,
             boolean isHdrPlusEnabled) {
-        mCameraFacing = cameraFacing;
         mCaptureSize = captureSize;
         mFlashSetting = flashSetting;
         mExposureSetting = exposureSetting;
         mHdrSceneSetting = hdrSceneSetting;
         mIsHdrPlusEnabled = isHdrPlusEnabled;
-    }
-
-    public OneCamera.Facing getCameraFacing() {
-        return mCameraFacing;
     }
 
     public Size getCaptureSize() {

@@ -506,7 +506,7 @@ public class CaptureModule extends CameraModule implements
                 mSettingsManager.getString(mAppController.getCameraScope(),
                         Keys.KEY_FLASH_MODE);
         boolean gridLinesOn = Keys.areGridLinesOn(mSettingsManager);
-        float timerDuration = (float) mSettingsManager
+        float timerDuration = mSettingsManager
                 .getInteger(SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
 
         session.getCollector().decorateAtTimeCaptureRequest(
@@ -517,7 +517,7 @@ public class CaptureModule extends CameraModule implements
                 mZoomValue,
                 flashSetting,
                 gridLinesOn,
-                (float) timerDuration,
+                timerDuration,
                 mLastShutterTouchCoordinate,
                 null /* TODO: Implement Volume Button Shutter Click Instrumentation */,
                 mCameraCharacteristics.getSensorInfoActiveArraySize()
@@ -744,7 +744,7 @@ public class CaptureModule extends CameraModule implements
             // facing.
             settingsManager.set(SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR_PLUS, true);
             settingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,
-                  (String) mOneCameraManager.findFirstCameraFacing(Facing.BACK).getValue());
+                  mOneCameraManager.findFirstCameraFacing(Facing.BACK).getValue());
         }
     }
 
@@ -758,7 +758,12 @@ public class CaptureModule extends CameraModule implements
 
             @Override
             public boolean isHdrSupported() {
-                return mCameraCharacteristics.isHdrSceneSupported();
+                if (ApiHelper.IS_NEXUS_4 && is16by9AspectRatio(mPictureSize)) {
+                    Log.v(TAG, "16:9 N4, no HDR support");
+                    return false;
+                } else {
+                    return mCameraCharacteristics.isHdrSceneSupported();
+                }
             }
 
             @Override
@@ -1327,14 +1332,14 @@ public class CaptureModule extends CameraModule implements
         OneCameraCaptureSetting captureSetting;
         // Read the preferred picture size from the setting.
         try {
-            captureSetting = OneCameraCaptureSetting.create(
-                    mCameraFacing, cameraId, mAppController.getResolutionSetting(), mSettingsManager,
-                    settingScope, useHdr);
+            mPictureSize = mAppController.getResolutionSetting().getPictureSize(
+                    cameraId, mCameraFacing);
+            captureSetting = OneCameraCaptureSetting.create(mPictureSize, mSettingsManager,
+                    getHardwareSpec(), settingScope, useHdr);
         } catch (OneCameraAccessException ex) {
             mAppController.getFatalErrorHandler().onGenericCameraAccessFailure();
             return;
         }
-        mPictureSize = captureSetting.getCaptureSize();
 
         mOneCameraOpener.open(cameraId, captureSetting, mCameraHandler, mainThread,
               imageRotationCalculator, mBurstController, mSoundPlayer,

@@ -180,14 +180,14 @@ public final class StateOpeningCamera extends StateImpl {
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
         }
         try {
+            mPictureSize = mResourceConstructed.get().getResolutionSetting().getPictureSize(
+                    mCameraId, mCameraFacing);
             mOneCameraCaptureSetting = OneCameraCaptureSetting.create(
-                    mCameraFacing,
-                    mCameraId,
-                    mResourceConstructed.get().getResolutionSetting(),
+                    mPictureSize,
                     mResourceConstructed.get().getAppController().getSettingsManager(),
+                    getHardwareSpec(),
                     mResourceConstructed.get().getAppController().getCameraScope(),
                     false);
-            mPictureSize = mOneCameraCaptureSetting.getCaptureSize();
         } catch (OneCameraAccessException ex) {
             Log.e(TAG, "Failed while open camera", ex);
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
