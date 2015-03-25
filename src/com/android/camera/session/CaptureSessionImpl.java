@@ -30,6 +30,8 @@ import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.FileUtil;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 
 import java.io.File;
 import java.io.IOException;
@@ -236,25 +238,33 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void saveAndFinish(byte[] data, int width, int height, int orientation,
-            ExifInterface exif, final MediaSaver.OnMediaSavedListener listener) {
+    public synchronized ListenableFuture<Optional<Uri>> saveAndFinish(byte[] data, int width, int height,
+            int orientation, ExifInterface exif) {
+        final SettableFuture<Optional<Uri>> futureResult = SettableFuture.create();
+
         mIsFinished = true;
         if (mPlaceHolderSession == null) {
             mMediaSaver.addImage(
                     data, mTitle, mSessionStartMillis, mLocation, width, height,
-                    orientation, exif, listener);
-            return;
+                    orientation, exif, new MediaSaver.OnMediaSavedListener() {
+                        @Override
+                        public void onMediaSaved(Uri uri) {
+                            futureResult.set(Optional.fromNullable(uri));
+                        }
+                    });
+        } else {
+            try {
+                mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
+                        orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
+                mSessionNotifier.notifyTaskDone(mUri);
+                futureResult.set(Optional.fromNullable(mUri));
+            } catch (IOException e) {
+                Log.e(TAG, "Could not write file", e);
+                finishWithFailure(-1, true);
+                futureResult.setException(e);
+            }
         }
-        try {
-            mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
-                    orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
-            mSessionNotifier.notifyTaskDone(mUri);
-        } catch (IOException e) {
-            Log.e(TAG, "IOException", e);
-            // TODO: Replace with a sensisble description
-            // Placeholder string R.string.reason_storage_failure
-            finishWithFailure(-1, true);
-        }
+        return futureResult;
     }
 
     @Override
@@ -299,8 +309,7 @@ public class CaptureSessionImpl implements CaptureSession {
                     Log.w(TAG, "Could not read exif", e);
                     exif = null;
                 }
-                CaptureSessionImpl.this.saveAndFinish(jpegData, width, height, rotation, exif,
-                        null);
+                CaptureSessionImpl.this.saveAndFinish(jpegData, width, height, rotation, exif);
             }
         });
 

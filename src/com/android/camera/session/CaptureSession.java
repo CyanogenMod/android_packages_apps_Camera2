@@ -20,10 +20,11 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 
-import com.android.camera.app.MediaSaver.OnMediaSavedListener;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * A session is an item that is in progress of being created and saved, such as
@@ -154,9 +155,20 @@ public interface CaptureSession {
     /**
      * Finish the session by saving the image to disk. Will add the final item
      * in the film strip and remove the progress notifications.
+     *
+     * @param data the data of the data (e.g. JPEG bytes) that should be written
+     *            to disk.
+     * @param width the width of the media item, in pixels.
+     * @param height the height of the media item, in pixels.
+     * @param orientation the orientaiton of the media item, in degrees.
+     * @param exif the EXIF information for this media item.
+     * @return A future that will provide the URI once the item is saved. URI
+     *         might be absent if the data could not be saved successfull, which
+     *         in turn means if a URI is returned it is guaranteed that the
+     *         media item was successfully written to disk.
      */
-    public void saveAndFinish(byte[] data, int width, int height, int orientation,
-            ExifInterface exif, OnMediaSavedListener listener);
+    public ListenableFuture<Optional<Uri>> saveAndFinish(byte[] data, int width, int height,
+            int orientation, ExifInterface exif);
 
     /**
      * Will create and return a {@link StackSaver} for saving out a number of

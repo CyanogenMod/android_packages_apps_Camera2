@@ -16,7 +16,10 @@
 
 package com.android.camera.captureintent;
 
-import com.android.camera.app.MediaSaver;
+import android.graphics.Bitmap;
+import android.location.Location;
+import android.net.Uri;
+
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.session.CaptureSession;
@@ -26,10 +29,9 @@ import com.android.camera.session.StackSaver;
 import com.android.camera.session.TemporarySessionFile;
 import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.Size;
-
-import android.graphics.Bitmap;
-import android.location.Location;
-import android.net.Uri;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * An implementation of {@link CaptureSession} which is used by
@@ -140,9 +142,10 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public synchronized void saveAndFinish(byte[] data, int width, int height, int orientation,
-            ExifInterface exif, final MediaSaver.OnMediaSavedListener listener) {
+    public synchronized ListenableFuture<Optional<Uri>> saveAndFinish(byte[] data, int width,
+            int height, int orientation, ExifInterface exif) {
         mSessionNotifier.notifySessionPictureDataAvailable(data, orientation);
+        return Futures.immediateFuture(Optional.<Uri> absent());
     }
 
     @Override
