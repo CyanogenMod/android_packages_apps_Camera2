@@ -47,7 +47,6 @@ import com.android.camera.captureintent.PreviewTransformCalculator;
 import com.android.camera.debug.DebugPropertyHelper;
 import com.android.camera.debug.Log;
 import com.android.camera.debug.Log.Tag;
-import com.android.camera.device.ActiveCameraDeviceTracker;
 import com.android.camera.device.CameraId;
 import com.android.camera.hardware.HardwareSpec;
 import com.android.camera.hardware.HeadingSensor;

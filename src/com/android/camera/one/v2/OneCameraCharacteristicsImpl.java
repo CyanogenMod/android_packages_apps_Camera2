@@ -16,8 +16,6 @@
 
 package com.android.camera.one.v2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -28,6 +26,7 @@ import android.os.Build;
 import android.util.Range;
 import android.util.Rational;
 
+import com.android.camera.debug.Log;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.ui.focus.LensRangeCalculator;
@@ -39,6 +38,8 @@ import com.google.common.primitives.Floats;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Describes a OneCamera device which is on top of camera2 API. This is
  * essential a wrapper for #{link
@@ -47,6 +48,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
     private static final int CONTROL_SCENE_MODE_HDR = 0x12;
+    private static final Log.Tag TAG = new Log.Tag("OneCamCharImpl");
 
     private final CameraCharacteristics mCameraCharacteristics;
 
@@ -56,8 +58,16 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
 
     @Override
     public List<Size> getSupportedPictureSizes(int imageFormat) {
-        StreamConfigurationMap configMap =
-                mCameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        StreamConfigurationMap configMap;
+        try {
+            configMap = mCameraCharacteristics.get(
+                    CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        } catch (Exception ex) {
+            Log.e(TAG, "Unable to obtain picture sizes.", ex);
+            // See b/19623115   where java.lang.AssertionError can be thrown due to HAL error
+            return new ArrayList<>(0);
+        }
+
         ArrayList<Size> supportedPictureSizes = new ArrayList<>();
         for (android.util.Size androidSize : configMap.getOutputSizes(imageFormat)) {
             supportedPictureSizes.add(new Size(androidSize));
@@ -67,8 +77,15 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
 
     @Override
     public List<Size> getSupportedPreviewSizes() {
-        StreamConfigurationMap configMap =
-                mCameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        StreamConfigurationMap configMap;
+        try {
+            configMap = mCameraCharacteristics.get(
+                    CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        } catch (Exception ex) {
+            Log.e(TAG, "Unable to obtain preview sizes.", ex);
+            // See b/19623115   where java.lang.AssertionError can be thrown due to HAL error
+            return new ArrayList<>(0);
+        }
         ArrayList<Size> supportedPictureSizes = new ArrayList<>();
         for (android.util.Size androidSize : configMap.getOutputSizes(SurfaceTexture.class)) {
             supportedPictureSizes.add(new Size(androidSize));

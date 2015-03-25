@@ -18,6 +18,7 @@ package com.android.camera.one.v2.common;
 
 import android.graphics.Rect;
 
+import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.AspectRatio;
 import com.android.camera.util.Size;
@@ -135,15 +136,20 @@ public final class PictureSizeCalculator {
      * crop-region to apply to images retrieved from the device. The combination
      * of these should achieve the desired image size specified in
      * {@link #computeConfiguration}.
-     * 
+     *
      * @return The optimal configuration of device-supported picture size and
      *         post-capture crop region to use.
+     * @throws com.android.camera.one.OneCameraAccessException if a
+     *             configuration could not be computed.
      */
-    public Configuration computeConfiguration(Size targetSize, int imageFormat) {
-        List<Size> supportedPictureSizes =
-                mCameraCharacteristics.getSupportedPictureSizes(imageFormat);
-        Preconditions.checkState(!supportedPictureSizes.isEmpty(), "No picture sizes supported " +
-                "for format: " + imageFormat);
+    public Configuration computeConfiguration(Size targetSize, int imageFormat)
+            throws OneCameraAccessException {
+        List<Size> supportedPictureSizes = mCameraCharacteristics
+                .getSupportedPictureSizes(imageFormat);
+        if (supportedPictureSizes.isEmpty()) {
+            throw new OneCameraAccessException("No picture sizes supported for format: "
+                    + imageFormat);
+        }
         Size size = getSmallestSupportedSizeContainingTarget(supportedPictureSizes, targetSize);
         Rect cropRegion = getPostCrop(AspectRatio.of(targetSize), size);
         return new Configuration(size, cropRegion);
