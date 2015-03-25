@@ -64,6 +64,8 @@ public final class StateOpeningCamera extends StateImpl {
     /** Whether is paused in the middle of opening camera. */
     private boolean mIsPaused;
 
+    private OneCameraCaptureSetting mOneCameraCaptureSetting;
+
     private OneCamera.OpenCallback mCameraOpenCallback = new OneCamera.OpenCallback() {
         @Override
         public void onFailure() {
@@ -152,7 +154,8 @@ public final class StateOpeningCamera extends StateImpl {
                                 mCameraId,
                                 mCameraFacing,
                                 mCameraCharacteristics,
-                                mPictureSize));
+                                mPictureSize,
+                                mOneCameraCaptureSetting));
                     }
                 };
         setEventHandler(EventOnOpenCameraSucceeded.class, onOpenCameraSucceededHandler);
@@ -176,16 +179,15 @@ public final class StateOpeningCamera extends StateImpl {
             Log.e(TAG, "mCameraCharacteristics is null");
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
         }
-        OneCameraCaptureSetting captureSetting;
         try {
-            captureSetting = OneCameraCaptureSetting.create(
+            mOneCameraCaptureSetting = OneCameraCaptureSetting.create(
                     mCameraFacing,
                     mCameraId,
                     mResourceConstructed.get().getResolutionSetting(),
                     mResourceConstructed.get().getAppController().getSettingsManager(),
                     mResourceConstructed.get().getAppController().getCameraScope(),
                     false);
-            mPictureSize = captureSetting.getCaptureSize();
+            mPictureSize = mOneCameraCaptureSetting.getCaptureSize();
         } catch (OneCameraAccessException ex) {
             Log.e(TAG, "Failed while open camera", ex);
             return Optional.of((State) StateFatal.from(this, mResourceConstructed));
@@ -196,7 +198,7 @@ public final class StateOpeningCamera extends StateImpl {
 
         mResourceConstructed.get().getOneCameraOpener().open(
                 mCameraId,
-                captureSetting,
+                mOneCameraCaptureSetting,
                 mResourceConstructed.get().getCameraHandler(),
                 mResourceConstructed.get().getMainThread(),
                 imageRotationCalculator,

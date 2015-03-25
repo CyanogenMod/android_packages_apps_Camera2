@@ -23,6 +23,7 @@ import com.android.camera.async.RefCountBase;
 import com.android.camera.debug.Log;
 import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
 
@@ -47,6 +48,8 @@ public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
     /** The current zoom ratio. */
     private float mZoomRatio;
 
+    private final OneCameraCaptureSetting mOneCameraCaptureSetting;
+
     /**
      * Creates a reference counted {@link ResourceOpenedCameraImpl} object.
      */
@@ -55,9 +58,10 @@ public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
             CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize) {
+            Size pictureSize,
+            OneCameraCaptureSetting captureSetting) {
         ResourceOpenedCamera resourceOpenedCamera = new ResourceOpenedCameraImpl(
-                camera, cameraId, cameraFacing, cameraCharacteristics, pictureSize);
+                camera, cameraId, cameraFacing, cameraCharacteristics, pictureSize, captureSetting);
         return new RefCountBase<>(resourceOpenedCamera);
     }
 
@@ -66,13 +70,15 @@ public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
             CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize) {
+            Size pictureSize,
+            OneCameraCaptureSetting captureSetting) {
         mCamera = camera;
         mCameraId = cameraId;
         mCameraFacing = cameraFacing;
         mCameraCharacteristics = cameraCharacteristics;
         mPictureSize = pictureSize;
         mZoomRatio = mCamera.getMaxZoom();
+        mOneCameraCaptureSetting = captureSetting;
     }
 
     @Override
@@ -105,6 +111,11 @@ public final class ResourceOpenedCameraImpl implements ResourceOpenedCamera {
     @Override
     public Size getPictureSize() {
         return mPictureSize;
+    }
+
+    @Override
+    public OneCameraCaptureSetting getCaptureSetting() {
+        return mOneCameraCaptureSetting;
     }
 
     @Override

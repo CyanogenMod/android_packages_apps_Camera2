@@ -16,7 +16,17 @@
 
 package com.android.camera.captureintent.event;
 
+import com.android.camera.captureintent.resource.ResourceCaptureTools;
 import com.android.camera.captureintent.stateful.Event;
 
 public class EventTimerCountDownToZero implements Event {
+    private final ResourceCaptureTools.CaptureLoggingInfo mCaptureLoggingInfo;
+
+    public EventTimerCountDownToZero(ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo) {
+        mCaptureLoggingInfo = captureLoggingInfo;
+    }
+
+    public ResourceCaptureTools.CaptureLoggingInfo getCaptureLoggingInfo() {
+        return mCaptureLoggingInfo;
+    }
 }

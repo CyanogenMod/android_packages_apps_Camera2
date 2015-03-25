@@ -26,6 +26,7 @@ import android.net.Uri;
 
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
+import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.captureintent.PictureDecoder;
 import com.android.camera.captureintent.event.EventCameraBusy;
 import com.android.camera.captureintent.event.EventCameraQuickExpose;
@@ -60,6 +61,7 @@ import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.CountDownView;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.ui.focus.FocusController;
 import com.google.common.base.Optional;
 
@@ -177,26 +179,60 @@ public final class StateReadyForCapture extends StateImpl {
         EventHandler<EventTapOnShutterButton> tapOnShutterButtonHandler =
                 new EventHandler<EventTapOnShutterButton>() {
                     @Override
-                    public Optional<State> processEvent(EventTapOnShutterButton event) {
+                    public Optional<State> processEvent(final EventTapOnShutterButton event) {
                         final int countDownDuration =
                                 mResourceCaptureTools.get().getResourceConstructed().get()
-                                        .getAppController().getSettingsManager().getInteger(
+                                        .getSettingsManager().getInteger(
                                         SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
+
+                        /** Prepare a CaptureLoggingInfo object. */
+                        final ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo
+                                = new ResourceCaptureTools.CaptureLoggingInfo() {
+                            @Override
+                            public TouchCoordinate getTouchPointInsideShutterButton() {
+                                return event.getTouchCoordinate();
+                            }
+
+                            @Override
+                            public int getCountDownDuration() {
+                                return countDownDuration;
+                            }
+                        };
+
+                        /** Start counting down if the duration is not zero. */
                         if (countDownDuration > 0) {
-                            mResourceCaptureTools.get().getModuleUI()
-                                    .setCountdownFinishedListener(mOnCountDownStatusListener);
                             mIsCountingDown = true;
                             mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mResourceCaptureTools.get().getModuleUI().startCountdown(
+                                    CaptureIntentModuleUI moduleUI = mResourceCaptureTools.get().getModuleUI();
+                                    moduleUI.setCountdownFinishedListener(
+                                            new CountDownView.OnCountDownStatusListener() {
+                                                @Override
+                                                public void onRemainingSecondsChanged(
+                                                        int remainingSeconds) {
+                                                    mResourceCaptureTools.get()
+                                                            .playCountDownSound(remainingSeconds);
+                                                }
+
+                                                @Override
+                                                public void onCountDownFinished() {
+                                                    getStateMachine().processEvent(
+                                                            new EventTimerCountDownToZero(
+                                                                    captureLoggingInfo));
+                                                }
+                                            });
+                                    moduleUI.startCountdown(
                                             countDownDuration);
                                 }
                             });
                             return NO_CHANGE;
                         }
+
+                        /** Otherwise, just take a picture immediately. */
                         mIsTakingPicture = true;
-                        mResourceCaptureTools.get().takePictureNow(mPictureCallback);
+                        mResourceCaptureTools.get().takePictureNow(
+                                mPictureCallback, captureLoggingInfo);
                         return NO_CHANGE;
                     }
                 };
@@ -210,7 +246,9 @@ public final class StateReadyForCapture extends StateImpl {
                         if (mIsCountingDown) {
                             mIsCountingDown = false;
                             mIsTakingPicture = true;
-                            mResourceCaptureTools.get().takePictureNow(mPictureCallback);
+                            mResourceCaptureTools.get().takePictureNow(
+                                    mPictureCallback,
+                                    event.getCaptureLoggingInfo());
                         }
                         return NO_CHANGE;
                     }
@@ -506,19 +544,6 @@ public final class StateReadyForCapture extends StateImpl {
                     } else {
                         getStateMachine().processEvent(new EventCameraBusy());
                     }
-                }
-            };
-
-    private final CountDownView.OnCountDownStatusListener mOnCountDownStatusListener =
-            new CountDownView.OnCountDownStatusListener() {
-                @Override
-                public void onRemainingSecondsChanged(int remainingSeconds) {
-                    mResourceCaptureTools.get().playCountDownSound(remainingSeconds);
-                }
-
-                @Override
-                public void onCountDownFinished() {
-                    getStateMachine().processEvent(new EventTimerCountDownToZero());
                 }
             };
 

@@ -22,6 +22,7 @@ import com.android.camera.async.SafeCloseable;
 import com.android.camera.captureintent.CaptureIntentModuleUI;
 import com.android.camera.one.OneCamera;
 import com.android.camera.session.CaptureSessionManager;
+import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.ui.focus.FocusController;
 
 import android.media.MediaActionSound;
@@ -31,13 +32,21 @@ import android.media.MediaActionSound;
  * resources to capture a photo.
  */
 public interface ResourceCaptureTools extends SafeCloseable {
+    public static interface CaptureLoggingInfo {
+        public TouchCoordinate getTouchPointInsideShutterButton();
+        public int getCountDownDuration();
+    }
+
     /**
      * Sends a photo capture request to the underlying camera system
      * immediately.
      *
      * @param pictureCallback A {@link com.android.camera.one.OneCamera.PictureCallback}.
+     * @param captureLoggingInfo A {@link CaptureLoggingInfo}.
      */
-    void takePictureNow(OneCamera.PictureCallback pictureCallback);
+    void takePictureNow(
+            OneCamera.PictureCallback pictureCallback,
+            CaptureLoggingInfo captureLoggingInfo);
 
     /**
      * Plays the sound for a specific remaining second when counting down.
