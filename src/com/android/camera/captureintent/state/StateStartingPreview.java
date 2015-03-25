@@ -34,6 +34,7 @@ import com.android.camera.device.CameraId;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.OneCameraAccessException;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
@@ -56,10 +57,11 @@ public final class StateStartingPreview extends StateImpl {
             RefCountBase<ResourceConstructed> resourceConstructed,
             RefCountBase<ResourceSurfaceTexture> resourceSurfaceTexture,
             OneCamera camera,
-          CameraId cameraId,
+            CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize) {
+            Size pictureSize,
+            OneCameraCaptureSetting captureSetting) {
         return new StateStartingPreview(
                 previousState,
                 resourceConstructed,
@@ -68,7 +70,8 @@ public final class StateStartingPreview extends StateImpl {
                 cameraId,
                 cameraFacing,
                 cameraCharacteristics,
-                pictureSize);
+                pictureSize,
+                captureSetting);
     }
 
     private StateStartingPreview(
@@ -79,14 +82,15 @@ public final class StateStartingPreview extends StateImpl {
             CameraId cameraId,
             OneCamera.Facing cameraFacing,
             OneCameraCharacteristics cameraCharacteristics,
-            Size pictureSize) {
+            Size pictureSize,
+            OneCameraCaptureSetting captureSetting) {
         super(previousState);
         mResourceConstructed = resourceConstructed;
         mResourceConstructed.addRef();     // Will be balanced in onLeave().
         mResourceSurfaceTexture = resourceSurfaceTexture;
         mResourceSurfaceTexture.addRef();  // Will be balanced in onLeave().
         mResourceOpenedCamera = ResourceOpenedCameraImpl.create(
-                camera, cameraId, cameraFacing, cameraCharacteristics, pictureSize);
+                camera, cameraId, cameraFacing, cameraCharacteristics, pictureSize, captureSetting);
         registerEventHandlers();
     }
 

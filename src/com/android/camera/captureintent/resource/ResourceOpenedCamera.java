@@ -22,6 +22,7 @@ import android.view.Surface;
 import com.android.camera.async.SafeCloseable;
 import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.util.Size;
 
@@ -65,6 +66,13 @@ public interface ResourceOpenedCamera extends SafeCloseable {
      * @return A {@link com.android.camera.util.Size} object.
      */
     public Size getPictureSize();
+
+    /**
+     * Obtains the capture setting of the opened camera.
+     *
+     * @return A {@link com.android.camera.one.OneCameraCaptureSetting} object.
+     */
+    public OneCameraCaptureSetting getCaptureSetting();
 
     /**
      * Obtains the current zoom ratio applied on this camera.

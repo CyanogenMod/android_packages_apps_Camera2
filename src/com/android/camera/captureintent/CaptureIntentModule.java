@@ -73,6 +73,8 @@ public class CaptureIntentModule extends CameraModule {
     /** The module state machine. */
     private final StateMachine mStateMachine;
 
+    private TouchCoordinate mTouchPointInsideShutterButton;
+
     public CaptureIntentModule(AppController appController, Intent intent,
             String settingScopeNamespace) throws OneCameraException {
         super(appController);
@@ -111,13 +113,13 @@ public class CaptureIntentModule extends CameraModule {
     }
 
     @Override
-    public void onShutterCoordinate(TouchCoordinate coord) {
-        // Do nothing for capture intent.
+    public void onShutterCoordinate(TouchCoordinate touchCoordinate) {
+        mTouchPointInsideShutterButton = touchCoordinate;
     }
 
     @Override
     public void onShutterButtonClick() {
-        mStateMachine.processEvent(new EventTapOnShutterButton());
+        mStateMachine.processEvent(new EventTapOnShutterButton(mTouchPointInsideShutterButton));
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package com.android.camera.captureintent.resource;
 
+import com.google.common.logging.eventprotos;
+
 import com.android.camera.SoundPlayer;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
@@ -28,6 +30,8 @@ import com.android.camera.session.CaptureSession;
 import com.android.camera.session.CaptureSessionManager;
 import com.android.camera.session.CaptureSessionManagerImpl;
 import com.android.camera.session.SessionStorageManagerImpl;
+import com.android.camera.settings.Keys;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.focus.FocusController;
 import com.android.camera.ui.focus.FocusSound;
 import com.android.camera.util.AndroidServices;
@@ -143,27 +147,49 @@ public final class ResourceCaptureToolsImpl implements ResourceCaptureTools {
     }
 
     @Override
-    public void takePictureNow(OneCamera.PictureCallback pictureCallback) {
-        // Create a new capture session.
+    public void takePictureNow(
+            OneCamera.PictureCallback pictureCallback,
+            CaptureLoggingInfo captureLoggingInfo) {
+        final ResourceConstructed resource = mResourceConstructed.get();
+        final ResourceOpenedCamera openedCamera = mResourceOpenedCamera.get();
+
+        /** Create a new capture session. */
         final long timestamp = System.currentTimeMillis();
         final String fileName = CameraUtil.instance().createJpegName(timestamp);
         final android.location.Location location =
-                mResourceConstructed.get().getLocationManager().getCurrentLocation();
+                resource.getLocationManager().getCurrentLocation();
         final CaptureSession session =
                 mCaptureSessionManager.createNewSession(fileName, timestamp, location);
-        session.startEmpty(mResourceOpenedCamera.get().getPictureSize());
+        session.startEmpty(openedCamera.getPictureSize());
+
+        /** Logging */
+        final SettingsManager settingsManager = resource.getSettingsManager();
+        boolean isGridLinesOn = Keys.areGridLinesOn(settingsManager);
+        session.getCollector().decorateAtTimeCaptureRequest(
+                eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
+                session.getTitle() + ".jpg",
+                (openedCamera.getCameraFacing() == OneCamera.Facing.FRONT),
+                false, /** hdrPlusEnabled */
+                openedCamera.getZoomRatio(),
+                openedCamera.getCaptureSetting().getFlashSetting().get().encodeSettingsString(),
+                isGridLinesOn,
+                (float) captureLoggingInfo.getCountDownDuration(),
+                captureLoggingInfo.getTouchPointInsideShutterButton(),
+                null /* TODO: Implement Volume Button Shutter Click Instrumentation */,
+                openedCamera.getCameraCharacteristics().getSensorInfoActiveArraySize()
+        );
 
         OneCamera.PhotoCaptureParameters params = new OneCamera.PhotoCaptureParameters(
                 session.getTitle(),
-                mResourceConstructed.get().getOrientationManager().getDeviceOrientation().getDegrees(),
+                resource.getOrientationManager().getDeviceOrientation().getDegrees(),
                 session.getLocation(),
-                mResourceConstructed.get().getContext().getExternalCacheDir(),
+                resource.getContext().getExternalCacheDir(),
                 pictureCallback,
                 mPictureSaverCallback,
                 mHeadingSensor.getCurrentHeading(),
-                mResourceOpenedCamera.get().getZoomRatio(),
+                openedCamera.getZoomRatio(),
                 0);
-        mResourceOpenedCamera.get().getCamera().takePicture(params, session);
+        openedCamera.getCamera().takePicture(params, session);
     }
 
     @Override
