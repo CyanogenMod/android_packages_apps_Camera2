@@ -28,7 +28,6 @@ import com.android.camera.one.v2.commands.CameraCommandExecutor;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.session.CaptureSession;
-import com.android.camera2.R;
 import com.google.common.base.Objects;
 
 class PictureTakerImpl implements PictureTaker {
@@ -48,14 +47,11 @@ class PictureTakerImpl implements PictureTaker {
     private final class PictureTakerCommand implements CameraCommand {
         private final Updatable<Void> mImageExposureCallback;
         private final ImageSaver mImageSaver;
-        private final Updatable<Void> mFailureCallback;
         private final CaptureSession mSession;
 
-        private PictureTakerCommand(Updatable<Void> failureCallback,
-                Updatable<Void> imageExposureCallback,
+        private PictureTakerCommand(Updatable<Void> imageExposureCallback,
                 ImageSaver imageSaver,
                 CaptureSession session) {
-            mFailureCallback = failureCallback;
             mImageExposureCallback = imageExposureCallback;
             mImageSaver = imageSaver;
             mSession = session;
@@ -67,9 +63,7 @@ class PictureTakerImpl implements PictureTaker {
             try {
                 mCommand.run(mImageExposureCallback, mImageSaver);
             } catch (Exception e) {
-                mFailureCallback.update(null);
-                mSession.finishWithFailure(R.string.error_cannot_connect_camera,
-                        true /* remove from filmstrip */);
+                mSession.cancel();
                 throw e;
             }
         }
@@ -94,15 +88,12 @@ class PictureTakerImpl implements PictureTaker {
         final Updatable<Void> imageExposureCallback =
                 pictureCallbackAdapter.provideQuickExposeUpdatable();
 
-        final Updatable<Void> failureCallback =
-                pictureCallbackAdapter.providePictureTakingFailedUpdatable();
-
         final ImageSaver imageSaver = mImageSaverBuilder.build(
                 params.saverCallback,
                 OrientationManager.DeviceOrientation.from(params.orientation),
                 session);
 
-        mCameraCommandExecutor.execute(new PictureTakerCommand(failureCallback,
+        mCameraCommandExecutor.execute(new PictureTakerCommand(
                 imageExposureCallback, imageSaver, session));
     }
 }
