@@ -133,8 +133,6 @@ public class FocusController implements FocusDistanceListener {
         mMainThread.execute(new Runnable() {
             @Override
             public void run() {
-                Log.v(TAG, "setFocusRatio(" + ratio + ")");
-
                 if (mFocusRing.isPassiveFocusRunning() ||
                       mFocusRing.isActiveFocusRunning()) {
                     mFocusRing.setRadiusRatio(ratio);
