@@ -42,6 +42,7 @@ import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
+import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -186,7 +187,7 @@ public final class StateOpeningCamera extends StateImpl {
                     mPictureSize,
                     mResourceConstructed.get().getAppController().getSettingsManager(),
                     getHardwareSpec(),
-                    mResourceConstructed.get().getAppController().getCameraScope(),
+                    SettingsManager.getCameraSettingScope(mCameraId.getValue()),
                     false);
         } catch (OneCameraAccessException ex) {
             Log.e(TAG, "Failed while open camera", ex);
