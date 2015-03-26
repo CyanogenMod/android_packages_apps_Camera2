@@ -23,6 +23,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 
 import com.android.camera.util.Size;
+import com.google.common.base.Optional;
 
 import java.util.List;
 
@@ -31,8 +32,8 @@ import java.util.List;
  * to query.  Will update cache if Build ID changes.
  */
 public class CameraPictureSizesCacher {
-    public static final String PICTURE_SIZES_BUILD_KEY = "CachedSupportedPictureSizes_Build_Camera";
-    public static final String PICTURE_SIZES_SIZES_KEY = "CachedSupportedPictureSizes_Sizes_Camera";
+    private static final String PICTURE_SIZES_BUILD_KEY = "CachedSupportedPictureSizes_Build_Camera";
+    private static final String PICTURE_SIZES_SIZES_KEY = "CachedSupportedPictureSizes_Sizes_Camera";
 
     /**
      * Opportunistically update the picture sizes cache, if needed.
@@ -62,20 +63,15 @@ public class CameraPictureSizesCacher {
      * cached.
      *
      * @param cameraId cameraID we would like sizes for.
+     * @param context valid android application context.
      * @return List of valid sizes, or null if the Camera can not be opened.
      */
     public static List<Size> getSizesForCamera(int cameraId, Context context) {
-        String key_build = PICTURE_SIZES_BUILD_KEY + cameraId;
-        String key_sizes = PICTURE_SIZES_SIZES_KEY + cameraId;
-        SharedPreferences defaultPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        // Return cached value for cameraId and current build, if available.
-        String thisCameraCachedBuild = defaultPrefs.getString(key_build, null);
-        if (thisCameraCachedBuild != null && thisCameraCachedBuild.equals(Build.DISPLAY)) {
-            String thisCameraCachedSizeList = defaultPrefs.getString(key_sizes, null);
-            if (thisCameraCachedSizeList != null) {
-                return Size.stringToList(thisCameraCachedSizeList);
-            }
+        Optional<List<Size>> cachedSizes = getCachedSizesForCamera(cameraId, context);
+        if (cachedSizes.isPresent()) {
+            return cachedSizes.get();
         }
+
         // No cached value, so need to query Camera API.
         Camera thisCamera;
         try {
@@ -85,6 +81,10 @@ public class CameraPictureSizesCacher {
             return null;
         }
         if (thisCamera != null) {
+            String key_build = PICTURE_SIZES_BUILD_KEY + cameraId;
+            String key_sizes = PICTURE_SIZES_SIZES_KEY + cameraId;
+            SharedPreferences defaultPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+
             List<Size> sizes = Size.buildListFromCameraSizes(thisCamera.getParameters()
                     .getSupportedPictureSizes());
             thisCamera.release();
@@ -95,5 +95,29 @@ public class CameraPictureSizesCacher {
             return sizes;
         }
         return null;
+    }
+
+    /**
+     * Returns the cached sizes for the current camera. See
+     * {@link #getSizesForCamera} for details.
+     *
+     * @param cameraId cameraID we would like sizes for.
+     * @param context valid android application context.
+     * @return Optional ist of valid sizes. Not present if the sizes for the
+     *         given camera were not cached.
+     */
+    public static Optional<List<Size>> getCachedSizesForCamera(int cameraId, Context context) {
+        String key_build = PICTURE_SIZES_BUILD_KEY + cameraId;
+        String key_sizes = PICTURE_SIZES_SIZES_KEY + cameraId;
+        SharedPreferences defaultPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // Return cached value for cameraId and current build, if available.
+        String thisCameraCachedBuild = defaultPrefs.getString(key_build, null);
+        if (thisCameraCachedBuild != null && thisCameraCachedBuild.equals(Build.DISPLAY)) {
+            String thisCameraCachedSizeList = defaultPrefs.getString(key_sizes, null);
+            if (thisCameraCachedSizeList != null) {
+                return Optional.of(Size.stringToList(thisCameraCachedSizeList));
+            }
+        }
+        return Optional.absent();
     }
 }

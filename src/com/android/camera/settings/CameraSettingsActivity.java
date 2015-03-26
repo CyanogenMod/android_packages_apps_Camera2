@@ -42,11 +42,10 @@ import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.OneCameraException;
 import com.android.camera.one.OneCameraManager;
 import com.android.camera.one.OneCameraModule;
-import com.android.camera.settings.SettingsUtil.SelectedPictureSizes;
+import com.android.camera.settings.PictureSizeLoader.PictureSizes;
 import com.android.camera.settings.SettingsUtil.SelectedVideoQualities;
 import com.android.camera.util.CameraSettingsActivityHelper;
 import com.android.camera.util.GoogleHelpHelper;
-import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraAgentFactory;
@@ -60,6 +59,7 @@ import java.util.List;
  * Provides the settings UI for the Camera app.
  */
 public class CameraSettingsActivity extends FragmentActivity {
+
     /**
      * Used to denote a subsection of the preference tree to display in the
      * Fragment. For instance, if 'Advanced' key is provided, the advanced
@@ -143,12 +143,7 @@ public class CameraSettingsActivity extends FragmentActivity {
         private boolean mGetSubPrefAsRoot = true;
 
         // Selected resolutions for the different cameras and sizes.
-        private SelectedPictureSizes mOldPictureSizesBack;
-        private SelectedPictureSizes mOldPictureSizesFront;
-        private List<Size> mPictureSizesBack;
-        private List<Size> mPictureSizesFront;
-        private SelectedVideoQualities mVideoQualitiesBack;
-        private SelectedVideoQualities mVideoQualitiesFront;
+        private PictureSizes mPictureSizes;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -188,6 +183,15 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             // Load the camera sizes.
             loadSizes();
+
+            // Send loaded sizes to additional preferences.
+            CameraSettingsActivityHelper.onSizesLoaded(this, mPictureSizes.backCameraSizes,
+                    new ListPreferenceFiller() {
+                        @Override
+                        public void fill(List<Size> sizes, ListPreference preference) {
+                            setEntriesForSelection(sizes, preference);
+                        }
+                    });
 
             // Make sure to hide settings for cameras that don't exist on this
             // device.
@@ -275,13 +279,13 @@ public class CameraSettingsActivity extends FragmentActivity {
         private void setVisibilities() {
             PreferenceGroup resolutions =
                     (PreferenceGroup) findPreference(PREF_CATEGORY_RESOLUTION);
-            if (mPictureSizesBack == null) {
+            if (mPictureSizes.backCameraSizes.isEmpty()) {
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_PICTURE_SIZE_BACK));
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_VIDEO_QUALITY_BACK));
             }
-            if (mPictureSizesFront == null) {
+            if (mPictureSizes.frontCameraSizes.isEmpty()) {
                 recursiveDelete(resolutions,
                         findPreference(Keys.KEY_PICTURE_SIZE_FRONT));
                 recursiveDelete(resolutions,
@@ -357,13 +361,13 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             ListPreference listPreference = (ListPreference) preference;
             if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_BACK)) {
-                setEntriesForSelection(mPictureSizesBack, listPreference);
+                setEntriesForSelection(mPictureSizes.backCameraSizes, listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_FRONT)) {
-                setEntriesForSelection(mPictureSizesFront, listPreference);
+                setEntriesForSelection(mPictureSizes.frontCameraSizes, listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_BACK)) {
-                setEntriesForSelection(mVideoQualitiesBack, listPreference);
+                setEntriesForSelection(mPictureSizes.videoQualitiesBack.orNull(), listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_FRONT)) {
-                setEntriesForSelection(mVideoQualitiesFront, listPreference);
+                setEntriesForSelection(mPictureSizes.videoQualitiesFront.orNull(), listPreference);
             }
         }
 
@@ -378,13 +382,15 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             ListPreference listPreference = (ListPreference) preference;
             if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_BACK)) {
-                setSummaryForSelection(mOldPictureSizesBack, mPictureSizesBack, listPreference);
+                setSummaryForSelection(mPictureSizes.backCameraSizes,
+                        listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_PICTURE_SIZE_FRONT)) {
-                setSummaryForSelection(mOldPictureSizesFront, mPictureSizesFront, listPreference);
+                setSummaryForSelection(mPictureSizes.frontCameraSizes,
+                        listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_BACK)) {
-                setSummaryForSelection(mVideoQualitiesBack, listPreference);
+                setSummaryForSelection(mPictureSizes.videoQualitiesBack.orNull(), listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_FRONT)) {
-                setSummaryForSelection(mVideoQualitiesFront, listPreference);
+                setSummaryForSelection(mPictureSizes.videoQualitiesFront.orNull(), listPreference);
             } else {
                 listPreference.setSummary(listPreference.getEntry());
             }
@@ -443,21 +449,20 @@ public class CameraSettingsActivity extends FragmentActivity {
         /**
          * Sets the summary for the given list preference.
          *
-         * @param oldPictureSizes The old selected picture sizes for small
-         *            medium and large
          * @param displayableSizes The human readable preferred sizes
          * @param preference The preference for which to set the summary.
          */
-        private void setSummaryForSelection(SelectedPictureSizes oldPictureSizes,
-                List<Size> displayableSizes, ListPreference preference) {
-            if (oldPictureSizes == null) {
+        private void setSummaryForSelection(List<Size> displayableSizes,
+                                            ListPreference preference) {
+            String setting = preference.getValue();
+            if (setting == null || !setting.contains("x")) {
                 return;
             }
-
-            String setting = preference.getValue();
-            Size selectedSize = oldPictureSizes.getFromSetting(setting, displayableSizes);
-
-            preference.setSummary(getSizeSummaryString(selectedSize));
+            Size settingSize = SettingsUtil.sizeFromSettingString(setting);
+            if (settingSize == null) {
+                return;
+            }
+            preference.setSummary(getSizeSummaryString(settingSize));
         }
 
         /**
@@ -478,57 +483,15 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         /**
          * This method gets the selected picture sizes for S,M,L and populates
-         * {@link #mPictureSizesBack}, {@link #mPictureSizesFront},
-         * {@link #mVideoQualitiesBack} and {@link #mVideoQualitiesFront}
-         * accordingly.
+         * {@link #mPictureSizes} accordingly.
          */
         private void loadSizes() {
             if (mInfos == null) {
                 Log.w(TAG, "null deviceInfo, cannot display resolution sizes");
                 return;
             }
-            // Back camera.
-            int backCameraId = SettingsUtil.getCameraId(mInfos, SettingsUtil.CAMERA_FACING_BACK);
-            if (backCameraId >= 0) {
-                List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(backCameraId,
-                        this.getActivity().getApplicationContext());
-                if (sizes != null) {
-                    mOldPictureSizesBack = SettingsUtil.getSelectedCameraPictureSizes(sizes,
-                            backCameraId);
-                    mPictureSizesBack = ResolutionUtil
-                            .getDisplayableSizesFromSupported(sizes, true);
-
-                    String blacklisted = GservicesHelper
-                            .getBlacklistedResolutionsBack(getActivity().getContentResolver());
-                    mPictureSizesBack = ResolutionUtil.filterBlackListedSizes(mPictureSizesBack,
-                            blacklisted);
-                }
-                mVideoQualitiesBack = SettingsUtil.getSelectedVideoQualities(backCameraId);
-            } else {
-                mPictureSizesBack = null;
-                mVideoQualitiesBack = null;
-            }
-
-            // Front camera.
-            int frontCameraId = SettingsUtil.getCameraId(mInfos, SettingsUtil.CAMERA_FACING_FRONT);
-            if (frontCameraId >= 0) {
-                List<Size> sizes = CameraPictureSizesCacher.getSizesForCamera(frontCameraId,
-                        this.getActivity().getApplicationContext());
-                if (sizes != null) {
-                    mOldPictureSizesFront = SettingsUtil.getSelectedCameraPictureSizes(sizes,
-                            frontCameraId);
-                    mPictureSizesFront =
-                            ResolutionUtil.getDisplayableSizesFromSupported(sizes, false);
-                    String blacklisted = GservicesHelper
-                            .getBlacklistedResolutionsFront(getActivity().getContentResolver());
-                    mPictureSizesFront = ResolutionUtil.filterBlackListedSizes(mPictureSizesFront,
-                            blacklisted);
-                }
-                mVideoQualitiesFront = SettingsUtil.getSelectedVideoQualities(frontCameraId);
-            } else {
-                mPictureSizesFront = null;
-                mVideoQualitiesFront = null;
-            }
+            PictureSizeLoader loader = new PictureSizeLoader(getActivity().getApplicationContext());
+            mPictureSizes = loader.computePictureSizes();
         }
 
         /**

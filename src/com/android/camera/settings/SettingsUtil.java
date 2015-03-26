@@ -402,7 +402,7 @@ public class SettingsUtil {
      * @param sizeSettingString The string that stored in settings to represent a size.
      * @return the represented Size.
      */
-    static public Size sizeFromSettingString(String sizeSettingString) {
+    public static Size sizeFromSettingString(String sizeSettingString) {
         if (sizeSettingString == null) {
             return null;
         }

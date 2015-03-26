@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.android.camera.util;
+package com.android.camera.settings;
 
-import android.content.Context;
-import android.preference.PreferenceFragment;
+import android.preference.ListPreference;
 
-public class CameraSettingsActivityHelper {
-    public static void addAdditionalPreferences(PreferenceFragment fragment, Context context) {
-    }
+import com.android.camera.util.Size;
 
-    public static void onSizesLoaded(PreferenceFragment fragment,
-            List<Size> backCameraSizes, ListPreferenceFiller cameraSizesFiller) {
-    }
+import java.util.List;
 
-    public static void verifyDefaults(SettingsManager settingsManager, Context context) {
-    }
+/**
+ * Classes implementing this interface can fill a list interface with content.
+ */
+public interface ListPreferenceFiller {
+    public void fill(List<Size> sizes, ListPreference preference);
 }
