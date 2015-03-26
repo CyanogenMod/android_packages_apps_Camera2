@@ -586,8 +586,11 @@ public class CaptureModule extends CameraModule implements
             // Cancel on-going countdown.
             mUI.cancelCountDown();
         }
-        mAppController.getCameraAppUI().showModeOptions();
-        mAppController.getCameraAppUI().transitionToCapture();
+
+        if (!mPaused) {
+            mAppController.getCameraAppUI().showModeOptions();
+            mAppController.getCameraAppUI().transitionToCapture();
+        }
     }
 
     @Override
