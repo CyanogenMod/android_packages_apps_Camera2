@@ -512,7 +512,7 @@ public class CaptureModule extends CameraModule implements
                 eventprotos.NavigationChange.Mode.PHOTO_CAPTURE,
                 session.getTitle() + ".jpg",
                 (mCameraFacing == Facing.FRONT),
-                mHdrPlusEnabled,
+                mHdrSceneEnabled,
                 mZoomValue,
                 flashSetting,
                 gridLinesOn,
