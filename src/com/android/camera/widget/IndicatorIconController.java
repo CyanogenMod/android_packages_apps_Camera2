@@ -167,8 +167,10 @@ public class IndicatorIconController
         ButtonManager buttonManager = mController.getButtonManager();
         // If flash isn't an enabled and visible option,
         // do not show the indicator.
-        if (buttonManager.isEnabled(ButtonManager.BUTTON_FLASH)
-                && buttonManager.isVisible(ButtonManager.BUTTON_FLASH)) {
+        if ((buttonManager.isEnabled(ButtonManager.BUTTON_FLASH)
+                && buttonManager.isVisible(ButtonManager.BUTTON_FLASH))
+                || (buttonManager.isEnabled(ButtonManager.BUTTON_TORCH)
+                && buttonManager.isVisible(ButtonManager.BUTTON_TORCH))) {
 
             int modeIndex = mController.getCurrentModuleIndex();
             if (modeIndex == mController.getAndroidContext().getResources()
