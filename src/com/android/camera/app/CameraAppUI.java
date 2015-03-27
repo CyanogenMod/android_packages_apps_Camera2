@@ -361,7 +361,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         public boolean enableExposureCompensation;
 
         /**
-         * Set true if the device supports exposure compensation.
+         * Set true if the device and module support exposure compensation.
+         * Used only to show exposure button in disabled (greyed out) state.
          */
         public boolean isExposureCompensationSupported;
 
@@ -2057,7 +2058,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         // If manual exposure is enabled both in SettingsManager and
         // BottomBarSpec,then show the exposure button.
         // If manual exposure is disabled in the BottomBarSpec (eg. HDR+
-        // enabled), but the device has the feature, then disable the exposure
+        // enabled), but the device/module has the feature, then disable the exposure
         // button.
         // Otherwise, hide the button.
         if (bottomBarSpec.enableExposureCompensation

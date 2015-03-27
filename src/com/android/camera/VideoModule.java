@@ -558,6 +558,8 @@ public class VideoModule extends CameraModule
         bottomBarSpec.flashCallback = mFlashCallback;
         bottomBarSpec.hideHdr = true;
         bottomBarSpec.enableGridLines = true;
+        bottomBarSpec.enableExposureCompensation = false;
+        bottomBarSpec.isExposureCompensationSupported = false;
 
         if (isVideoCaptureIntent()) {
             bottomBarSpec.showCancel = true;
