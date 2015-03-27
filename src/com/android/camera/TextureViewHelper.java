@@ -28,8 +28,8 @@ import com.android.camera.app.CameraProvider;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.device.CameraId;
-import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.ui.PreviewStatusListener;
+import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
 
@@ -332,7 +332,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             Log.e(TAG, "TransformViewHelper does not support Camera API2");
         }
 
-        if (cameraId >= 0) {
+        if (cameraId >= 0 && !ApiHelper.IS_NEXUS_4) {
             CameraDeviceInfo.Characteristics info = mCameraProvider.getCharacteristics(cameraId);
             matrix = info.getPreviewTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),
                     mCaptureLayoutHelper.getPreviewRect());
