@@ -51,6 +51,7 @@ import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResponseListener;
 import com.android.camera.one.v2.core.ResponseListeners;
+import com.android.camera.one.v2.errorhandling.FramerateJankDetector;
 import com.android.camera.one.v2.errorhandling.RepeatFailureHandlerComponent;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
@@ -228,6 +229,11 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                             basicCameraFactory.providePreviewStarter(),
                             UsageStatistics.instance(), 10).provideResponseListener();
                     rootBuilder.addResponseListener(failureDetector);
+                }
+
+                if (ApiHelper.IS_NEXUS_6) {
+                    rootBuilder.addResponseListener(
+                          new FramerateJankDetector(Loggers.tagFactory()));
                 }
 
                 final Observable<Integer> availableImageCount = sharedImageReaderFactory
