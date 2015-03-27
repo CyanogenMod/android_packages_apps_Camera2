@@ -231,8 +231,8 @@ public final class GlideFilmstripManager {
      */
     private static Integer computeEglMaxTextureSize() {
         EGLDisplay eglDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
-        int[] _ = new int[2];
-        EGL14.eglInitialize(eglDisplay, _, 0, _, 1);
+        int[] majorMinor = new int[2];
+        EGL14.eglInitialize(eglDisplay, majorMinor, 0, majorMinor, 1);
 
         int[] configAttr = {
               EGL14.EGL_COLOR_BUFFER_TYPE, EGL14.EGL_RGB_BUFFER,
