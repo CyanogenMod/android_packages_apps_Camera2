@@ -152,7 +152,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"सामने का कैमरा"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"पीछे का कैमरा"</string>
     <string name="dialog_ok" msgid="774141340500181131">"ठीक"</string>
-    <string name="dialog_cancel" msgid="692365061128351656">"रहने दें"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"अभी नहीं"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"आपके SD कार्ड में स्थान कम है. गुणवत्ता सेटिंग बदलें या कुछ चित्र या अन्य फ़ाइलें हटाएं."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"आकार सीमा तक पहुंच गए."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"बहुत तेज़"</string>
@@ -182,7 +182,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"मज़ाकिया चेहरे"</string>
     <string name="effect_background" msgid="1358432220077975015">"पृष्ठभूमि"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"शटर"</string>
-    <string name="accessibility_cancel_button" msgid="5679989494636116448">"रहने दें"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"अभी नहीं"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"मेनू बटन"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s चेक बॉक्स"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"फ़ोटो पर स्‍विच करें"</string>
@@ -313,7 +313,7 @@
     <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"काउंटडाउन टाइमर अवधि 3 सेकंड पर सेट है"</string>
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"काउंटडाउन टाइमर अवधि 10 सेकंड पर सेट है"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"अधिक विकल्प"</string>
-    <string name="cancel_button_description" msgid="3801167024006905033">"रहने दें"</string>
+    <string name="cancel_button_description" msgid="3801167024006905033">"अभी नहीं"</string>
     <string name="done_button_description" msgid="1334963435441544592">"पूर्ण"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"फिर से लें"</string>
     <string name="share_button_description" msgid="5108508790540832053">"साझा करें"</string>
