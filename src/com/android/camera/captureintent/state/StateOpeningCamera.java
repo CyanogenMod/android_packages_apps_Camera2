@@ -42,6 +42,7 @@ import com.android.camera.one.OneCameraCaptureSetting;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.one.v2.photo.ImageRotationCalculator;
 import com.android.camera.one.v2.photo.ImageRotationCalculatorImpl;
+import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
 import com.android.camera.util.Size;
 import com.google.common.annotations.VisibleForTesting;
@@ -58,6 +59,7 @@ public final class StateOpeningCamera extends StateImpl {
     private final OneCamera.Facing mCameraFacing;
     private final CameraId mCameraId;
     private final OneCameraCharacteristics mCameraCharacteristics;
+    private final String mCameraSettingsScope;
 
     /** The desired picture size. */
     private Size mPictureSize;
@@ -110,6 +112,7 @@ public final class StateOpeningCamera extends StateImpl {
         mCameraId = cameraId;
         mCameraCharacteristics = cameraCharacteristics;
         mIsPaused = false;
+        mCameraSettingsScope = SettingsManager.getCameraSettingScope(mCameraId.getValue());
         registerEventHandlers();
     }
 
@@ -187,7 +190,7 @@ public final class StateOpeningCamera extends StateImpl {
                     mPictureSize,
                     mResourceConstructed.get().getAppController().getSettingsManager(),
                     getHardwareSpec(),
-                    SettingsManager.getCameraSettingScope(mCameraId.getValue()),
+                    mCameraSettingsScope,
                     false);
         } catch (OneCameraAccessException ex) {
             Log.e(TAG, "Failed while open camera", ex);
@@ -267,6 +270,25 @@ public final class StateOpeningCamera extends StateImpl {
         bottomBarSpec.showSelfTimer = true;
         /** Flash button UI spec. */
         bottomBarSpec.enableFlash = mCameraCharacteristics.isFlashSupported();
+
+        /** Setup exposure compensation */
+        bottomBarSpec.isExposureCompensationSupported = mCameraCharacteristics
+                .isExposureCompensationSupported();
+        bottomBarSpec.enableExposureCompensation = bottomBarSpec.isExposureCompensationSupported;
+        bottomBarSpec.minExposureCompensation =
+                mCameraCharacteristics.getMinExposureCompensation();
+        bottomBarSpec.maxExposureCompensation =
+                mCameraCharacteristics.getMaxExposureCompensation();
+        bottomBarSpec.exposureCompensationStep =
+                mCameraCharacteristics.getExposureCompensationStep();
+        bottomBarSpec.exposureCompensationSetCallback =
+                new CameraAppUI.BottomBarUISpec.ExposureCompensationSetCallback() {
+                    @Override
+                    public void setExposure(int value) {
+                        mResourceConstructed.get().getSettingsManager().set(
+                                mCameraSettingsScope, Keys.KEY_EXPOSURE, value);
+                    }
+                };
 
         /** Intent image review UI spec. */
         bottomBarSpec.showCancel = true;
