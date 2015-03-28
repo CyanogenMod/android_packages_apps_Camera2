@@ -833,7 +833,6 @@ public class CaptureModule extends CameraModule implements
                     }
                 };
 
-        Log.v(TAG, ">>>>>>>> bottomBarSpec.enableHdr=" + bottomBarSpec.enableHdr);
         return bottomBarSpec;
     }
 
