@@ -1896,8 +1896,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         boolean flashBackCamera = mController.getSettingsManager().getBoolean(
             SettingsManager.SCOPE_GLOBAL, Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA);
-        boolean isSamsung4k = mController.getSettingsManager().getBoolean(
-            SettingsManager.SCOPE_GLOBAL, Keys.KEY_VIDEOCAMERA_SAMSUNG4K_MODE);
         if (bottomBarSpec.hideFlash || !flashBackCamera) {
             buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
         } else {
@@ -1908,10 +1906,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 } else if (bottomBarSpec.enableTorchFlash) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
                         bottomBarSpec.flashCallback);
-                    if (isSamsung4k) {
-                        // Disable flash icon.
-                        buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
-                    }
                 } else if (bottomBarSpec.enableHdrPlusFlash) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
                         bottomBarSpec.flashCallback);
