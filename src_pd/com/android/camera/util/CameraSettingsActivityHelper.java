@@ -19,6 +19,11 @@ package com.android.camera.util;
 import android.content.Context;
 import android.preference.PreferenceFragment;
 
+import com.android.camera.settings.ListPreferenceFiller;
+import com.android.camera.settings.SettingsManager;
+
+import java.util.List;
+
 public class CameraSettingsActivityHelper {
     public static void addAdditionalPreferences(PreferenceFragment fragment, Context context) {
     }
