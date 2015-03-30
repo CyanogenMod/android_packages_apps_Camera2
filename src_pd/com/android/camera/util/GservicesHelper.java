@@ -33,6 +33,10 @@ public class GservicesHelper {
         return false;
     }
 
+    public static boolean isJankStatisticsEnabled(ContentResolver contentResolver) {
+        return false;
+    }
+
     public static int getCaptureSupportLevelOverrideBack(ContentResolver contentResolver) {
         return -1;
     }
