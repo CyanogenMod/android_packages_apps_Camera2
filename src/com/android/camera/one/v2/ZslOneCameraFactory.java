@@ -59,7 +59,9 @@ import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
 import com.android.camera.one.v2.photo.ZslPictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ZslSharedImageReaderFactory;
 import com.android.camera.stats.UsageStatistics;
+import com.android.camera.util.AndroidContext;
 import com.android.camera.util.ApiHelper;
+import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
 import com.google.common.base.Supplier;
@@ -231,9 +233,11 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                     rootBuilder.addResponseListener(failureDetector);
                 }
 
-                if (ApiHelper.IS_NEXUS_6) {
+                if (GservicesHelper.isJankStatisticsEnabled(AndroidContext.instance().get()
+                      .getContentResolver())) {
                     rootBuilder.addResponseListener(
-                          new FramerateJankDetector(Loggers.tagFactory()));
+                          new FramerateJankDetector(Loggers.tagFactory(),
+                                UsageStatistics.instance()));
                 }
 
                 final Observable<Integer> availableImageCount = sharedImageReaderFactory

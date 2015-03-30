@@ -24,6 +24,7 @@ import android.os.Build.VERSION_CODES;
 import com.android.camera.debug.Log.Tag;
 import com.android.camera.debug.Logger;
 import com.android.camera.one.v2.core.ResponseListener;
+import com.android.camera.stats.UsageStatistics;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -34,18 +35,23 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @TargetApi(VERSION_CODES.L)
 public final class FramerateJankDetector extends ResponseListener {
-    private static final double PERCENT_CHANGE_LOG_THRESHOLD = 1.20;
+    private static final double FRACTIONAL_CHANGE_STATS_THRESHOLD = .5;
+    private static final double FRACTIONAL_CHANGE_LOG_THRESHOLD = 1.5;
 
     private final Logger mLog;
+    private final UsageStatistics mUsageStatistics;
 
     private long mLastFrameTimestamp = -1;
     private double mLastDeltaMillis = 0.0;
 
     /**
-     * @param logFactory Used for logging.
+     * @param logFactory the logger to use when over the logs threshold.
+     * @param usageStatistics the usage statistics to report to when over the
+     *                        statistics reporting threshold.
      */
-    public FramerateJankDetector(Logger.Factory logFactory) {
+    public FramerateJankDetector(Logger.Factory logFactory, UsageStatistics usageStatistics) {
         mLog = logFactory.create(new Tag("FrameJank"));
+        mUsageStatistics = usageStatistics;
     }
 
     @Override
@@ -55,10 +61,14 @@ public final class FramerateJankDetector extends ResponseListener {
             double deltaMillis = (timestamp - mLastFrameTimestamp) / 1000000.0;
 
             if (mLastDeltaMillis > 0) {
-                double percentChange = (deltaMillis - mLastDeltaMillis) / mLastDeltaMillis;
-                if (percentChange >= PERCENT_CHANGE_LOG_THRESHOLD) {
-                    mLog.v("JANK. Time between frames (" + deltaMillis + "ms) increased by " +
-                          (percentChange * 100) + "% over the last frame delta (" +
+                double fractionalChange = (deltaMillis - mLastDeltaMillis) / mLastDeltaMillis;
+                if (fractionalChange >= FRACTIONAL_CHANGE_STATS_THRESHOLD) {
+                    mUsageStatistics.cameraFrameDrop(deltaMillis, mLastDeltaMillis);
+                }
+
+                if (fractionalChange >= FRACTIONAL_CHANGE_LOG_THRESHOLD) {
+                    mLog.v("JANK! Time between frames (" + deltaMillis + "ms) increased by " +
+                          (fractionalChange * 100) + "% over the last frame delta (" +
                           mLastDeltaMillis + "ms)");
                 }
             }

@@ -56,6 +56,9 @@ public class UsageStatistics {
     public void backgrounded() {
     }
 
+    public void cameraFrameDrop(double deltaMs, double previousDeltaMs) {
+    }
+
     public void storageWarning(long storageSpace) {
     }
 
