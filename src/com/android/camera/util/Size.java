@@ -19,8 +19,8 @@ package com.android.camera.util;
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build.VERSION_CODES;
 import android.hardware.Camera;
+import android.os.Build.VERSION_CODES;
 import android.text.TextUtils;
 
 import com.google.common.base.Objects;
@@ -121,6 +121,11 @@ public class Size {
 
     public long area() {
         return width * height;
+    }
+
+    /** Returns width/height. */
+    public float aspectRatio() {
+        return (float) width / height;
     }
 
     @Override

@@ -19,7 +19,6 @@ package com.android.camera.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.android.camera.CameraActivity;
 import com.android.camera.app.AppController;
 import com.android.camera.app.ModuleManagerImpl;
 import com.android.camera.debug.Log;
