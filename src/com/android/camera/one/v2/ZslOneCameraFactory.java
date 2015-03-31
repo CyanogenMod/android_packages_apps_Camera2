@@ -78,11 +78,31 @@ public class ZslOneCameraFactory implements OneCameraFactory {
     private final Logger mLogger;
     private final int mImageFormat;
     private final int mMaxImageCount;
+    private final int maxRingBufferSize;
 
     public ZslOneCameraFactory(int imageFormat, int maxImageCount) {
         mImageFormat = imageFormat;
         mMaxImageCount = maxImageCount;
         mLogger = Loggers.tagFactory().create(TAG);
+
+        // Determines the maximum size of the ZSL ring-buffer.
+        // Note that this is *different* from mMaxImageCount.
+        // mMaxImageCount determines the size of the ImageReader used for large
+        // (typically YUV) images to be saved. It is correlated with the total
+        // number of in-progress captures which can simultaneously occur by
+        // buffering captured images.
+        // maxRingBufferSize determines the maximum size of the ring-buffer
+        // (which uses a subset of the capacity of the ImageReader). This is
+        // correlated to the maximum amount of look-back for zero-shutter-lag
+        // photography. If this is greater than mMaxImageCount - 2, then it
+        // places no additional constraints on ring-buffer size. That is,
+        // the ring-buffer will expand to fill the entire capacity of the
+        // ImageReader whenever possible.
+
+        // A value of 1 here is adequate for single-frame ZSL capture, but
+        // *must* be increased to support multi-frame burst capture with
+        // zero-shutter-lag.
+        maxRingBufferSize = 1;
     }
 
     /**
@@ -156,7 +176,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // Create the shared image reader.
                 ZslSharedImageReaderFactory sharedImageReaderFactory =
                         new ZslSharedImageReaderFactory(new Lifetime(cameraLifetime),
-                                imageReader, new HandlerFactory());
+                                imageReader, new HandlerFactory(), maxRingBufferSize);
 
                 CameraCommandExecutor cameraCommandExecutor = new CameraCommandExecutor(
                         Loggers.tagFactory(),
@@ -234,10 +254,10 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 }
 
                 if (GservicesHelper.isJankStatisticsEnabled(AndroidContext.instance().get()
-                      .getContentResolver())) {
+                        .getContentResolver())) {
                     rootBuilder.addResponseListener(
-                          new FramerateJankDetector(Loggers.tagFactory(),
-                                UsageStatistics.instance()));
+                            new FramerateJankDetector(Loggers.tagFactory(),
+                                    UsageStatistics.instance()));
                 }
 
                 final Observable<Integer> availableImageCount = sharedImageReaderFactory

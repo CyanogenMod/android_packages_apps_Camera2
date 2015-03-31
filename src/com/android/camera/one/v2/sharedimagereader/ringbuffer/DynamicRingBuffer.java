@@ -26,6 +26,7 @@ import com.android.camera.one.v2.sharedimagereader.ticketpool.Ticket;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
 import com.android.camera.one.v2.sharedimagereader.util.ImageCloser;
 import com.android.camera.one.v2.sharedimagereader.util.TicketImageProxy;
+import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +37,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.ThreadSafe;
 
+/**
+ * A dynamically-sized ring-buffer, implementing BufferQueue (output) and
+ * BufferQueueController (input).
+ * <p>
+ * The size of the buffer is implicitly defined by the number of "Tickets"
+ * available from the parent {@link TicketPool} at any given time. When the
+ * number of available tickets decreases, the buffer shrinks, discarding old
+ * elements. When the number of available tickets increases, the buffer expands,
+ * retaining old elements when new elements are added.
+ * <p>
+ * The ring-buffer is also a TicketPool, which allows higher-priority requests
+ * to reserve "Tickets" (representing ImageReader capacity) to evict images from
+ * the ring-buffer.
+ * <p>
+ * See docs for {@link DynamicRingBufferFactory} for more information.
+ */
+@ThreadSafe
 @ParametersAreNonnullByDefault
 final class DynamicRingBuffer implements TicketPool, BufferQueue<ImageProxy>,
         BufferQueueController<ImageProxy> {
@@ -44,14 +63,21 @@ final class DynamicRingBuffer implements TicketPool, BufferQueue<ImageProxy>,
     private final TicketPool mTicketPool;
     private final AtomicInteger mTicketWaiterCount;
     private final AvailableTicketCounter mAvailableTicketCount;
+    private final AtomicInteger mMaxSize;
+    private final ConcurrentState<Integer> mQueueSize;
 
+    /**
+     * @param parentTickets The parent ticket pool which implicitly determines
+     *            how much capacity is available at any given time.
+     */
     DynamicRingBuffer(TicketPool parentTickets) {
-        ConcurrentState<Integer> queueSize = new ConcurrentState<>(0);
-        mQueue = new CountableBufferQueue<>(queueSize, new ImageCloser());
-        mAvailableTicketCount = new AvailableTicketCounter(Arrays.asList(queueSize, parentTickets
+        mQueueSize = new ConcurrentState<>(0);
+        mQueue = new CountableBufferQueue<>(mQueueSize, new ImageCloser());
+        mAvailableTicketCount = new AvailableTicketCounter(Arrays.asList(mQueueSize, parentTickets
                 .getAvailableTicketCount()));
         mTicketPool = parentTickets;
         mTicketWaiterCount = new AtomicInteger(0);
+        mMaxSize = new AtomicInteger(Integer.MAX_VALUE);
     }
 
     @Override
@@ -82,6 +108,7 @@ final class DynamicRingBuffer implements TicketPool, BufferQueue<ImageProxy>,
             } else {
                 image.close();
             }
+            shrinkToFitMaxSize();
         } finally {
             mAvailableTicketCount.unfreeze();
         }
@@ -158,6 +185,30 @@ final class DynamicRingBuffer implements TicketPool, BufferQueue<ImageProxy>,
             return mTicketPool.tryAcquire();
         } finally {
             mTicketWaiterCount.decrementAndGet();
+        }
+    }
+
+    public void setMaxSize(int newMaxSize) {
+        Preconditions.checkArgument(newMaxSize >= 0);
+        mMaxSize.set(newMaxSize);
+        // Shrink the queue to meet this new constraint.
+        shrinkToFitMaxSize();
+    }
+
+    private void shrinkToFitMaxSize() {
+        // To ensure that the available ticket count never "flickers" when we
+        // logically move the ticket from the queue into the parent ticket pool,
+        // lock the available ticket count.
+        mAvailableTicketCount.freeze();
+        try {
+            // Note that to maintain the invariant of eventual-consistency
+            // (since this class is inherently shared between multiple threads),
+            // we must repeatedly poll these values each time.
+            while (mQueueSize.get() > mMaxSize.get()) {
+                mQueue.discardNext();
+            }
+        } finally {
+            mAvailableTicketCount.unfreeze();
         }
     }
 }

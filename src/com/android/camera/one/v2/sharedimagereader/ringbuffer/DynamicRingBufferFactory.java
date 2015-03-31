@@ -19,8 +19,10 @@ package com.android.camera.one.v2.sharedimagereader.ringbuffer;
 import com.android.camera.async.BufferQueue;
 import com.android.camera.async.BufferQueueController;
 import com.android.camera.async.Lifetime;
+import com.android.camera.async.Observable;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.sharedimagereader.ticketpool.TicketPool;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /*
  * Creates a dynamic ring buffer of images.
@@ -40,9 +42,18 @@ public class DynamicRingBufferFactory {
     private final BufferQueueController<ImageProxy> mRingBufferInput;
     private final BufferQueue<ImageProxy> mRingBufferOutput;
 
-    public DynamicRingBufferFactory(Lifetime lifetime, TicketPool rootTicketPool) {
-        DynamicRingBuffer ringBuffer = new DynamicRingBuffer(rootTicketPool);
+    public DynamicRingBufferFactory(Lifetime lifetime, TicketPool rootTicketPool,
+            final Observable<Integer> maxRingBufferSize) {
+        final DynamicRingBuffer ringBuffer = new DynamicRingBuffer(rootTicketPool);
         lifetime.add(ringBuffer);
+        lifetime.add(maxRingBufferSize.addCallback(new Runnable() {
+            @Override
+            public void run() {
+                ringBuffer.setMaxSize(Math.max(0, maxRingBufferSize.get()));
+            }
+        }, MoreExecutors.sameThreadExecutor()));
+        ringBuffer.setMaxSize(Math.max(0, maxRingBufferSize.get()));
+
         mOutputTicketPool = ringBuffer;
         mRingBufferInput = ringBuffer;
         mRingBufferOutput = ringBuffer;

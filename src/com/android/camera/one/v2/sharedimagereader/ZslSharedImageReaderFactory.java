@@ -22,6 +22,7 @@ import static com.android.camera.one.v2.core.ResponseListeners.forTimestamps;
 import com.android.camera.async.HandlerFactory;
 import com.android.camera.async.Lifetime;
 import com.android.camera.async.Observable;
+import com.android.camera.async.Observables;
 import com.android.camera.async.Updatable;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.core.ResponseListener;
@@ -55,9 +56,14 @@ public class ZslSharedImageReaderFactory {
      *            the resulting SharedImageReader instance.
      * @param handlerFactory Used for create handler threads on which to receive
      *            callbacks from the platform.
+     * @param maxRingBufferSize Limits the size of the ring-buffer. This reduces
+     *            steady-state memory consumption since ImageReader images are
+     *            allocated on-demand, so no more than maxRingBufferSize + 2
+     *            images are guaranteed to have to be allocated, as opposed to
+     *            imageReader.getMaxImages().
      */
     public ZslSharedImageReaderFactory(Lifetime lifetime, ImageReaderProxy imageReader,
-            HandlerFactory handlerFactory) {
+            HandlerFactory handlerFactory, int maxRingBufferSize) {
         ImageDistributorFactory imageDistributorFactory = new ImageDistributorFactory(lifetime,
                 imageReader, handlerFactory);
         ImageDistributor imageDistributor = imageDistributorFactory.provideImageDistributor();
@@ -65,10 +71,12 @@ public class ZslSharedImageReaderFactory {
                 .provideGlobalTimestampCallback();
 
         // TODO Try using 1 instead.
+        // Leave 2 ImageReader Images available to allow ImageDistributor and
+        // the camera system to have some slack to work with.
         TicketPool rootTicketPool = new FiniteTicketPool(imageReader.getMaxImages() - 2);
 
         DynamicRingBufferFactory ringBufferFactory = new DynamicRingBufferFactory(
-                new Lifetime(lifetime), rootTicketPool);
+                new Lifetime(lifetime), rootTicketPool, Observables.of(maxRingBufferSize));
 
         MetadataPoolFactory metadataPoolFactory = new MetadataPoolFactory(
                 ringBufferFactory.provideRingBufferInput());
