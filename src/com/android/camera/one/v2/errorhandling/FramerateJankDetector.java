@@ -52,6 +52,7 @@ public final class FramerateJankDetector extends ResponseListener {
     public FramerateJankDetector(Logger.Factory logFactory, UsageStatistics usageStatistics) {
         mLog = logFactory.create(new Tag("FrameJank"));
         mUsageStatistics = usageStatistics;
+        mUsageStatistics.jankDetectionEnabled();
     }
 
     @Override

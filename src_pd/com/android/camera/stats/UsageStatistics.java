@@ -59,6 +59,9 @@ public class UsageStatistics {
     public void cameraFrameDrop(double deltaMs, double previousDeltaMs) {
     }
 
+    public void jankDetectionEnabled() {
+    }
+
     public void storageWarning(long storageSpace) {
     }
 
