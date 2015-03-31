@@ -48,6 +48,7 @@ import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
 import com.android.camera.one.v2.core.ResponseListeners;
+import com.android.camera.one.v2.errorhandling.FramerateJankDetector;
 import com.android.camera.one.v2.imagesaver.ImageSaver;
 import com.android.camera.one.v2.initialization.CameraStarter;
 import com.android.camera.one.v2.initialization.InitializedOneCameraFactory;
@@ -57,6 +58,9 @@ import com.android.camera.one.v2.photo.PictureTaker;
 import com.android.camera.one.v2.photo.PictureTakerFactory;
 import com.android.camera.one.v2.sharedimagereader.ManagedImageReader;
 import com.android.camera.one.v2.sharedimagereader.SharedImageReaderFactory;
+import com.android.camera.stats.UsageStatistics;
+import com.android.camera.util.AndroidContext;
+import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Provider;
 import com.android.camera.util.Size;
 import com.google.common.base.Supplier;
@@ -176,6 +180,13 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 // Register the dynamic updater via orientation supplier
                 rootBuilder.setParam(CaptureRequest.JPEG_ORIENTATION,
                         mImageRotationCalculator.getSupplier());
+
+                if (GservicesHelper.isJankStatisticsEnabled(AndroidContext.instance().get()
+                      .getContentResolver())) {
+                    rootBuilder.addResponseListener(
+                          new FramerateJankDetector(Loggers.tagFactory(),
+                                UsageStatistics.instance()));
+                }
 
                 RequestBuilder.Factory meteredZoomedRequestBuilder =
                         basicCameraFactory.provideMeteredZoomedRequestBuilder();
