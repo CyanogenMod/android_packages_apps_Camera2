@@ -29,10 +29,14 @@ import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
 
 import java.util.Arrays;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Performs a full auto focus scan.
  */
-class FullAFScanCommand implements CameraCommand {
+@ParametersAreNonnullByDefault
+final class FullAFScanCommand implements CameraCommand {
     private final FrameServer mFrameServer;
     private final RequestBuilder.Factory mBuilderFactory;
     private final int mTemplateType;
@@ -68,7 +72,7 @@ class FullAFScanCommand implements CameraCommand {
             AFTriggerResult afScanResult = new AFTriggerResult();
 
             // Start a repeating sequence of idle requests
-            RequestBuilder idleBuilder = createAFIdleRequest(afScanResult);
+            RequestBuilder idleBuilder = createAFIdleRequest(null);
             session.submitRequest(Arrays.asList(idleBuilder.build()),
                     FrameServer.RequestType.REPEATING);
 
@@ -80,9 +84,14 @@ class FullAFScanCommand implements CameraCommand {
             // ~1-3inches from the device with AF_MODE_ON_ALWAYS_FLASH).
             // So, to avoid triggering this issue, always send an
             // AF_TRIGGER_CANCEL before *every* AF_TRIGGER_START.
-            RequestBuilder cancelBuilder = createAFCancelRequest(afScanResult);
+            RequestBuilder cancelBuilder = createAFCancelRequest(null);
             session.submitRequest(Arrays.asList(cancelBuilder.build()),
                     FrameServer.RequestType.NON_REPEATING);
+
+            // Start a repeating sequence of idle requests
+            idleBuilder = createAFIdleRequest(afScanResult);
+            session.submitRequest(Arrays.asList(idleBuilder.build()),
+                    FrameServer.RequestType.REPEATING);
 
             // Build a request to send a single AF_TRIGGER
             RequestBuilder triggerBuilder = createAFTriggerRequest(afScanResult);
@@ -99,10 +108,12 @@ class FullAFScanCommand implements CameraCommand {
         }
     }
 
-    private RequestBuilder createAFIdleRequest(AFTriggerResult triggerResultListener) throws
-            CameraAccessException {
+    private RequestBuilder createAFIdleRequest(@Nullable AFTriggerResult triggerResultListener)
+            throws CameraAccessException {
         RequestBuilder idleBuilder = mBuilderFactory.create(mTemplateType);
-        idleBuilder.addResponseListener(forPartialMetadata(triggerResultListener));
+        if (triggerResultListener != null) {
+            idleBuilder.addResponseListener(forPartialMetadata(triggerResultListener));
+        }
         idleBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
                 .CONTROL_MODE_AUTO);
         idleBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
@@ -125,10 +136,12 @@ class FullAFScanCommand implements CameraCommand {
         return triggerBuilder;
     }
 
-    private RequestBuilder createAFCancelRequest(AFTriggerResult afScanResult) throws
+    private RequestBuilder createAFCancelRequest(@Nullable AFTriggerResult afScanResult) throws
             CameraAccessException {
         RequestBuilder triggerBuilder = mBuilderFactory.create(mTemplateType);
-        triggerBuilder.addResponseListener(forPartialMetadata(afScanResult));
+        if (afScanResult != null) {
+            triggerBuilder.addResponseListener(forPartialMetadata(afScanResult));
+        }
         triggerBuilder.setParam(CaptureRequest.CONTROL_MODE, CaptureRequest
                 .CONTROL_MODE_AUTO);
         triggerBuilder.setParam(CaptureRequest.CONTROL_AF_MODE, CaptureRequest
