@@ -67,9 +67,17 @@ public class CaptureIntentModuleUI {
                     mProgressOverlay.setBounds(previewArea);
                     FrameLayout.LayoutParams params =
                             (FrameLayout.LayoutParams) mIntentReviewImageView.getLayoutParams();
-                    params.width = (int) previewArea.width();
-                    params.height = (int) previewArea.height();
-                    params.setMargins((int) previewArea.left, (int) previewArea.top, 0, 0);
+
+                    /**
+                     * WAR for b/19676505: On Nexus 6 / 16:9 / portrait, for
+                     * some reasons the previewArea width is 1345.499999999....
+                     * Use Math.ceil here to make the width 1346.
+                     */
+                    params.width = (int) Math.ceil((double) previewArea.width());
+
+                    params.height = Math.round(previewArea.height());
+                    params.setMargins(
+                            Math.round(previewArea.left), Math.round(previewArea.top), 0, 0);
                     mIntentReviewImageView.setLayoutParams(params);
                 }
             };
