@@ -42,6 +42,7 @@ import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
+import com.android.camera.one.v2.commands.zsl.BasicPreviewCommandFactory;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
 import com.android.camera.one.v2.core.FrameServerFactory;
@@ -172,10 +173,17 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
 
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
-                        (cameraLifetime), characteristics,
-                        frameServerComponent.provideEphemeralFrameServer(), rootBuilder,
-                        cameraCommandExecutor, flashSetting, exposureSetting, zoomState,
-                        hdrSceneSetting, CameraDevice.TEMPLATE_PREVIEW);
+                        (cameraLifetime),
+                        characteristics,
+                        frameServerComponent.provideEphemeralFrameServer(),
+                        rootBuilder,
+                        cameraCommandExecutor,
+                        new BasicPreviewCommandFactory(cameraCommandExecutor),
+                        flashSetting,
+                        exposureSetting,
+                        zoomState,
+                        hdrSceneSetting,
+                        CameraDevice.TEMPLATE_PREVIEW);
 
                 // Register the dynamic updater via orientation supplier
                 rootBuilder.setParam(CaptureRequest.JPEG_ORIENTATION,
@@ -224,7 +232,7 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
 
                 lifetime.add(Observables.addThreadSafeCallback(ready, readyState));
 
-                basicCameraFactory.providePreviewStarter().run();
+                basicCameraFactory.providePreviewUpdater().run();
 
                 return new CameraStarter.CameraControls(
                         pictureTaker,
