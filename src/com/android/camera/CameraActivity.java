@@ -118,6 +118,7 @@ import com.android.camera.session.CaptureSessionManager.SessionListener;
 import com.android.camera.settings.AppUpgrader;
 import com.android.camera.settings.CameraSettingsActivity;
 import com.android.camera.settings.Keys;
+import com.android.camera.settings.PictureSizeLoader;
 import com.android.camera.settings.ResolutionSetting;
 import com.android.camera.settings.ResolutionUtil;
 import com.android.camera.settings.SettingsManager;
@@ -1462,6 +1463,12 @@ public class CameraActivity extends QuickActivity
 
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
+
+        // Make sure the picture sizes are correctly cached for the current OS
+        // version.
+        profile.mark();
+        (new PictureSizeLoader(mAppContext)).computePictureSizes();
+        profile.mark("computePictureSizes");
         Keys.setDefaults(mSettingsManager, mAppContext);
 
         mResolutionSetting = new ResolutionSetting(mSettingsManager, mOneCameraManager,
