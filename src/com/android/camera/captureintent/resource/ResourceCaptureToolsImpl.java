@@ -153,6 +153,17 @@ public final class ResourceCaptureToolsImpl implements ResourceCaptureTools {
         final ResourceConstructed resource = mResourceConstructed.get();
         final ResourceOpenedCamera openedCamera = mResourceOpenedCamera.get();
 
+        /**
+         * Disable the shutter button immediately. The button will be
+         * re-enabled when users press re-take button.
+         */
+        resource.getMainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                resource.getModuleUI().setShutterButtonEnabled(false);
+            }
+        });
+
         /** Create a new capture session. */
         final long timestamp = System.currentTimeMillis();
         final String fileName = CameraUtil.instance().createJpegName(timestamp);
