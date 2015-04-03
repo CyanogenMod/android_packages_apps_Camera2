@@ -459,7 +459,7 @@ public class CameraSettingsActivity extends FragmentActivity {
                 return;
             }
             Size settingSize = SettingsUtil.sizeFromSettingString(setting);
-            if (settingSize == null) {
+            if (settingSize == null || settingSize.area() == 0) {
                 return;
             }
             preference.setSummary(getSizeSummaryString(settingSize));
