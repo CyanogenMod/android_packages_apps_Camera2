@@ -7,10 +7,12 @@ import android.os.SystemClock;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.ui.TouchCoordinate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Accumulates statistics during the lifecycle of a Capture Session. Since a
@@ -19,8 +21,9 @@ import com.android.camera.ui.TouchCoordinate;
  * attached to the CaptureSession so that we can collect information from both
  * the CaptureModule and the ImageBackend.
  */
-
 public class CaptureSessionStatsCollector {
+
+
     /** Time when capture is completed in SystemClock.elapsedRealtime(). */
     protected long mCaptureTimeMillis;
     protected final UsageStatistics mUsageStatistics;
@@ -42,7 +45,7 @@ public class CaptureSessionStatsCollector {
     protected Float mTimerSeconds;
     protected TouchCoordinate mTouchCoordinate;
     protected Boolean mVolumeButtonShutter;
-    protected Face[] mFaces;
+    protected List<Camera2FaceProxy> mFaceProxies;
     protected Float mLensFocusDistance;
     protected Rect mActiveSensorSize;
 
@@ -69,7 +72,16 @@ public class CaptureSessionStatsCollector {
      * @param captureResult CaptureResults to be queried for capture event information
      */
     public void decorateAtTimeOfCaptureRequestAvailable(CaptureResultProxy captureResult) {
-        mFaces = captureResult.get(CaptureResult.STATISTICS_FACES);
+        Face [] facesCaptured = captureResult.get(CaptureResult.STATISTICS_FACES);
+        if(facesCaptured == null) {
+            mFaceProxies = null;
+        } else {
+            mFaceProxies = new ArrayList<>(facesCaptured.length);
+            for (Face face : facesCaptured) {
+                mFaceProxies.add(Camera2FaceProxy.from(face));
+            }
+        }
+
         mLensFocusDistance = captureResult.get(CaptureResult.LENS_FOCUS_DISTANCE);
     }
 
@@ -147,7 +159,7 @@ public class CaptureSessionStatsCollector {
                     mMode, mFilename, mExifInterface, mIsFrontFacing,
                     mIsHdr, mZoom, mFlashSetting, mGridLinesOn, mTimerSeconds,
                     processingTime, mTouchCoordinate, mVolumeButtonShutter,
-                    mFaces, mLensFocusDistance, mActiveSensorSize);
+                    mFaceProxies, mLensFocusDistance, mActiveSensorSize);
         }
     }
 

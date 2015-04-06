@@ -19,12 +19,12 @@ package com.android.camera.stats;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.hardware.camera2.params.Face;
 
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.ui.TouchCoordinate;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class UsageStatistics {
     public static final long VIEW_TIMEOUT_MILLIS = 0;
@@ -75,7 +75,7 @@ public class UsageStatistics {
                                       String flashSetting, boolean gridLinesOn,
                                       Float timerSeconds, Float processingTime,
                                       TouchCoordinate touch, Boolean volumeButtonShutter,
-                                      Face[] faces, Float lensDistance,
+                                      List<Camera2FaceProxy> faces, Float lensDistance,
                                       Rect activeSensorSize
     ) {
     }
