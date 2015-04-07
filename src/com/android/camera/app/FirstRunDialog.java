@@ -97,11 +97,16 @@ public class FirstRunDialog {
      * Shows first run dialogs if necessary.
      */
     public void showIfNecessary() {
-        if (shouldShow()) {
+        if (shouldShowLocationDialog()) {
             // When people open the app for the first time, prompt two dialogs to
             // ask preferences about location and aspect ratio. The first dialog is
             // location reference.
             promptLocationPreferenceDialog();
+        } else if (shouldShowAspectRatioDialog()) {
+            /**
+             * If people already set location preference, prompt aspect ratio dialog.
+             */
+            promptAspectRatioPreferenceDialog();
         } else {
             mListener.onFirstRunStateReady();
         }
@@ -130,16 +135,16 @@ public class FirstRunDialog {
      *
      * @return Whether first run dialogs should be presented to the user.
      */
-    private boolean shouldShow() {
+    private boolean shouldShowLocationDialog() {
+        return !mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL, Keys.KEY_RECORD_LOCATION);
+    }
+
+    private boolean shouldShowAspectRatioDialog() {
         final boolean isAspectRatioPreferenceSet = mSettingsManager.getBoolean(
                 SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
         final boolean isAspectRatioDevice =
                 ApiHelper.IS_NEXUS_4 || ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6;
-        final boolean shouldShowAspectRatioDialog =
-                isAspectRatioDevice && !isAspectRatioPreferenceSet;
-        final boolean shouldShowLocationDialog =
-                !mSettingsManager.isSet(SettingsManager.SCOPE_GLOBAL, Keys.KEY_RECORD_LOCATION);
-        return shouldShowAspectRatioDialog || shouldShowLocationDialog;
+        return isAspectRatioDevice && !isAspectRatioPreferenceSet;
     }
 
     /**
@@ -215,8 +220,15 @@ public class FirstRunDialog {
                         Keys.KEY_RECORD_LOCATION,
                         locationRecordingEnabled);
 
-                // Prompt the second dialog about aspect ratio preference.
-                promptAspectRatioPreferenceDialog();
+                if (shouldShowAspectRatioDialog()) {
+                    // Prompt the second dialog about aspect ratio preference.
+                    promptAspectRatioPreferenceDialog();
+                } else {
+                    // Dismiss all dialogs.
+                    dismiss();
+                    // Notify that the app is ready to go.
+                    mListener.onFirstRunStateReady();
+                }
             }
         });
 
