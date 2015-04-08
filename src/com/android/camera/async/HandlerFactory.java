@@ -41,4 +41,25 @@ public class HandlerFactory {
 
         return new Handler(thread.getLooper());
     }
+
+    /**
+     * @param lifetime The lifetime of the associated handler's thread.
+     * @param threadName The name to assign to the created thread.
+     * @param javaThreadPriority The Java thread priority to use for this thread.
+     * @return A handler backed by a new thread.
+     */
+    public Handler create(Lifetime lifetime, String threadName, int javaThreadPriority) {
+        final HandlerThread thread = new HandlerThread(threadName);
+        thread.start();
+        thread.setPriority(javaThreadPriority);
+
+        lifetime.add(new SafeCloseable() {
+            @Override
+            public void close() {
+                thread.quitSafely();
+            }
+        });
+
+        return new Handler(thread.getLooper());
+    }
 }

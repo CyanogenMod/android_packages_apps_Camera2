@@ -45,7 +45,11 @@ public class ImageDistributorFactory {
         lifetime.add(globalTimestampStream);
         mImageDistributor = new ImageDistributorImpl(Loggers.tagFactory(), globalTimestampStream);
 
-        Handler imageReaderHandler = handlerFactory.create(lifetime, "ImageDistributor");
+        // This imageReaderHandler will be created with a very very high thread
+        // priority because missing any input event potentially stalls the
+        // camera preview and HAL.
+        Handler imageReaderHandler = handlerFactory.create(lifetime, "ImageDistributor",
+              Thread.MAX_PRIORITY);
 
         imageReader.setOnImageAvailableListener(
                 new ImageDistributorOnImageAvailableListener(imageReader, mImageDistributor),

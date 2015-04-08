@@ -30,7 +30,12 @@ public class FrameServerFactory {
 
     public FrameServerFactory(Lifetime lifetime, CameraCaptureSessionProxy cameraCaptureSession,
             HandlerFactory handlerFactory) {
-        Handler cameraHandler = handlerFactory.create(lifetime, "CameraMetadataHandler");
+        // The camera handler will be created with a very very high thread
+        // priority because missing any input event potentially stalls the
+        // camera preview and HAL.
+        Handler cameraHandler = handlerFactory.create(lifetime, "CameraMetadataHandler",
+              Thread.MAX_PRIORITY);
+
         // TODO Maybe enable closing the FrameServer along with the lifetime?
         // It would allow clean reuse of the cameraCaptureSession with
         // non-frameserver interaction.
