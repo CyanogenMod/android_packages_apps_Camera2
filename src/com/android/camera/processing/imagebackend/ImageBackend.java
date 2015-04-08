@@ -85,7 +85,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
     protected static final int FAST_THREAD_PRIORITY = Thread.MAX_PRIORITY;
 
-    protected static final int SLOW_THREAD_PRIORITY = Thread.NORM_PRIORITY;
+    protected static final int SLOW_THREAD_PRIORITY = Thread.MIN_PRIORITY;
 
     protected static final int NUM_THREADS_FAST = 2;
 
