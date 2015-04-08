@@ -148,36 +148,48 @@ public class ImageProcessorProxyListener implements ImageProcessorListener {
     }
 
     public void onStart(TaskImageContainer.TaskInfo job) {
+        final List<ImageProcessorListener> listeners;
         synchronized (mRegisteredListeners) {
-            for (ImageProcessorListener l : filteredListeners(job.contentId)) {
-                l.onStart(job);
-            }
+            listeners = filteredListeners(job.contentId);
+        }
+
+        for (ImageProcessorListener l : listeners) {
+            l.onStart(job);
         }
     }
 
     public void onResultCompressed(TaskImageContainer.TaskInfo job,
             TaskImageContainer.CompressedPayload payload) {
+        final List<ImageProcessorListener> listeners;
         synchronized (mRegisteredListeners) {
-            for (ImageProcessorListener l : filteredListeners(job.contentId)) {
-                l.onResultCompressed(job, payload);
-            }
+            listeners = filteredListeners(job.contentId);
+        }
+
+        for (ImageProcessorListener l : listeners) {
+            l.onResultCompressed(job, payload);
         }
     }
 
     public void onResultUncompressed(TaskImageContainer.TaskInfo job,
             TaskImageContainer.UncompressedPayload payload) {
+        final List<ImageProcessorListener> listeners;
         synchronized (mRegisteredListeners) {
-            for (ImageProcessorListener l : filteredListeners(job.contentId)) {
-                l.onResultUncompressed(job, payload);
-            }
+            listeners = filteredListeners(job.contentId);
+        }
+
+        for (ImageProcessorListener l : listeners) {
+            l.onResultUncompressed(job, payload);
         }
     }
 
     public void onResultUri(TaskImageContainer.TaskInfo job, Uri uri) {
+        final List<ImageProcessorListener> listeners;
         synchronized (mRegisteredListeners) {
-            for (ImageProcessorListener l : filteredListeners(job.contentId)) {
-                l.onResultUri(job, uri);
-            }
+            listeners = filteredListeners(job.contentId);
+        }
+
+        for (ImageProcessorListener l : listeners) {
+            l.onResultUri(job, uri);
         }
     }
 
