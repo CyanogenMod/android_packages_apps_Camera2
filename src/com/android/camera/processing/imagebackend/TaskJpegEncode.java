@@ -23,11 +23,9 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.net.Uri;
 
-import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.session.CaptureSession;
-import com.android.camera.util.Size;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

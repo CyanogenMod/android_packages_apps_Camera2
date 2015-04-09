@@ -17,10 +17,12 @@
 package com.android.camera.processing.imagebackend;
 
 import android.graphics.Rect;
-import com.android.camera.debug.Log;
+
+import com.android.camera.processing.memory.LruResourcePool;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.Executor;
 
 /**
@@ -28,6 +30,8 @@ import java.util.concurrent.Executor;
  * inscribed in a circle.
  */
 public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
+    private final LruResourcePool<Integer, ByteBuffer> mByteBufferDirectPool;
+
     /**
      * Constructor
      *
@@ -38,10 +42,15 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
      * @param captureSession Capture session that bound to this image
      * @param targetSize Approximate viewable pixel demensions of the desired
      *            preview Image     */
-    TaskPreviewChainedJpeg(ImageToProcess image, Executor executor,
-            ImageTaskManager imageTaskManager, CaptureSession captureSession, Size targetSize) {
+    TaskPreviewChainedJpeg(ImageToProcess image,
+            Executor executor,
+            ImageTaskManager imageTaskManager,
+            CaptureSession captureSession,
+            Size targetSize,
+            LruResourcePool<Integer, ByteBuffer> byteBufferResourcePool) {
         super(image, executor, imageTaskManager, ProcessingPriority.SLOW, captureSession,
                 targetSize , ThumbnailShape.MAINTAIN_ASPECT_NO_INSET);
+        mByteBufferDirectPool = byteBufferResourcePool;
     }
 
     public void logWrapper(String message) {
@@ -72,7 +81,7 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
 
             // Chain JPEG task
             TaskImageContainer jpegTask = new TaskCompressImageToJpeg(img, mExecutor,
-                    mImageTaskManager, mSession);
+                    mImageTaskManager, mSession, mByteBufferDirectPool);
             mImageTaskManager.appendTasks(img, jpegTask);
         } finally {
             // Signal backend that reference has been released
