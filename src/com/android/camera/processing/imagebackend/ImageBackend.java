@@ -84,11 +84,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
     protected static final int FAST_THREAD_PRIORITY = Thread.MAX_PRIORITY;
-
+    protected static final int AVERAGE_THREAD_PRIORITY = Thread.NORM_PRIORITY - 1;
     protected static final int SLOW_THREAD_PRIORITY = Thread.MIN_PRIORITY;
 
     protected static final int NUM_THREADS_FAST = 2;
-
+    protected static final int NUM_THREADS_AVERAGE = 2;
     protected static final int NUM_THREADS_SLOW = 2;
 
     protected final ProcessingTaskConsumer mProcessingTaskConsumer;
@@ -103,8 +103,9 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      */
     protected final Map<CaptureSession, ImageShadowTask> mShadowTaskMap;
 
+    // The available threadpools for scheduling
     protected final ExecutorService mThreadPoolFast;
-
+    protected final ExecutorService mThreadPoolAverage;
     protected final ExecutorService mThreadPoolSlow;
 
     private final static Log.Tag TAG = new Log.Tag("ImageBackend");
@@ -139,6 +140,8 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     // Default constructor, values are conservatively targeted to the Nexus 6
     public ImageBackend(ProcessingTaskConsumer processingTaskConsumer, int tinyThumbnailSize) {
         mThreadPoolFast = Executors.newFixedThreadPool(NUM_THREADS_FAST, new FastThreadFactory());
+        mThreadPoolAverage = Executors.newFixedThreadPool(NUM_THREADS_AVERAGE,
+                new AverageThreadFactory());
         mThreadPoolSlow = Executors.newFixedThreadPool(NUM_THREADS_SLOW, new SlowThreadFactory());
         mProxyListener = new ImageProcessorProxyListener();
         mImageSemaphoreMap = new HashMap<>();
@@ -151,13 +154,16 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * Direct Injection Constructor for Testing purposes.
      *
      * @param fastService Service where Tasks of FAST Priority are placed.
+     * @param averageService Service where Tasks of AVERAGE Priority are placed.
      * @param slowService Service where Tasks of SLOW Priority are placed.
      * @param imageProcessorProxyListener iamge proxy listener to be used
      */
-    public ImageBackend(ExecutorService fastService, ExecutorService slowService,
+    public ImageBackend(ExecutorService fastService, ExecutorService averageService,
+            ExecutorService slowService,
             ImageProcessorProxyListener imageProcessorProxyListener,
             ProcessingTaskConsumer processingTaskConsumer, int tinyThumbnailSize) {
         mThreadPoolFast = fastService;
+        mThreadPoolAverage = averageService;
         mThreadPoolSlow = slowService;
         mProxyListener = imageProcessorProxyListener;
         mImageSemaphoreMap = new HashMap<>();
@@ -650,10 +656,19 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
                 // Before scheduling, wrap TaskImageContainer inside of the
                 // TaskDoneWrapper to add
                 // instrumentation for managing ImageShadowTasks
-                if (task.getProcessingPriority() == TaskImageContainer.ProcessingPriority.FAST) {
-                    mThreadPoolFast.execute(new TaskDoneWrapper(this, shadowTask, task));
-                } else {
-                    mThreadPoolSlow.execute(new TaskDoneWrapper(this, shadowTask, task));
+                switch (task.getProcessingPriority()) {
+                    case FAST:
+                        mThreadPoolFast.execute(new TaskDoneWrapper(this, shadowTask, task));
+                        break;
+                    case AVERAGE:
+                        mThreadPoolAverage.execute(new TaskDoneWrapper(this, shadowTask, task));
+                        break;
+                    case SLOW:
+                        mThreadPoolSlow.execute(new TaskDoneWrapper(this, shadowTask, task));
+                        break;
+                    default:
+                        mThreadPoolSlow.execute(new TaskDoneWrapper(this, shadowTask, task));
+                        break;
                 }
             }
         }
@@ -897,6 +912,15 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setPriority(FAST_THREAD_PRIORITY);
+            return t;
+        }
+    }
+
+    private class AverageThreadFactory implements ThreadFactory {
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setPriority(AVERAGE_THREAD_PRIORITY);
             return t;
         }
     }

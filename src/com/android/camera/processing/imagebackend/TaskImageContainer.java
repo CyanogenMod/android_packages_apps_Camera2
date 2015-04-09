@@ -136,7 +136,7 @@ public abstract class TaskImageContainer implements Runnable {
     }
 
     public enum ProcessingPriority {
-        FAST, SLOW
+        FAST, AVERAGE, SLOW
     }
 
     protected final static Log.Tag TAG = new Log.Tag("TaskImgContain");

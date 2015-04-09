@@ -33,7 +33,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * delta between the sensor timestamps retrieved from the camera.
  */
 @ParametersAreNonnullByDefault
-@TargetApi(VERSION_CODES.L)
+@TargetApi(VERSION_CODES.LOLLIPOP)
 public final class FramerateJankDetector extends ResponseListener {
     private static final double FRACTIONAL_CHANGE_STATS_THRESHOLD = .5;
     private static final double FRACTIONAL_CHANGE_LOG_THRESHOLD = 1.5;
