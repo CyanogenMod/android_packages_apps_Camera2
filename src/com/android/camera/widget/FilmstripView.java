@@ -191,6 +191,10 @@ public class FilmstripView extends ViewGroup {
             mView.setPivotY(0f);
         }
 
+        public FilmstripItem getData() {
+            return mData;
+        }
+
         public void setData(FilmstripItem item) {
             mData = item;
 
@@ -426,20 +430,12 @@ public class FilmstripView extends ViewGroup {
         }
 
         /**
-         * Removes from the hierarchy. Keeps the view in the view hierarchy if
-         * view type is {@code VIEW_TYPE_STICKY} and set to invisible instead.
-         *
-         * @param force {@code true} to remove the view from the hierarchy
-         *                          regardless of the view type.
+         * Removes from the hierarchy.
          */
-        public void removeViewFromHierarchy(boolean force) {
-            if (force) {
-                mFilmstrip.removeView(mView);
-                mData.recycle(mView);
-                mFilmstrip.recycleView(mView, mIndex);
-            } else {
-                setVisibility(View.INVISIBLE);
-            }
+        public void removeViewFromHierarchy() {
+            mFilmstrip.removeView(mView);
+            mData.recycle(mView);
+            mFilmstrip.recycleView(mView, mIndex);
         }
 
         /**
@@ -680,6 +676,7 @@ public class FilmstripView extends ViewGroup {
     }
 
     private void recycleView(View view, int index) {
+        Log.v(TAG, "recycleView");
         final int viewType = (Integer) view.getTag(R.id.mediadata_tag_viewtype);
         if (viewType > 0) {
             Queue<View> recycledViewsForType = recycledViews.get(viewType);
@@ -701,6 +698,7 @@ public class FilmstripView extends ViewGroup {
         if (view != null) {
             view.setVisibility(View.GONE);
         }
+        Log.v(TAG, "getRecycledView, recycled=" + (view != null));
         return view;
     }
 
@@ -892,7 +890,7 @@ public class FilmstripView extends ViewGroup {
             Log.w(TAG, "removeItem() - Trying to remove a null item!");
             return;
         }
-        mViewItems[bufferIndex].removeViewFromHierarchy(false);
+        mViewItems[bufferIndex].removeViewFromHierarchy();
         mViewItems[bufferIndex] = null;
     }
 
@@ -1444,7 +1442,7 @@ public class FilmstripView extends ViewGroup {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                removedItem.removeViewFromHierarchy(false);
+                removedItem.removeViewFromHierarchy();
             }
         }, GEOMETRY_ADJUST_TIME_MS);
 
@@ -1673,10 +1671,18 @@ public class FilmstripView extends ViewGroup {
             return;
         }
 
+        FilmstripItem oldFilmstripItem = item.getData();
+
         // In case the underlying data item is changed (commonly from
         // SessionItem to PhotoItem for an image requiring processing), set the
         // new FilmstripItem on the ViewItem
-        item.setData(filmstripItem);
+        if (!filmstripItem.equals(oldFilmstripItem)) {
+            oldFilmstripItem.recycle(item.getView());
+            item.setData(filmstripItem);
+            Log.v(TAG, "updateViewItem() - recycling old data item and setting new");
+        } else {
+            Log.v(TAG, "updateViewItem() - updating data with the same item");
+        }
 
         // In case state changed from a new FilmStripItem or the existing one,
         // redraw the View contents. We call getView here as it will refill the
@@ -1799,7 +1805,7 @@ public class FilmstripView extends ViewGroup {
             if (mViewItems[i] == null) {
                 continue;
             }
-            mViewItems[i].removeViewFromHierarchy(false);
+            mViewItems[i].removeViewFromHierarchy();
         }
 
         // Clear out the mViewItems and rebuild with camera in the center.
