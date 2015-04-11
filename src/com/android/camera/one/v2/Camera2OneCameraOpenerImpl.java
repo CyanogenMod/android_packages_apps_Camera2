@@ -202,6 +202,8 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
                     openCallback.onFailure();
                 }
             });
+        } catch (SecurityException ex) {
+            fatalErrorHandler.onCameraDisabledFailure();
         }
     }
 }
