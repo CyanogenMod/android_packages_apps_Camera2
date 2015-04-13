@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.android.camera.Storage;
+import com.android.camera.debug.Log;
 import com.android.camera.util.Size;
 import com.android.camera2.R;
 import com.bumptech.glide.Glide;
@@ -44,7 +45,24 @@ public class SessionItem implements FilmstripItem {
     private final Context mContext;
     private final Uri mUri;
 
-    public SessionItem(Context context, Uri uri) {
+    /**
+     * Creates a new session from the given URI.
+     * @param context valid android application context.
+     * @param uri the URI of the session.
+     * @return If the session was found, a new SessionItem is returned.
+     */
+    public static Optional<SessionItem> create(Context context, Uri uri) {
+        if (!Storage.containsPlaceholderSize(uri)) {
+            return Optional.absent();
+        }
+        Size dimension = getSessionSize(uri);
+        if (dimension == null) {
+            return Optional.absent();
+        }
+        return Optional.of(new SessionItem(context, uri, dimension));
+    }
+
+    protected SessionItem(Context context, Uri uri, Size dimension) {
         mContext = context;
         mUri = uri;
 
@@ -52,8 +70,6 @@ public class SessionItem implements FilmstripItem {
         mMetaData.setLoaded(true);
 
         Date creationDate = new Date();
-        Size dimension = getSessionSize(uri);
-
         mData = new FilmstripItemData.Builder(uri)
               .withCreationDate(creationDate)
               .withLastModifiedDate(creationDate)
@@ -63,12 +79,14 @@ public class SessionItem implements FilmstripItem {
         mAttributes = new FilmstripItemAttributes.Builder()
                 .with(FilmstripItemAttributes.Attributes.IS_RENDERING)
                 .build();
-
     }
 
-    private Size getSessionSize(Uri uri) {
+    private static Size getSessionSize(Uri uri) {
         Point size = Storage.getSizeForSession(uri);
-        return new Size(size.x, size.y);
+        if (size == null) {
+            return null;
+        }
+        return new Size(size);
     }
 
     @Override
@@ -124,6 +142,10 @@ public class SessionItem implements FilmstripItem {
     @Override
     public FilmstripItem refresh() {
         Size dimension = getSessionSize(mData.getUri());
+        if (dimension == null) {
+            Log.w(TAG, "Cannot refresh item, session does not exist.");
+            return this;
+        }
 
         mData = FilmstripItemData.Builder.from(mData)
               .withDimensions(dimension)

@@ -50,6 +50,8 @@ public class CaptureSessionImpl implements CaptureSession {
     private final SessionNotifier mSessionNotifier;
     /** Used for adding/removing/updating placeholders for in-progress sessions. */
     private final PlaceholderManager mPlaceholderManager;
+    /** A place holder for this capture session. */
+    private PlaceholderManager.Placeholder mPlaceHolder;
     /** Used to store images on disk and to add them to the media store. */
     private final MediaSaver mMediaSaver;
     /** The title of the item being processed. */
@@ -72,8 +74,6 @@ public class CaptureSessionImpl implements CaptureSession {
     private int mProgressPercent = 0;
     /** A message ID for the current progress state. */
     private int mProgressMessageId;
-    /** A place holder for this capture session. */
-    private PlaceholderManager.Session mPlaceHolderSession;
     private Uri mContentUri;
     /** Whether this image was finished. */
     private volatile boolean mIsFinished;
@@ -163,7 +163,7 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public void updateThumbnail(Bitmap bitmap) {
-        mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, bitmap);
+        mPlaceholderManager.replacePlaceholder(mPlaceHolder, bitmap);
         mSessionNotifier.notifySessionUpdated(mUri);
     }
 
@@ -179,9 +179,9 @@ public class CaptureSessionImpl implements CaptureSession {
         }
 
         mProgressMessageId = -1;
-        mPlaceHolderSession = mPlaceholderManager.insertEmptyPlaceholder(mTitle, pictureSize,
+        mPlaceHolder = mPlaceholderManager.insertEmptyPlaceholder(mTitle, pictureSize,
                 mSessionStartMillis);
-        mUri = mPlaceHolderSession.outputUri;
+        mUri = mPlaceHolder.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionNotifier.notifyTaskQueued(mUri);
     }
@@ -193,9 +193,9 @@ public class CaptureSessionImpl implements CaptureSession {
         }
 
         mProgressMessageId = progressMessageId;
-        mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
+        mPlaceHolder = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
                 mSessionStartMillis);
-        mUri = mPlaceHolderSession.outputUri;
+        mUri = mPlaceHolder.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionNotifier.notifyTaskQueued(mUri);
         onCaptureIndicatorUpdate(placeholder, 0);
@@ -208,13 +208,13 @@ public class CaptureSessionImpl implements CaptureSession {
         }
 
         mProgressMessageId = progressMessageId;
-        mPlaceHolderSession = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
+        mPlaceHolder = mPlaceholderManager.insertPlaceholder(mTitle, placeholder,
                 mSessionStartMillis);
-        mUri = mPlaceHolderSession.outputUri;
+        mUri = mPlaceHolder.outputUri;
         mSessionManager.putSession(mUri, this);
         mSessionNotifier.notifyTaskQueued(mUri);
         Optional<Bitmap> placeholderBitmap =
-                mPlaceholderManager.getPlaceholder(mPlaceHolderSession);
+                mPlaceholderManager.getPlaceholder(mPlaceHolder);
         if (placeholderBitmap.isPresent()) {
             onCaptureIndicatorUpdate(placeholderBitmap.get(), 0);
         }
@@ -224,7 +224,7 @@ public class CaptureSessionImpl implements CaptureSession {
     public synchronized void startSession(Uri uri, int progressMessageId) {
         mUri = uri;
         mProgressMessageId = progressMessageId;
-        mPlaceHolderSession = mPlaceholderManager.convertToPlaceholder(uri);
+        mPlaceHolder = mPlaceholderManager.convertToPlaceholder(uri);
 
         mSessionManager.putSession(mUri, this);
         mSessionNotifier.notifyTaskQueued(mUri);
@@ -234,6 +234,12 @@ public class CaptureSessionImpl implements CaptureSession {
     public synchronized void cancel() {
         if (isStarted()) {
             mSessionManager.removeSession(mUri);
+            mSessionNotifier.notifyTaskCanceled(mUri);
+        }
+
+        if (mPlaceHolder != null) {
+            mPlaceholderManager.removePlaceholder(mPlaceHolder);
+            mPlaceHolder = null;
         }
     }
 
@@ -243,7 +249,7 @@ public class CaptureSessionImpl implements CaptureSession {
         final SettableFuture<Optional<Uri>> futureResult = SettableFuture.create();
 
         mIsFinished = true;
-        if (mPlaceHolderSession == null) {
+        if (mPlaceHolder == null) {
             mMediaSaver.addImage(
                     data, mTitle, mSessionStartMillis, mLocation, width, height,
                     orientation, exif, new MediaSaver.OnMediaSavedListener() {
@@ -254,7 +260,7 @@ public class CaptureSessionImpl implements CaptureSession {
                     });
         } else {
             try {
-                mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolderSession, mLocation,
+                mContentUri = mPlaceholderManager.finishPlaceholder(mPlaceHolder, mLocation,
                         orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
                 mSessionNotifier.notifyTaskDone(mUri);
                 futureResult.set(Optional.fromNullable(mUri));
@@ -274,7 +280,7 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public void finish() {
-        if (mPlaceHolderSession == null) {
+        if (mPlaceHolder == null) {
             throw new IllegalStateException(
                     "Cannot call finish without calling startSession first.");
         }
@@ -348,7 +354,7 @@ public class CaptureSessionImpl implements CaptureSession {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 Bitmap placeholder = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length,
                         options);
-                mPlaceholderManager.replacePlaceholder(mPlaceHolderSession, placeholder);
+                mPlaceholderManager.replacePlaceholder(mPlaceHolder, placeholder);
                 mSessionNotifier.notifySessionUpdated(mUri);
             }
         });
@@ -356,7 +362,7 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public void finishWithFailure(int failureMessageId, boolean removeFromFilmstrip) {
-        if (mPlaceHolderSession == null) {
+        if (mPlaceHolder == null) {
             throw new IllegalStateException(
                     "Cannot call finish without calling startSession first.");
         }
@@ -381,7 +387,7 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public void finalizeSession() {
-        mPlaceholderManager.removePlaceholder(mPlaceHolderSession);
+        mPlaceholderManager.removePlaceholder(mPlaceHolder);
     }
 
     private void onCaptureIndicatorUpdate(Bitmap indicator, int rotationDegrees) {

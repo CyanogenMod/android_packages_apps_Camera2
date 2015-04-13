@@ -118,6 +118,21 @@ public class CaptureSessionManagerImpl implements CaptureSessionManager {
             });
         }
 
+        @Override
+        public void notifyTaskCanceled(final Uri uri) {
+            mMainHandler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (mTaskListeners) {
+                        for (SessionListener listener : mTaskListeners) {
+                            listener.onSessionCanceled(uri);
+                        }
+                    }
+                    finalizeSession(uri);
+                }
+            });
+        }
+
         /**
          * Notifies all task listeners that the task with the given URI has
          * progressed to the given state.

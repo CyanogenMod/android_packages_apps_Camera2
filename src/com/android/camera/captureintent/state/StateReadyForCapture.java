@@ -610,6 +610,10 @@ public final class StateReadyForCapture extends StateImpl {
                 }
 
                 @Override
+                public void onSessionCanceled(Uri mediaUri) {
+                }
+
+                @Override
                 public void onSessionProgress(Uri sessionUri, int progress) {
                 }
 

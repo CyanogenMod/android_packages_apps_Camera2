@@ -28,6 +28,7 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.LruCache;
+
 import com.android.camera.data.FilmstripItemData;
 import com.android.camera.debug.Log;
 import com.android.camera.exif.ExifInterface;
@@ -35,13 +36,14 @@ import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
 import com.google.common.base.Optional;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
 
 public class Storage {
     public static final String DCIM =
@@ -50,9 +52,6 @@ public class Storage {
     public static final File DIRECTORY_FILE = new File(DIRECTORY);
     public static final String JPEG_POSTFIX = ".jpg";
     public static final String GIF_POSTFIX = ".gif";
-    // Match the code in MediaProvider.computeBucketValues().
-    public static final String BUCKET_ID =
-            String.valueOf(DIRECTORY.toLowerCase().hashCode());
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
@@ -443,14 +442,11 @@ public class Storage {
     }
 
     /**
-     * Returns the current version of a placeholder for a session. The version will increment
-     * with each call to replacePlaceholder.
-     *
-     * @param uri the session uri to look up.
-     * @return the current version int.
+     * @return Whether a placeholder size for the session with the given URI
+     *         exists.
      */
-    public static int getPlaceholderVersionForSession(Uri uri) {
-        return sSessionsToPlaceholderVersions.get(uri);
+    public static boolean containsPlaceholderSize(Uri uri) {
+        return sSessionsToSizes.containsKey(uri);
     }
 
     /**

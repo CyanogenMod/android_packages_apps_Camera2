@@ -16,14 +16,12 @@
 
 package com.android.camera.captureintent.state;
 
-import com.google.common.base.Optional;
+import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.android.camera.async.RefCountBase;
 import com.android.camera.captureintent.CaptureIntentConfig;
 import com.android.camera.captureintent.PictureDecoder;
-import com.android.camera.captureintent.resource.ResourceCaptureTools;
-import com.android.camera.captureintent.resource.ResourceConstructed;
-import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
 import com.android.camera.captureintent.event.EventPause;
 import com.android.camera.captureintent.event.EventPictureCompressed;
@@ -31,13 +29,14 @@ import com.android.camera.captureintent.event.EventPictureDecoded;
 import com.android.camera.captureintent.event.EventTapOnCancelIntentButton;
 import com.android.camera.captureintent.event.EventTapOnConfirmPhotoButton;
 import com.android.camera.captureintent.event.EventTapOnRetakePhotoButton;
+import com.android.camera.captureintent.resource.ResourceCaptureTools;
+import com.android.camera.captureintent.resource.ResourceConstructed;
+import com.android.camera.captureintent.stateful.EventHandler;
 import com.android.camera.captureintent.stateful.State;
 import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.session.CaptureSessionManager;
-
-import android.graphics.Bitmap;
-import android.net.Uri;
+import com.google.common.base.Optional;
 
 /**
  * A state that shows the taken picture for review. The Cancel, Done or
@@ -260,6 +259,10 @@ public class StateReviewingPicture extends StateImpl {
                 @Override
                 public void onSessionFailed(Uri sessionUri, int failureMessageId,
                         boolean removeFromFilmstrip) {
+                }
+
+                @Override
+                public void onSessionCanceled(Uri mediaUri) {
                 }
 
                 @Override

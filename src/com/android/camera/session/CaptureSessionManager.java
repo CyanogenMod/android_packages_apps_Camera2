@@ -58,6 +58,9 @@ public interface CaptureSessionManager {
         /** Called when the session with the given Uri failed processing. */
         public void onSessionFailed(Uri mediaUri, int failureMessageId, boolean removeFromFilmstrip);
 
+        /** Called when the session with the given Uri was canceled. */
+        public void onSessionCanceled(Uri mediaUri);
+
         /** Called when the session with the given Uri has progressed. */
         public void onSessionProgress(Uri mediaUri, int progress);
 

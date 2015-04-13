@@ -144,7 +144,6 @@ import com.android.camera.util.IntentHelper;
 import com.android.camera.util.PhotoSphereHelper.PanoramaViewHelper;
 import com.android.camera.util.QuickActivity;
 import com.android.camera.util.ReleaseHelper;
-import com.android.camera.util.Size;
 import com.android.camera.widget.FilmstripView;
 import com.android.camera.widget.Preloader;
 import com.android.camera2.R;
@@ -157,7 +156,6 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
-import com.bumptech.glide.load.engine.prefill.PreFillType;
 import com.google.common.base.Optional;
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
@@ -881,8 +879,10 @@ public class CameraActivity extends QuickActivity
                     if (!Storage.isSessionUri(uri)) {
                         return;
                     }
-                    SessionItem newData = new SessionItem(getApplicationContext(), uri);
-                    mDataAdapter.addOrUpdate(newData);
+                    Optional<SessionItem> newData = SessionItem.create(getApplicationContext(), uri);
+                    if (newData.isPresent()) {
+                        mDataAdapter.addOrUpdate(newData.get());
+                    }
                 }
 
                 @Override
@@ -986,6 +986,13 @@ public class CameraActivity extends QuickActivity
                         mFatalErrorHandler.onMediaStorageFailure();
                         mDataAdapter.removeAt(failedIndex);
                     }
+                }
+
+                @Override
+                public void onSessionCanceled(Uri uri) {
+                    Log.v(TAG, "onSessionCanceled:" + uri);
+                    int failedIndex = mDataAdapter.findByContentUri(uri);
+                    mDataAdapter.removeAt(failedIndex);
                 }
 
                 @Override

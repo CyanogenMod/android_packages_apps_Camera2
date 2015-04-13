@@ -32,7 +32,10 @@ public interface SessionNotifier {
 
     /** A task has failed to process. */
     public void notifyTaskFailed(final Uri uri, final int failureMessageId,
-            boolean removeFromFilmstrip);
+                                 boolean removeFromFilmstrip);
+
+    /** A task has been canceled. */
+    public void notifyTaskCanceled(final Uri uri);
 
     /** A task has progressed. */
     public void notifyTaskProgress(final Uri uri, final int progressPercent);
