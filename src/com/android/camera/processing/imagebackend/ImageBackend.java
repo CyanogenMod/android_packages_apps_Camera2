@@ -18,11 +18,13 @@ package com.android.camera.processing.imagebackend;
 
 import com.android.camera.debug.Log;
 import com.android.camera.processing.ProcessingTaskConsumer;
+import com.android.camera.processing.memory.ByteBufferDirectPool;
+import com.android.camera.processing.memory.LruResourcePool;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.Size;
-
 import com.google.common.base.Optional;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,6 +84,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * already been completed should return immediately on its process call.
  */
 public class ImageBackend implements ImageConsumer, ImageTaskManager {
+    private final static Log.Tag TAG = new Log.Tag("ImageBackend");
 
     protected static final int FAST_THREAD_PRIORITY = Thread.MAX_PRIORITY;
     protected static final int AVERAGE_THREAD_PRIORITY = Thread.NORM_PRIORITY - 1;
@@ -90,6 +93,8 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     protected static final int NUM_THREADS_FAST = 2;
     protected static final int NUM_THREADS_AVERAGE = 2;
     protected static final int NUM_THREADS_SLOW = 2;
+
+    private static final int IMAGE_BACKEND_HARD_REF_POOL_SIZE = 2;
 
     protected final ProcessingTaskConsumer mProcessingTaskConsumer;
 
@@ -108,7 +113,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
     protected final ExecutorService mThreadPoolAverage;
     protected final ExecutorService mThreadPoolSlow;
 
-    private final static Log.Tag TAG = new Log.Tag("ImageBackend");
+    private final LruResourcePool<Integer, ByteBuffer> mByteBufferDirectPool;
 
     /**
      * Approximate viewable size (in pixels) for the fast thumbnail in the
@@ -143,6 +148,7 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
         mThreadPoolAverage = Executors.newFixedThreadPool(NUM_THREADS_AVERAGE,
                 new AverageThreadFactory());
         mThreadPoolSlow = Executors.newFixedThreadPool(NUM_THREADS_SLOW, new SlowThreadFactory());
+        mByteBufferDirectPool = new ByteBufferDirectPool(IMAGE_BACKEND_HARD_REF_POOL_SIZE);
         mProxyListener = new ImageProcessorProxyListener();
         mImageSemaphoreMap = new HashMap<>();
         mShadowTaskMap = new HashMap<>();
@@ -158,13 +164,17 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
      * @param slowService Service where Tasks of SLOW Priority are placed.
      * @param imageProcessorProxyListener iamge proxy listener to be used
      */
-    public ImageBackend(ExecutorService fastService, ExecutorService averageService,
+    public ImageBackend(ExecutorService fastService,
+            ExecutorService averageService,
             ExecutorService slowService,
+            LruResourcePool<Integer, ByteBuffer> byteBufferDirectPool,
             ImageProcessorProxyListener imageProcessorProxyListener,
-            ProcessingTaskConsumer processingTaskConsumer, int tinyThumbnailSize) {
+            ProcessingTaskConsumer processingTaskConsumer,
+            int tinyThumbnailSize) {
         mThreadPoolFast = fastService;
         mThreadPoolAverage = averageService;
         mThreadPoolSlow = slowService;
+        mByteBufferDirectPool = byteBufferDirectPool;
         mProxyListener = imageProcessorProxyListener;
         mImageSemaphoreMap = new HashMap<>();
         mShadowTaskMap = new HashMap<>();
@@ -487,11 +497,12 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
                 // JPEG compression of the YUV Image, and writes the result to
                 // disk
                 tasksToExecute.add(new TaskPreviewChainedJpeg(img, executor, this, session,
-                        FILMSTRIP_THUMBNAIL_TARGET_SIZE));
+                        FILMSTRIP_THUMBNAIL_TARGET_SIZE, mByteBufferDirectPool));
             } else {
                 // Request job that only does JPEG compression and writes the
                 // result to disk
-                tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session));
+                tasksToExecute.add(new TaskCompressImageToJpeg(img, executor, this, session,
+                      mByteBufferDirectPool));
             }
         }
 
@@ -546,7 +557,8 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
     public TaskCompressImageToJpeg createTaskCompressImageToJpeg(ImageToProcess image,
             Executor executor, ImageBackend imageBackend, CaptureSession session) {
-        return new TaskCompressImageToJpeg(image, executor, imageBackend, session);
+        return new TaskCompressImageToJpeg(image, executor, imageBackend, session,
+              mByteBufferDirectPool);
     }
 
     /**

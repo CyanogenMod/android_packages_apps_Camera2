@@ -29,6 +29,8 @@ import com.android.camera.exif.ExifInterface;
 import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.one.v2.camera2proxy.ImageProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
+import com.android.camera.processing.memory.LruResourcePool;
+import com.android.camera.processing.memory.LruResourcePool.Resource;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.util.ExifUtil;
 import com.android.camera.util.JpegUtilNative;
@@ -51,6 +53,15 @@ import java.util.concurrent.Executor;
  * that the JPEG is already encoded in the proper orientation.
  */
 public class TaskCompressImageToJpeg extends TaskJpegEncode {
+
+    /**
+     *  Loss-less JPEG compression  is usually about a factor of 5,
+     *  and is a safe lower bound for this value to use to reduce the memory
+     *  footprint for encoding the final jpg.
+     */
+    private static final int MINIMUM_EXPECTED_JPG_COMPRESSION_FACTOR = 5;
+    private final LruResourcePool<Integer, ByteBuffer> mByteBufferDirectPool;
+
     /**
      * Constructor
      *
@@ -61,8 +72,10 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      */
     TaskCompressImageToJpeg(ImageToProcess image, Executor executor,
             ImageTaskManager imageTaskManager,
-            CaptureSession captureSession) {
+            CaptureSession captureSession,
+            LruResourcePool<Integer, ByteBuffer> byteBufferResourcePool) {
         super(image, executor, imageTaskManager, ProcessingPriority.SLOW, captureSession);
+        mByteBufferDirectPool = byteBufferResourcePool;
     }
 
     /**
@@ -105,6 +118,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         int numBytes;
         ByteBuffer compressedData;
         ExifInterface exifData = null;
+        Resource<ByteBuffer> byteBufferResource = null;
 
         switch (img.proxy.getFormat()) {
             case ImageFormat.JPEG:
@@ -240,13 +254,27 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
 
                     onStart(mId, inputImage, resultImage, TaskInfo.Destination.FINAL_IMAGE);
 
-                    compressedData = ByteBuffer.allocateDirect(3 * resultImage.width
-                            * resultImage.height);
+                    // WARNING:
+                    // This reduces the size of the buffer that is created
+                    // to hold the final jpg. It is reduced by the "Minimum expected
+                    // jpg compression factor" to reduce memory allocation consumption.
+                    // If the final jpg is more than this size the image will be
+                    // corrupted. The maximum size of an image is width * height *
+                    // number_of_channels. We artificially reduce this number based on
+                    // what we expect the compression ratio to be to reduce the
+                    // amount of memory we are required to allocate.
+                    int maxPossibleJpgSize = 3 * resultImage.width * resultImage.height;
+                    int jpgBufferSize = maxPossibleJpgSize /
+                          MINIMUM_EXPECTED_JPG_COMPRESSION_FACTOR;
+
+                    byteBufferResource = mByteBufferDirectPool.acquire(jpgBufferSize);
+                    compressedData = byteBufferResource.get();
 
                     // On memory allocation failure, fail gracefully.
                     if (compressedData == null) {
                         // TODO: Put memory allocation failure code here.
                         mSession.finishWithFailure(-1, true);
+                        byteBufferResource.close();
                         return;
                     }
 
@@ -255,7 +283,28 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
                             img.proxy, compressedData, getJpegCompressionQuality(),
                             img.crop, inputImage.orientation.getDegrees());
 
+                    // If the compression overflows the size of the buffer, the
+                    // actual number of bytes will be returned.
+                    if (numBytes > jpgBufferSize) {
+                        byteBufferResource.close();
+                        mByteBufferDirectPool.acquire(maxPossibleJpgSize);
+                        compressedData = byteBufferResource.get();
+
+                        // On memory allocation failure, fail gracefully.
+                        if (compressedData == null) {
+                            // TODO: Put memory allocation failure code here.
+                            mSession.finishWithFailure(-1, true);
+                            byteBufferResource.close();
+                            return;
+                        }
+
+                        numBytes = compressJpegFromYUV420Image(
+                              img.proxy, compressedData, getJpegCompressionQuality(),
+                              img.crop, inputImage.orientation.getDegrees());
+                    }
+
                     if (numBytes < 0) {
+                        byteBufferResource.close();
                         throw new RuntimeException("Error compressing jpeg.");
                     }
                     compressedData.limit(numBytes);
@@ -274,6 +323,10 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
         writeOut = new byte[numBytes];
         compressedData.get(writeOut);
         compressedData.rewind();
+
+        if (byteBufferResource != null) {
+            byteBufferResource.close();
+        }
 
         onJpegEncodeDone(mId, inputImage, resultImage, writeOut,
                 TaskInfo.Destination.FINAL_IMAGE);
