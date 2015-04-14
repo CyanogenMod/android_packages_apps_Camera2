@@ -31,9 +31,10 @@ import com.android.camera.one.OneCameraCharacteristics.FaceDetectMode;
 import com.android.camera.one.Settings3A;
 import com.android.camera.one.v2.autofocus.ManualAutoFocus;
 import com.android.camera.one.v2.autofocus.ManualAutoFocusFactory;
+import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
-import com.android.camera.one.v2.commands.PreviewCommand;
-import com.android.camera.one.v2.commands.zsl.PreviewCommandFactory;
+import com.android.camera.one.v2.commands.ResettingRunnableCameraCommand;
+import com.android.camera.one.v2.commands.PreviewCommandFactory;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
@@ -112,12 +113,13 @@ public class BasicCameraFactory {
                 cameraCharacteristics.getSensorInfoActiveArraySize(), zoom);
         requestTemplate.setParam(CaptureRequest.SCALER_CROP_REGION, cropRegion);
 
-        PreviewCommand previewUpdater =
-              new PreviewCommand(frameServer, requestTemplate, templateType);
+        CameraCommand previewUpdaterCommand =
+              previewCommandFactory.get(requestTemplate, templateType);
 
         // Use a resetting command to ensure that many rapid settings changes do
         // not result in many rapid (>30fps) requests to restart the preview.
-        mPreviewUpdater = previewCommandFactory.get(previewUpdater);
+        mPreviewUpdater = new ResettingRunnableCameraCommand(cameraCommandExecutor,
+              previewUpdaterCommand);
 
         // Resend the repeating preview request when the zoom or flash state
         // changes to apply the new setting.

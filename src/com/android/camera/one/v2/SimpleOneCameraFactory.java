@@ -42,9 +42,10 @@ import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
-import com.android.camera.one.v2.commands.zsl.BasicPreviewCommandFactory;
+import com.android.camera.one.v2.commands.BasicPreviewCommandFactory;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
+import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServerFactory;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.RequestTemplate;
@@ -171,14 +172,17 @@ public class SimpleOneCameraFactory implements OneCameraFactory {
                 rootBuilder.addResponseListener(ResponseListeners.forFinalMetadata(
                         metadataCallback));
 
+                FrameServer ephemeralFrameServer =
+                      frameServerComponent.provideEphemeralFrameServer();
+
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(new Lifetime
                         (cameraLifetime),
                         characteristics,
-                        frameServerComponent.provideEphemeralFrameServer(),
+                        ephemeralFrameServer,
                         rootBuilder,
                         cameraCommandExecutor,
-                        new BasicPreviewCommandFactory(cameraCommandExecutor),
+                        new BasicPreviewCommandFactory(ephemeralFrameServer),
                         flashSetting,
                         exposureSetting,
                         zoomState,

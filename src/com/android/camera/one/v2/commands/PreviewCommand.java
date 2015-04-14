@@ -16,14 +16,14 @@
 
 package com.android.camera.one.v2.commands;
 
-import java.util.Arrays;
-
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+
+import java.util.Arrays;
 
 /**
  * Sends repeating preview requests to a {@link FrameServer}.
@@ -34,7 +34,7 @@ public class PreviewCommand implements CameraCommand {
     private final int mRequestType;
 
     /**
-     * Constructs a Preview. Note that it is the responsiblity of the
+     * Constructs a Preview. Note that it is the responsibility of the
      * {@link RequestBuilder.Factory} to attach the relevant
      * {@link com.android.camera.one.v2.core.CaptureStream}s, such as the
      * viewfinder surface.

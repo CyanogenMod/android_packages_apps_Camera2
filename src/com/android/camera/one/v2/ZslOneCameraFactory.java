@@ -16,8 +16,10 @@
 
 package com.android.camera.one.v2;
 
+import android.annotation.TargetApi;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
+import android.os.Build.VERSION_CODES;
 import android.util.Range;
 import android.view.Surface;
 
@@ -44,8 +46,7 @@ import com.android.camera.one.v2.camera2proxy.CameraDeviceRequestBuilderFactory;
 import com.android.camera.one.v2.camera2proxy.ImageReaderProxy;
 import com.android.camera.one.v2.camera2proxy.TotalCaptureResultProxy;
 import com.android.camera.one.v2.commands.CameraCommandExecutor;
-import com.android.camera.one.v2.commands.PreviewCommand;
-import com.android.camera.one.v2.commands.zsl.ZslPreviewCommandFactory;
+import com.android.camera.one.v2.commands.ZslPreviewCommandFactory;
 import com.android.camera.one.v2.common.BasicCameraFactory;
 import com.android.camera.one.v2.common.SimpleCaptureStream;
 import com.android.camera.one.v2.core.FrameServer;
@@ -74,6 +75,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@TargetApi(VERSION_CODES.LOLLIPOP)
 public class ZslOneCameraFactory implements OneCameraFactory {
     private static Tag TAG = new Tag("ZslOneCamFactory");
 
@@ -196,41 +198,34 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // Streams, ResponseListeners, and Parameters added to
                 // this will be applied to *all* requests sent to the camera.
                 // By default, only the minimal number of streams are configured.
-                RequestTemplate rootTemplate = new RequestTemplate(
+                RequestTemplate zslTemplate = new RequestTemplate(
                       new CameraDeviceRequestBuilderFactory(device));
-                rootTemplate.addStream(new SimpleCaptureStream(previewSurface));
-
-                // Create the request builder that will be used by most camera
-                // operations.
-                RequestTemplate zslTemplate = new RequestTemplate(rootTemplate);
                 zslTemplate.addResponseListener(sharedImageReaderFactory
                       .provideGlobalResponseListener());
                 zslTemplate.addStream(sharedImageReaderFactory.provideZSLStream());
                 zslTemplate.addResponseListener(
                       ResponseListeners.forFinalMetadata(metadataCallback));
 
+                // Create the request builder that will be used by most camera
+                // operations.
+                RequestTemplate zslAndPreviewTemplate = new RequestTemplate(zslTemplate);
+                zslAndPreviewTemplate.addStream(new SimpleCaptureStream(previewSurface));
+
                 boolean isBackCamera = characteristics.getCameraDirection() ==
                         OneCamera.Facing.BACK;
 
                 if (isBackCamera && ApiHelper.IS_NEXUS_5) {
-                    applyNexus5BackCameraFrameRateWorkaround(rootTemplate);
+                    applyNexus5BackCameraFrameRateWorkaround(zslTemplate);
                 }
-
-
-                PreviewCommand updatePreview = new PreviewCommand(frameServer,
-                      rootTemplate,
-                      CameraDevice.TEMPLATE_ZERO_SHUTTER_LAG);
 
                 // Create basic functionality (zoom, AE, AF).
                 BasicCameraFactory basicCameraFactory = new BasicCameraFactory(
                         new Lifetime(cameraLifetime),
                         characteristics,
                         ephemeralFrameServer,
-                        zslTemplate,
+                        zslAndPreviewTemplate,
                         cameraCommandExecutor,
-                        new ZslPreviewCommandFactory(updatePreview,
-                              cameraCommandExecutor,
-                              Executors.newScheduledThreadPool(1)),
+                        new ZslPreviewCommandFactory(ephemeralFrameServer, zslTemplate),
                         flashSetting,
                         exposureSetting,
                         zoomState,
@@ -251,7 +246,7 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         sharedImageReaderFactory.provideZSLStream(),
                         sharedImageReaderFactory.provideMetadataPool(),
                         flashSetting,
-                        zslTemplate);
+                        zslAndPreviewTemplate);
 
                 BurstTaker burstTaker = new BurstTakerImpl(cameraCommandExecutor,
                         frameServer,
@@ -276,12 +271,13 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                             basicCameraFactory.providePreviewUpdater(),
                             UsageStatistics.instance(),
                             10 /* consecutiveFailureThreshold */).provideResponseListener();
-                    rootTemplate.addResponseListener(failureDetector);
+                    zslTemplate.addResponseListener(failureDetector);
                 }
 
                 if (GservicesHelper.isJankStatisticsEnabled(AndroidContext.instance().get()
                         .getContentResolver())) {
-                    rootTemplate.addResponseListener(
+                    // Don't add jank detection unless the preview is running.
+                    zslAndPreviewTemplate.addResponseListener(
                           new FramerateJankDetector(Loggers.tagFactory(),
                                 UsageStatistics.instance()));
                 }

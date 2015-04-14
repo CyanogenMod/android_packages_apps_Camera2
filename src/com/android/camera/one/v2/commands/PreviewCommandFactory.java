@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.commands.zsl;
+package com.android.camera.one.v2.commands;
 
-import com.android.camera.one.v2.commands.PreviewCommand;
+import com.android.camera.one.v2.commands.CameraCommand;
+import com.android.camera.one.v2.core.RequestBuilder;
 
 /**
  * Factory for creating the reusable runnable that will be executed when the
  * frame server should refresh.
  */
 public interface PreviewCommandFactory {
-    Runnable get(PreviewCommand primaryCommand);
+    CameraCommand get(RequestBuilder.Factory primaryRequest, int templateType);
 }

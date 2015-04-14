@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package com.android.camera.one.v2.commands.zsl;
+package com.android.camera.one.v2.commands;
 
-import com.android.camera.one.v2.commands.CameraCommandExecutor;
-import com.android.camera.one.v2.commands.PreviewCommand;
-import com.android.camera.one.v2.commands.ResettingRunnableCameraCommand;
+import com.android.camera.one.v2.core.FrameServer;
+import com.android.camera.one.v2.core.RequestBuilder;
 
 /**
  * Simple frame server command runnable.
  */
 public class BasicPreviewCommandFactory implements PreviewCommandFactory {
-    private final CameraCommandExecutor mCameraCommandExecutor;
+    private final FrameServer mFrameServer;
 
-    public BasicPreviewCommandFactory(CameraCommandExecutor cameraCommandExecutor) {
-        mCameraCommandExecutor = cameraCommandExecutor;
+    public BasicPreviewCommandFactory(FrameServer frameServer) {
+        mFrameServer = frameServer;
     }
 
     @Override
-    public Runnable get(PreviewCommand primaryCommand) {
-        return new ResettingRunnableCameraCommand(mCameraCommandExecutor,
-              primaryCommand);
+    public CameraCommand get(RequestBuilder.Factory previewRequestBuilder, int templateType) {
+        return new PreviewCommand(mFrameServer, previewRequestBuilder, templateType);
     }
 }
