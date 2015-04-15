@@ -50,6 +50,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Wires up the ImageBackend task submission process to save Yuv images.
  */
 public class YuvImageBackendImageSaver implements ImageSaver.Builder {
+    /** Progress for JPEG saving once the intermediate thumbnail is done. */
+    private static final int PERCENTAGE_INTERMEDIATE_THUMBNAIL_DONE = 25;
+    /** Progress for JPEG saving after compression, before writing to disk. */
+    private static final int PERCENTAGE_COMPRESSION_DONE = 95;
+
 
     @ParametersAreNonnullByDefault
     private final class ImageSaverImpl implements SingleImageSaver {
@@ -120,6 +125,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
         public void onResultCompressed(TaskImageContainer.TaskInfo task,
                 TaskImageContainer.CompressedPayload payload) {
             if (task.destination == TaskImageContainer.TaskInfo.Destination.FINAL_IMAGE) {
+                mSession.setProgress(PERCENTAGE_COMPRESSION_DONE);
                 mPictureSaverCallback.onRemoteThumbnailAvailable(payload.data);
             }
         }
@@ -146,6 +152,7 @@ public class YuvImageBackendImageSaver implements ImageSaver.Builder {
                             bitmapIntermediate.getHeight(), matrix, true);
                     mSession.updateThumbnail(bitmapIntermediateRotated);
                     mSession.setProgressMessage(R.string.session_saving_image);
+                    mSession.setProgress(PERCENTAGE_INTERMEDIATE_THUMBNAIL_DONE);
                     break;
             }
         }
