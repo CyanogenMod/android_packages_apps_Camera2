@@ -22,7 +22,7 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"Ορισμός εικόνας ως"</string>
     <string name="delete" msgid="2714492172818940424">"Διαγραφή"</string>
-    <string name="share" msgid="8581089487762243115">"Κοινή χρήση"</string>
+    <string name="share" msgid="8581089487762243115">"Κοινοποίηση"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Κοινή χρήση πανοράματος"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Κοινή χρήση ως φωτογραφίας"</string>
     <string name="deleted" msgid="2036165115527228127">"Διαγράφηκε"</string>
@@ -316,7 +316,7 @@
     <string name="cancel_button_description" msgid="3801167024006905033">"Ακύρωση"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Τέλος"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Νέα λήψη"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"Κοινή χρήση"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"Κοινοποίηση"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Προβολή"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Επεξεργασία"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Διαγραφή"</string>
