@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class FilmstripContentQueries {
     private static final Log.Tag TAG = new Log.Tag("LocalDataQuery");
-    private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
+    private static final String CAMERA_PATH = Storage.generateDirectory() + "%";
     private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
 
     public interface CursorToFilmstripItemFactory<I extends FilmstripItem> {

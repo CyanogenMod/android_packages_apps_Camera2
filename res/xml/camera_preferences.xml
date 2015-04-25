@@ -60,6 +60,11 @@
       android:key="pref_camera_recordlocation_key"
       android:title="@string/pref_camera_save_location_title" />
 
+  <!-- Storage -->
+  <ListPreference
+      android:key="pref_camera_storage_key"
+      android:title="@string/pref_camera_storage_title" />
+
   <!-- Advanced -->
   <PreferenceScreen
       android:key="pref_category_advanced"

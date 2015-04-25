@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.storage.StorageVolume;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -150,6 +151,8 @@ public class CameraSettingsActivity extends FragmentActivity {
         // Selected resolutions for the different cameras and sizes.
         private PictureSizes mPictureSizes;
 
+        private List<StorageVolume> mStorageVolumes;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -189,6 +192,9 @@ public class CameraSettingsActivity extends FragmentActivity {
             // Load the camera sizes.
             loadSizes();
 
+            // Load storage volumes
+            loadStorageVolumeList();
+
             // Send loaded sizes to additional preferences.
             CameraSettingsActivityHelper.onSizesLoaded(this, mPictureSizes.backCameraSizes,
                     new ListPreferenceFiller() {
@@ -213,6 +219,15 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             if (!mHideAdvancedScreen) {
                 setPreferenceScreenIntent(advancedScreen);
+            }
+
+            // Fill Storage preference
+            final Preference storagePreference = findPreference(Keys.KEY_STORAGE);
+            if (mStorageVolumes == null) {
+                getPreferenceScreen().removePreference(storagePreference);
+            } else {
+                setEntries(storagePreference);
+                setSummary(storagePreference);
             }
 
             getPreferenceScreen().getSharedPreferences()
@@ -365,6 +380,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                 setEntriesForSelection(mPictureSizes.videoQualitiesBack.orNull(), listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_FRONT)) {
                 setEntriesForSelection(mPictureSizes.videoQualitiesFront.orNull(), listPreference);
+            } else if (listPreference.getKey().equals(Keys.KEY_STORAGE)) {
+                setStorageEntriesForSelection(mStorageVolumes, listPreference);
             }
         }
 
@@ -444,6 +461,28 @@ public class CameraSettingsActivity extends FragmentActivity {
         }
 
         /**
+         * Sets the entries for the storage list preference.
+         *
+         * @param storageVolumes The storage volumes.
+         * @param preference The preference to set the entries for.
+         */
+        private void setStorageEntriesForSelection(List<StorageVolume> storageVolumes,
+                                                   ListPreference preference) {
+            if (storageVolumes == null) {
+                return;
+            }
+            String[] entries = new String[storageVolumes.size()];
+            String[] entryValues = new String[storageVolumes.size()];
+            for (int i = 0; i < storageVolumes.size(); i++) {
+                StorageVolume v = storageVolumes.get(i);
+                entries[i] = v.getDescription(getActivity());
+                entryValues[i] = v.getPath();
+            }
+            preference.setEntries(entries);
+            preference.setEntryValues(entryValues);
+        }
+
+        /**
          * Sets the summary for the given list preference.
          *
          * @param displayableSizes The human readable preferred sizes
@@ -489,6 +528,14 @@ public class CameraSettingsActivity extends FragmentActivity {
             }
             PictureSizeLoader loader = new PictureSizeLoader(getActivity().getApplicationContext());
             mPictureSizes = loader.computePictureSizes();
+        }
+
+        private void loadStorageVolumeList() {
+            mStorageVolumes = SettingsUtil.getMountedStorageVolumes();
+            if (mStorageVolumes.size() < 2) {
+                // Remove storage preference
+                mStorageVolumes = null;
+            }
         }
 
         /**

@@ -161,7 +161,7 @@ public class OneCameraImpl extends AbstractOneCamera {
     }
 
     /** Directory to store raw DNG files in. */
-    private static final File RAW_DIRECTORY = new File(Storage.DIRECTORY, "DNG");
+    private static final File RAW_DIRECTORY = new File(Storage.generateDirectory(), "DNG");
 
     /** Current CONTROL_AF_MODE request to Camera2 API. */
     private int mControlAFMode = CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;

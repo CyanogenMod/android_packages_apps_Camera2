@@ -65,7 +65,7 @@ public class CameraServicesImpl implements CameraServices {
         PlaceholderManager mPlaceHolderManager = new PlaceholderManager(context);
         SessionStorageManager mSessionStorageManager = SessionStorageManagerImpl.create(context);
 
-        StackSaverFactory mStackSaverFactory = new StackSaverFactory(Storage.DIRECTORY,
+        StackSaverFactory mStackSaverFactory = new StackSaverFactory(Storage.generateDirectory(),
               context.getContentResolver());
         CaptureSessionFactory captureSessionFactory = new CaptureSessionFactoryImpl(
                 mMediaSaver, mPlaceHolderManager, mSessionStorageManager, mStackSaverFactory);
