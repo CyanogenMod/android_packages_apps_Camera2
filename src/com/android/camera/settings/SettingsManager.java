@@ -148,7 +148,7 @@ public class SettingsManager {
         /**
          * Called every time a SharedPreference has been changed.
          */
-	public void onSettingChanged(SettingsManager settingsManager, String key);
+        public void onSettingChanged(SettingsManager settingsManager, String key);
     }
 
     private OnSharedPreferenceChangeListener getSharedPreferenceListener(
