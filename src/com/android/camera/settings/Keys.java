@@ -18,6 +18,8 @@ package com.android.camera.settings;
 
 import android.content.Context;
 
+import android.os.Environment;
+
 import com.android.camera.app.LocationManager;
 import com.android.camera.util.ApiHelper;
 import com.android.camera2.R;
@@ -76,6 +78,7 @@ public class Keys {
             "pref_should_show_settings_button_cling";
     public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
     public static final String KEY_MAX_BRIGHTNESS = "pref_max_brightness";
+    public static final String KEY_STORAGE = "pref_camera_storage_key";
 
     /**
      * Set some number of defaults for the defined keys.
@@ -171,6 +174,11 @@ public class Keys {
 
         settingsManager.setDefaults(KEY_SHOULD_SHOW_SETTINGS_BUTTON_CLING, true);
 
+        settingsManager.setDefaults(KEY_STORAGE,
+            Environment.getExternalStorageDirectory().toString(), null);
+        if (!settingsManager.isSet(SettingsManager.SCOPE_GLOBAL, KEY_STORAGE)) {
+            settingsManager.setToDefault(SettingsManager.SCOPE_GLOBAL, KEY_STORAGE);
+        }
     }
 
     /** Helper functions for some defined keys. */
