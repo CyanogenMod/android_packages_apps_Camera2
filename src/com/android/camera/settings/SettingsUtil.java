@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.media.CamcorderProfile;
+import android.os.storage.StorageVolume;
 import android.util.SparseArray;
 
 import com.android.camera.debug.Log;
@@ -489,6 +490,16 @@ public class SettingsUtil {
             }
         }
         return -1;
+    }
+
+    private static List<StorageVolume> sMountedStorageVolumes;
+
+    public static void setMountedStorageVolumes(List<StorageVolume> volumes) {
+        sMountedStorageVolumes = volumes;
+    }
+
+    public static List<StorageVolume> getMountedStorageVolumes() {
+        return sMountedStorageVolumes;
     }
 
     public static interface CameraDeviceSelector {

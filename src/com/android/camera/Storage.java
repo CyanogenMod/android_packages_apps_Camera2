@@ -46,10 +46,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
 public class Storage {
-    public static final String DCIM =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-    public static final String DIRECTORY = DCIM + "/Camera";
-    public static final File DIRECTORY_FILE = new File(DIRECTORY);
     public static final String JPEG_POSTFIX = ".jpg";
     public static final String GIF_POSTFIX = ".gif";
     public static final long UNAVAILABLE = -1L;
@@ -72,6 +68,17 @@ public class Storage {
             };
     private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<>();
     private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions = new HashMap<>();
+    private static String sRoot = Environment.getExternalStorageDirectory().toString();
+
+    public static void setRoot(String root) {
+        if (!root.equals(sRoot)) {
+            sSessionsToContentUris.clear();
+            sContentUrisToSessions.clear();
+            sSessionsToSizes.clear();
+            sSessionsToPlaceholderVersions.clear();
+        }
+        sRoot = root;
+    }
 
     /**
      * Save the image with default JPEG MIME type and add it to the MediaStore.
@@ -416,7 +423,7 @@ public class Storage {
     }
 
     private static String generateFilepath(String title, String mimeType) {
-        return generateFilepath(DIRECTORY, title, mimeType);
+        return generateFilepath(generateDirectory(), title, mimeType);
     }
 
     public static String generateFilepath(String directory, String title, String mimeType) {
@@ -429,6 +436,14 @@ public class Storage {
             throw new IllegalArgumentException("Invalid mimeType: " + mimeType);
         }
         return (new File(directory, title + extension)).getAbsolutePath();
+    }
+
+    private static String generateDCIM() {
+        return new File(sRoot, Environment.DIRECTORY_DCIM).toString();
+    }
+
+    public static String generateDirectory() {
+        return generateDCIM() + "/Camera";
     }
 
     /**
@@ -499,14 +514,14 @@ public class Storage {
             return UNAVAILABLE;
         }
 
-        File dir = new File(DIRECTORY);
+        File dir = new File(generateDirectory());
         dir.mkdirs();
         if (!dir.isDirectory() || !dir.canWrite()) {
             return UNAVAILABLE;
         }
 
         try {
-            StatFs stat = new StatFs(DIRECTORY);
+            StatFs stat = new StatFs(generateDirectory());
             return stat.getAvailableBlocks() * (long) stat.getBlockSize();
         } catch (Exception e) {
             Log.i(TAG, "Fail to access external storage", e);
@@ -519,7 +534,7 @@ public class Storage {
      * imported. This is a temporary fix for bug#1655552.
      */
     public static void ensureOSXCompatible() {
-        File nnnAAAAA = new File(DCIM, "100ANDRO");
+        File nnnAAAAA = new File(generateDCIM(), "100ANDRO");
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }

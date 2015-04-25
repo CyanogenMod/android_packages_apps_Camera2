@@ -146,7 +146,7 @@ public abstract class FilmstripItemBase<T extends FilmstripItemData> implements 
         }
 
         // Check if this is a 'Camera' sub-directory.
-        String cameraPathStr = Storage.DIRECTORY_FILE.getAbsolutePath();
+        String cameraPathStr = new File(Storage.generateDirectory()).getAbsolutePath();
         String fileParentPathStr = directory.getParentFile().getAbsolutePath();
         Log.d(TAG, "CameraPathStr: " + cameraPathStr + "  fileParentPathStr: " + fileParentPathStr);
 
