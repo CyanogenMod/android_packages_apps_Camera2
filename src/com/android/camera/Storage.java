@@ -41,13 +41,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Storage {
-    public static final String DCIM =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
-    public static final String DIRECTORY = DCIM + "/Camera";
     public static final String JPEG_POSTFIX = ".jpg";
-    // Match the code in MediaProvider.computeBucketValues().
-    public static final String BUCKET_ID =
-            String.valueOf(DIRECTORY.toLowerCase().hashCode());
+
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
@@ -55,12 +50,25 @@ public class Storage {
     public static final String CAMERA_SESSION_SCHEME = "camera_session";
     private static final Log.Tag TAG = new Log.Tag("Storage");
     private static final String GOOGLE_COM = "google.com";
+
     private static HashMap<Uri, Uri> sSessionsToContentUris = new HashMap<Uri, Uri>();
     private static HashMap<Uri, Uri> sContentUrisToSessions = new HashMap<Uri, Uri>();
     private static HashMap<Uri, byte[]> sSessionsToPlaceholderBytes = new HashMap<Uri, byte[]>();
     private static HashMap<Uri, Point> sSessionsToSizes = new HashMap<Uri, Point>();
     private static HashMap<Uri, Integer> sSessionsToPlaceholderVersions =
         new HashMap<Uri, Integer>();
+    private static String sRoot = Environment.getExternalStorageDirectory().toString();
+
+    public static void setRoot(String root) {
+        if (!root.equals(sRoot)) {
+            sSessionsToContentUris.clear();
+            sContentUrisToSessions.clear();
+            sSessionsToPlaceholderBytes.clear();
+            sSessionsToSizes.clear();
+            sSessionsToPlaceholderVersions.clear();
+        }
+        sRoot = root;
+    }
 
     /**
      * Save the image with default JPEG MIME type and add it to the MediaStore.
@@ -329,7 +337,23 @@ public class Storage {
     }
 
     private static String generateFilepath(String title) {
-        return DIRECTORY + '/' + title + ".jpg";
+        return generateDirectory() + '/' + title + ".jpg";
+    }
+
+    private static String generateDCIM() {
+        return new File(sRoot, Environment.DIRECTORY_DCIM).toString();
+    }
+
+    public static String generateDirectory() {
+        return generateDCIM() + "/Camera";
+    }
+
+    public static String generateBucketId() {
+        return String.valueOf(generateBucketIdInt());
+    }
+
+    public static int generateBucketIdInt() {
+        return generateDirectory().toLowerCase().hashCode();
     }
 
     /**
@@ -394,7 +418,8 @@ public class Storage {
     }
 
     public static long getAvailableSpace() {
-        String state = Environment.getExternalStorageState();
+        File dir = new File(generateDirectory());
+        String state = Environment.getStorageState(dir);
         Log.d(TAG, "External storage state=" + state);
         if (Environment.MEDIA_CHECKING.equals(state)) {
             return PREPARING;
@@ -403,14 +428,13 @@ public class Storage {
             return UNAVAILABLE;
         }
 
-        File dir = new File(DIRECTORY);
         dir.mkdirs();
         if (!dir.isDirectory() || !dir.canWrite()) {
             return UNAVAILABLE;
         }
 
         try {
-            StatFs stat = new StatFs(DIRECTORY);
+            StatFs stat = new StatFs(generateDirectory());
             return stat.getAvailableBlocks() * (long) stat.getBlockSize();
         } catch (Exception e) {
             Log.i(TAG, "Fail to access external storage", e);
@@ -423,7 +447,7 @@ public class Storage {
      * imported. This is a temporary fix for bug#1655552.
      */
     public static void ensureOSXCompatible() {
-        File nnnAAAAA = new File(DCIM, "100ANDRO");
+        File nnnAAAAA = new File(generateDCIM(), "100ANDRO");
         if (!(nnnAAAAA.exists() || nnnAAAAA.mkdirs())) {
             Log.e(TAG, "Failed to create " + nnnAAAAA.getPath());
         }

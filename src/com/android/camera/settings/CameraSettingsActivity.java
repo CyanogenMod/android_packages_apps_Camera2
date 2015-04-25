@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.storage.StorageVolume;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -105,6 +106,8 @@ public class CameraSettingsActivity extends FragmentActivity {
         private SelectedVideoQualities mVideoQualitiesBack;
         private SelectedVideoQualities mVideoQualitiesFront;
 
+        private List<StorageVolume> mStorageVolumes;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -135,6 +138,9 @@ public class CameraSettingsActivity extends FragmentActivity {
             // Load the camera sizes.
             loadSizes();
 
+            // Load storage volumes
+            loadStorageVolumeList();
+
             // Make sure to hide settings for cameras that don't exist on this
             // device.
             setVisibilities();
@@ -148,6 +154,15 @@ public class CameraSettingsActivity extends FragmentActivity {
             final PreferenceScreen advancedScreen =
                 (PreferenceScreen) findPreference(PREF_CATEGORY_ADVANCED);
             setPreferenceScreenIntent(advancedScreen);
+
+            // Fill Storage preference
+            final Preference storagePreference = findPreference(Keys.KEY_STORAGE);
+            if (mStorageVolumes == null) {
+                getPreferenceScreen().removePreference(storagePreference);
+            } else {
+                setEntries(storagePreference);
+                setSummary(storagePreference);
+            }
 
             getPreferenceScreen().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(this);
@@ -299,6 +314,8 @@ public class CameraSettingsActivity extends FragmentActivity {
                 setEntriesForSelection(mVideoQualitiesBack, listPreference);
             } else if (listPreference.getKey().equals(Keys.KEY_VIDEO_QUALITY_FRONT)) {
                 setEntriesForSelection(mVideoQualitiesFront, listPreference);
+            } else if (listPreference.getKey().equals(Keys.KEY_STORAGE)) {
+                setStorageEntriesForSelection(mStorageVolumes, listPreference);
             }
         }
 
@@ -373,6 +390,28 @@ public class CameraSettingsActivity extends FragmentActivity {
                 entries.add(mCamcorderProfileNames[selectedQualities.small]);
             }
             preference.setEntries(entries.toArray(new String[0]));
+        }
+
+        /**
+         * Sets the entries for the storage list preference.
+         *
+         * @param storageVolumes The storage volumes.
+         * @param preference The preference to set the entries for.
+         */
+        private void setStorageEntriesForSelection(List<StorageVolume> storageVolumes,
+                ListPreference preference) {
+            if (storageVolumes == null) {
+                return;
+            }
+            String[] entries = new String[storageVolumes.size()];
+            String[] entryValues = new String[storageVolumes.size()];
+            for (int i = 0; i < storageVolumes.size(); i++) {
+                StorageVolume v = storageVolumes.get(i);
+                entries[i] = v.getDescription(getActivity());
+                entryValues[i] = v.getPath();
+            }
+            preference.setEntries(entries);
+            preference.setEntryValues(entryValues);
         }
 
         /**
@@ -453,6 +492,14 @@ public class CameraSettingsActivity extends FragmentActivity {
             } else {
                 mPictureSizesFront = null;
                 mVideoQualitiesFront = null;
+            }
+        }
+
+        private void loadStorageVolumeList() {
+            mStorageVolumes = SettingsUtil.getMountedStorageVolumes();
+            if (mStorageVolumes.size() < 2) {
+                // Remove storage preference
+                mStorageVolumes = null;
             }
         }
 

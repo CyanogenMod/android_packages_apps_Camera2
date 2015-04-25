@@ -52,7 +52,6 @@ import java.util.Locale;
 public abstract class LocalMediaData implements LocalData {
     /** The minimum id to use to query for all media at a given media store uri */
     static final int QUERY_ALL_MEDIA_ID = -1;
-    private static final String CAMERA_PATH = Storage.DIRECTORY + "%";
     private static final String SELECT_BY_PATH = MediaStore.MediaColumns.DATA + " LIKE ?";
     private static final int MEDIASTORE_THUMB_WIDTH = 512;
     private static final int MEDIASTORE_THUMB_HEIGHT = 384;
@@ -107,7 +106,8 @@ public abstract class LocalMediaData implements LocalData {
             Uri contentUri, String[] projection, long minimumId, String orderBy,
             CursorToLocalData builder) {
         String selection = SELECT_BY_PATH + " AND " + MediaStore.MediaColumns._ID + " > ?";
-        String[] selectionArgs = new String[] { CAMERA_PATH, Long.toString(minimumId) };
+        String cameraPath = Storage.generateDirectory() + "%";
+        String[] selectionArgs = new String[] { cameraPath, Long.toString(minimumId) };
 
         Cursor cursor = contentResolver.query(contentUri, projection,
                 selection, selectionArgs, orderBy);
