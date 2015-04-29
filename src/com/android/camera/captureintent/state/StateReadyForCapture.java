@@ -372,6 +372,15 @@ public final class StateReadyForCapture extends StateImpl {
                 new EventHandler<EventPictureDecoded>() {
                     @Override
                     public Optional<State> processEvent(EventPictureDecoded event) {
+                        // Do nothing if we are not in the decoding image sub-state. There is a
+                        // chance that EventPictureDecoded for an old image might come after people
+                        // hitting retake button. We have to ignore it or it will take us to
+                        // StateReviewingPicture.
+                        if (!mIsDecodingPicture) {
+                            return NO_CHANGE;
+                        }
+
+                        mIsDecodingPicture = false;
                         return Optional.of((State) StateReviewingPicture.from(
                                 StateReadyForCapture.this, mResourceCaptureTools,
                                 event.getPictureBitmap(), Optional.of(event.getPictureData())));
