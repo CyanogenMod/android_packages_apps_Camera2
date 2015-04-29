@@ -393,9 +393,9 @@ public class BottomBar extends FrameLayout {
         if (d != null) {
             Drawable animatedCircleDrawable =
                     new AnimatedCircleDrawable((int) mCircleRadius);
-            animatedCircleDrawable.setLevel(DRAWABLE_MAX_LEVEL);
             shutterBackground
                     .setDrawableByLayerId(R.id.circle_item, animatedCircleDrawable);
+            animatedCircleDrawable.setLevel(DRAWABLE_MAX_LEVEL);
         }
 
         return shutterBackground;

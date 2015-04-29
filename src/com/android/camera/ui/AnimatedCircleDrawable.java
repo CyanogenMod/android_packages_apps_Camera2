@@ -75,8 +75,11 @@ public class AnimatedCircleDrawable extends Drawable {
 
     @Override
     public boolean onLevelChange(int level) {
-        invalidateSelf();
-        return true;
+        if (level != getLevel()) {
+            invalidateSelf();
+            return true;
+        }
+        return false;
     }
 
     public void animateToSmallRadius() {
