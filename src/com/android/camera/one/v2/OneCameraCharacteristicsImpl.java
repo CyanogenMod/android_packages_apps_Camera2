@@ -16,6 +16,8 @@
 
 package com.android.camera.one.v2;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import android.annotation.TargetApi;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -37,8 +39,6 @@ import com.google.common.primitives.Floats;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Describes a OneCamera device which is on top of camera2 API. This is
@@ -227,5 +227,21 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
         Rational compensationStep = mCameraCharacteristics.get(
                 CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP);
         return (float) compensationStep.getNumerator() / compensationStep.getDenominator();
+    }
+
+    @Override
+    public boolean isAutoFocusSupported() {
+        Integer maxAfRegions = mCameraCharacteristics.get(
+              CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
+        // Auto-Focus is supported if the device supports one or more AF regions
+        return maxAfRegions != null && maxAfRegions > 0;
+    }
+
+    @Override
+    public boolean isAutoExposureSupported() {
+        Integer maxAeRegions = mCameraCharacteristics.get(
+              CameraCharacteristics.CONTROL_MAX_REGIONS_AE);
+        // Auto-Exposure is supported if the device supports one or more AE regions
+        return maxAeRegions != null && maxAeRegions > 0;
     }
 }

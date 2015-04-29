@@ -20,6 +20,7 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.ui.focus.LensRangeCalculator;
 import com.android.camera.ui.motion.LinearScale;
@@ -166,5 +167,17 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
             return -1.0f;
         }
         return mCameraParameters.getExposureCompensationStep();
+    }
+
+    @Override
+    public boolean isAutoFocusSupported() {
+        // Custom AF is only supported on the back camera for legacy devices.
+        return getCameraDirection() == Facing.BACK;
+    }
+
+    @Override
+    public boolean isAutoExposureSupported() {
+        // Custom AE is only supported on the back camera for legacy devices.
+        return getCameraDirection() == Facing.BACK;
     }
 }
