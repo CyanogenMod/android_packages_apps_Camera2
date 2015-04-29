@@ -474,6 +474,9 @@ public class SettingsUtil {
      *         -1, if no camera meeting the specification was found.
      */
     public static int getCameraId(CameraDeviceInfo info, CameraDeviceSelector chooser) {
+        if (info == null) {
+            return -1;
+        }
         int numCameras = info.getNumberOfCameras();
         for (int i = 0; i < numCameras; ++i) {
             CameraDeviceInfo.Characteristics props = info.getCharacteristics(i);
