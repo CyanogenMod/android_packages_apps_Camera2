@@ -215,8 +215,8 @@ public class CaptureModule extends CameraModule implements
                 public boolean onSingleTapUp(MotionEvent ev) {
                     Point tapPoint = new Point((int) ev.getX(), (int) ev.getY());
                     Log.v(TAG, "onSingleTapUpPreview location=" + tapPoint);
-                    // TODO: This should query actual capability.
-                    if (mCameraFacing == Facing.FRONT) {
+                    if (!mCameraCharacteristics.isAutoExposureSupported() &&
+                          !mCameraCharacteristics.isAutoFocusSupported()) {
                         return false;
                     }
                     startActiveFocusAt(tapPoint.x, tapPoint.y);
@@ -897,6 +897,12 @@ public class CaptureModule extends CameraModule implements
         Matrix rotationMatrix = new Matrix();
         rotationMatrix.setRotate(mDisplayRotation, 0.5f, 0.5f);
         rotationMatrix.mapPoints(points);
+
+        // Invert X coordinate on front camera since the display is mirrored.
+        if (mCameraCharacteristics.getCameraDirection() == Facing.FRONT) {
+            points[0] = 1 - points[0];
+        }
+
         mCamera.triggerFocusAndMeterAtPoint(points[0], points[1]);
 
         // Log touch (screen coordinates).

@@ -128,4 +128,14 @@ public interface OneCameraCharacteristics {
      * #isExposureCompensationSupported()} is false, return -1.
      */
     public float getExposureCompensationStep();
+
+    /**
+     * @return true if this camera supports custom AutoFocus regions.
+     */
+    public boolean isAutoFocusSupported();
+
+    /**
+     * @return true if this camera supports custom AutoExposure regions.
+     */
+    public boolean isAutoExposureSupported();
 }

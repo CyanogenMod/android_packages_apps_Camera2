@@ -54,6 +54,7 @@ import com.android.camera.captureintent.stateful.StateImpl;
 import com.android.camera.debug.Log;
 import com.android.camera.device.CameraId;
 import com.android.camera.one.OneCamera;
+import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCameraAccessException;
 import com.android.camera.one.OneCameraCharacteristics;
 import com.android.camera.session.CaptureSession;
@@ -300,25 +301,37 @@ public final class StateReadyForCapture extends StateImpl {
         EventHandler<EventTapOnPreview> tapOnPreviewHandler = new EventHandler<EventTapOnPreview>() {
             @Override
             public Optional<State> processEvent(EventTapOnPreview event) {
-                final Point tapPoint = event.getTapPoint();
-                mResourceCaptureTools.get().getFocusController().showActiveFocusAt(
-                        tapPoint.x, tapPoint.y);
+                OneCameraCharacteristics cameraCharacteristics = mResourceCaptureTools.get()
+                      .getResourceOpenedCamera().get().getCameraCharacteristics();
+                if (cameraCharacteristics.isAutoExposureSupported() ||
+                      cameraCharacteristics.isAutoFocusSupported()) {
+                    final Point tapPoint = event.getTapPoint();
+                    mResourceCaptureTools.get().getFocusController().showActiveFocusAt(
+                          tapPoint.x, tapPoint.y);
 
-                RectF previewRect = mResourceCaptureTools.get().getModuleUI().getPreviewRect();
-                int rotationDegree = mResourceCaptureTools.get().getResourceConstructed().get()
-                        .getOrientationManager().getDisplayRotation().getDegrees();
+                    RectF previewRect = mResourceCaptureTools.get().getModuleUI().getPreviewRect();
+                    int rotationDegree = mResourceCaptureTools.get().getResourceConstructed().get()
+                          .getOrientationManager().getDisplayRotation().getDegrees();
 
-                // Normalize coordinates to [0,1] per CameraOne API.
-                float points[] = new float[2];
-                points[0] = (tapPoint.x - previewRect.left) / previewRect.width();
-                points[1] = (tapPoint.y - previewRect.top) / previewRect.height();
+                    // Normalize coordinates to [0,1] per CameraOne API.
+                    float points[] = new float[2];
+                    points[0] = (tapPoint.x - previewRect.left) / previewRect.width();
+                    points[1] = (tapPoint.y - previewRect.top) / previewRect.height();
 
-                // Rotate coordinates to portrait orientation per CameraOne API.
-                Matrix rotationMatrix = new Matrix();
-                rotationMatrix.setRotate(rotationDegree, 0.5f, 0.5f);
-                rotationMatrix.mapPoints(points);
-                mResourceCaptureTools.get().getResourceOpenedCamera().get().triggerFocusAndMeterAtPoint(
-                        new PointF(points[0], points[1]));
+                    // Rotate coordinates to portrait orientation per CameraOne API.
+                    Matrix rotationMatrix = new Matrix();
+                    rotationMatrix.setRotate(rotationDegree, 0.5f, 0.5f);
+                    rotationMatrix.mapPoints(points);
+
+                    // Invert X coordinate on front camera since the display is mirrored.
+                    if (cameraCharacteristics.getCameraDirection() == Facing.FRONT) {
+                        points[0] = 1 - points[0];
+                    }
+
+                    mResourceCaptureTools.get().getResourceOpenedCamera().get()
+                          .triggerFocusAndMeterAtPoint(
+                                new PointF(points[0], points[1]));
+                }
 
                 return NO_CHANGE;
             }
