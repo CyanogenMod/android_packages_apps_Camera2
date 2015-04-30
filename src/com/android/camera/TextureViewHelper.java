@@ -70,7 +70,8 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
 
     // Hack to allow to know which module is running for b/20694189
     private final AppController mAppController;
-    private final int CAMERA_MODE_ID;
+    private final int mCameraModeId;
+    private final int mCaptureIntentModeId;
 
     public TextureViewHelper(TextureView preview, CaptureLayoutHelper helper,
             CameraProvider cameraProvider, AppController appController) {
@@ -80,8 +81,10 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         mPreview.setSurfaceTextureListener(this);
         mCaptureLayoutHelper = helper;
         mAppController = appController;
-        CAMERA_MODE_ID = appController.getAndroidContext().getResources()
+        mCameraModeId = appController.getAndroidContext().getResources()
                 .getInteger(R.integer.camera_mode_photo);
+        mCaptureIntentModeId = appController.getAndroidContext().getResources()
+                .getInteger(R.integer.camera_mode_capture_intent);
     }
 
     /**
@@ -346,29 +349,23 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
         // Phone is Nexus4 The enhancement fix b/20694189 to original fix to
         // b/19271661 ensures that the fix should only be applied when:
         // 1) the phone is a Nexus4 which requires the specific workaround
-        // 2) the Camera Photo Mode is active
-        // 3) the CameraModule implementation is running
-        //
-        // In the current implementation, this set of twisted logic is only true
-        // 1) (same condition)
-        // 2) (same condition)
-        // 3) cameraId < 0, implying the Camera2 is used and only
-        //    CameraModule implementation uses Camera2.  This is only true
-        //    because the current Camera2 implementation does NOT provide
-        //    a valid CameraProvider.
-        if (cameraId < 0 && ApiHelper.IS_NEXUS_4
-                && mAppController.getCurrentModuleIndex() == CAMERA_MODE_ID) {
-            Log.v(TAG, "Applying Photo-Module specific fix for b/19271661");
-            // Assumed at this point, we are in a Camera2-based implementation.
+        // 2) CaptureModule is enabled.
+        // 3) the Camera Photo Mode Or Capture Intent Photo Mode is active
+        if (ApiHelper.IS_NEXUS_4 && mAppController.getCameraFeatureConfig().isUsingCaptureModule()
+                && (mAppController.getCurrentModuleIndex() == mCameraModeId ||
+                mAppController.getCurrentModuleIndex() == mCaptureIntentModeId)) {
+            Log.v(TAG, "Applying Photo Mode, Capture Module, Nexus-4 specific fix for b/19271661");
             mOrientation = CameraUtil.getDisplayRotation();
             matrix = getPreviewRotationalTransform(mOrientation,
                     new RectF(0, 0, mWidth, mHeight),
                     mCaptureLayoutHelper.getPreviewRect());
-        } else {
-            // Otherwise do the default, legacy action.
+        } else if (cameraId >= 0) {
+            // Otherwise, do the default, legacy action.
             CameraDeviceInfo.Characteristics info = mCameraProvider.getCharacteristics(cameraId);
             matrix = info.getPreviewTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),
                     mCaptureLayoutHelper.getPreviewRect());
+        } else {
+            // Do Nothing
         }
 
         mPreview.setTransform(matrix);
