@@ -88,17 +88,23 @@ public class CameraSettingsActivity extends FragmentActivity {
 
         // Check if manual exposure is available, so we can decide whether to
         // display Advanced screen.
-        OneCameraCharacteristics frontCameraCharacteristics;
-        OneCameraCharacteristics backCameraCharacteristics;
         try {
             CameraId frontCameraId = mOneCameraManager.findFirstCameraFacing(Facing.FRONT);
-            CameraId backCamera = mOneCameraManager.findFirstCameraFacing(Facing.BACK);
-            frontCameraCharacteristics = mOneCameraManager
-                    .getOneCameraCharacteristics(frontCameraId);
-            backCameraCharacteristics = mOneCameraManager
-                    .getOneCameraCharacteristics(backCamera);
-            if (!frontCameraCharacteristics.isExposureCompensationSupported()
-                    && !backCameraCharacteristics.isExposureCompensationSupported()) {
+            CameraId backCameraId = mOneCameraManager.findFirstCameraFacing(Facing.BACK);
+
+            // The exposure compensation is supported when both of the following conditions meet
+            //   - we have the valid camera, and
+            //   - the valid camera supports the exposure compensation
+            boolean isExposureCompensationSupportedByFrontCamera = (frontCameraId != null) &&
+                    (mOneCameraManager.getOneCameraCharacteristics(frontCameraId)
+                            .isExposureCompensationSupported());
+            boolean isExposureCompensationSupportedByBackCamera = (backCameraId != null) &&
+                    (mOneCameraManager.getOneCameraCharacteristics(backCameraId)
+                            .isExposureCompensationSupported());
+
+            // Hides the option if neither front and back camera support exposure compensation.
+            if (!isExposureCompensationSupportedByFrontCamera &&
+                    !isExposureCompensationSupportedByBackCamera) {
                 hideAdvancedScreen = true;
             }
         } catch (OneCameraAccessException e) {
