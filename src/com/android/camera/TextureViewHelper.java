@@ -24,6 +24,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 
+import com.android.camera.app.AppController;
 import com.android.camera.app.CameraProvider;
 import com.android.camera.app.OrientationManager;
 import com.android.camera.debug.Log;
@@ -31,6 +32,7 @@ import com.android.camera.device.CameraId;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.CameraUtil;
+import com.android.camera2.R;
 import com.android.ex.camera2.portability.CameraDeviceInfo;
 
 import java.util.ArrayList;
@@ -66,13 +68,20 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
     private CaptureLayoutHelper mCaptureLayoutHelper = null;
     private int mOrientation = UNSET;
 
+    // Hack to allow to know which module is running for b/20694189
+    private final AppController mAppController;
+    private final int CAMERA_MODE_ID;
+
     public TextureViewHelper(TextureView preview, CaptureLayoutHelper helper,
-            CameraProvider cameraProvider) {
+            CameraProvider cameraProvider, AppController appController) {
         mPreview = preview;
         mCameraProvider = cameraProvider;
         mPreview.addOnLayoutChangeListener(this);
         mPreview.setSurfaceTextureListener(this);
         mCaptureLayoutHelper = helper;
+        mAppController = appController;
+        CAMERA_MODE_ID = appController.getAndroidContext().getResources()
+                .getInteger(R.integer.camera_mode_photo);
     }
 
     /**
@@ -322,7 +331,7 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             return true;
         }
 
-        Matrix matrix;
+        Matrix matrix = new Matrix();
         CameraId cameraKey = mCameraProvider.getCurrentCameraId();
         int cameraId = -1;
 
@@ -332,17 +341,33 @@ public class TextureViewHelper implements TextureView.SurfaceTextureListener,
             Log.e(TAG, "TransformViewHelper does not support Camera API2");
         }
 
-        if (cameraId >= 0 && !ApiHelper.IS_NEXUS_4) {
-            CameraDeviceInfo.Characteristics info = mCameraProvider.getCharacteristics(cameraId);
-            matrix = info.getPreviewTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),
-                    mCaptureLayoutHelper.getPreviewRect());
-        } else {
-            Log.v(TAG,
-                    "CameraProvider Invalid.  Implementation rotation via Matrix Transformation."
-                            + " Expected for Camera2 Implementations.");
+
+        // Only apply this fix when Current Active Module is Photo module AND
+        // Phone is Nexus4 The enhancement fix b/20694189 to original fix to
+        // b/19271661 ensures that the fix should only be applied when:
+        // 1) the phone is a Nexus4 which requires the specific workaround
+        // 2) the Camera Photo Mode is active
+        // 3) the CameraModule implementation is running
+        //
+        // In the current implementation, this set of twisted logic is only true
+        // 1) (same condition)
+        // 2) (same condition)
+        // 3) cameraId < 0, implying the Camera2 is used and only
+        //    CameraModule implementation uses Camera2.  This is only true
+        //    because the current Camera2 implementation does NOT provide
+        //    a valid CameraProvider.
+        if (cameraId < 0 && ApiHelper.IS_NEXUS_4
+                && mAppController.getCurrentModuleIndex() == CAMERA_MODE_ID) {
+            Log.v(TAG, "Applying Photo-Module specific fix for b/19271661");
             // Assumed at this point, we are in a Camera2-based implementation.
             mOrientation = CameraUtil.getDisplayRotation();
-            matrix = getPreviewRotationalTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),
+            matrix = getPreviewRotationalTransform(mOrientation,
+                    new RectF(0, 0, mWidth, mHeight),
+                    mCaptureLayoutHelper.getPreviewRect());
+        } else {
+            // Otherwise do the default, legacy action.
+            CameraDeviceInfo.Characteristics info = mCameraProvider.getCharacteristics(cameraId);
+            matrix = info.getPreviewTransform(mOrientation, new RectF(0, 0, mWidth, mHeight),
                     mCaptureLayoutHelper.getPreviewRect());
         }
 
