@@ -175,7 +175,13 @@ public class Camera2OneCameraOpenerImpl implements OneCameraOpener {
                                     imageRotationCalculator,
                                     burstController,
                                     soundPlayer, fatalErrorHandler);
-                            openCallback.onCameraOpened(oneCamera);
+
+                            if (oneCamera != null) {
+                                openCallback.onCameraOpened(oneCamera);
+                            } else {
+                                Log.d(TAG, "Could not construct a OneCamera object!");
+                                openCallback.onFailure();
+                            }
                         } catch (CameraAccessException e) {
                             Log.d(TAG, "Could not get camera characteristics", e);
                             openCallback.onFailure();

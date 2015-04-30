@@ -48,6 +48,8 @@ import com.android.camera.util.Size;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
+import javax.annotation.Nonnull;
+
 /**
  * Represents a state that the module is waiting for a camera to be opened.
  */
@@ -81,7 +83,7 @@ public final class StateOpeningCamera extends StateImpl {
         }
 
         @Override
-        public void onCameraOpened(final OneCamera camera) {
+        public void onCameraOpened(@Nonnull final OneCamera camera) {
             getStateMachine().processEvent(new EventOnOpenCameraSucceeded(camera));
         }
     };

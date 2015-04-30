@@ -2076,6 +2076,9 @@ public class CameraActivity extends QuickActivity
             unregisterReceiver(mShutdownReceiver);
         }
 
+        // Ensure anything that checks for "isPaused" returns true.
+        mPaused = true;
+
         mSettingsManager.removeAllListeners();
         mCameraController.removeCallbackReceiver();
         mCameraController.setCameraExceptionHandler(null);

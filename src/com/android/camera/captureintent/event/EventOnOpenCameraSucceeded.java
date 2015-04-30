@@ -19,10 +19,12 @@ package com.android.camera.captureintent.event;
 import com.android.camera.captureintent.stateful.Event;
 import com.android.camera.one.OneCamera;
 
+import javax.annotation.Nonnull;
+
 public class EventOnOpenCameraSucceeded implements Event {
     private final OneCamera mCamera;
 
-    public EventOnOpenCameraSucceeded(OneCamera camera) {
+    public EventOnOpenCameraSucceeded(@Nonnull OneCamera camera) {
         mCamera = camera;
     }
 

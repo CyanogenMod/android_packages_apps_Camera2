@@ -81,7 +81,7 @@ public interface OneCamera {
          *
          * @param camera the camera instance that was successfully opened
          */
-        public void onCameraOpened(OneCamera camera);
+        public void onCameraOpened(@Nonnull OneCamera camera);
 
         /**
          * Called if opening the camera failed.
