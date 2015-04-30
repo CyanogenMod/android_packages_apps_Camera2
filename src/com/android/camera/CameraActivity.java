@@ -135,7 +135,6 @@ import com.android.camera.ui.ModeListView.ModeListVisibilityChangedListener;
 import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Callback;
-import com.android.camera.util.CameraSettingsActivityHelper;
 import com.android.camera.util.CameraUtil;
 import com.android.camera.util.GalleryHelper;
 import com.android.camera.util.GcamHelper;
@@ -514,7 +513,12 @@ public class CameraActivity extends QuickActivity
         }
         if (mCurrentModule != null) {
             resetExposureCompensationToDefault(camera);
-            mCurrentModule.onCameraAvailable(camera);
+            try {
+                mCurrentModule.onCameraAvailable(camera);
+            } catch (RuntimeException ex) {
+                Log.e(TAG, "Error connecting to camera", ex);
+                mFatalErrorHandler.onCameraOpenFailure();
+            }
         } else {
             Log.v(TAG, "mCurrentModule null, not invoking onCameraAvailable");
         }
@@ -1673,10 +1677,6 @@ public class CameraActivity extends QuickActivity
               new FirstRunDialog.FirstRunDialogListener() {
             @Override
             public void onFirstRunStateReady() {
-                // Make sure additional preferences have the correct resolution selected
-                CameraSettingsActivityHelper.verifyDefaults(getSettingsManager(),
-                        getAndroidContext());
-
                 // Run normal resume tasks.
                 resume();
             }
