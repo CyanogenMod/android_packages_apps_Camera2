@@ -708,6 +708,7 @@ public class CaptureModule extends CameraModule implements
         if (mShowErrorAndFinish) {
             return;
         }
+        cancelCountDown();
         mPaused = true;
         mHeadingSensor.deactivate();
 
@@ -715,7 +716,6 @@ public class CaptureModule extends CameraModule implements
         mAppController.removePreviewAreaSizeChangedListener(mPreviewAreaChangedListener);
         getServices().getRemoteShutterListener().onModuleExit();
         mBurstController.release();
-        cancelCountDown();
         closeCamera();
         resetTextureBufferSize();
         mSoundPlayer.unloadSound(R.raw.timer_final_second);
