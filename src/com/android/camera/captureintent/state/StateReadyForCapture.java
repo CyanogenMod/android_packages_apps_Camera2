@@ -126,6 +126,19 @@ public final class StateReadyForCapture extends StateImpl {
         registerEventHandlers();
     }
 
+    private void takePictureNow(ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo) {
+        mIsTakingPicture = true;
+        mResourceCaptureTools.get().takePictureNow(mPictureCallback, captureLoggingInfo);
+
+        // Freeze the screen.
+        mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                mResourceCaptureTools.get().getModuleUI().freezeScreenUntilPreviewReady();
+            }
+        });
+    }
+
     private void registerEventHandlers() {
         /** Handles EventPause. */
         EventHandler<EventPause> pauseHandler = new EventHandler<EventPause>() {
@@ -231,9 +244,7 @@ public final class StateReadyForCapture extends StateImpl {
                         }
 
                         /** Otherwise, just take a picture immediately. */
-                        mIsTakingPicture = true;
-                        mResourceCaptureTools.get().takePictureNow(
-                                mPictureCallback, captureLoggingInfo);
+                        takePictureNow(captureLoggingInfo);
                         return NO_CHANGE;
                     }
                 };
@@ -246,10 +257,7 @@ public final class StateReadyForCapture extends StateImpl {
                     public Optional<State> processEvent(EventTimerCountDownToZero event) {
                         if (mIsCountingDown) {
                             mIsCountingDown = false;
-                            mIsTakingPicture = true;
-                            mResourceCaptureTools.get().takePictureNow(
-                                    mPictureCallback,
-                                    event.getCaptureLoggingInfo());
+                            takePictureNow(event.getCaptureLoggingInfo());
                         }
                         return NO_CHANGE;
                     }
