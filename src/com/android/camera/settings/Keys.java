@@ -62,6 +62,8 @@ public class Keys {
             "pref_release_dialog_last_shown_version";
     public static final String KEY_FLASH_SUPPORTED_BACK_CAMERA =
             "pref_flash_supported_back_camera";
+    public static final String KEY_HDR_SUPPORTED_BACK_CAMERA =
+            "pref_hdr_supported_back_camera";
     public static final String KEY_UPGRADE_VERSION = "pref_upgrade_version";
     public static final String KEY_REQUEST_RETURN_HDR_PLUS = "pref_request_return_hdr_plus";
     public static final String KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING =

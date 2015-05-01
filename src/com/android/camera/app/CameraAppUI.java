@@ -562,6 +562,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     /** Whether to prevent capture indicator from being triggered. */
     private boolean mSuppressCaptureIndicator;
 
+    /** Whether HDR is supported in at least one module. */
+    private boolean mHdrSupportedOverall;
+
+    /** Used to track the last scope used to update the bottom bar UI. */
+    private String mCurrentCameraScope;
+    private String mCurrentModuleScope;
+
     /**
      * Provides current preview frame and the controls/overlay from the module that
      * are shown on top of the preview.
@@ -1225,7 +1232,36 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      */
     public void onChangeCamera() {
         ModuleController moduleController = mController.getCurrentModuleController();
-        applyModuleSpecs(moduleController.getHardwareSpec(), moduleController.getBottomBarSpec());
+        HardwareSpec hardwareSpec = moduleController.getHardwareSpec();
+
+        /**
+         * The current UI requires that the flash option visibility in front-
+         * facing camera be
+         *   * disabled if back facing camera supports flash
+         *   * hidden if back facing camera does not support flash
+         * We save whether back facing camera supports flash because we cannot
+         * get this in front facing camera without a camera switch.
+         *
+         * If this preference is cleared, we also need to clear the camera
+         * facing setting so we default to opening the camera in back facing
+         * camera, and can save this flash support value again.
+         */
+        if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
+            mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
+                    hardwareSpec.isFlashSupported());
+        }
+        /** Similar logic applies to the HDR option. */
+        if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
+                Keys.KEY_HDR_SUPPORTED_BACK_CAMERA)) {
+            mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_HDR_SUPPORTED_BACK_CAMERA,
+                    hardwareSpec.isHdrSupported() || hardwareSpec.isHdrPlusSupported());
+        }
+
+        applyModuleSpecs(hardwareSpec, moduleController.getBottomBarSpec(),
+                true /*skipScopeCheck*/);
         syncModeOptionIndicators();
     }
 
@@ -1942,7 +1978,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (key.equals(Keys.KEY_CAMERA_HDR)) {
             ModuleController moduleController = mController.getCurrentModuleController();
             applyModuleSpecs(moduleController.getHardwareSpec(),
-                             moduleController.getBottomBarSpec());
+                             moduleController.getBottomBarSpec(),
+                             true /*skipScopeCheck*/);
         }
     }
 
@@ -1956,8 +1993,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
      *
      * Otherwise, the option is fully enabled and clickable.
      */
-    public void applyModuleSpecs(final HardwareSpec hardwareSpec,
-           final BottomBarUISpec bottomBarSpec) {
+    public void applyModuleSpecs(HardwareSpec hardwareSpec,
+            BottomBarUISpec bottomBarSpec) {
+        applyModuleSpecs(hardwareSpec, bottomBarSpec, false /*skipScopeCheck*/);
+    }
+
+    private void applyModuleSpecs(final HardwareSpec hardwareSpec,
+           final BottomBarUISpec bottomBarSpec, boolean skipScopeCheck) {
         if (hardwareSpec == null || bottomBarSpec == null) {
             return;
         }
@@ -1967,65 +2009,101 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
         buttonManager.setToInitialState();
 
-        /** Standard mode options */
-        if (mController.getCameraProvider().getNumberOfCameras() > 1 &&
-                hardwareSpec.isFrontCameraSupported()) {
-            if (bottomBarSpec.enableCamera) {
-                buttonManager.initializeButton(ButtonManager.BUTTON_CAMERA,
-                        bottomBarSpec.cameraCallback);
-            } else {
-                buttonManager.disableButton(ButtonManager.BUTTON_CAMERA);
-            }
-        } else {
-            // Hide camera icon if front camera not available.
-            buttonManager.hideButton(ButtonManager.BUTTON_CAMERA);
-        }
+        if (skipScopeCheck
+                || !mController.getModuleScope().equals(mCurrentModuleScope)
+                || !mController.getCameraScope().equals(mCurrentCameraScope)) {
 
-        if (bottomBarSpec.hideFlash || !hardwareSpec.isFlashSupported()) {
-            // Hide both flash and torch button in flash disable logic
-            buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
-            buttonManager.hideButton(ButtonManager.BUTTON_TORCH);
-        } else {
-            if (bottomBarSpec.enableFlash) {
-                buttonManager.initializeButton(ButtonManager.BUTTON_FLASH,
-                    bottomBarSpec.flashCallback);
-            } else if (bottomBarSpec.enableTorchFlash) {
-                buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
-                    bottomBarSpec.flashCallback);
-            } else if (bottomBarSpec.enableHdrPlusFlash) {
-                buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
-                    bottomBarSpec.flashCallback);
-            } else {
-                // Disable both flash and torch button in flash disable logic
-                buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
-                buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
-            }
-        }
+            // Scope dependent options, update only if the module or the
+            // camera scope changed or scope-check skip was requested.
+            mCurrentModuleScope = mController.getModuleScope();
+            mCurrentCameraScope = mController.getCameraScope();
 
-        if (bottomBarSpec.hideHdr || mIsCaptureIntent) {
-            // Force hide hdr or hdr plus icon.
-            buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
-        } else {
-            if (hardwareSpec.isHdrPlusSupported()) {
-                if (bottomBarSpec.enableHdr) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
-                            bottomBarSpec.hdrCallback);
+            /** Standard mode options */
+            if (mController.getCameraProvider().getNumberOfCameras() > 1 &&
+                    hardwareSpec.isFrontCameraSupported()) {
+                if (bottomBarSpec.enableCamera) {
+                    buttonManager.initializeButton(ButtonManager.BUTTON_CAMERA,
+                            bottomBarSpec.cameraCallback);
                 } else {
-                    buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
-                }
-            } else if (hardwareSpec.isHdrSupported()) {
-                if (bottomBarSpec.enableHdr) {
-                    buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
-                            bottomBarSpec.hdrCallback);
-                } else {
-                    buttonManager.disableButton(ButtonManager.BUTTON_HDR);
+                    buttonManager.disableButton(ButtonManager.BUTTON_CAMERA);
                 }
             } else {
-                // Hide hdr plus or hdr icon if neither are supported.
+                // Hide camera icon if front camera not available.
+                buttonManager.hideButton(ButtonManager.BUTTON_CAMERA);
+            }
+
+            boolean flashBackCamera = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA);
+            mHdrSupportedOverall = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_HDR_SUPPORTED_BACK_CAMERA);
+            if (bottomBarSpec.hideFlash
+                    || !flashBackCamera) {
+                // Hide both flash and torch button in flash disable logic
+                buttonManager.hideButton(ButtonManager.BUTTON_FLASH);
+                buttonManager.hideButton(ButtonManager.BUTTON_TORCH);
+            } else {
+                if (hardwareSpec.isFlashSupported()) {
+                    if (bottomBarSpec.enableFlash) {
+                        buttonManager.initializeButton(ButtonManager.BUTTON_FLASH,
+                                bottomBarSpec.flashCallback);
+                    } else if (bottomBarSpec.enableTorchFlash) {
+                        buttonManager.initializeButton(ButtonManager.BUTTON_TORCH,
+                                bottomBarSpec.flashCallback);
+                    } else if (bottomBarSpec.enableHdrPlusFlash) {
+                        buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS_FLASH,
+                                bottomBarSpec.flashCallback);
+                    } else {
+                        // Disable both flash and torch button in flash disable
+                        // logic. Need to ensure it's visible, it may be hidden
+                        // from previous non-flash mode.
+                        buttonManager.showButton(ButtonManager.BUTTON_FLASH);
+                        buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                        buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
+                    }
+                } else {
+                    // Flash not supported but another module does.
+                    // Disable flash button. Need to ensure it's visible,
+                    // it may be hidden from previous non-flash mode.
+                    buttonManager.showButton(ButtonManager.BUTTON_FLASH);
+                    buttonManager.disableButton(ButtonManager.BUTTON_FLASH);
+                    buttonManager.disableButton(ButtonManager.BUTTON_TORCH);
+                }
+            }
+
+            if (bottomBarSpec.hideHdr || mIsCaptureIntent) {
+                // Force hide hdr or hdr plus icon.
                 buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
+            } else {
+                if (hardwareSpec.isHdrPlusSupported()) {
+                    mHdrSupportedOverall = true;
+                    if (bottomBarSpec.enableHdr) {
+                        buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
+                                bottomBarSpec.hdrCallback);
+                    } else {
+                        buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
+                    }
+                } else if (hardwareSpec.isHdrSupported()) {
+                    mHdrSupportedOverall = true;
+                    if (bottomBarSpec.enableHdr) {
+                        buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
+                                bottomBarSpec.hdrCallback);
+                    } else {
+                        buttonManager.disableButton(ButtonManager.BUTTON_HDR);
+                    }
+                } else {
+                    // Hide hdr plus or hdr icon if neither are supported overall.
+                    if (!mHdrSupportedOverall) {
+                        buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
+                    } else {
+                        // Disable HDR button. Need to ensure it's visible,
+                        // it may be hidden from previous non HDR mode (eg. Video).
+                        buttonManager.showButton(ButtonManager.BUTTON_HDR_PLUS);
+                        buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
+                    }
+                }
             }
-        }
 
+        }
         if (bottomBarSpec.hideGridLines) {
             // Force hide grid lines icon.
             buttonManager.hideButton(ButtonManager.BUTTON_GRID_LINES);
