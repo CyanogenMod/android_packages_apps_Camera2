@@ -584,8 +584,6 @@ public class FocusOverlayManager implements PreviewStatusListener.PreviewAreaCha
     }
 
     private boolean needAutoFocusCall(CameraCapabilities.FocusMode focusMode) {
-        return !(focusMode == CameraCapabilities.FocusMode.INFINITY
-                || focusMode == CameraCapabilities.FocusMode.FIXED
-                || focusMode == CameraCapabilities.FocusMode.EXTENDED_DOF);
+        return focusMode == CameraCapabilities.FocusMode.AUTO;
     }
 }
