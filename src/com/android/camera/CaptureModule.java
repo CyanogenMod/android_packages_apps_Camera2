@@ -92,6 +92,8 @@ import com.google.common.logging.eventprotos;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
+
 /**
  * New Capture module that is made to support photo and video capture on top of
  * the OneCamera API, to transparently support GCam.
@@ -1366,9 +1368,18 @@ public class CaptureModule extends CameraModule implements
                   }
 
                   @Override
-                  public void onCameraOpened(final OneCamera camera) {
+                  public void onCameraOpened(@Nonnull final OneCamera camera) {
                       Log.d(TAG, "onCameraOpened: " + camera);
                       mCamera = camera;
+
+                      // A race condition exists where the camera may be in the process
+                      // of opening (blocked), but the activity gets destroyed. If the
+                      // preview is initialized or callbacks are invoked on a destroyed
+                      // activity, bad things can happen.
+                      if (mAppController.isPaused()) {
+                          onFailure();
+                          return;
+                      }
 
                       // When camera is opened, the zoom is implicitly reset to 1.0f
                       mZoomValue = 1.0f;
