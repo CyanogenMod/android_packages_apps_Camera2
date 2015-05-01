@@ -130,6 +130,7 @@ public class PhotoModule
     private int mCameraId;
     private CameraCapabilities mCameraCapabilities;
     private CameraSettings mCameraSettings;
+    private HardwareSpec mHardwareSpec;
     private boolean mPaused;
 
     private PhotoUI mUI;
@@ -611,9 +612,12 @@ public class PhotoModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return (mCameraSettings != null ?
-                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
-                        mAppController.getCameraFeatureConfig(), isCameraFrontFacing()) : null);
+        if (mHardwareSpec == null) {
+            mHardwareSpec = (mCameraSettings != null ?
+                    new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
+                            mAppController.getCameraFeatureConfig(), isCameraFrontFacing()) : null);
+        }
+        return mHardwareSpec;
     }
 
     @Override
@@ -1230,6 +1234,9 @@ public class PhotoModule
         startPreview();
 
         onCameraOpened();
+
+        mHardwareSpec = new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
+                mAppController.getCameraFeatureConfig(), isCameraFrontFacing());
     }
 
     @Override

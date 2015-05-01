@@ -122,6 +122,7 @@ public class VideoModule extends CameraModule
     private int mCameraId;
     private CameraSettings mCameraSettings;
     private CameraCapabilities mCameraCapabilities;
+    private HardwareSpec mHardwareSpec;
 
     private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
@@ -543,9 +544,12 @@ public class VideoModule extends CameraModule
 
     @Override
     public HardwareSpec getHardwareSpec() {
-        return (mCameraSettings != null ?
-                new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
-                        mAppController.getCameraFeatureConfig(), isCameraFrontFacing()) : null);
+        if (mHardwareSpec == null) {
+            mHardwareSpec = (mCameraSettings != null ?
+                    new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
+                            mAppController.getCameraFeatureConfig(), isCameraFrontFacing()) : null);
+        }
+        return mHardwareSpec;
     }
 
     @Override
@@ -600,6 +604,9 @@ public class VideoModule extends CameraModule
         initializeVideoSnapshot();
         mUI.initializeZoom(mCameraSettings, mCameraCapabilities);
         initializeControlByIntent();
+
+        mHardwareSpec = new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
+                mAppController.getCameraFeatureConfig(), isCameraFrontFacing());
     }
 
     private void startPlayVideoActivity() {
