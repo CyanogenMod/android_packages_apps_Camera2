@@ -2018,12 +2018,17 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mCurrentModuleScope = mController.getModuleScope();
             mCurrentCameraScope = mController.getCameraScope();
 
+            mHdrSupportedOverall = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_HDR_SUPPORTED_BACK_CAMERA);
+
             /** Standard mode options */
             if (mController.getCameraProvider().getNumberOfCameras() > 1 &&
                     hardwareSpec.isFrontCameraSupported()) {
                 if (bottomBarSpec.enableCamera) {
                     buttonManager.initializeButton(ButtonManager.BUTTON_CAMERA,
-                            bottomBarSpec.cameraCallback);
+                            bottomBarSpec.cameraCallback,
+                            getDisableButtonCallback(mHdrSupportedOverall
+                                    ? ButtonManager.BUTTON_HDR_PLUS : ButtonManager.BUTTON_HDR));
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_CAMERA);
                 }
@@ -2034,8 +2039,6 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
 
             boolean flashBackCamera = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
                     Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA);
-            mHdrSupportedOverall = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_HDR_SUPPORTED_BACK_CAMERA);
             if (bottomBarSpec.hideFlash
                     || !flashBackCamera) {
                 // Hide both flash and torch button in flash disable logic
@@ -2078,7 +2081,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     mHdrSupportedOverall = true;
                     if (bottomBarSpec.enableHdr) {
                         buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
-                                bottomBarSpec.hdrCallback);
+                                bottomBarSpec.hdrCallback,
+                                getDisableButtonCallback(ButtonManager.BUTTON_CAMERA));
                     } else {
                         buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
                     }
@@ -2086,7 +2090,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     mHdrSupportedOverall = true;
                     if (bottomBarSpec.enableHdr) {
                         buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
-                                bottomBarSpec.hdrCallback);
+                                bottomBarSpec.hdrCallback,
+                                getDisableButtonCallback(ButtonManager.BUTTON_CAMERA));
                     } else {
                         buttonManager.disableButton(ButtonManager.BUTTON_HDR);
                     }
@@ -2192,6 +2197,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     R.drawable.ic_play,
                     R.string.review_button_description);
         }
+    }
+
+    /**
+     * Returns a {@link com.android.camera.ButtonManager.ButtonCallback} that
+     * will disable the button identified by the parameter.
+     *
+     * @param conflictingButton The button id to be disabled.
+     */
+    private ButtonManager.ButtonCallback getDisableButtonCallback(final int conflictingButton) {
+        return new ButtonManager.ButtonCallback() {
+            @Override
+            public void onStateChanged(int state) {
+                mController.getButtonManager().disableButton(conflictingButton);
+            }
+        };
     }
 
     /**
