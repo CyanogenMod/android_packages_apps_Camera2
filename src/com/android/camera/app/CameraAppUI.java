@@ -1922,6 +1922,10 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             moduleController.getBottomBarSpec());
         mBottomBar.transitionToIntentReviewLayout();
         hideModeOptions();
+
+        // Hide the preview snapshot since the screen is frozen when users tap
+        // shutter button in capture intent.
+        hideModeCover();
     }
 
     /**
