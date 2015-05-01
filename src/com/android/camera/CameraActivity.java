@@ -1457,14 +1457,19 @@ public class CameraActivity extends QuickActivity
         }
         profile.mark("OneCameraManager.get");
 
-        mCameraController = new CameraController(mAppContext, this, mMainHandler,
-                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
-                        CameraAgentFactory.CameraApi.API_1),
-                CameraAgentFactory.getAndroidCameraAgent(mAppContext,
-                        CameraAgentFactory.CameraApi.AUTO),
-                mActiveCameraDeviceTracker);
-        mCameraController.setCameraExceptionHandler(
-                new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
+        try {
+            mCameraController = new CameraController(mAppContext, this, mMainHandler,
+                    CameraAgentFactory.getAndroidCameraAgent(mAppContext,
+                            CameraAgentFactory.CameraApi.API_1),
+                    CameraAgentFactory.getAndroidCameraAgent(mAppContext,
+                            CameraAgentFactory.CameraApi.AUTO),
+                    mActiveCameraDeviceTracker);
+            mCameraController.setCameraExceptionHandler(
+                    new CameraExceptionHandler(mCameraExceptionCallback, mMainHandler));
+        } catch (AssertionError e) {
+            Log.e(TAG, "Creating camera controller failed.", e);
+            mFatalErrorHandler.onGenericCameraAccessFailure();
+        }
 
         // TODO: Try to move all the resources allocation to happen as soon as
         // possible so we can call module.init() at the earliest time.
@@ -1478,7 +1483,12 @@ public class CameraActivity extends QuickActivity
         // Make sure the picture sizes are correctly cached for the current OS
         // version.
         profile.mark();
-        (new PictureSizeLoader(mAppContext)).computePictureSizes();
+        try {
+            (new PictureSizeLoader(mAppContext)).computePictureSizes();
+        } catch (AssertionError e) {
+            Log.e(TAG, "Creating camera controller failed.", e);
+            mFatalErrorHandler.onGenericCameraAccessFailure();
+        }
         profile.mark("computePictureSizes");
         Keys.setDefaults(mSettingsManager, mAppContext);
 
@@ -1858,7 +1868,9 @@ public class CameraActivity extends QuickActivity
         } else {
             // Close the camera and wait for the operation done.
             Log.v(TAG, "onPause closing camera");
-            mCameraController.closeCamera(true);
+            if (mCameraController != null) {
+                mCameraController.closeCamera(true);
+            }
         }
 
         profile.stop();
@@ -1870,7 +1882,12 @@ public class CameraActivity extends QuickActivity
 
         // Show the dialog if necessary. The rest resume logic will be invoked
         // at the onFirstRunStateReady() callback.
-        mFirstRunDialog.showIfNecessary();
+        try {
+            mFirstRunDialog.showIfNecessary();
+        } catch (AssertionError e) {
+            Log.e(TAG, "Creating camera controller failed.", e);
+            mFatalErrorHandler.onGenericCameraAccessFailure();
+        }
     }
 
     private void resume() {
@@ -2077,8 +2094,10 @@ public class CameraActivity extends QuickActivity
         }
 
         mSettingsManager.removeAllListeners();
-        mCameraController.removeCallbackReceiver();
-        mCameraController.setCameraExceptionHandler(null);
+        if (mCameraController != null) {
+            mCameraController.removeCallbackReceiver();
+            mCameraController.setCameraExceptionHandler(null);
+        }
         getContentResolver().unregisterContentObserver(mLocalImagesObserver);
         getContentResolver().unregisterContentObserver(mLocalVideosObserver);
         getServices().getCaptureSessionManager().removeSessionListener(mSessionListener);

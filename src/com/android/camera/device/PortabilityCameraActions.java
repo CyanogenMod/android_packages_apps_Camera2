@@ -71,12 +71,16 @@ public class PortabilityCameraActions implements SingleDeviceActions<CameraProxy
     public void executeOpen(SingleDeviceOpenListener<CameraProxy> openListener,
           Lifetime deviceLifetime) throws UnsupportedOperationException {
         mLogger.i("executeOpen(id: " + mId.getCameraId() + ")");
-        CameraAgent agent = CameraAgentFactory.getAndroidCameraAgent(mContext, mApiVersion);
-        deviceLifetime.add(new CameraAgentRecycler(mApiVersion, mLogger));
+        try {
+            CameraAgent agent = CameraAgentFactory.getAndroidCameraAgent(mContext, mApiVersion);
+            deviceLifetime.add(new CameraAgentRecycler(mApiVersion, mLogger));
 
-        mBackgroundRunner.execute(new OpenCameraRunnable(agent, mId.getCameraId().getLegacyValue(),
-              mHandlerFactory.create(deviceLifetime, "Camera2 Lifetime"),
-              openListener, mLogger));
+            mBackgroundRunner.execute(new OpenCameraRunnable(agent, mId.getCameraId().getLegacyValue(),
+                    mHandlerFactory.create(deviceLifetime, "Camera2 Lifetime"),
+                    openListener, mLogger));
+        } catch (AssertionError e) {
+            openListener.onDeviceOpenException(e);
+        }
     }
 
     @Override
