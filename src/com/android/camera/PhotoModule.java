@@ -537,6 +537,9 @@ public class PhotoModule
                         }
                     }
 
+                    ButtonManager buttonManager = mActivity.getButtonManager();
+                    buttonManager.disableCameraButtonAndBlock();
+
                     mPendingSwitchCameraId = state;
 
                     Log.d(TAG, "Start to switch camera. cameraId=" + state);
@@ -1237,6 +1240,9 @@ public class PhotoModule
 
         mHardwareSpec = new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
                 mAppController.getCameraFeatureConfig(), isCameraFrontFacing());
+
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.enableCameraButton();
     }
 
     @Override

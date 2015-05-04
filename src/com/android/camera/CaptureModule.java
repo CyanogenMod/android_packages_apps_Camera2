@@ -1126,6 +1126,9 @@ public class CaptureModule extends CameraModule implements
                         return;
                     }
 
+                    ButtonManager buttonManager = mAppController.getButtonManager();
+                    buttonManager.disableCameraButtonAndBlock();
+
                     // At the time this callback is fired, the camera id
                     // has be set to the desired camera.
                     mSettingsManager.set(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID,
@@ -1403,6 +1406,7 @@ public class CaptureModule extends CameraModule implements
                           @Override
                           public void run() {
                               mAppController.getCameraAppUI().onChangeCamera();
+                              mAppController.getButtonManager().enableCameraButton();
                           }
                       });
 

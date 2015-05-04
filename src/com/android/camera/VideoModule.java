@@ -508,6 +508,8 @@ public class VideoModule extends CameraModule
                 if (mPaused || mAppController.getCameraProvider().waitingForCamera()) {
                     return;
                 }
+                ButtonManager buttonManager = mActivity.getButtonManager();
+                buttonManager.disableCameraButtonAndBlock();
                 mPendingSwitchCameraId = state;
                 Log.d(TAG, "Start to copy texture.");
 
@@ -607,6 +609,9 @@ public class VideoModule extends CameraModule
 
         mHardwareSpec = new HardwareSpecImpl(getCameraProvider(), mCameraCapabilities,
                 mAppController.getCameraFeatureConfig(), isCameraFrontFacing());
+
+        ButtonManager buttonManager = mActivity.getButtonManager();
+        buttonManager.enableCameraButton();
     }
 
     private void startPlayVideoActivity() {

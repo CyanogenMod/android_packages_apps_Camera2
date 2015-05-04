@@ -95,6 +95,9 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     /** An reference to the gcam mode index. */
     private static int sGcamIndex;
 
+    /** Whether Camera Button can be enabled by generic operations. */
+    private boolean mIsCameraButtonBlocked;
+
     private final AppController mAppController;
 
     /**
@@ -427,6 +430,16 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
+     * Sets the camera button in its disabled (greyed out) state and blocks it
+     * so no generic operation can enable it until it's explicitly re-enabled by
+     * calling {@link #enableCameraButton()}.
+     */
+    public void disableCameraButtonAndBlock() {
+        mIsCameraButtonBlocked = true;
+        disableButton(BUTTON_CAMERA);
+    }
+
+    /**
      * Sets a button in its disabled (greyed out) state.
      */
     public void disableButton(int buttonId) {
@@ -458,9 +471,22 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
+     * Enables the camera button and removes the block that was set by
+     * {@link #disableCameraButtonAndBlock()}.
+     */
+    public void enableCameraButton() {
+        mIsCameraButtonBlocked = false;
+        enableButton(BUTTON_CAMERA);
+    }
+
+    /**
      * Enables a button that has already been initialized.
      */
     public void enableButton(int buttonId) {
+        // If Camera Button is blocked, ignore the request.
+        if(buttonId == BUTTON_CAMERA && mIsCameraButtonBlocked) {
+            return;
+        }
         ImageButton button;
         // Manual exposure uses a regular image button instead of a
         // MultiToggleImageButton, so it requires special handling.
