@@ -324,36 +324,50 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
     }
 
     /**
-     * Initialize a known button by id, with a state change callback and
-     * a resource id that points to an array of drawables, and then enable
-     * the button.
+     * Initialize a known button by id with a state change callback, and then
+     * enable the button.
+     *
+     * @param buttonId The id if the button to be initialized.
+     * @param cb The callback to be executed after the button state change.
      */
     public void initializeButton(int buttonId, ButtonCallback cb) {
+        initializeButton(buttonId, cb, null);
+    }
+
+    /**
+     * Initialize a known button by id, with a state change callback and a state
+     * pre-change callback, and then enable the button.
+     *
+     * @param buttonId The id if the button to be initialized.
+     * @param cb The callback to be executed after the button state change.
+     * @param preCb The callback to be executed before the button state change.
+     */
+    public void initializeButton(int buttonId, ButtonCallback cb, ButtonCallback preCb) {
         MultiToggleImageButton button = getButtonOrError(buttonId);
         switch (buttonId) {
             case BUTTON_FLASH:
-                initializeFlashButton(button, cb, R.array.camera_flashmode_icons);
+                initializeFlashButton(button, cb, preCb, R.array.camera_flashmode_icons);
                 break;
             case BUTTON_TORCH:
-                initializeTorchButton(button, cb, R.array.video_flashmode_icons);
+                initializeTorchButton(button, cb, preCb, R.array.video_flashmode_icons);
                 break;
             case BUTTON_HDR_PLUS_FLASH:
-                initializeHdrPlusFlashButton(button, cb, R.array.camera_flashmode_icons);
+                initializeHdrPlusFlashButton(button, cb, preCb, R.array.camera_flashmode_icons);
                 break;
             case BUTTON_CAMERA:
-                initializeCameraButton(button, cb, R.array.camera_id_icons);
+                initializeCameraButton(button, cb, preCb, R.array.camera_id_icons);
                 break;
             case BUTTON_HDR_PLUS:
-                initializeHdrPlusButton(button, cb, R.array.pref_camera_hdr_plus_icons);
+                initializeHdrPlusButton(button, cb, preCb, R.array.pref_camera_hdr_plus_icons);
                 break;
             case BUTTON_HDR:
-                initializeHdrButton(button, cb, R.array.pref_camera_hdr_icons);
+                initializeHdrButton(button, cb, preCb, R.array.pref_camera_hdr_icons);
                 break;
             case BUTTON_GRID_LINES:
-                initializeGridLinesButton(button, cb, R.array.grid_lines_icons);
+                initializeGridLinesButton(button, cb, preCb, R.array.grid_lines_icons);
                 break;
             case BUTTON_COUNTDOWN:
-                initializeCountdownButton(button, cb, R.array.countdown_duration_icons);
+                initializeCountdownButton(button, cb, preCb, R.array.countdown_duration_icons);
                 break;
             default:
                 throw new IllegalArgumentException("button not known by id=" + buttonId);
@@ -622,7 +636,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize a flash button.
      */
     private void initializeFlashButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
@@ -632,6 +646,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getCameraScope(),
                                                             Keys.KEY_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -649,7 +665,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize video torch button
      */
     private void initializeTorchButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
@@ -659,6 +675,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getCameraScope(),
                                                             Keys.KEY_VIDEOCAMERA_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -676,7 +694,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize hdr plus flash button
      */
     private void initializeHdrPlusFlashButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
@@ -686,6 +704,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getModuleScope(),
                                                             Keys.KEY_HDR_PLUS_FLASH_MODE);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -703,7 +723,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize a camera button.
      */
     private void initializeCameraButton(final MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
@@ -712,6 +732,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         int index = mSettingsManager.getIndexOfCurrentValue(mAppController.getModuleScope(),
                                                             Keys.KEY_CAMERA_ID);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -737,13 +759,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize an hdr plus button.
      */
     private void initializeHdrPlusButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         initializeHdrPlusButtonIcons(button, resIdImages);
 
         int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
                                                             Keys.KEY_CAMERA_HDR_PLUS);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -768,13 +792,15 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize an hdr button.
      */
     private void initializeHdrButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         initializeHdrButtonIcons(button, resIdImages);
 
         int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
                                                             Keys.KEY_CAMERA_HDR);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -799,7 +825,7 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize a countdown timer button.
      */
     private void initializeCountdownButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
@@ -807,6 +833,8 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         int index = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
                                                             Keys.KEY_COUNTDOWN_DURATION);
         button.setState(index >= 0 ? index : 0, false);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -836,12 +864,14 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
      * Initialize a grid lines button.
      */
     private void initializeGridLinesButton(MultiToggleImageButton button,
-            final ButtonCallback cb, int resIdImages) {
+            final ButtonCallback cb, final ButtonCallback preCb, int resIdImages) {
 
         if (resIdImages > 0) {
             button.overrideImageIds(resIdImages);
         }
         button.overrideContentDescriptions(R.array.grid_lines_descriptions);
+
+        setPreChangeCallback(button, preCb);
 
         button.setOnStateChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
             @Override
@@ -939,5 +969,16 @@ public class ButtonManager implements SettingsManager.OnSettingChangedListener {
         int modeIndex = mSettingsManager.getIndexOfCurrentValue(SettingsManager.SCOPE_GLOBAL,
                                                                 Keys.KEY_CAMERA_PANO_ORIENTATION);
         mModeOptionsPano.setSelectedOptionByTag(String.valueOf(modeIndex));
+    }
+
+    private void setPreChangeCallback(MultiToggleImageButton button, final ButtonCallback preCb) {
+        button.setOnPreChangeListener(new MultiToggleImageButton.OnStateChangeListener() {
+            @Override
+            public void stateChanged(View view, int state) {
+                if(preCb != null) {
+                    preCb.onStateChanged(state);
+                }
+            }
+        });
     }
 }
