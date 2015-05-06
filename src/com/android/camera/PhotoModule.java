@@ -387,15 +387,14 @@ public class PhotoModule
         mActivity.setPreviewStatusListener(mUI);
 
         SettingsManager settingsManager = mActivity.getSettingsManager();
+        // TODO: Move this to SettingsManager as a part of upgrade procedure.
+        // Aspect Ratio selection dialog is only shown for Nexus 4, 5 and 6.
+        if (mAppController.getCameraAppUI().shouldShowAspectRatioDialog()) {
+            // Switch to back camera to set aspect ratio.
+            settingsManager.setToDefault(mAppController.getModuleScope(), Keys.KEY_CAMERA_ID);
+        }
         mCameraId = settingsManager.getInteger(mAppController.getModuleScope(),
                                                Keys.KEY_CAMERA_ID);
-
-        // TODO: Move this to SettingsManager as a part of upgrade procedure.
-        if (!settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
-                                        Keys.KEY_USER_SELECTED_ASPECT_RATIO)) {
-            // Switch to back camera to set aspect ratio.
-            mCameraId = settingsManager.getIntegerDefault(Keys.KEY_CAMERA_ID);
-        }
 
         mContentResolver = mActivity.getContentResolver();
 

@@ -140,11 +140,7 @@ public class FirstRunDialog {
     }
 
     private boolean shouldShowAspectRatioDialog() {
-        final boolean isAspectRatioPreferenceSet = mSettingsManager.getBoolean(
-                SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
-        final boolean isAspectRatioDevice =
-                ApiHelper.IS_NEXUS_4 || ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6;
-        return isAspectRatioDevice && !isAspectRatioPreferenceSet;
+        return mAppController.getCameraAppUI().shouldShowAspectRatioDialog();
     }
 
     /**

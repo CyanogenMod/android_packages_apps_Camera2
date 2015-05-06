@@ -2221,6 +2221,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         tutorial.show(mTutorialsPlaceHolderWrapper, inflater);
     }
 
+    /**
+     * Whether the capture ratio selector dialog must be shown on this device.
+     * */
+    public boolean shouldShowAspectRatioDialog() {
+        final boolean isAspectRatioPreferenceSet = mController.getSettingsManager().getBoolean(
+                SettingsManager.SCOPE_GLOBAL, Keys.KEY_USER_SELECTED_ASPECT_RATIO);
+        final boolean isAspectRatioDevice =
+                ApiHelper.IS_NEXUS_4 || ApiHelper.IS_NEXUS_5 || ApiHelper.IS_NEXUS_6;
+        return isAspectRatioDevice && !isAspectRatioPreferenceSet;
+    }
+
+
     /***************************Filmstrip api *****************************/
 
     public void showFilmstrip() {
