@@ -199,6 +199,7 @@ public class PhotoItem extends FilmstripItemBase<FilmstripItemData> {
         // If we have a non-null placeholder, use that and do NOT ever render a
         // tiny thumbnail to prevent un-intended "flash of low resolution image"
         if (mSessionPlaceholderBitmap.isPresent()) {
+            Log.v(TAG, "using session bitmap as placeholder");
             return request.placeholder(new BitmapDrawable(mContext.getResources(),
                   mSessionPlaceholderBitmap.get()));
         }

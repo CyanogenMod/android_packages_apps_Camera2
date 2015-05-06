@@ -84,7 +84,11 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
 
     @Override
     public AsyncTask updateMetadataAt(int index) {
-        MetadataUpdateTask result = new MetadataUpdateTask();
+        return updateMetadataAt(index, false);
+    }
+
+    private AsyncTask updateMetadataAt(int index, boolean forceItemUpdate) {
+        MetadataUpdateTask result = new MetadataUpdateTask(forceItemUpdate);
         result.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, index);
         return result;
     }
@@ -238,19 +242,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
     @Override
     public void updateItemAt(final int pos, FilmstripItem item) {
         mFilmstripItems.set(pos, item);
-        if (mListener != null) {
-            mListener.onFilmstripItemUpdated(new UpdateReporter() {
-                @Override
-                public boolean isDataRemoved(int index) {
-                    return false;
-                }
-
-                @Override
-                public boolean isDataUpdated(int index) {
-                    return (index == pos);
-                }
-            });
-        }
+        updateMetadataAt(pos, true /* forceItemUpdate */);
     }
 
     private void insertItem(FilmstripItem item) {
@@ -469,6 +461,17 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
     }
 
     private class MetadataUpdateTask extends AsyncTask<Integer, Void, List<Integer> > {
+        private final boolean mForceUpdate;
+
+        MetadataUpdateTask(boolean forceUpdate) {
+            super();
+            mForceUpdate = forceUpdate;
+        }
+
+        MetadataUpdateTask() {
+            this(false);
+        }
+
         @Override
         protected List<Integer> doInBackground(Integer... dataId) {
             List<Integer> updatedList = new ArrayList<>();
@@ -477,7 +480,7 @@ public class CameraFilmstripDataAdapter implements LocalFilmstripDataAdapter {
                     continue;
                 }
                 final FilmstripItem data = mFilmstripItems.get(id);
-                if (MetadataLoader.loadMetadata(mContext, data)) {
+                if (MetadataLoader.loadMetadata(mContext, data) || mForceUpdate) {
                     updatedList.add(id);
                 }
             }
