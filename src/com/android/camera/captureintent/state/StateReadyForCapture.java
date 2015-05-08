@@ -31,6 +31,7 @@ import com.android.camera.captureintent.PictureDecoder;
 import com.android.camera.captureintent.event.EventCameraBusy;
 import com.android.camera.captureintent.event.EventCameraQuickExpose;
 import com.android.camera.captureintent.event.EventCameraReady;
+import com.android.camera.captureintent.event.EventClickOnCameraKey;
 import com.android.camera.captureintent.event.EventFastPictureBitmapAvailable;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureUpdated;
 import com.android.camera.captureintent.event.EventOnTextureViewLayoutChanged;
@@ -65,6 +66,8 @@ import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.ui.focus.FocusController;
 import com.google.common.base.Optional;
+
+import javax.annotation.Nullable;
 
 /**
  * Represents a state that allows users to take a picture. The capture UI
@@ -124,6 +127,76 @@ public final class StateReadyForCapture extends StateImpl {
         mIsDecodingPicture = false;
         mShouldUpdateTransformOnNextSurfaceTextureUpdate = true;
         registerEventHandlers();
+    }
+
+    private void takePicture(@Nullable final TouchCoordinate touchPointInsideShutterButton) {
+        final int countDownDuration =
+                mResourceCaptureTools.get().getResourceConstructed().get()
+                        .getSettingsManager().getInteger(
+                        SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
+
+        /** Prepare a CaptureLoggingInfo object. */
+        final ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo
+                = new ResourceCaptureTools.CaptureLoggingInfo() {
+            @Override
+            public TouchCoordinate getTouchPointInsideShutterButton() {
+                return touchPointInsideShutterButton;
+            }
+
+            @Override
+            public int getCountDownDuration() {
+                return countDownDuration;
+            }
+        };
+
+        /** Start counting down if the duration is not zero. */
+        if (countDownDuration > 0) {
+            startCountDown(countDownDuration, captureLoggingInfo);
+        } else {
+            /** Otherwise, just take a picture immediately. */
+            takePictureNow(captureLoggingInfo);
+        }
+    }
+
+    private void startCountDown(
+            final int countDownDuration,
+            final ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo) {
+        mIsCountingDown = true;
+        mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                CaptureIntentModuleUI moduleUI = mResourceCaptureTools.get().getModuleUI();
+                moduleUI.setCountdownFinishedListener(
+                        new CountDownView.OnCountDownStatusListener() {
+                            @Override
+                            public void onRemainingSecondsChanged(
+                                    int remainingSeconds) {
+                                mResourceCaptureTools.get()
+                                        .playCountDownSound(remainingSeconds);
+                            }
+
+                            @Override
+                            public void onCountDownFinished() {
+                                getStateMachine().processEvent(
+                                        new EventTimerCountDownToZero(
+                                                captureLoggingInfo));
+                            }
+                        });
+                moduleUI.startCountdown(countDownDuration);
+            }
+        });
+    }
+
+    private void cancelCountDown() {
+        // Cancel in this state means that the countdown was cancelled.
+        mIsCountingDown = false;
+        mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                mResourceCaptureTools.get().getModuleUI().cancelCountDown();
+                mResourceCaptureTools.get().getModuleUI().showPictureCaptureUI();
+            }
+        });
     }
 
     private void takePictureNow(ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo) {
@@ -194,61 +267,26 @@ public final class StateReadyForCapture extends StateImpl {
                 new EventHandler<EventTapOnShutterButton>() {
                     @Override
                     public Optional<State> processEvent(final EventTapOnShutterButton event) {
-                        final int countDownDuration =
-                                mResourceCaptureTools.get().getResourceConstructed().get()
-                                        .getSettingsManager().getInteger(
-                                        SettingsManager.SCOPE_GLOBAL, Keys.KEY_COUNTDOWN_DURATION);
-
-                        /** Prepare a CaptureLoggingInfo object. */
-                        final ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo
-                                = new ResourceCaptureTools.CaptureLoggingInfo() {
-                            @Override
-                            public TouchCoordinate getTouchPointInsideShutterButton() {
-                                return event.getTouchCoordinate();
-                            }
-
-                            @Override
-                            public int getCountDownDuration() {
-                                return countDownDuration;
-                            }
-                        };
-
-                        /** Start counting down if the duration is not zero. */
-                        if (countDownDuration > 0) {
-                            mIsCountingDown = true;
-                            mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    CaptureIntentModuleUI moduleUI = mResourceCaptureTools.get().getModuleUI();
-                                    moduleUI.setCountdownFinishedListener(
-                                            new CountDownView.OnCountDownStatusListener() {
-                                                @Override
-                                                public void onRemainingSecondsChanged(
-                                                        int remainingSeconds) {
-                                                    mResourceCaptureTools.get()
-                                                            .playCountDownSound(remainingSeconds);
-                                                }
-
-                                                @Override
-                                                public void onCountDownFinished() {
-                                                    getStateMachine().processEvent(
-                                                            new EventTimerCountDownToZero(
-                                                                    captureLoggingInfo));
-                                                }
-                                            });
-                                    moduleUI.startCountdown(
-                                            countDownDuration);
-                                }
-                            });
-                            return NO_CHANGE;
-                        }
-
-                        /** Otherwise, just take a picture immediately. */
-                        takePictureNow(captureLoggingInfo);
+                        takePicture(event.getTouchCoordinate());
                         return NO_CHANGE;
                     }
                 };
         setEventHandler(EventTapOnShutterButton.class, tapOnShutterButtonHandler);
+
+        /** Handles EventClickOnCameraKey */
+        EventHandler<EventClickOnCameraKey> clickOnVolumeKeyHandler =
+                new EventHandler<EventClickOnCameraKey>() {
+                    @Override
+                    public Optional<State> processEvent(EventClickOnCameraKey event) {
+                        if (mIsCountingDown) {
+                            cancelCountDown();
+                            return NO_CHANGE;
+                        }
+                        takePicture(null);
+                        return NO_CHANGE;
+                    }
+                };
+        setEventHandler(EventClickOnCameraKey.class, clickOnVolumeKeyHandler);
 
         /** Handles EventTimerCountDownToZero. */
         EventHandler<EventTimerCountDownToZero> timerCountDownToZeroHandler =
@@ -452,15 +490,7 @@ public final class StateReadyForCapture extends StateImpl {
                 new EventHandler<EventTapOnCancelShutterButton>() {
                     @Override
                     public Optional<State> processEvent(EventTapOnCancelShutterButton event) {
-                        // Cancel in this state means that the countdown was cancelled.
-                        mIsCountingDown = false;
-                        mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                mResourceCaptureTools.get().getModuleUI().cancelCountDown();
-                                mResourceCaptureTools.get().getModuleUI().showPictureCaptureUI();
-                            }
-                        });
+                        cancelCountDown();
                         return NO_CHANGE;
                     }
                 };

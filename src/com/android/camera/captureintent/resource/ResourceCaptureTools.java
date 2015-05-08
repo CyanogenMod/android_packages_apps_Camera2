@@ -27,13 +27,15 @@ import com.android.camera.ui.focus.FocusController;
 
 import android.media.MediaActionSound;
 
+import javax.annotation.Nullable;
+
 /**
  * Defines an interface that any implementation of this should retain necessary
  * resources to capture a photo.
  */
 public interface ResourceCaptureTools extends SafeCloseable {
     public static interface CaptureLoggingInfo {
-        public TouchCoordinate getTouchPointInsideShutterButton();
+        public @Nullable TouchCoordinate getTouchPointInsideShutterButton();
         public int getCountDownDuration();
     }
 

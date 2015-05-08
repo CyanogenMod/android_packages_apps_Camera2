@@ -31,6 +31,7 @@ import com.android.camera.app.CameraAppUI;
 import com.android.camera.async.MainThread;
 import com.android.camera.async.RefCountBase;
 import com.android.camera.burst.BurstFacadeFactory;
+import com.android.camera.captureintent.event.EventClickOnCameraKey;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureAvailable;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureDestroyed;
 import com.android.camera.captureintent.event.EventOnSurfaceTextureUpdated;
@@ -211,11 +212,27 @@ public class CaptureIntentModule extends CameraModule {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_CAMERA:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                mStateMachine.processEvent(new EventClickOnCameraKey());
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                // Prevent default.
+                return true;
+        }
         return false;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                mStateMachine.processEvent(new EventClickOnCameraKey());
+                return true;
+        }
         return false;
     }
 
