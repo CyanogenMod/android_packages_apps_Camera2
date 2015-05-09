@@ -19,12 +19,12 @@ package com.android.camera.one.v2.commands;
 import android.hardware.camera2.CameraAccessException;
 
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionClosedException;
-import com.android.camera.one.v2.commands.CameraCommand;
 import com.android.camera.one.v2.core.FrameServer;
 import com.android.camera.one.v2.core.FrameServer.RequestType;
 import com.android.camera.one.v2.core.Request;
 import com.android.camera.one.v2.core.RequestBuilder;
 import com.android.camera.one.v2.core.ResourceAcquisitionFailedException;
+import com.android.camera.util.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +37,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ZslPreviewCommand implements CameraCommand {
     private final FrameServer mFrameServer;
+    private final RequestBuilder.Factory mPreviewWarmupRequestBuilder;
+    private final int mPreviewWarmupRequestType;
     private final RequestBuilder.Factory mZslRequestBuilder;
     private final int mZslRequestType;
     private final RequestBuilder.Factory mZslAndPreviewRequestBuilder;
@@ -51,12 +53,16 @@ public class ZslPreviewCommand implements CameraCommand {
      * viewfinder surface.
      */
     public ZslPreviewCommand(FrameServer frameServer,
+          RequestBuilder.Factory previewWarmupRequestBuilder,
+          int previewWarmupRequestType,
           RequestBuilder.Factory zslRequestBuilder,
           int zslRequestType,
           RequestBuilder.Factory zslAndPreviewRequestBuilder,
           int zslAndPreviewRequestType,
           int warmupBurstSize) {
         mFrameServer = frameServer;
+        mPreviewWarmupRequestBuilder = previewWarmupRequestBuilder;
+        mPreviewWarmupRequestType = previewWarmupRequestType;
         mZslRequestBuilder = zslRequestBuilder;
         mZslRequestType = zslRequestType;
         mZslAndPreviewRequestBuilder = zslAndPreviewRequestBuilder;
@@ -68,9 +74,18 @@ public class ZslPreviewCommand implements CameraCommand {
     public void run() throws InterruptedException, CameraAccessException,
           CameraCaptureSessionClosedException, ResourceAcquisitionFailedException {
         try (FrameServer.Session session = mFrameServer.createExclusiveSession()) {
-
-            // Only run a warmup burst the first time this command is executed.
             if (mIsFirstRun.getAndSet(false)) {
+                if (ApiHelper.isLorLMr1() && ApiHelper.IS_NEXUS_6) {
+                    // This is the work around of the face detection failure in b/20724126.
+                    // We need to request a single preview frame followed by a burst of 5-frame ZSL
+                    // before requesting the repeating preview and ZSL requests. We do it only for
+                    // L, Nexus 6 and Haleakala.
+                    List<Request> previewWarming = createWarmupBurst(mPreviewWarmupRequestBuilder,
+                            mPreviewWarmupRequestType, 1);
+                    session.submitRequest(previewWarming, RequestType.NON_REPEATING);
+                }
+
+                // Only run a warmup burst the first time this command is executed.
                 List<Request> zslWarmingBurst =
                       createWarmupBurst(mZslRequestBuilder, mZslRequestType, mWarmupBurstSize);
                 session.submitRequest(zslWarmingBurst, RequestType.NON_REPEATING);
