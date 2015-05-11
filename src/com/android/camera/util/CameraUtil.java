@@ -993,10 +993,18 @@ public class CameraUtil {
         p.x = boundWidth;
         p.y = boundHeight;
 
-        if (imageWidth * boundHeight > boundWidth * imageHeight) {
-            p.y = imageHeight * p.x / imageWidth;
+        // In some cases like automated testing, image height/width may not be
+        // loaded, to avoid divide by zero fall back to provided bounds.
+        if (imageWidth != 0 && imageHeight != 0) {
+            if (imageWidth * boundHeight > boundWidth * imageHeight) {
+                p.y = imageHeight * p.x / imageWidth;
+            } else {
+                p.x = imageWidth * p.y / imageHeight;
+            }
         } else {
-            p.x = imageWidth * p.y / imageHeight;
+            Log.w(TAG, "zero width/height, falling back to bounds (w|h|bw|bh):"
+                    + imageWidth + "|" + imageHeight + "|" + boundWidth + "|"
+                    + boundHeight);
         }
 
         return p;
