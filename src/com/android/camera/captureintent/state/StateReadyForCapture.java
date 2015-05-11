@@ -202,14 +202,6 @@ public final class StateReadyForCapture extends StateImpl {
     private void takePictureNow(ResourceCaptureTools.CaptureLoggingInfo captureLoggingInfo) {
         mIsTakingPicture = true;
         mResourceCaptureTools.get().takePictureNow(mPictureCallback, captureLoggingInfo);
-
-        // Freeze the screen.
-        mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                mResourceCaptureTools.get().getModuleUI().freezeScreenUntilPreviewReady();
-            }
-        });
     }
 
     private void registerEventHandlers() {
@@ -471,10 +463,19 @@ public final class StateReadyForCapture extends StateImpl {
                             mResourceCaptureTools.get().getMainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
+
+                                    ResourceConstructed resourceConstructed =
+                                            mResourceCaptureTools.get().getResourceConstructed()
+                                                    .get();
+                                    // Freeze the screen.
+                                    resourceConstructed.getModuleUI()
+                                            .freezeScreenUntilPreviewReady();
                                     // Disable shutter button.
-                                    mResourceCaptureTools.get().getModuleUI().setShutterButtonEnabled(false);
+                                    mResourceCaptureTools.get().getModuleUI()
+                                            .setShutterButtonEnabled(false);
                                     // Starts the short version of the capture animation UI.
-                                    mResourceCaptureTools.get().getModuleUI().startFlashAnimation(true);
+                                    mResourceCaptureTools.get().getModuleUI()
+                                            .startFlashAnimation(true);
                                     mResourceCaptureTools.get().getMediaActionSound().play(
                                             MediaActionSound.SHUTTER_CLICK);
                                 }
