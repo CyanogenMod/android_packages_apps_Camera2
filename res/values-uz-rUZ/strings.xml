@@ -131,7 +131,7 @@
     <string name="pref_camera_scenemode_entry_night" msgid="3468037364159759991">"Tunda"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="5884302914893488509">"Quyosh botishi"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="401232668169066415">"Bazm kechasi"</string>
-    <string name="pref_camera_scenemode_label_auto" msgid="2874586883608401615">"HECH QAYSI"</string>
+    <string name="pref_camera_scenemode_label_auto" msgid="2874586883608401615">"YO‘Q"</string>
     <string name="pref_camera_scenemode_label_action" msgid="1822814017595414923">"HARAKAT"</string>
     <string name="pref_camera_scenemode_label_night" msgid="7764371228088101131">"TUN"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="3443610538453611123">"QUYOSH BOTISHI"</string>
@@ -165,7 +165,7 @@
     <string name="pano_review_rendering" msgid="2743087719999377155">"Panorama renderlanmoqda"</string>
     <string name="tap_to_focus" msgid="3519718196270593468">"Fokuslantirish uchun bosing."</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"Effektlar"</string>
-    <string name="effect_none" msgid="3102797925086872636">"Hech qaysi"</string>
+    <string name="effect_none" msgid="3102797925086872636">"Effektsiz"</string>
     <string name="effect_goofy_face_squeeze" msgid="1362021544829311452">"Bujmaytirish"</string>
     <string name="effect_goofy_face_big_eyes" msgid="9220121522816762649">"Katta ko‘zlar"</string>
     <string name="effect_goofy_face_big_mouth" msgid="2064008284599552683">"Katta og‘iz"</string>
