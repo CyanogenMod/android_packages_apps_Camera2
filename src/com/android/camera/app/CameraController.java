@@ -113,6 +113,7 @@ public class CameraController implements CameraAgent.CameraOpenCallback, CameraP
     }
 
     @Override
+    @Deprecated
     public CameraId getCurrentCameraId() {
         return mActiveCameraDeviceTracker.getActiveOrPreviousCamera();
     }
