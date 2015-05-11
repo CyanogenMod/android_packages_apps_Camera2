@@ -102,6 +102,7 @@ import com.android.camera.data.VideoDataFactory;
 import com.android.camera.data.VideoItemFactory;
 import com.android.camera.debug.Log;
 import com.android.camera.device.ActiveCameraDeviceTracker;
+import com.android.camera.device.CameraId;
 import com.android.camera.filmstrip.FilmstripContentPanel;
 import com.android.camera.filmstrip.FilmstripController;
 import com.android.camera.module.ModuleController;
@@ -1050,8 +1051,14 @@ public class CameraActivity extends QuickActivity
         // this could cause user issues, so log a stack trace noting the call path
         // which resulted in this scenario.
 
-        return SettingsManager.getCameraSettingScope(
-                mCameraController.getCurrentCameraId().getValue());
+        CameraId cameraId =  mCameraController.getCurrentCameraId();
+
+        if(cameraId == null) {
+            Log.e(TAG,  "Retrieving Camera Setting Scope with -1");
+            return SettingsManager.getCameraSettingScope("-1");
+        }
+
+        return SettingsManager.getCameraSettingScope(cameraId.getValue());
     }
 
     @Override
