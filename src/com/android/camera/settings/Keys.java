@@ -62,8 +62,8 @@ public class Keys {
             "pref_release_dialog_last_shown_version";
     public static final String KEY_FLASH_SUPPORTED_BACK_CAMERA =
             "pref_flash_supported_back_camera";
-    public static final String KEY_HDR_SUPPORTED_BACK_CAMERA =
-            "pref_hdr_supported_back_camera";
+    public static final String KEY_HDR_SUPPORT_MODE_BACK_CAMERA =
+            "pref_hdr_support_mode_back_camera";
     public static final String KEY_UPGRADE_VERSION = "pref_upgrade_version";
     public static final String KEY_REQUEST_RETURN_HDR_PLUS = "pref_request_return_hdr_plus";
     public static final String KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING =
@@ -100,6 +100,10 @@ public class Keys {
         settingsManager.setDefaults(KEY_FLASH_MODE,
             context.getString(R.string.pref_camera_flashmode_default),
             context.getResources().getStringArray(R.array.pref_camera_flashmode_entryvalues));
+
+        settingsManager.setDefaults(KEY_HDR_SUPPORT_MODE_BACK_CAMERA,
+            context.getString(R.string.pref_camera_hdr_supportmode_none),
+            context.getResources().getStringArray(R.array.pref_camera_hdr_supportmode_entryvalues));
 
         settingsManager.setDefaults(KEY_CAMERA_HDR, false);
         settingsManager.setDefaults(KEY_CAMERA_HDR_PLUS, false);

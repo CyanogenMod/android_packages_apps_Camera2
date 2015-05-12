@@ -562,8 +562,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     /** Whether to prevent capture indicator from being triggered. */
     private boolean mSuppressCaptureIndicator;
 
-    /** Whether HDR is supported in at least one module. */
-    private boolean mHdrSupportedOverall;
+    /** Supported HDR mode (none, hdr, hdr+). */
+    private String mHdrSupportMode;
 
     /** Used to track the last scope used to update the bottom bar UI. */
     private String mCurrentCameraScope;
@@ -1253,11 +1253,18 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     hardwareSpec.isFlashSupported());
         }
         /** Similar logic applies to the HDR option. */
+        String hdrSupportMode;
+        if (hardwareSpec.isHdrPlusSupported()) {
+            hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_hdr_plus);
+        } else if (hardwareSpec.isHdrSupported()) {
+            hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_hdr);
+        } else {
+            hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_none);
+        }
         if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
-                Keys.KEY_HDR_SUPPORTED_BACK_CAMERA)) {
+                Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA)) {
             mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_HDR_SUPPORTED_BACK_CAMERA,
-                    hardwareSpec.isHdrSupported() || hardwareSpec.isHdrPlusSupported());
+                    Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA, hdrSupportMode);
         }
 
         applyModuleSpecs(hardwareSpec, moduleController.getBottomBarSpec(),
@@ -2018,17 +2025,21 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
             mCurrentModuleScope = mController.getModuleScope();
             mCurrentCameraScope = mController.getCameraScope();
 
-            mHdrSupportedOverall = settingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_HDR_SUPPORTED_BACK_CAMERA);
+            mHdrSupportMode = settingsManager.getString(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA);
 
             /** Standard mode options */
             if (mController.getCameraProvider().getNumberOfCameras() > 1 &&
                     hardwareSpec.isFrontCameraSupported()) {
                 if (bottomBarSpec.enableCamera) {
+                    int hdrButtonId = ButtonManager.BUTTON_HDR;
+                    if (mHdrSupportMode.equals(getResourceString(
+                            R.string.pref_camera_hdr_supportmode_hdr_plus))) {
+                        hdrButtonId = ButtonManager.BUTTON_HDR_PLUS;
+                    }
                     buttonManager.initializeButton(ButtonManager.BUTTON_CAMERA,
                             bottomBarSpec.cameraCallback,
-                            getDisableButtonCallback(mHdrSupportedOverall
-                                    ? ButtonManager.BUTTON_HDR_PLUS : ButtonManager.BUTTON_HDR));
+                            getDisableButtonCallback(hdrButtonId));
                 } else {
                     buttonManager.disableButton(ButtonManager.BUTTON_CAMERA);
                 }
@@ -2078,7 +2089,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
             } else {
                 if (hardwareSpec.isHdrPlusSupported()) {
-                    mHdrSupportedOverall = true;
+                    mHdrSupportMode = getResourceString(
+                            R.string.pref_camera_hdr_supportmode_hdr_plus);
                     if (bottomBarSpec.enableHdr) {
                         buttonManager.initializeButton(ButtonManager.BUTTON_HDR_PLUS,
                                 bottomBarSpec.hdrCallback,
@@ -2087,7 +2099,7 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                         buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
                     }
                 } else if (hardwareSpec.isHdrSupported()) {
-                    mHdrSupportedOverall = true;
+                    mHdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_hdr);
                     if (bottomBarSpec.enableHdr) {
                         buttonManager.initializeButton(ButtonManager.BUTTON_HDR,
                                 bottomBarSpec.hdrCallback,
@@ -2097,13 +2109,19 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                     }
                 } else {
                     // Hide hdr plus or hdr icon if neither are supported overall.
-                    if (!mHdrSupportedOverall) {
+                    if (mHdrSupportMode.isEmpty() || mHdrSupportMode
+                            .equals(getResourceString(R.string.pref_camera_hdr_supportmode_none))) {
                         buttonManager.hideButton(ButtonManager.BUTTON_HDR_PLUS);
                     } else {
                         // Disable HDR button. Need to ensure it's visible,
                         // it may be hidden from previous non HDR mode (eg. Video).
-                        buttonManager.showButton(ButtonManager.BUTTON_HDR_PLUS);
-                        buttonManager.disableButton(ButtonManager.BUTTON_HDR_PLUS);
+                        int buttonId = ButtonManager.BUTTON_HDR;
+                        if (mHdrSupportMode.equals(
+                                getResourceString(R.string.pref_camera_hdr_supportmode_hdr_plus))) {
+                            buttonId = ButtonManager.BUTTON_HDR_PLUS;
+                        }
+                        buttonManager.showButton(buttonId);
+                        buttonManager.disableButton(buttonId);
                     }
                 }
             }
@@ -2212,6 +2230,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
                 mController.getButtonManager().disableButton(conflictingButton);
             }
         };
+    }
+
+    private String getResourceString(int stringId) {
+        try {
+            return mController.getAndroidContext().getResources().getString(stringId);
+        } catch (Resources.NotFoundException e) {
+            // String not found, returning empty string.
+            return "";
+        }
     }
 
     /**

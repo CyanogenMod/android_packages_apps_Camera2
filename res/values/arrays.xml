@@ -83,6 +83,12 @@
         <item>on</item>
     </string-array>
 
+    <string-array name="pref_camera_hdr_supportmode_entryvalues" translatable="false">
+        <item>@string/pref_camera_hdr_supportmode_none</item>
+        <item>@string/pref_camera_hdr_supportmode_hdr</item>
+        <item>@string/pref_camera_hdr_supportmode_hdr_plus</item>
+    </string-array>
+
     <string-array name="pref_camera_hdr_plus_flashmode_entryvalues" translatable="false">
         <item>off</item>
         <item>auto</item>
