@@ -1887,13 +1887,20 @@ public class CameraActivity extends QuickActivity
     public void onResumeTasks() {
         mPaused = false;
 
-        // Show the dialog if necessary. The rest resume logic will be invoked
-        // at the onFirstRunStateReady() callback.
-        try {
-            mFirstRunDialog.showIfNecessary();
-        } catch (AssertionError e) {
-            Log.e(TAG, "Creating camera controller failed.", e);
-            mFatalErrorHandler.onGenericCameraAccessFailure();
+        if (!mSecureCamera) {
+            // Show the dialog if necessary. The rest resume logic will be invoked
+            // at the onFirstRunStateReady() callback.
+            try {
+                mFirstRunDialog.showIfNecessary();
+            } catch (AssertionError e) {
+                Log.e(TAG, "Creating camera controller failed.", e);
+                mFatalErrorHandler.onGenericCameraAccessFailure();
+            }
+        } else {
+            // In secure mode from lockscreen, we go straight to camera and will
+            // show first run dialog next time user enters launcher.
+            Log.v(TAG, "in secure mode, skipping first run dialog check");
+            resume();
         }
     }
 
