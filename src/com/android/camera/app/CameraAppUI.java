@@ -1247,25 +1247,28 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
          * facing setting so we default to opening the camera in back facing
          * camera, and can save this flash support value again.
          */
-        if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
-                Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
-            mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
-                    hardwareSpec.isFlashSupported());
-        }
-        /** Similar logic applies to the HDR option. */
-        String hdrSupportMode;
-        if (hardwareSpec.isHdrPlusSupported()) {
-            hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_hdr_plus);
-        } else if (hardwareSpec.isHdrSupported()) {
-            hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_hdr);
-        } else {
-            hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_none);
-        }
-        if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
-                Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA)) {
-            mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
-                    Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA, hdrSupportMode);
+        if (hardwareSpec != null) {
+            if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA)) {
+                mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_FLASH_SUPPORTED_BACK_CAMERA,
+                        hardwareSpec.isFlashSupported());
+            }
+            /** Similar logic applies to the HDR option. */
+            if (!mController.getSettingsManager().isSet(SettingsManager.SCOPE_GLOBAL,
+                    Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA)) {
+                String hdrSupportMode;
+                if (hardwareSpec.isHdrPlusSupported()) {
+                    hdrSupportMode = getResourceString(
+                            R.string.pref_camera_hdr_supportmode_hdr_plus);
+                } else if (hardwareSpec.isHdrSupported()) {
+                    hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_hdr);
+                } else {
+                    hdrSupportMode = getResourceString(R.string.pref_camera_hdr_supportmode_none);
+                }
+                mController.getSettingsManager().set(SettingsManager.SCOPE_GLOBAL,
+                        Keys.KEY_HDR_SUPPORT_MODE_BACK_CAMERA, hdrSupportMode);
+            }
         }
 
         applyModuleSpecs(hardwareSpec, moduleController.getBottomBarSpec(),
