@@ -24,18 +24,24 @@ import com.android.camera.one.v2.core.RequestBuilder;
  */
 public class ZslPreviewCommandFactory implements PreviewCommandFactory {
     private final FrameServer mFrameServer;
+    private final RequestBuilder.Factory mPreviewWarmupRequestBuilder;
     private final RequestBuilder.Factory mZslRequestBuilder;
+    private static final int ZSL_WARMUP_BURST_SIZE = 5;
 
     public ZslPreviewCommandFactory(
           FrameServer frameServer,
+          RequestBuilder.Factory previewWarmupRequestBuilder,
           RequestBuilder.Factory zslRequestBuilder) {
         mFrameServer = frameServer;
+        mPreviewWarmupRequestBuilder = previewWarmupRequestBuilder;
         mZslRequestBuilder = zslRequestBuilder;
     }
 
     @Override
     public CameraCommand get(RequestBuilder.Factory previewRequestBuilder, int templateType) {
-        return new ZslPreviewCommand(mFrameServer, mZslRequestBuilder, templateType,
-              previewRequestBuilder, templateType, 5 /* warmupBurstSize */);
+        return new ZslPreviewCommand(mFrameServer,
+                mPreviewWarmupRequestBuilder, templateType,
+                mZslRequestBuilder, templateType,
+                previewRequestBuilder, templateType, ZSL_WARMUP_BURST_SIZE);
     }
 }

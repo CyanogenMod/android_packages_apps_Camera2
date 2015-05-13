@@ -197,14 +197,22 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                 // Create the request builder used by all camera operations.
                 // Streams, ResponseListeners, and Parameters added to
                 // this will be applied to *all* requests sent to the camera.
-                // By default, only the minimal number of streams are configured.
-                RequestTemplate zslTemplate = new RequestTemplate(
-                      new CameraDeviceRequestBuilderFactory(device));
-                zslTemplate.addResponseListener(sharedImageReaderFactory
-                      .provideGlobalResponseListener());
+                RequestTemplate rootTemplate = new RequestTemplate(
+                        new CameraDeviceRequestBuilderFactory(device));
+                rootTemplate.addResponseListener(sharedImageReaderFactory
+                        .provideGlobalResponseListener());
+                rootTemplate.addResponseListener(ResponseListeners
+                        .forFinalMetadata(metadataCallback));
+
+                // Create the request builder for the preview warmup in order to workaround
+                // the face detection failure. This is a work around of the HAL face detection
+                // failure in b/20724126.
+                RequestTemplate previewWarmupTemplate = new RequestTemplate(rootTemplate);
+                previewWarmupTemplate.addStream(new SimpleCaptureStream(previewSurface));
+
+                // Create the request builder for the ZSL stream
+                RequestTemplate zslTemplate = new RequestTemplate(rootTemplate);
                 zslTemplate.addStream(sharedImageReaderFactory.provideZSLStream());
-                zslTemplate.addResponseListener(
-                      ResponseListeners.forFinalMetadata(metadataCallback));
 
                 // Create the request builder that will be used by most camera
                 // operations.
@@ -225,7 +233,9 @@ public class ZslOneCameraFactory implements OneCameraFactory {
                         ephemeralFrameServer,
                         zslAndPreviewTemplate,
                         cameraCommandExecutor,
-                        new ZslPreviewCommandFactory(ephemeralFrameServer, zslTemplate),
+                        new ZslPreviewCommandFactory(ephemeralFrameServer,
+                                previewWarmupTemplate,
+                                zslTemplate),
                         flashSetting,
                         exposureSetting,
                         zoomState,

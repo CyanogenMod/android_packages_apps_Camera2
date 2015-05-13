@@ -107,4 +107,9 @@ public class ApiHelper {
     public static boolean isLMr1OrHigher() {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP;
     }
+
+    public static boolean isLorLMr1() {
+        return Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP
+                || Build.VERSION.SDK_INT == 22; // Lollipop MR1
+    }
 }

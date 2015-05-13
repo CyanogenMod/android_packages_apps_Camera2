@@ -505,7 +505,8 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     private final static int COVER_HIDDEN = 0;
     private final static int COVER_SHOWN = 1;
     private final static int COVER_WILL_HIDE_AT_NEXT_FRAME = 2;
-    private static final int COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE = 3;
+    private final static int COVER_WILL_HIDE_AFTER_NEXT_TEXTURE_UPDATE = 3;
+    private final static int COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE = 4;
 
     /**
      * Preview down-sample rate when taking a screenshot.
@@ -1433,7 +1434,15 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
     public void onPreviewStarted() {
         Log.v(TAG, "onPreviewStarted");
         if (mModeCoverState == COVER_SHOWN) {
-            mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
+            // This is a work around of the face detection failure in b/20724126.
+            // In particular, we need to drop the first preview frame in order to
+            // make face detection work and also need to hide this preview frame to
+            // avoid potential janks. We do this only for L, Nexus 6 and Haleakala.
+            if (ApiHelper.isLorLMr1() && ApiHelper.IS_NEXUS_6) {
+                mModeCoverState = COVER_WILL_HIDE_AFTER_NEXT_TEXTURE_UPDATE;
+            } else {
+                mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
+            }
         }
         enableModeOptions();
     }
@@ -1725,7 +1734,13 @@ public class CameraAppUI implements ModeListView.ModeSwitchListener,
         if (mPreviewStatusListener != null) {
             mPreviewStatusListener.onSurfaceTextureUpdated(surface);
         }
-        if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE) {
+        // Do not show the first preview frame. Due to the bug b/20724126, we need to have
+        // a WAR to request a preview frame followed by 5-frame ZSL burst before the repeating
+        // preview and ZSL streams. Need to hide the first preview frame since it is janky.
+        // We do this only for L, Nexus 6 and Haleakala.
+        if (mModeCoverState == COVER_WILL_HIDE_AFTER_NEXT_TEXTURE_UPDATE) {
+            mModeCoverState = COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE;
+        } else if (mModeCoverState == COVER_WILL_HIDE_AT_NEXT_TEXTURE_UPDATE){
             Log.v(TAG, "hiding cover via onSurfaceTextureUpdated");
             CameraPerformanceTracker.onEvent(CameraPerformanceTracker.FIRST_PREVIEW_FRAME);
             hideModeCover();
