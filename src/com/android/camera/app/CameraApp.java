@@ -19,6 +19,7 @@ package com.android.camera.app;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Debug;
 
 import com.android.camera.MediaSaverImpl;
 import com.android.camera.debug.LogHelper;
@@ -40,6 +41,15 @@ import com.android.camera.util.UsageStatistics;
  * to be used across modules.
  */
 public class CameraApp extends Application implements CameraServices {
+    /**
+     * This is for debugging only: If set to true, application will not start
+     * until a debugger is attached.
+     * <p>
+     * Use this if you need to debug code that is executed while the app starts
+     * up and it would be too late to attach a debugger afterwards.
+     */
+    private static final boolean WAIT_FOR_DEBUGGER_ON_START = false;
+
     private MediaSaver mMediaSaver;
     private CaptureSessionManager mSessionManager;
     private SessionStorageManager mSessionStorageManager;
@@ -52,6 +62,10 @@ public class CameraApp extends Application implements CameraServices {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (WAIT_FOR_DEBUGGER_ON_START) {
+            Debug.waitForDebugger();
+        }
 
         Context context = getApplicationContext();
         LogHelper.initialize(context);
