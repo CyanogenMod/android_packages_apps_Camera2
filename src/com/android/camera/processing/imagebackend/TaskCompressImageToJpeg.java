@@ -59,7 +59,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      *  and is a safe lower bound for this value to use to reduce the memory
      *  footprint for encoding the final jpg.
      */
-    private static final int MINIMUM_EXPECTED_JPG_COMPRESSION_FACTOR = 5;
+    private static final int MINIMUM_EXPECTED_JPG_COMPRESSION_FACTOR = 2;
     private final LruResourcePool<Integer, ByteBuffer> mByteBufferDirectPool;
 
     /**
