@@ -48,7 +48,7 @@ public class TaskPreviewChainedJpeg extends TaskConvertImageToRGBPreview {
             CaptureSession captureSession,
             Size targetSize,
             LruResourcePool<Integer, ByteBuffer> byteBufferResourcePool) {
-        super(image, executor, imageTaskManager, ProcessingPriority.SLOW, captureSession,
+        super(image, executor, imageTaskManager, ProcessingPriority.AVERAGE, captureSession,
                 targetSize , ThumbnailShape.MAINTAIN_ASPECT_NO_INSET);
         mByteBufferDirectPool = byteBufferResourcePool;
     }
