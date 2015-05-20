@@ -174,6 +174,11 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public void updateThumbnail(Bitmap bitmap) {
+        // No placeholder present means the task might already be finished or
+        // cancelled.
+        if (mPlaceHolder == null) {
+            return;
+        }
         if (mImageLifecycleListener != null) {
             mImageLifecycleListener.onMediumThumb();
         }
