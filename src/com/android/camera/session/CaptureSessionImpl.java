@@ -37,6 +37,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * The default implementation of the CaptureSession interface. This is the
  * implementation we use for normal Camera use.
@@ -79,6 +82,10 @@ public class CaptureSessionImpl implements CaptureSession {
     private volatile boolean mIsFinished;
     /** Object that collects logging information through the capture session lifecycle */
     private final CaptureSessionStatsCollector mCaptureSessionStatsCollector = new CaptureSessionStatsCollector();
+
+    @Nullable
+    private ImageLifecycleListener mImageLifecycleListener;
+    private boolean mHasPreviouslySetProgress = false;
 
     /**
      * Creates a new {@link CaptureSession}.
@@ -140,6 +147,10 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public synchronized void setProgress(int percent) {
+        if (!mHasPreviouslySetProgress && percent == 0 && mImageLifecycleListener != null) {
+            mImageLifecycleListener.onProcessingStarted();
+        }
+
         mProgressPercent = percent;
         mSessionNotifier.notifyTaskProgress(mUri, mProgressPercent);
         for (ProgressListener listener : mProgressListeners) {
@@ -163,19 +174,32 @@ public class CaptureSessionImpl implements CaptureSession {
 
     @Override
     public void updateThumbnail(Bitmap bitmap) {
+        if (mImageLifecycleListener != null) {
+            mImageLifecycleListener.onMediumThumb();
+        }
         mPlaceholderManager.replacePlaceholder(mPlaceHolder, bitmap);
         mSessionNotifier.notifySessionUpdated(mUri);
     }
 
     @Override
     public void updateCaptureIndicatorThumbnail(Bitmap indicator, int rotationDegrees) {
+        if (mImageLifecycleListener != null) {
+            mImageLifecycleListener.onTinyThumb();
+        }
         onCaptureIndicatorUpdate(indicator, rotationDegrees);
+
     }
 
     @Override
-    public synchronized void startEmpty(Size pictureSize) {
+    public synchronized void startEmpty(@Nullable ImageLifecycleListener listener,
+          @Nonnull Size pictureSize) {
         if (mIsFinished) {
             return;
+        }
+
+        if (listener != null) {
+            mImageLifecycleListener = listener;
+            mImageLifecycleListener.onCaptureStarted();
         }
 
         mProgressMessageId = -1;
@@ -187,9 +211,15 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(Bitmap placeholder, int progressMessageId) {
+    public synchronized void startSession(@Nullable ImageLifecycleListener listener,
+          @Nonnull Bitmap placeholder, int progressMessageId) {
         if (mIsFinished) {
             return;
+        }
+
+        if (listener != null) {
+            mImageLifecycleListener = listener;
+            mImageLifecycleListener.onCaptureStarted();
         }
 
         mProgressMessageId = progressMessageId;
@@ -202,9 +232,15 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(byte[] placeholder, int progressMessageId) {
+    public synchronized void startSession(@Nullable ImageLifecycleListener listener,
+          @Nonnull byte[] placeholder, int progressMessageId) {
         if (mIsFinished) {
             return;
+        }
+
+        if (listener != null) {
+            mImageLifecycleListener = listener;
+            mImageLifecycleListener.onCaptureStarted();
         }
 
         mProgressMessageId = progressMessageId;
@@ -221,7 +257,13 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized void startSession(Uri uri, int progressMessageId) {
+    public synchronized void startSession(@Nullable ImageLifecycleListener listener,
+          @Nonnull Uri uri, int progressMessageId) {
+        if (listener != null) {
+            mImageLifecycleListener = listener;
+            mImageLifecycleListener.onCaptureStarted();
+        }
+
         mUri = uri;
         mProgressMessageId = progressMessageId;
         mPlaceHolder = mPlaceholderManager.convertToPlaceholder(uri);
@@ -244,18 +286,27 @@ public class CaptureSessionImpl implements CaptureSession {
     }
 
     @Override
-    public synchronized ListenableFuture<Optional<Uri>> saveAndFinish(byte[] data, int width, int height,
-            int orientation, ExifInterface exif) {
+    public synchronized ListenableFuture<Optional<Uri>> saveAndFinish(byte[] data, int width,
+          int height, int orientation, ExifInterface exif) {
         final SettableFuture<Optional<Uri>> futureResult = SettableFuture.create();
+
+        if (mImageLifecycleListener != null) {
+            mImageLifecycleListener.onProcessingComplete();
+        }
 
         mIsFinished = true;
         if (mPlaceHolder == null) {
+
             mMediaSaver.addImage(
                     data, mTitle, mSessionStartMillis, mLocation, width, height,
                     orientation, exif, new MediaSaver.OnMediaSavedListener() {
                         @Override
                         public void onMediaSaved(Uri uri) {
                             futureResult.set(Optional.fromNullable(uri));
+
+                            if (mImageLifecycleListener != null) {
+                                mImageLifecycleListener.onCapturePersisted();
+                            }
                         }
                     });
         } else {
@@ -264,6 +315,10 @@ public class CaptureSessionImpl implements CaptureSession {
                         orientation, exif, data, width, height, FilmstripItemData.MIME_TYPE_JPEG);
                 mSessionNotifier.notifyTaskDone(mUri);
                 futureResult.set(Optional.fromNullable(mUri));
+
+                if (mImageLifecycleListener != null) {
+                    mImageLifecycleListener.onCapturePersisted();
+                }
             } catch (IOException e) {
                 Log.e(TAG, "Could not write file", e);
                 finishWithFailure(-1, true);

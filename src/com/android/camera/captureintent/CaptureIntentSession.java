@@ -33,6 +33,8 @@ import com.google.common.base.Optional;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import javax.annotation.Nonnull;
+
 /**
  * An implementation of {@link CaptureSession} which is used by
  * {@link CaptureIntentModule}.
@@ -118,22 +120,25 @@ public class CaptureIntentSession implements CaptureSession {
     }
 
     @Override
-    public synchronized void startEmpty(Size pictureSize) {
+    public synchronized void startEmpty(ImageLifecycleListener listener, @Nonnull Size pictureSize) {
         isStarted = true;
     }
 
     @Override
-    public synchronized void startSession(Bitmap placeholder, int progressMessageId) {
+    public synchronized void startSession(ImageLifecycleListener listener, @Nonnull Bitmap placeholder,
+          int progressMessageId) {
         throw new RuntimeException("Not supported.");
     }
 
     @Override
-    public synchronized void startSession(byte[] placeholder, int progressMessageId) {
+    public synchronized void startSession(ImageLifecycleListener listener, @Nonnull byte[] placeholder,
+          int progressMessageId) {
         throw new RuntimeException("Not supported.");
     }
 
     @Override
-    public synchronized void startSession(Uri uri, int progressMessageId) {
+    public synchronized void startSession(ImageLifecycleListener listener, @Nonnull Uri uri,
+          @Nonnull int progressMessageId) {
         throw new RuntimeException("Not supported.");
     }
 
