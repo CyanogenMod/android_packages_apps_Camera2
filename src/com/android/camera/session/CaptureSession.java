@@ -23,8 +23,12 @@ import android.net.Uri;
 import com.android.camera.exif.ExifInterface;
 import com.android.camera.stats.CaptureSessionStatsCollector;
 import com.android.camera.util.Size;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A session is an item that is in progress of being created and saved, such as
@@ -56,6 +60,45 @@ public interface CaptureSession {
          * @param messageId The current progress message ID.
          */
         public void onStatusMessageChanged(int messageId);
+    }
+
+    /**
+     * Classes implementing this interface can listen to progress updates of
+     * this session.
+     */
+    public static interface ImageLifecycleListener {
+        /**
+         * Occurs when, for a particular image type, an image capture has
+         * started. This method is always executed, and will always be called
+         * first.
+         */
+        public void onCaptureStarted();
+
+        /**
+         * Occurs when the tiny thumbnail bytes are received.
+         */
+        public void onTinyThumb();
+
+        /**
+         * Occurs when the medium thumbnail bytes are received.
+         */
+        public void onMediumThumb();
+
+        /**
+         * Occurs when rendering/processing/encoding starts for the full size image.
+         */
+        public void onProcessingStarted();
+
+        /**
+         * Occurs when the rendering/processing/encoding for the full size image
+         * is completed.
+         */
+        public void onProcessingComplete();
+
+        /**
+         * This occurs after all the bytes are physically on disk.
+         */
+        public void onCapturePersisted();
     }
 
     /** Returns the title/name of this session. */
@@ -109,42 +152,50 @@ public interface CaptureSession {
     /**
      * Starts an empty session with the given placeholder size.
      *
-     * @param mPictureSize the size, in pixels of the empty placeholder.
+     * @param listener receives events as the session progresses.
+     * @param pictureSize the size, in pixels of the empty placeholder.
      */
-    public void startEmpty(Size mPictureSize);
+    public void startEmpty(@Nullable ImageLifecycleListener listener, @Nonnull Size pictureSize);
 
     /**
      * Starts the session by adding a placeholder to the filmstrip and adding
      * notifications.
      *
+     * @param listener receives events as the session progresses.
      * @param placeholder a valid encoded bitmap to be used as the placeholder.
      * @param progressMessageId the message to be used to the progress
      *            notification initially. This can later be changed using
      *            {@link #setProgressMessage(int)}.
      */
-    public void startSession(byte[] placeholder, int progressMessageId);
+    public void startSession(@Nullable ImageLifecycleListener listener, @Nonnull byte[] placeholder,
+          int progressMessageId);
 
     /**
      * Starts the session by adding a placeholder to the filmstrip and adding
      * notifications.
      *
+     * @param listener receives events as the session progresses.
      * @param placeholder a valid bitmap to be used as the placeholder.
      * @param progressMessageId the message to be used to the progress
      *            notification initially. This can later be changed using
      *            {@link #setProgressMessage(int)}.
      */
-    public void startSession(Bitmap placeholder, int progressMessageId);
+    @VisibleForTesting
+    public void startSession(@Nullable ImageLifecycleListener listener, @Nonnull Bitmap placeholder,
+          int progressMessageId);
 
     /**
      * Starts the session by marking the item as in-progress and adding
      * notifications.
      *
+     * @param listener receives events as the session progresses.
      * @param uri the URI of the item to be re-processed.
      * @param progressMessageId the message to be used to the progress
      *            notification initially. This can later be changed using
      *            {@link #setProgressMessage(int)}.
      */
-    public void startSession(Uri uri, int progressMessageId);
+    public void startSession(@Nullable ImageLifecycleListener listener, @Nonnull Uri uri,
+          int progressMessageId);
 
     /**
      * Cancel the session without a final result. The session will be removed
