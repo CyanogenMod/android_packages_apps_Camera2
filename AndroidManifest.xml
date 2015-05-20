@@ -47,7 +47,8 @@
         android:largeHeap="true"
         android:restoreAnyVersion="true"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Camera" >
+        android:theme="@style/Theme.Camera"
+        android:usesCleartextTraffic="false" >
         <activity
             android:name="com.android.camera.CameraActivity"
             android:clearTaskOnLaunch="true"
