@@ -171,7 +171,7 @@ public final class ResourceCaptureToolsImpl implements ResourceCaptureTools {
                 resource.getLocationManager().getCurrentLocation();
         final CaptureSession session =
                 mCaptureSessionManager.createNewSession(fileName, timestamp, location);
-        session.startEmpty(openedCamera.getPictureSize());
+        session.startEmpty(null, openedCamera.getPictureSize());
 
         /** Logging */
         final SettingsManager settingsManager = resource.getSettingsManager();
