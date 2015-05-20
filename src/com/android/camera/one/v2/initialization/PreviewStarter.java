@@ -20,6 +20,7 @@ import android.view.Surface;
 
 import com.android.camera.one.OneCamera;
 import com.android.camera.one.v2.camera2proxy.CameraCaptureSessionProxy;
+import com.android.camera.util.ApiHelper;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -63,8 +64,20 @@ class PreviewStarter {
      */
     public ListenableFuture<Void> startPreview(final Surface surface) {
         // When we have the preview surface, start the capture session.
-        List<Surface> surfaceList = new ArrayList<Surface>(mOutputSurfaces);
-        surfaceList.add(surface);
+        List<Surface> surfaceList = new ArrayList<>();
+
+        // Workaround of the face detection failure on Nexus 5 and L. (b/21039466)
+        // Need to create a capture session with the single preview stream first
+        // to lock it as the first stream. Then resend the another session with preview
+        // and JPEG stream.
+        if (ApiHelper.isLorLMr1() && ApiHelper.IS_NEXUS_5) {
+            surfaceList.add(surface);
+            mCaptureSessionCreator.createCaptureSession(surfaceList);
+            surfaceList.addAll(mOutputSurfaces);
+        } else {
+            surfaceList.addAll(mOutputSurfaces);
+            surfaceList.add(surface);
+        }
 
         final ListenableFuture<CameraCaptureSessionProxy> sessionFuture =
                 mCaptureSessionCreator.createCaptureSession(surfaceList);
