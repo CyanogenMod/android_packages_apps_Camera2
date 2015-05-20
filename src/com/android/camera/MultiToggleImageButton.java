@@ -365,10 +365,10 @@ public class MultiToggleImageButton extends ImageButton {
     }
 
     private Bitmap combine(int oldState, int newState) {
-        // in some cases, a new set of image Ids are set via overrideImageIds()
-        // and oldState overruns the array.
+        // In some cases, a new set of image Ids are set via overrideImageIds()
+        // and oldState or newState overrun the array.
         // check here for that.
-        if (oldState >= mImageIds.length) {
+        if (oldState >= mImageIds.length || newState >= mImageIds.length) {
             return null;
         }
 
