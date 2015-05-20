@@ -71,6 +71,7 @@ import com.android.camera.remote.RemoteCameraModule;
 import com.android.camera.session.CaptureSession;
 import com.android.camera.settings.Keys;
 import com.android.camera.settings.SettingsManager;
+import com.android.camera.stats.CaptureStats;
 import com.android.camera.stats.UsageStatistics;
 import com.android.camera.stats.profiler.Profile;
 import com.android.camera.stats.profiler.Profiler;
@@ -555,7 +556,9 @@ public class CaptureModule extends CameraModule implements
         String title = CameraUtil.instance().createJpegName(sessionTime);
         CaptureSession session = getServices().getCaptureSessionManager()
                 .createNewSession(title, sessionTime, location);
-        session.startEmpty(new Size((int) mPreviewArea.width(), (int) mPreviewArea.height()));
+
+        session.startEmpty(new CaptureStats(mHdrPlusEnabled),
+              new Size((int) mPreviewArea.width(), (int) mPreviewArea.height()));
         return session;
     }
 
