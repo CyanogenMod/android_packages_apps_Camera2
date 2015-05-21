@@ -186,7 +186,7 @@
     <string name="video_recording_stopped" msgid="4658626532857624974">"Видео жазу тоқтады."</string>
     <string name="clear_effects" msgid="6192797848995967992">"Анықтық әсерлері"</string>
     <string name="effect_silly_faces" msgid="7952713419757286453">"ҚЫЗЫҚ БЕТ-ӘЛПЕТТЕР"</string>
-    <string name="effect_background" msgid="1358432220077975015">"Жалпы мағлұмат"</string>
+    <string name="effect_background" msgid="1358432220077975015">"ФОН"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"Сырғыту"</string>
     <string name="accessibility_cancel_button" msgid="5679989494636116448">"Өшіру"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Mәзір түймесі"</string>
@@ -269,7 +269,7 @@
     <string name="time_lapse_seconds" msgid="7319683099532506270">"секундтар"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"минуттар"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"сағаттар"</string>
-    <string name="time_lapse_interval_set" msgid="2418594453248958440">"Орындалды"</string>
+    <string name="time_lapse_interval_set" msgid="2418594453248958440">"Дайын"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"Уақыт аралығын орнату"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"Уақыт аралығы функциясы өшірулі. Уақыт аралығын реттеу үшін оны қосыңыз."</string>
     <string name="set_duration" msgid="1638453882581604341">"Ұзақтығын секундпен реттеу"</string>
@@ -325,7 +325,7 @@
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Кері санау таймерінің ұзақтығы 10 секундқа орнатылған"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Басқа опциялар"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Өшіру"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"Орындалды"</string>
+    <string name="done_button_description" msgid="1334963435441544592">"Дайын"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Қайта түсіру"</string>
     <string name="review_button_description" msgid="7932122063748430080">"Қарап шығу"</string>
     <string name="share_button_description" msgid="5108508790540832053">"Бөлісу"</string>
