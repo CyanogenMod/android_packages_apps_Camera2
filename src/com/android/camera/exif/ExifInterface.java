@@ -70,6 +70,7 @@ public class ExifInterface {
     /**
      * Tag constants for Jeita EXIF 2.2
      */
+    public static final String EXIF_VERSION = "0220";
 
     // IFD 0
     public static final int TAG_IMAGE_WIDTH =
@@ -470,7 +471,7 @@ public class ExifInterface {
      */
     public static interface Flash {
         // LSB
-        public static final short DID_NOT_FIRED = 0;
+        public static final short DID_NOT_FIRE = 0;
         public static final short FIRED = 1;
         // 1st~2nd bits
         public static final short RETURN_NO_STROBE_RETURN_DETECTION_FUNCTION = 0 << 1;
@@ -1935,7 +1936,7 @@ public class ExifInterface {
      * {@link #TAG_DATE_TIME_ORIGINAL}.
      *
      * @param tagId one of the DateTimeStamp tags.
-     * @param timestamp a timestamp to format.
+     * @param timestamp a timestamp to format, in ms.
      * @param timezone a TimeZone object.
      * @return true if success, false if the tag could not be set.
      */

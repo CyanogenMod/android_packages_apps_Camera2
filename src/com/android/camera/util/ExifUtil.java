@@ -26,6 +26,11 @@ import com.android.camera.one.v2.camera2proxy.CaptureResultProxy;
 import com.android.camera.processing.imagebackend.TaskImageContainer;
 import com.google.common.base.Optional;
 
+import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Exif utility functions.
  */
@@ -43,33 +48,17 @@ public class ExifUtil {
     }
 
     /**
-     * Adds the given location to the EXIF object.
-     *
-     * @param location The location to add.
-     */
-    public void addLocationToExif(Location location) {
-        mExif.addGpsTags(location.getLatitude(), location.getLongitude());
-        mExif.addGpsDateTimeStampTag(location.getTime());
-
-        double altitude = location.getAltitude();
-        if (altitude == 0) {
-            return;
-        }
-        short altitudeRef = altitude < 0 ? ExifInterface.GpsAltitudeRef.SEA_LEVEL_NEGATIVE
-                : ExifInterface.GpsAltitudeRef.SEA_LEVEL;
-        mExif.setTag(mExif.buildTag(ExifInterface.TAG_GPS_ALTITUDE_REF, altitudeRef));
-    }
-
-    /**
      * Populate the EXIF object with info pulled from a given capture result.
      *
      * @param image A {@link TaskImageContainer.TaskImage} from which to extract info from.
      * @param captureResult A {@link CaptureResultProxy} from which to extract info from.
-     * @param location optinally a location that should be added to the EXIF.
+     * @param location optionally a location that should be added to the EXIF.
      */
     public void populateExif(Optional<TaskImageContainer.TaskImage> image,
                              Optional<CaptureResultProxy> captureResult,
                              Optional<Location> location) {
+        addExifVersionToExif();
+        addTimestampToExif();
         addMakeAndModelToExif();
         if (image.isPresent()) {
             addImageDataToExif(image.get());
@@ -80,6 +69,47 @@ public class ExifUtil {
         if (location.isPresent()) {
             addLocationToExif(location.get());
         }
+    }
+
+    /**
+     * Adds the given location to the EXIF object.
+     *
+     * @param location The location to add.
+     */
+    public void addLocationToExif(Location location) {
+        final Long ALTITUDE_PRECISION = 1L; // GPS altitude isn't particularly accurate (determined empirically)
+
+        mExif.addGpsTags(location.getLatitude(), location.getLongitude());
+        mExif.addGpsDateTimeStampTag(location.getTime());
+
+        if (location.hasAltitude()) {
+            double altitude = location.getAltitude();
+            addExifTag(ExifInterface.TAG_GPS_ALTITUDE, rational(altitude, ALTITUDE_PRECISION));
+            short altitudeRef = altitude < 0 ? ExifInterface.GpsAltitudeRef.SEA_LEVEL_NEGATIVE
+                    : ExifInterface.GpsAltitudeRef.SEA_LEVEL;
+            addExifTag(ExifInterface.TAG_GPS_ALTITUDE_REF, altitudeRef);
+        }
+    }
+
+    private void addExifVersionToExif() {
+        addExifTag(ExifInterface.TAG_EXIF_VERSION, ExifInterface.EXIF_VERSION);
+    }
+
+    private void addTimestampToExif() {
+        final Long MS_TO_S = 1000L; // Milliseconds per second
+        final String subSecondFormat = "000";
+
+        Long timestampMs = System.currentTimeMillis();
+        TimeZone timezone = Calendar.getInstance().getTimeZone();
+        mExif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME, timestampMs, timezone);
+        mExif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME_DIGITIZED, timestampMs, timezone);
+        mExif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME_ORIGINAL, timestampMs, timezone);
+
+        Long subSeconds = timestampMs % MS_TO_S;
+        String subSecondsString = new DecimalFormat(subSecondFormat).format(subSeconds);
+        addExifTag(ExifInterface.TAG_SUB_SEC_TIME, subSecondsString);
+        addExifTag(ExifInterface.TAG_SUB_SEC_TIME_ORIGINAL, subSecondsString);
+        addExifTag(ExifInterface.TAG_SUB_SEC_TIME_DIGITIZED, subSecondsString);
     }
 
     private void addMakeAndModelToExif() {
@@ -98,7 +128,7 @@ public class ExifUtil {
 
     private void addCaptureResultToExif(CaptureResultProxy result) {
         final Long NS_TO_S = 1000000000L; // Nanoseconds per second
-        final Long SHUTTER_SPEED_VALUE_PRECISION = 100L;
+        final Long SHUTTER_SPEED_VALUE_PRECISION = 1000L;
         final Long F_NUMBER_PRECISION = 100L;
         final Long APERTURE_VALUE_PRECISION = 100L;
         final Long FOCAL_LENGTH_PRECISION = 1000L; // micrometer precision
@@ -107,10 +137,10 @@ public class ExifUtil {
         Long exposureTimeNs = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
         addExifTag(ExifInterface.TAG_EXPOSURE_TIME, ratio(exposureTimeNs, NS_TO_S));
 
-        // Shutter speed value
+        // Shutter speed value (APEX unit, see Jeita EXIF 2.2 spec Annex C).
         if (exposureTimeNs != null) {
             Double exposureTime = (double) exposureTimeNs / NS_TO_S;
-            Double shutterSpeedValue = log2(exposureTime);
+            Double shutterSpeedValue = -log2(exposureTime);
             addExifTag(ExifInterface.TAG_SHUTTER_SPEED_VALUE, rational(shutterSpeedValue, SHUTTER_SPEED_VALUE_PRECISION));
         }
 
@@ -121,7 +151,7 @@ public class ExifUtil {
         Float fNumber = result.get(CaptureResult.LENS_APERTURE);
         addExifTag(ExifInterface.TAG_F_NUMBER, rational(fNumber, F_NUMBER_PRECISION));
 
-        // Aperture value
+        // Aperture value (APEX unit, see Jeita EXIF 2.2 spec Annex C).
         if (fNumber != null) {
             Double apertureValue = 2 * log2(fNumber);
             addExifTag(ExifInterface.TAG_APERTURE_VALUE, rational(apertureValue, APERTURE_VALUE_PRECISION));
@@ -130,6 +160,23 @@ public class ExifUtil {
         // Focal length
         Float focalLength = result.get(CaptureResult.LENS_FOCAL_LENGTH);
         addExifTag(ExifInterface.TAG_FOCAL_LENGTH, rational(focalLength, FOCAL_LENGTH_PRECISION));
+
+        // Flash mode
+        Integer flashMode = result.get(CaptureResult.FLASH_MODE);
+        if (flashMode == CaptureResult.FLASH_MODE_OFF) {
+            addExifTag(ExifInterface.TAG_FLASH, ExifInterface.Flash.DID_NOT_FIRE);
+        } else {
+            addExifTag(ExifInterface.TAG_FLASH, ExifInterface.Flash.FIRED);
+        }
+
+        // White balance
+        Integer whiteBalanceMode = result.get(CaptureResult.CONTROL_AWB_MODE);
+        if (whiteBalanceMode == CaptureResult.CONTROL_AWB_MODE_OFF) {
+            addExifTag(ExifInterface.TAG_WHITE_BALANCE, ExifInterface.WhiteBalance.MANUAL);
+        } else {
+            addExifTag(ExifInterface.TAG_WHITE_BALANCE, ExifInterface.WhiteBalance.AUTO);
+        }
+
     }
 
     private void addExifTag(int tagId, Object val) {
