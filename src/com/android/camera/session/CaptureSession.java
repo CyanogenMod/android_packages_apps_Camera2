@@ -99,6 +99,12 @@ public interface CaptureSession {
          * This occurs after all the bytes are physically on disk.
          */
         public void onCapturePersisted();
+
+        /**
+         * This occurs if a capture session is created but is later canceled for
+         * some reason.
+         */
+        public void onCaptureCanceled();
     }
 
     /** Returns the title/name of this session. */
