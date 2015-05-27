@@ -456,7 +456,7 @@ public class CaptureModule extends CameraModule implements
                     new CaptureSession.CaptureSessionCreator() {
                         @Override
                         public CaptureSession createAndStartEmpty() {
-                            return createAndStartCaptureSession();
+                            return createAndStartUntrackedCaptureSession();
                         }
                     },
                     deviceOrientation,
@@ -558,6 +558,18 @@ public class CaptureModule extends CameraModule implements
                 .createNewSession(title, sessionTime, location);
 
         session.startEmpty(new CaptureStats(mHdrPlusEnabled),
+              new Size((int) mPreviewArea.width(), (int) mPreviewArea.height()));
+        return session;
+    }
+
+    private CaptureSession createAndStartUntrackedCaptureSession() {
+        long sessionTime = getSessionTime();
+        Location location = mLocationManager.getCurrentLocation();
+        String title = CameraUtil.instance().createJpegName(sessionTime);
+        CaptureSession session = getServices().getCaptureSessionManager()
+              .createNewSession(title, sessionTime, location);
+
+        session.startEmpty(null,
               new Size((int) mPreviewArea.width(), (int) mPreviewArea.height()));
         return session;
     }
