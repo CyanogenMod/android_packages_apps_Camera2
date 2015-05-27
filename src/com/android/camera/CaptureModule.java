@@ -1362,9 +1362,21 @@ public class CaptureModule extends CameraModule implements
                   @Override
                   public void onFailure() {
                       Log.e(TAG, "Could not open camera.");
+                      // Sometimes the failure happens due to the controller
+                      // being in paused state but mCamera is already
+                      // initialized.  In these cases we just need to close the
+                      // camera device without showing the error dialog.
+                      // Application will properly reopen the camera on the next
+                      // resume operation (b/21025113).
+                      boolean isControllerPaused = mAppController.isPaused();
+                      if (mCamera != null) {
+                          mCamera.close();
+                      }
                       mCamera = null;
                       mCameraOpenCloseLock.release();
-                      mAppController.getFatalErrorHandler().onCameraOpenFailure();
+                      if (!isControllerPaused) {
+                          mAppController.getFatalErrorHandler().onCameraOpenFailure();
+                      }
                   }
 
                   @Override
