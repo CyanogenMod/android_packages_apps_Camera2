@@ -105,6 +105,12 @@ public interface CaptureSession {
          * some reason.
          */
         public void onCaptureCanceled();
+
+        /**
+         * This occurs if a capture session is created but failed to persist the
+         * final image.
+         */
+        public void onCaptureFailed();
     }
 
     /** Returns the title/name of this session. */
