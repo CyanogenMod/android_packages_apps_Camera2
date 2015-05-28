@@ -282,6 +282,9 @@ public class CaptureSessionImpl implements CaptureSession {
         if (isStarted()) {
             mSessionManager.removeSession(mUri);
             mSessionNotifier.notifyTaskCanceled(mUri);
+            if (mImageLifecycleListener != null) {
+                mImageLifecycleListener.onCaptureCanceled();
+            }
         }
 
         if (mPlaceHolder != null) {
