@@ -24,6 +24,7 @@ import android.graphics.SurfaceTexture;
 import android.location.Location;
 import android.media.MediaActionSound;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
@@ -148,8 +149,8 @@ public class CaptureModule extends CameraModule implements
     private OneCamera mCamera;
     /** The selected picture size. */
     private Size mPictureSize;
-    /** Held when opening or closing the camera. */
-    private final Semaphore mCameraOpenCloseLock = new Semaphore(1);
+    /** Fair semaphore held when opening or closing the camera. */
+    private final Semaphore mCameraOpenCloseLock = new Semaphore(1, true);
     /** The direction the currently opened camera is facing to. */
     private Facing mCameraFacing;
     /** Whether HDR Scene mode is currently enabled. */
@@ -644,8 +645,15 @@ public class CaptureModule extends CameraModule implements
         if (mPaused) {
             return;
         }
-        closeCamera();
-        openCameraAndStartPreview();
+        AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            @Override
+            public void run() {
+                closeCamera();
+                if(!mAppController.isPaused()) {
+                    openCameraAndStartPreview();
+                }
+            }
+        });
     }
 
     private SurfaceTexture getPreviewSurfaceTexture() {
@@ -693,13 +701,6 @@ public class CaptureModule extends CameraModule implements
 
         mHdrSceneEnabled = !mStickyGcamCamera && mAppController.getSettingsManager().getBoolean(
               SettingsManager.SCOPE_GLOBAL, Keys.KEY_CAMERA_HDR);
-
-        // The lock only exists for HDR and causes trouble for non-HDR
-        // OneCameras.
-        // TODO: Fix for removing the locks completely is tracked at b/17985028
-        if (!mHdrPlusEnabled) {
-            mCameraOpenCloseLock.release();
-        }
 
         // This means we are resuming with an existing preview texture. This
         // means we will never get the onSurfaceTextureAvailable call. So we
