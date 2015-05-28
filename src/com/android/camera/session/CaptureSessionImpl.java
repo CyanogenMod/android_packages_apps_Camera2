@@ -329,6 +329,9 @@ public class CaptureSessionImpl implements CaptureSession {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Could not write file", e);
+                if (mImageLifecycleListener != null) {
+                    mImageLifecycleListener.onCaptureFailed();
+                }
                 finishWithFailure(-1, true);
                 futureResult.setException(e);
             }

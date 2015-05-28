@@ -37,4 +37,8 @@ public class CaptureStats implements ImageLifecycleListener {
     @Override
     public void onCaptureCanceled() {
     }
+
+    @Override
+    public void onCaptureFailed() {
+    }
 }
