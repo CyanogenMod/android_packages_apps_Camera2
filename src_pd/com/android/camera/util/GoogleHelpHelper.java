@@ -32,5 +32,5 @@ public class GoogleHelpHelper {
     public void launchGoogleHelp() {
     }
 
-    public void sendGoogleFeedback(int category) {}
+    public void sendGoogleFeedback(int category, Exception ex) {}
 }
