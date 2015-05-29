@@ -289,7 +289,7 @@ public class CameraUtil {
      */
     @Deprecated
     public static void showError(final Activity activity, final int dialogMsgId, final int feedbackMsgId,
-                                 final boolean finishActivity) {
+                                 final boolean finishActivity, final Exception ex) {
         final DialogInterface.OnClickListener buttonListener =
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -304,7 +304,7 @@ public class CameraUtil {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        new GoogleHelpHelper(activity).sendGoogleFeedback(feedbackMsgId);
+                        new GoogleHelpHelper(activity).sendGoogleFeedback(feedbackMsgId, ex);
                         if (finishActivity) {
                             activity.finish();
                         }
