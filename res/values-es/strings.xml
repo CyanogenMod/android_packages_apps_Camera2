@@ -340,10 +340,10 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Compensación de exposición +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Ahora el botón es %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Ubicación"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto de cámara trasera"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo de cámara trasera"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto de cámara frontal"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo de cámara frontal"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto de la cámara trasera"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo de la cámara trasera"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto de la cámara frontal"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo de la cámara frontal"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Cámara predeterminada"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Ayuda y sugerencias"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Procesando HDR+…"</string>
@@ -364,12 +364,12 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeles"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s MP"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Toca para volver a enfocar"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"Avanzado"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"Opciones avanzadas"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposición manual"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Cambia la resolución y la calidad en Ajustes o prueba las funciones avanzadas."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Selecciona un tamaño de foto"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Puedes cambiar esta opción más tarde en Ajustes."</string>
-    <string name="share_to" msgid="5144911209144798122">"Compartir en"</string>
+    <string name="share_to" msgid="5144911209144798122">"Compartir vía"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar con"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"SIGUIENTE"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ENTENDIDO"</string>
