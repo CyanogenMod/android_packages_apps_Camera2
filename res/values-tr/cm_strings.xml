@@ -18,4 +18,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_power_shutter_title">Güç tuşu ile çekim</string>
   <string name="pref_camera_max_brightness_title">Parlak ekran</string>
+  <string name="pref_camera_storage_title">Bellek konumu</string>
 </resources>

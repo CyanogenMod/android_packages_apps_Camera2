@@ -18,4 +18,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_power_shutter_title">Power окидач</string>
   <string name="pref_camera_max_brightness_title">Светли екран</string>
+  <string name="pref_camera_storage_title">Локација складиштења</string>
 </resources>
