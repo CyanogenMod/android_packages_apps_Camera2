@@ -40,7 +40,7 @@
     <string name="title" msgid="8061744305671964703">"Атауы"</string>
     <string name="description" msgid="8193138501982849808">"Сипаттама"</string>
     <string name="time" msgid="5248213506417024287">"Уақыт"</string>
-    <string name="location" msgid="564326205780827668">"Аймақ"</string>
+    <string name="location" msgid="564326205780827668">"Орын"</string>
     <string name="path" msgid="5927003361865586353">"Жол"</string>
     <string name="width" msgid="7045750687833828758">"Ені"</string>
     <string name="height" msgid="5186001199353423689">"Биіктігі"</string>
@@ -274,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Уақыт аралығы функциясы өшірулі. Уақыт аралығын реттеу үшін оны қосыңыз."</string>
     <string name="set_duration" msgid="1638453882581604341">"Ұзақтығын секундпен реттеу"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Фотосурет түсіру үшін кері санау"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Фотосурет аймақтары есіңізде ме?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Фотосуреттер мен видеоларды түсірілген аймақтарымен байланыстырыңыз. \n\nБұл ақпарат сақталған бейнелеріңізбен бірге басқа қолданбаларға қол жетімді болады."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Фотосуреттің қайда түсірілгені көрсетілсін бе?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Фотосуреттер мен бейнелерде түсірілген жерлері белгіленіп тұрады. \n\nБұл ақпарат сақталған бейнелеріңізбен бірге басқа қолданбаларға қолжетімді болады."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Жоқ рахмет"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Иә"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"Басқа опциялар"</string>
@@ -339,10 +339,10 @@
     <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"Экспозиция түзетілімі +1"</string>
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Экспозиция түзетілімі +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Түйме қазір %s"</string>
-    <string name="setting_location" msgid="4459859689227893838">"Аймақ"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Артқы камераның фотосур."</string>
+    <string name="setting_location" msgid="4459859689227893838">"Орын"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Артқы камера фотосы"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Артқы камераның бейнесі"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Алдыңғы камераның фотос."</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Алдыңғы камера фотосы"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Алдыңғы камераның бейнесі"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Бастапқы камера"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Анықтама және кері байл."</string>
@@ -365,7 +365,7 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s мп"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Қайта фокустау үшін осы жерді түртіңіз"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Қосымша"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Қолмен рет-тін экс."</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Экспозиция: қолдан"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"«Параметрлер» тармағында ажыратымдылықты және сапаны өзгертіңіз немесе кеңейтілген мүмкіндіктерді қолданып көріңіз."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Фотосурет өлшемін таңдау"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Мұны кейінірек «Параметрлер» тармағында өзгертуге болады."</string>
