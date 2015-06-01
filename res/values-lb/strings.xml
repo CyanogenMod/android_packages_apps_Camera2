@@ -204,7 +204,7 @@
   <string name="photosphere_date_content_description">Fotosphär opgeholl um %s</string>
   <string name="refocus_date_content_description">Déiftenonschäerft opgeholl um %s</string>
   <string name="media_processing_content_description">Medieveraarbechtung</string>
-  <string name="accessibility_mode_list_toggle">Moduslëscht uweise/verstoppen</string>
+  <string name="accessibility_mode_list_toggle">Moduslëscht uweisen/verstoppen</string>
   <string name="btn_mode_list_toggle">Moduslëscht</string>
   <string name="accessibility_filmstrip_toggle">Filmsträif un-/ausschalten</string>
   <string name="btn_filmstrip_toggle">Filmsträif</string>
