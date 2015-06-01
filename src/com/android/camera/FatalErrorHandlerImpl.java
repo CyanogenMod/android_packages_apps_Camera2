@@ -34,8 +34,9 @@ public final class FatalErrorHandlerImpl implements FatalErrorHandler {
 
     @Override
     public void onMediaStorageFailure() {
+        Exception ex = new Exception();
         // Log a stack trace to be sure we can track the source.
-        Log.e(TAG, "Handling Media Storage Failure:", new Exception());
+        Log.e(TAG, "Handling Media Storage Failure:", ex);
 
         // Log the error
         UsageStatistics.instance().storageWarning(Storage.ACCESS_FAILURE);
@@ -43,13 +44,14 @@ public final class FatalErrorHandlerImpl implements FatalErrorHandler {
         Reason reason = Reason.MEDIA_STORAGE_FAILURE;
         boolean finishActivity = reason.doesFinishActivity();
         CameraUtil.showError(mActivity, reason.getDialogMsgId(), reason.getFeedbackMsgId(),
-                finishActivity);
+                finishActivity, ex);
     }
 
     @Override
     public void onCameraOpenFailure() {
+        Exception ex = new Exception();
         // Log a stack trace to be sure we can track the source.
-        Log.e(TAG, "Handling Camera Open Failure:", new Exception());
+        Log.e(TAG, "Handling Camera Open Failure:", ex);
 
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.OPEN_FAILURE, null,
@@ -58,13 +60,14 @@ public final class FatalErrorHandlerImpl implements FatalErrorHandler {
         Reason reason = Reason.CANNOT_CONNECT_TO_CAMERA;
         boolean finishActivity = reason.doesFinishActivity();
         CameraUtil.showError(mActivity, reason.getDialogMsgId(), reason.getFeedbackMsgId(),
-                finishActivity);
+                finishActivity, ex);
     }
 
     @Override
     public void onCameraReconnectFailure() {
+        Exception ex = new Exception();
         // Log a stack trace to be sure we can track the source.
-        Log.e(TAG, "Handling Camera Reconnect Failure:", new Exception());
+        Log.e(TAG, "Handling Camera Reconnect Failure:", ex);
 
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.RECONNECT_FAILURE, null,
@@ -73,13 +76,14 @@ public final class FatalErrorHandlerImpl implements FatalErrorHandler {
         Reason reason = Reason.CANNOT_CONNECT_TO_CAMERA;
         boolean finishActivity = reason.doesFinishActivity();
         CameraUtil.showError(mActivity, reason.getDialogMsgId(), reason.getFeedbackMsgId(),
-                finishActivity);
+                finishActivity, ex);
     }
 
     @Override
     public void onGenericCameraAccessFailure() {
+        Exception ex = new Exception();
         // Log a stack trace to be sure we can track the source.
-        Log.e(TAG, "Handling Camera Access Failure:", new Exception());
+        Log.e(TAG, "Handling Camera Access Failure:", ex);
 
         UsageStatistics.instance().cameraFailure(
                 eventprotos.CameraFailure.FailureReason.UNKNOWN_REASON, null,
@@ -88,13 +92,14 @@ public final class FatalErrorHandlerImpl implements FatalErrorHandler {
         Reason reason = Reason.CANNOT_CONNECT_TO_CAMERA;
         boolean finishActivity = reason.doesFinishActivity();
         CameraUtil.showError(mActivity, reason.getDialogMsgId(), reason.getFeedbackMsgId(),
-                finishActivity);
+                finishActivity, ex);
     }
 
     @Override
     public void onCameraDisabledFailure() {
+        Exception ex = new Exception();
         // Log a stack trace to be sure we can track the source.
-        Log.e(TAG, "Handling Camera Disabled Failure:", new Exception());
+        Log.e(TAG, "Handling Camera Disabled Failure:", ex);
 
         // Log the error
         UsageStatistics.instance().cameraFailure(
@@ -104,16 +109,17 @@ public final class FatalErrorHandlerImpl implements FatalErrorHandler {
         Reason reason = Reason.CAMERA_DISABLED_BY_SECURITY_POLICY;
         boolean finishActivity = reason.doesFinishActivity();
         CameraUtil.showError(mActivity, reason.getDialogMsgId(), reason.getFeedbackMsgId(),
-                finishActivity);
+                finishActivity, ex);
     }
 
     @Override
     public void handleFatalError(Reason reason) {
+        Exception ex = new Exception();
         // Log a stack trace to be sure we can track the source.
-        Log.e(TAG, "Handling Fatal Error:", new Exception());
+        Log.e(TAG, "Handling Fatal Error:", ex);
 
         boolean finishActivity = reason.doesFinishActivity();
         CameraUtil.showError(mActivity, reason.getDialogMsgId(), reason.getFeedbackMsgId(),
-                finishActivity);
+                finishActivity, ex);
     }
 }
