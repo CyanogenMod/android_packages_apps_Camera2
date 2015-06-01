@@ -159,7 +159,7 @@ class GenericOneCameraImpl implements OneCamera {
             public void onFailure(@Nonnull Throwable throwable) {
                 listener.onSetupFailed();
             }
-        }, mMainExecutor);
+        });
     }
 
     @Override
