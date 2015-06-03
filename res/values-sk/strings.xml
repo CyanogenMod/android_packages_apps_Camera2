@@ -275,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Nastavte dobu trvania v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítavanie spúšte fotoaparátu"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Pamätať si, kde boli fotky vytvorené?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridávať k fotkám a videám označenia miest, kde boli zaznamenané\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridávať k fotkám a videám označenia miest, kde boli zaznamenané\n\nOstatné aplikácie budú mať k týmto informáciám a uloženým snímkam prístup."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, nemám záujem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Áno"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ĎALŠIE MOŽNOSTI"</string>
@@ -292,7 +292,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Nastavenia"</string>
     <string name="mode_camera" msgid="279763925715250603">"Fotoaparát"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Sférické fotky"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Časozberné video"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoráma"</string>
