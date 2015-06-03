@@ -158,7 +158,7 @@
     <string name="dialog_ok" msgid="774141340500181131">"Aceptar"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Cancelar"</string>
     <string name="dialog_report" msgid="7616428760369876209">"Informar"</string>
-    <string name="dialog_dismiss" msgid="1382550604990470119">"Ignorar"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Aceptar"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"No queda espacio en la tarjeta SD. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Se ha alcanzado el límite de tamaño."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Muy rápido"</string>
@@ -275,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Define la duración en segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Cuenta atrás para hacer una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"¿Recordar ubicaciones de las fotos?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiquetar tus fotos y vídeos con las ubicaciones donde se han realizado\n\nOtras aplicaciones pueden acceder a esta información y a imágenes guardadas."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiquetar tus fotos y vídeos con las ubicaciones donde se han realizado.\n\nOtras aplicaciones pueden acceder a esta información y a imágenes guardadas."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gracias"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÁS OPCIONES"</string>
