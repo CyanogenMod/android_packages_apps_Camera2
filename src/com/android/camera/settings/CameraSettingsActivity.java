@@ -157,7 +157,7 @@ public class CameraSettingsActivity extends FragmentActivity {
 
             // Fill Storage preference
             final Preference storagePreference = findPreference(Keys.KEY_STORAGE);
-            if (mStorageVolumes == null) {
+            if (mStorageVolumes == null && storagePreference != null) {
                 getPreferenceScreen().removePreference(storagePreference);
             } else {
                 setEntries(storagePreference);
