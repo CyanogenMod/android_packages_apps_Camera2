@@ -27,7 +27,7 @@
     <string name="share_as_photo" msgid="4831213580709167218">"Ibahagi bilang larawan"</string>
     <string name="deleted" msgid="2036165115527228127">"Tinanggal"</string>
     <string name="undo" msgid="5110048345890050107">"I-UNDO"</string>
-    <string name="details" msgid="4404020741542549488">"Mga detalye"</string>
+    <string name="details" msgid="4404020741542549488">"Mga Detalye"</string>
     <string name="close" msgid="4826166926297479820">"Isara"</string>
     <string name="show_on_map" msgid="8542853913632649160">"Ipakita sa mapa"</string>
     <string name="rotate_left" msgid="2618440058490662604">"I-rotate pakaliwa"</string>
@@ -349,7 +349,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Pinoproseso ang HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Mga lisensya na open source"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Mga Pangkalahatang Setting"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Resolution at Kalidad"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Resolution at kalidad"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Tungkol dito"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Bersyon ng build"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Mababa"</string>

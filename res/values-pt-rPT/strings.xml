@@ -276,8 +276,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"A funcionalidade de intervalo de tempo está desativada. Ative-a para definir o intervalo de tempo."</string>
     <string name="set_duration" msgid="1638453882581604341">"Definir a duração em segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Contagem decrescente para tirar uma fotografia"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Memorizar localizações das fotografias?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Insira etiquetas nas fotografias e vídeos com as localizações onde foram capturados.\n\nOutras aplicações podem aceder a estas informações juntamente com as suas imagens guardadas."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Memorizar localizações das fotos?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Insira etiquetas nas fotos e vídeos com as localizações onde foram capturados.\n\nOutras aplicações podem aceder a estas informações juntamente com as suas imagens guardadas."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Não, obrigado"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sim"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MAIS OPÇÕES"</string>
@@ -342,9 +342,9 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Compensação de exposição +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"O botão está agora %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Localização"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Fotografia câmara posterior"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto da câmara posterior"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo da câmara posterior"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Fotografia câmara frontal"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto da câmara frontal"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo da câmara frontal"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Câmara predefinida"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Ajuda e comentários"</string>
