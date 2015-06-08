@@ -57,7 +57,7 @@
     <string name="exposure_time" msgid="949787291620767754">"Ekspoz-ya vaqti"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"mm"</string>
-    <string name="manual" msgid="2444400953521760140">"Qo‘lbola"</string>
+    <string name="manual" msgid="2444400953521760140">"Qo‘lda"</string>
     <string name="auto" msgid="2552649885114400474">"Avto"</string>
     <string name="flash_on" msgid="6573457197393807642">"Chaqnoq yoqildi"</string>
     <string name="flash_off" msgid="7889323512830926273">"Chaqnoqsiz"</string>
