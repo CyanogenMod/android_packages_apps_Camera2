@@ -80,7 +80,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"కెమెరాను ఎంచుకోండి"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"వెనుక వైపు ఉండేది"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"ముందువైపు"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"సేవ్ అయ్యే స్థానం"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"స్థానం సేవ్ చేయి"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"స్థానం"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"కౌంట్‍డౌన్ టైమర్"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->

@@ -87,7 +87,7 @@
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"ಕ್ಷಣಗಣನೆ ಸಮಯದಲ್ಲಿ ಬೀಪ್"</string>
     <string name="setting_off" msgid="6782191065550276632">"ಆಫ್ ಆಗಿದೆ"</string>
-    <string name="setting_on" msgid="9086728135773197891">"ಆನ್ ಆಗಿದೆ"</string>
+    <string name="setting_on" msgid="9086728135773197891">"ಆನ್"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"ವೀಡಿಯೊ ಗುಣಮಟ್ಟ"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"ಸಮಯದ ಅಂತರ"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"ಕ್ಯಾಮರಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"</string>
@@ -106,7 +106,7 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"ಫ್ಲ್ಯಾಶ್ ಮೋಡ್"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"ಫ್ಲ್ಯಾಶ್ ಮೋಡ್"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"ಸ್ವಯಂ"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"ಆನ್ ಆಗಿದೆ"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"ಆನ್"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"ಆಫ್ ಆಗಿದೆ"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"ಫ್ಲ್ಯಾಶ್ ಆಟೋ"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"ಫ್ಲ್ಯಾಶ್ ಆನ್"</string>

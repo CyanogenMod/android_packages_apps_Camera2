@@ -181,7 +181,7 @@
     <string name="effect_backdropper_space" msgid="9133825395915767627">"در فضا"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"غروب آفتاب"</string>
     <string name="effect_backdropper_gallery" msgid="2333888391153564920">"ویدیوی شما"</string>
-    <string name="video_snapshot_hint" msgid="2707403607250082339">"برای گرفتن عکس در هنگام ضبط لمس کنید."</string>
+    <string name="video_snapshot_hint" msgid="2707403607250082339">"برای عکس گرفتن در هنگام ضبط، لمس کنید."</string>
     <string name="video_recording_started" msgid="3374878415050991030">"ضبط ویدیو شروع شد."</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"ضبط ویدیو متوقف شد."</string>
     <string name="clear_effects" msgid="6192797848995967992">"پاک کردن جلوه‌ها"</string>
@@ -194,7 +194,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"تغییر به حالت عکس"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"تغییر به حالت ویدیو"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"تغییر به حالت پانوراما"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"‏تغییر به Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"تغییر به عکس کروی"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"تغییر به کیفیت بالا"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"تغییر به فوکوس مجدد"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"لغو بازبینی"</string>
@@ -211,7 +211,7 @@
     <string name="photo_date_content_description" msgid="5705865897898465619">"‏عکس در %s گرفته شده است"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"‏ویدیو در %s گرفته شده است"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"‏پانوراما در %s گرفته شده است"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس پانوراما در %s گرفته شده است"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس کروی در %s گرفته شده است"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"‏Lens blur در %s گرفته شده است"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"در حال پردازش رسانه"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"جابجایی لیست حالت"</string>
@@ -273,7 +273,7 @@
     <string name="set_time_interval" msgid="2531393962847535331">"تنظیم فاصله زمانی"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"قابلیت گذر زمان خاموش است. برای تنظیم فاصله زمانی آن را روشن کنید."</string>
     <string name="set_duration" msgid="1638453882581604341">"تنظیم مدت زمان به ثانیه"</string>
-    <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای گرفتن عکس"</string>
+    <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای عکس گرفتن"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"موقعیت مکانی عکس به خاطر سپرده شود؟"</string>
     <string name="remember_location_prompt" msgid="5104210757873140169">"عکس‌ها و ویدیوهایتان را با موقعیت مکانی که گرفته شده‌اند، برچسب بزنید.\n\nدیگر برنامه‌ها می‌توانند همراه با تصاویر ذخیره شده‌تان به این اطلاعات دسترسی داشته باشند."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"خیر متشکرم"</string>
@@ -292,14 +292,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"تنظیمات"</string>
     <string name="mode_camera" msgid="279763925715250603">"دوربین"</string>
     <string name="mode_video" msgid="8633929034048169139">"ویدیو"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"عکس پانوراما"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"عکس کروی"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"فاصله زمانی"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاویه باز"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"پانوراما"</string>
     <string name="mode_refocus" msgid="172192967119469061">"Lens Blur"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"تغییر به حالت دوربین"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"تغییر به دوربین فیلمبرداری"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"‏تغییر به حالت Photo Sphere"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"تغییر به حالت عکس کروی"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"تغییر به حالت پانوراما"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"‏تغییر به حالت Lens Blur"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"باز کردن تنظیمات"</string>
@@ -372,7 +372,7 @@
     <string name="share_to" msgid="5144911209144798122">"اشتراک‌گذاری با"</string>
     <string name="edit_with" msgid="615569327230783971">"ویرایش با"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"بعدی"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"بسیار خوب، متوجه شدم"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"بله، متوجه شدم"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"حسگر کامل \n‏(۴:۳)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"حسگر برش داده شده \n‏(۱۶:۹)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"۰"</string>
