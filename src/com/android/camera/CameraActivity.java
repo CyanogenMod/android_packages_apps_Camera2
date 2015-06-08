@@ -156,6 +156,7 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
+
 import com.google.common.base.Optional;
 import com.google.common.logging.eventprotos;
 import com.google.common.logging.eventprotos.ForegroundEvent.ForegroundSource;
@@ -2612,6 +2613,12 @@ public class CameraActivity extends QuickActivity
                 @Override
                 public void onClick(View view) {
                     mDataAdapter.undoDeletion();
+                    // Fix for b/21666018: When undoing a delete in Fullscreen
+                    // mode, just flip
+                    // back to the filmstrip to force a refresh.
+                    if (mFilmstripController.inFullScreen()) {
+                        mFilmstripController.goToFilmstrip();
+                    }
                     hideUndoDeletionBar(true);
                 }
             });
