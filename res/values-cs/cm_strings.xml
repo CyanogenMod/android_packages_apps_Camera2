@@ -18,4 +18,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_power_shutter_title">Spoušť tlačítkem vypnutí</string>
   <string name="pref_camera_max_brightness_title">Plný jas obrazovky</string>
+  <string name="pref_camera_storage_title">Umístění úložiště</string>
 </resources>

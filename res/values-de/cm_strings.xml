@@ -18,4 +18,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_power_shutter_title">Auslöser</string>
   <string name="pref_camera_max_brightness_title">Heller Bildschirm</string>
+  <string name="pref_camera_storage_title">Speicherort</string>
 </resources>
