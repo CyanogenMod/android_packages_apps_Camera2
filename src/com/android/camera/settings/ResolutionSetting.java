@@ -30,6 +30,8 @@ import com.android.camera.one.OneCameraManager;
 import com.android.camera.util.GservicesHelper;
 import com.android.camera.util.Size;
 
+import com.google.common.base.Preconditions;
+
 import java.util.List;
 
 /**
@@ -103,7 +105,7 @@ public class ResolutionSetting {
      * is blacklisted or is not cached to prevent a crash.
      */
     public Size getPictureSize(CameraId cameraId, Facing cameraFacing)
-          throws OneCameraAccessException {
+            throws OneCameraAccessException {
         final String pictureSizeSettingKey = cameraFacing == OneCamera.Facing.FRONT ?
                 Keys.KEY_PICTURE_SIZE_FRONT : Keys.KEY_PICTURE_SIZE_BACK;
 
@@ -126,16 +128,25 @@ public class ResolutionSetting {
         if (isPictureSizeSettingSet) {
             pictureSize = SettingsUtil.sizeFromSettingString(
                     mSettingsManager.getString(SettingsManager.SCOPE_GLOBAL,
-                          pictureSizeSettingKey));
+                            pictureSizeSettingKey));
             isPictureSizeBlacklisted = pictureSize == null ||
-                  ResolutionUtil.isBlackListed(pictureSize, blacklist);
+                    ResolutionUtil.isBlackListed(pictureSize, blacklist);
         }
 
-        if (!isPictureSizeSettingSet || isPictureSizeBlacklisted){
+        // Due to b/21758681, it is possible that an invalid picture size has
+        // been saved to the settings. Therefore, picture size is set AND is not
+        // blacklisted, but completely invalid. In these cases, need to take the
+        // fallback, instead of the saved value. This logic should now save a
+        // valid picture size to the settings and self-correct the state of the
+        // settings.
+        final boolean isPictureSizeFromSettingsValid =
+                pictureSize.width() > 0 && pictureSize.height() > 0;
+
+        if (!isPictureSizeSettingSet || isPictureSizeBlacklisted || !isPictureSizeFromSettingsValid) {
             final Rational aspectRatio = ResolutionUtil.ASPECT_RATIO_4x3;
 
             OneCameraCharacteristics cameraCharacteristics =
-                  mOneCameraManager.getOneCameraCharacteristics(cameraId);
+                    mOneCameraManager.getOneCameraCharacteristics(cameraId);
 
             final List<Size> supportedPictureSizes =
                     ResolutionUtil.filterBlackListedSizes(
@@ -149,12 +160,17 @@ public class ResolutionSetting {
                     SettingsUtil.sizeToSettingString(fallbackPictureSize));
             pictureSize = fallbackPictureSize;
             Log.e(TAG, "Picture size setting is not set. Choose " + fallbackPictureSize);
+            // Crash here if invariants are violated
+            Preconditions.checkNotNull(fallbackPictureSize);
+            Preconditions.checkState(fallbackPictureSize.width() > 0
+                    && fallbackPictureSize.height() > 0);
         }
         return pictureSize;
     }
 
     /**
-     * Obtains the preferred picture aspect ratio in terms of the picture size setting.
+     * Obtains the preferred picture aspect ratio in terms of the picture size
+     * setting.
      *
      * @param cameraId The specific camera device.
      * @return The preferred picture aspect ratio.
