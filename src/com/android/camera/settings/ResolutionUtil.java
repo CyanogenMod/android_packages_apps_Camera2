@@ -24,6 +24,7 @@ import com.android.camera.exif.Rational;
 import com.android.camera.util.AndroidServices;
 import com.android.camera.util.ApiHelper;
 import com.android.camera.util.Size;
+
 import com.google.common.collect.Lists;
 
 import java.math.BigInteger;
@@ -359,15 +360,35 @@ public class ResolutionUtil {
     }
 
     /**
-     * Selects the maximal resolution for the given aspect ratio from all available resolutions.
+     * Selects the maximal resolution for the given desired aspect ratio from all available
+     * resolutions.  If no resolution exists for the desired aspect ratio, return a resolution
+     * with the maximum number of pixels.
      *
      * @param desiredAspectRatio The desired aspect ratio.
      * @param sizes All available resolutions.
-     * @return The maximal resolution for 4x3 aspect ratio
+     * @return The maximal resolution for desired aspect ratio ; if no sizes are found, then
+     *      return size of (0,0)
      */
     public static Size getLargestPictureSize(Rational desiredAspectRatio, List<Size> sizes) {
-        int maxPixelNum = 0;
+        int maxPixelNumNoAspect = 0;
         Size maxSize = new Size(0, 0);
+
+        // Fix for b/21758681
+        // Do first pass with the candidate with closest size, regardless of aspect ratio,
+        // to loosen the requirement of valid preview sizes.  As long as one size exists
+        // in the list, we should pass back a valid size.
+        for (Size size : sizes) {
+            int pixelNum = size.getWidth() * size.getHeight();
+            if (pixelNum > maxPixelNumNoAspect) {
+                maxPixelNumNoAspect = pixelNum;
+                maxSize = size;
+            }
+        }
+
+        // With second pass, override first pass with the candidate with closest
+        // size AND similar aspect ratio.  If there are no valid candidates are found
+        // in the second pass, take the candidate from the first pass.
+        int maxPixelNumWithAspect = 0;
         for (Size size : sizes) {
             Rational aspectRatio = getAspectRatio(size);
             // Skip if the aspect ratio is not desired.
@@ -375,11 +396,12 @@ public class ResolutionUtil {
                 continue;
             }
             int pixelNum = size.getWidth() * size.getHeight();
-            if (pixelNum > maxPixelNum) {
-                maxPixelNum = pixelNum;
+            if (pixelNum > maxPixelNumWithAspect) {
+                maxPixelNumWithAspect = pixelNum;
                 maxSize = size;
             }
         }
+
         return maxSize;
     }
 
