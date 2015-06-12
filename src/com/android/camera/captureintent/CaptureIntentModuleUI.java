@@ -25,6 +25,7 @@ import com.android.camera.ui.PreviewStatusListener;
 import com.android.camera.ui.ProgressOverlay;
 import com.android.camera.ui.focus.FocusRing;
 import com.android.camera.util.AndroidServices;
+import com.android.camera.util.Size;
 import com.android.camera2.R;
 
 import android.graphics.Bitmap;
@@ -109,6 +110,13 @@ public class CaptureIntentModuleUI {
      */
     public RectF getPreviewRect() {
         return mPreviewRect;
+    }
+
+    /**
+     * Obtains the current preview layout size.
+     */
+    public Size getPreviewSurfaceSize() {
+        return new Size(mAppUI.getSurfaceWidth(), mAppUI.getSurfaceHeight());
     }
 
     /**
