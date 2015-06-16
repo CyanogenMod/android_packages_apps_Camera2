@@ -366,7 +366,7 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"फिर से फ़ोकस करने के लिए, यहां स्पर्श करें"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"वरीयताएं"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"मैन्युअल एक्सपोज़र"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"सेटिंग में, रिज़ॉल्यूशन बदलें, या अतिरिक्त सुविधाओं को आज़माएं."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"सेटिंग में, रिज़ॉल्यूशन और गुणवत्ता बदलें, या अतिरिक्त सुविधाओं को आज़माएं."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"फ़ोटो आकार चुनें"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"आप इसे बाद में सेटिंग में बदल सकते हैं."</string>
     <string name="share_to" msgid="5144911209144798122">"इनसे साझा करें:"</string>

@@ -347,7 +347,7 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Камера за умовчанням"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Довідка й відгуки"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Обробка HDR+…"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"Ліцензії ПЗ з відкритим кодом"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Ліцензії відкритого коду"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Загальні налаштування"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Роздільна здатність і якість"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Про програму"</string>
