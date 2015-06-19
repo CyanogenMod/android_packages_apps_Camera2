@@ -40,10 +40,8 @@ public class OneCameraFeatureConfigCreator {
      */
     public static OneCameraFeatureConfig createDefault(ContentResolver contentResolver,
             MemoryManager memoryManager) {
-        // Enable CaptureModule on all L devices unless the device is
-        // black-listed.
-        boolean useCaptureModule = ApiHelper.HAS_CAMERA_2_API
-                && !GservicesHelper.isCaptureModuleDisabled(contentResolver);
+        // Enable CaptureModule on all M devices.
+        boolean useCaptureModule = true;
         Log.i(TAG, "CaptureModule? " + useCaptureModule);
 
         // HDR+ has multiple levels of support.
