@@ -24,7 +24,7 @@
   <string name="pref_camera_powermode_title">Energia modua</string>
   <string name="pref_camera_powermode_entry_lp">Energia baxua</string>
   <string name="pref_camera_powermode_entry_np">Energia arrunta</string>
-  <string name="pref_camera_autoexposure_title">Espozizio automatikoa</string>
+  <string name="pref_camera_autoexposure_title">Esposizio automatikoa</string>
   <string name="pref_camera_autoexposure_entry_frameaverage">Matriziala</string>
   <string name="pref_camera_autoexposure_entry_centerweighted">Erdialdean haztatua</string>
   <string name="pref_camera_autoexposure_entry_spotmetering">Puntuala</string>
@@ -39,7 +39,7 @@
   <string name="hdr_enable_message">HDR gaituta dago, auto eszena modua onartzen da soilik</string>
   <string name="scene_enable_message">HDR ez da onartzen auto eszena ez den modu batean</string>
   <string name="pref_camera_video_hdr_title">Hein dinamiko altuko bideoa</string>
-  <string name="pref_camera_facedetection_title">Aurpegien antzematea</string>
+  <string name="pref_camera_facedetection_title">Aurpegi antzematea</string>
   <string name="pref_camera_redeyereduction_title">Begi gorrien murrizketa</string>
   <string name="error_app_unsupported_hfr_selection">HFR ez dago eskuragarri bideo estabilizazioa, time lapse edo bideo HDR biztuta daudenean</string>
   <string name="error_app_unsupported_hfr">Abiadura handiko bideoa ez dago erabilgarri hautaturiko erresoluzioan</string>
@@ -48,7 +48,7 @@
   <string name="error_app_unsupported_dis">Bideo estabilizazioa ez da onartzen hautatutako erresoluzioarekin</string>
   <string name="pref_camera_ae_bracket_hdr_title">HDR esposizio automatikoa</string>
   <string name="pref_camera_hfr_title">Kamera geldoa (HFR)</string>
-  <string name="pref_camera_hfr_entry_off">Ezgaituta</string>
+  <string name="pref_camera_hfr_entry_off">Ez</string>
   <string name="pref_camera_hfr_entry_2x">60 FPS</string>
   <string name="pref_camera_hfr_entry_3x">90 FPS</string>
   <string name="pref_camera_hfr_entry_4x">120 FPS</string>
@@ -75,8 +75,8 @@
   <string name="pref_camera_iso_entry_iso3200">ISO3200</string>
   <string name="pref_camera_iso_entry_iso6400">ISO6400</string>
   <string name="pref_camera_iso_entry_iso12800">ISO12800</string>
-  <string name="pref_camera_antibanding_title">Kliskagailu murriztailea</string>
-  <string name="pref_camera_antibanding_entry_0">Ezgaituta</string>
+  <string name="pref_camera_antibanding_title">Marratzea ekiditea</string>
+  <string name="pref_camera_antibanding_entry_0">Ez</string>
   <string name="pref_camera_antibanding_entry_1">50 Hz</string>
   <string name="pref_camera_antibanding_entry_2">60 Hz</string>
   <string name="pref_camera_antibanding_entry_3">Automatikoa</string>
@@ -93,9 +93,9 @@
   <string name="pref_camera_coloreffect_entry_neon">Neona</string>
   <string name="pref_camera_coloreffect_entry_pastel">Pastela</string>
   <string name="pref_camera_coloreffect_entry_mosaic">Mosaikoa</string>
-  <string name="pref_camera_coloreffect_entry_redtint">Tintatu gorria</string>
-  <string name="pref_camera_coloreffect_entry_bluetint">Tintatu urdina</string>
-  <string name="pref_camera_coloreffect_entry_greentint">Tintatu berdea</string>
+  <string name="pref_camera_coloreffect_entry_redtint">Gorriz tindatu</string>
+  <string name="pref_camera_coloreffect_entry_bluetint">Urdinez tindatu</string>
+  <string name="pref_camera_coloreffect_entry_greentint">Berdez tindatu</string>
   <string name="pref_camera_touchafaec_title">AF/AEC sakatzea</string>
   <string name="pref_camera_dis_title">Bideo egonkortzea</string>
   <string name="pref_camera_facerc_title">Aurpegi antzematea</string>
@@ -140,5 +140,5 @@
   <string name="pref_camera_jpegquality_entry_4">95%</string>
   <string name="pref_camera_jpegquality_entry_5">100%</string>
   <string name="pref_camera_histogram_title">Histograma</string>
-  <string name="pref_camera_scenedetect_title">Eszena adimentsua</string>
+  <string name="pref_camera_scenedetect_title">Eszena antzemate adimentsua</string>
 </resources>

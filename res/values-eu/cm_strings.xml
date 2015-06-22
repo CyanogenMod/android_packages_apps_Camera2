@@ -102,7 +102,7 @@
   <string name="pref_camera_coloreffect_entry_point_red_yellow">Puntu gorri-horia</string>
   <string name="pref_camera_coloreffect_entry_cartoonize">Bineta</string>
   <string name="pref_camera_burst_title">Kliskatze sorta</string>
-  <string name="pref_camera_burst_entry_off">Itzalita</string>
+  <string name="pref_camera_burst_entry_off">Ez</string>
   <string name="pref_camera_burst_entry_5">5 kliskatze</string>
   <string name="pref_camera_burst_entry_10">10 kliskatze</string>
   <string name="pref_camera_burst_entry_15">15 kliskatze</string>
@@ -118,7 +118,7 @@
   <string name="pref_camera_flashmode_label_redeye">BEGI GORRIAK</string>
   <string name="pref_camera_beauty_mode_title">Edertasun modua</string>
   <string name="pref_camera_slow_shutter_title">Obturadore motela</string>
-  <string name="pref_camera_slow_shutter_entry_off">Itzalita</string>
+  <string name="pref_camera_slow_shutter_entry_off">Ez</string>
   <string name="pref_camera_slow_shutter_entry_auto">Automatikoa</string>
   <string name="pref_camera_slow_shutter_entry_half_second">Segundo ½</string>
   <string name="pref_camera_slow_shutter_entry_1s">Segundo 1</string>
