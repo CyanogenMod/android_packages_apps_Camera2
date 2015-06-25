@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.ViewGroup;
 
+import com.android.camera.device.CameraId;
 import com.android.camera.exif.Rational;
 import com.android.camera.one.OneCamera.Facing;
 import com.android.camera.one.OneCameraAccessException;
@@ -157,10 +158,14 @@ public class FirstRunDialog {
             public void onConfirm(Rational aspectRatio) {
                 // Change resolution setting based on the chosen aspect ratio.
                 try {
-                    mResolutionSetting.setPictureAspectRatio(
-                          mOneCameraManager.findFirstCameraFacing(Facing.BACK), aspectRatio);
-                    mResolutionSetting.setPictureAspectRatio(
-                          mOneCameraManager.findFirstCameraFacing(Facing.FRONT), aspectRatio);
+                    CameraId backCameraId = mOneCameraManager.findFirstCameraFacing(Facing.BACK);
+                    if (backCameraId != null) {
+                        mResolutionSetting.setPictureAspectRatio(backCameraId, aspectRatio);
+                    }
+                    CameraId frontCameraId = mOneCameraManager.findFirstCameraFacing(Facing.FRONT);
+                    if (frontCameraId != null) {
+                        mResolutionSetting.setPictureAspectRatio(frontCameraId, aspectRatio);
+                    }
                 } catch (OneCameraAccessException ex) {
                     mListener.onCameraAccessException();
                     return;
