@@ -65,6 +65,8 @@ import com.android.camera.settings.SettingsManager;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.TouchCoordinate;
 import com.android.camera.ui.focus.FocusController;
+import com.android.camera.util.Size;
+
 import com.google.common.base.Optional;
 
 import javax.annotation.Nullable;
@@ -224,8 +226,15 @@ public final class StateReadyForCapture extends StateImpl {
                     public Optional<State> processEvent(EventOnSurfaceTextureUpdated event) {
                         if (mShouldUpdateTransformOnNextSurfaceTextureUpdate) {
                             mShouldUpdateTransformOnNextSurfaceTextureUpdate = false;
+
+                            // We have to provide a preview layout size to
+                            // ResourceSurfaceTexture. Otherwise, it will
+                            // not be able to calculate transform matrix.
+                            Size previewSurfaceSize = mResourceCaptureTools.get().getModuleUI()
+                                    .getPreviewSurfaceSize();
                             mResourceCaptureTools.get().getResourceSurfaceTexture().get()
-                                    .updatePreviewTransform();
+                                    .setPreviewLayoutSize(previewSurfaceSize);
+
                             removeEventHandler(EventOnSurfaceTextureUpdated.class);
                         }
                         return NO_CHANGE;
