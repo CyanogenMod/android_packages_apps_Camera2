@@ -96,7 +96,20 @@ public class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture {
     @Override
     public void setPreviewSize(Size previewSize) {
         // Update preview transform when preview stream size is changed.
-        mPreviewSize = previewSize;
+        if (!mPreviewSize.equals(previewSize)) {
+            mPreviewSize = previewSize;
+
+            /**
+             * Update transform here since preview size might change when
+             * switching between back and front camera.
+             */
+            mResourceConstructed.get().getMainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    updatePreviewTransform();
+                }
+            });
+        }
 
         // Update surface texture's default buffer size. See b/17286155.
         mSurfaceTexture.setDefaultBufferSize(mPreviewSize.width(), mPreviewSize.height());
@@ -124,10 +137,15 @@ public class ResourceSurfaceTextureImpl implements ResourceSurfaceTexture {
     @Override
     public void updatePreviewTransform() {
         MainThread.checkMainThread();
-        if (mPreviewSize.getWidth() == 0 || mPreviewSize.getHeight() == 0 ||
-                mPreviewLayoutSize.getWidth() == 0 || mPreviewLayoutSize.getHeight() == 0) {
+        if (mPreviewSize.getWidth() == 0 || mPreviewSize.getHeight() == 0) {
+            Log.w(TAG, "Do nothing since mPreviewSize is 0");
             return;
         }
+        if (mPreviewLayoutSize.getWidth() == 0 || mPreviewLayoutSize.getHeight() == 0) {
+            Log.w(TAG, "Do nothing since mPreviewLayoutSize is 0");
+            return;
+        }
+
         Matrix transformMatrix = mPreviewTransformCalculator.toTransformMatrix(
                 mPreviewLayoutSize, mPreviewSize);
         mResourceConstructed.get().getModuleUI().updatePreviewTransform(transformMatrix);
