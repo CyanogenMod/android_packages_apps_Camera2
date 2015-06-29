@@ -777,7 +777,7 @@ public class CameraActivity extends QuickActivity
                     int currentIndex = mFilmstripController.getCurrentAdapterIndex();
                     for (Integer index : indexes) {
                         if (index == currentIndex) {
-                            updateBottomControlsByData(mDataAdapter.getItemAt(index));
+                            updateUiByData(index);
                             // Currently we have only 1 data can be matched.
                             // No need to look for more, break.
                             break;
