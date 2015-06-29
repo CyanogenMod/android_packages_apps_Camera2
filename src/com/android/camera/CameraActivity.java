@@ -17,6 +17,7 @@
 
 package com.android.camera;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -28,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -190,6 +192,9 @@ public class CameraActivity extends QuickActivity
     private static final long SCREEN_DELAY_MS = 2 * 60 * 1000; // 2 mins.
     /** Load metadata for 10 items ahead of our current. */
     private static final int FILMSTRIP_PRELOAD_AHEAD_ITEMS = 10;
+    private static final int PERMISSIONS_ACTIVITY_REQUEST_CODE = 1;
+    private static final int PERMISSIONS_RESULT_CODE_OK = 0;
+    private static final int PERMISSIONS_RESULT_CODE_FAILED = 1;
 
     /** Should be used wherever a context is needed. */
     private Context mAppContext;
@@ -245,6 +250,7 @@ public class CameraActivity extends QuickActivity
     private boolean mIsUndoingDeletion = false;
     private boolean mIsActivityRunning = false;
     private FatalErrorHandler mFatalErrorHandler;
+    private boolean mHasCriticalPermissions;
 
     private final Uri[] mNfcPushUris = new Uri[1];
 
@@ -1434,7 +1440,7 @@ public class CameraActivity extends QuickActivity
         mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver(),
                 getServices().getMemoryManager());
         mFatalErrorHandler = new FatalErrorHandlerImpl(this);
-
+        checkPermissions();
         profile.mark();
         if (!Glide.isSetup()) {
             Context context = getAndroidContext();
@@ -1602,13 +1608,6 @@ public class CameraActivity extends QuickActivity
               new PhotoDataFactory());
         mVideoItemFactory = new VideoItemFactory(mAppContext, glideManager, appContentResolver,
               new VideoDataFactory());
-        mDataAdapter = new CameraFilmstripDataAdapter(mAppContext,
-              mPhotoItemFactory, mVideoItemFactory);
-        mDataAdapter.setLocalDataListener(mFilmstripItemListener);
-
-        mPreloader = new Preloader<Integer, AsyncTask>(FILMSTRIP_PRELOAD_AHEAD_ITEMS, mDataAdapter,
-                mDataAdapter);
-
         mCameraAppUI.getFilmstripContentPanel().setFilmstripListener(mFilmstripListener);
         if (mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL,
                                         Keys.KEY_SHOULD_SHOW_REFOCUS_VIEWER_CLING)) {
@@ -1622,45 +1621,6 @@ public class CameraActivity extends QuickActivity
         profile.mark("Init Current Module UI");
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
         profile.mark("Init CurrentModule");
-
-        if (!mSecureCamera) {
-            mFilmstripController.setDataAdapter(mDataAdapter);
-            if (!isCaptureIntent()) {
-                mDataAdapter.requestLoad(new Callback<Void>() {
-                    @Override
-                    public void onCallback(Void result) {
-                        fillTemporarySessions();
-                    }
-                });
-            }
-        } else {
-            // Put a lock placeholder as the last image by setting its date to
-            // 0.
-            ImageView v = (ImageView) getLayoutInflater().inflate(
-                    R.layout.secure_album_placeholder, null);
-            v.setTag(R.id.mediadata_tag_viewtype, FilmstripItemType.SECURE_ALBUM_PLACEHOLDER.ordinal());
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
-                            NavigationChange.InteractionCause.BUTTON);
-                    startGallery();
-                    finish();
-                }
-            });
-            v.setContentDescription(getString(R.string.accessibility_unlock_to_camera));
-            mDataAdapter = new FixedLastProxyAdapter(
-                    mAppContext,
-                    mDataAdapter,
-                    new PlaceholderItem(
-                            v,
-                            FilmstripItemType.SECURE_ALBUM_PLACEHOLDER,
-                            v.getDrawable().getIntrinsicWidth(),
-                            v.getDrawable().getIntrinsicHeight()));
-            // Flush out all the original data.
-            mDataAdapter.clear();
-            mFilmstripController.setDataAdapter(mDataAdapter);
-        }
 
         setupNfcBeamPush();
 
@@ -1857,7 +1817,9 @@ public class CameraActivity extends QuickActivity
         mLocalImagesObserver.setForegroundChangeListener(null);
         mLocalImagesObserver.setActivityPaused(true);
         mLocalVideosObserver.setActivityPaused(true);
-        mPreloader.cancelAllLoads();
+        if (mPreloader != null) {
+            mPreloader.cancelAllLoads();
+        }
         resetScreenOn();
 
         mMotionManager.stop();
@@ -1887,7 +1849,6 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onResumeTasks() {
         mPaused = false;
-
         if (!mSecureCamera) {
             // Show the dialog if necessary. The rest resume logic will be invoked
             // at the onFirstRunStateReady() callback.
@@ -1905,11 +1866,99 @@ public class CameraActivity extends QuickActivity
         }
     }
 
+    /**
+     * Checks if any of the needed Android runtime permissions are missing.
+     * If they are, then launch the permissions activity under one of the following conditions:
+     * a) The permissions dialogs have not run yet. We will ask for permission only once.
+     * b) If the missing permissions are critical to the app running, we will display a fatal error dialog.
+     * Critical permissions are: camera, microphone and storage. The app cannot run without them.
+     * Non-critical permission is location.
+     */
+    private void checkPermissions() {
+
+        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            mHasCriticalPermissions = true;
+        } else {
+            mHasCriticalPermissions = false;
+        }
+
+        if ((checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                !mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL, Keys.KEY_HAS_SEEN_PERMISSIONS_DIALOGS)) ||
+                !mHasCriticalPermissions) {
+            Intent intent = new Intent(this, PermissionsActivity.class);
+            startActivityForResult(intent, PERMISSIONS_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Close the app if critical permissions are missing.
+        if (requestCode == PERMISSIONS_ACTIVITY_REQUEST_CODE && resultCode == PERMISSIONS_RESULT_CODE_FAILED) {
+            finish();
+        }
+    }
+
+    private void preloadFilmstripItems() {
+        if (mDataAdapter == null) {
+            mDataAdapter = new CameraFilmstripDataAdapter(mAppContext,
+                    mPhotoItemFactory, mVideoItemFactory);
+            mDataAdapter.setLocalDataListener(mFilmstripItemListener);
+            mPreloader = new Preloader<Integer, AsyncTask>(FILMSTRIP_PRELOAD_AHEAD_ITEMS, mDataAdapter,
+                    mDataAdapter);
+            if (!mSecureCamera) {
+                mFilmstripController.setDataAdapter(mDataAdapter);
+                if (!isCaptureIntent()) {
+                    mDataAdapter.requestLoad(new Callback<Void>() {
+                        @Override
+                        public void onCallback(Void result) {
+                            fillTemporarySessions();
+                        }
+                    });
+                }
+            } else {
+                // Put a lock placeholder as the last image by setting its date to
+                // 0.
+                ImageView v = (ImageView) getLayoutInflater().inflate(
+                        R.layout.secure_album_placeholder, null);
+                v.setTag(R.id.mediadata_tag_viewtype, FilmstripItemType.SECURE_ALBUM_PLACEHOLDER.ordinal());
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UsageStatistics.instance().changeScreen(NavigationChange.Mode.GALLERY,
+                                NavigationChange.InteractionCause.BUTTON);
+                        startGallery();
+                        finish();
+                    }
+                });
+                v.setContentDescription(getString(R.string.accessibility_unlock_to_camera));
+                mDataAdapter = new FixedLastProxyAdapter(
+                        mAppContext,
+                        mDataAdapter,
+                        new PlaceholderItem(
+                                v,
+                                FilmstripItemType.SECURE_ALBUM_PLACEHOLDER,
+                                v.getDrawable().getIntrinsicWidth(),
+                                v.getDrawable().getIntrinsicHeight()));
+                // Flush out all the original data.
+                mDataAdapter.clear();
+                mFilmstripController.setDataAdapter(mDataAdapter);
+            }
+        }
+    }
+
     private void resume() {
         Profile profile = mProfiler.create("CameraActivity.resume").start();
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
         Log.v(TAG, "Build info: " + Build.DISPLAY);
-
+        if (!mHasCriticalPermissions) {
+            Log.v(TAG, "Missing critical permissions.");
+            return;
+        }
+        preloadFilmstripItems();
         updateStorageSpaceAndHint(null);
 
         mLastLayoutOrientation = getResources().getConfiguration().orientation;
