@@ -99,7 +99,8 @@ public class Camera2OneCameraManagerImpl implements OneCameraManager {
 
     @Override
     public CameraId findFirstCameraFacing(@Nonnull Facing facing) {
-        return CameraId.from(findCameraId(facing));
+        String cameraId = findCameraId(facing);
+        return (cameraId != null) ? CameraId.from(cameraId) : null;
     }
 
     @Override

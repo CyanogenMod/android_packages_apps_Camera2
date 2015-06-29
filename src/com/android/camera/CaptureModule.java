@@ -773,7 +773,7 @@ public class CaptureModule extends CameraModule implements
         return new HardwareSpec() {
             @Override
             public boolean isFrontCameraSupported() {
-                return true;
+                return mOneCameraManager.hasCameraFacing(Facing.FRONT);
             }
 
             @Override
