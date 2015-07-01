@@ -369,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Under Inställningar ändrar du upplösning och kvalitet, eller testar avancerade funktioner."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Välj fotostorlek"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Det här kan ändras senare under Inställningar."</string>
-    <string name="share_to" msgid="5144911209144798122">"Dela på"</string>
+    <string name="share_to" msgid="5144911209144798122">"Dela via"</string>
     <string name="edit_with" msgid="615569327230783971">"Redigera med"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"NÄSTA"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, JAG FÖRSTÅR"</string>
