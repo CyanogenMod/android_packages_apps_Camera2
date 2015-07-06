@@ -80,7 +80,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"انتخاب دوربین"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"برگشت"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"جلو"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ذخیره مکان"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ذخیره موقعیت مکانی"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"موقعیت مکانی"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"تایمر شمارش معکوس"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -275,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"تنظیم مدت زمان به ثانیه"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای عکس گرفتن"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"موقعیت مکانی عکس به خاطر سپرده شود؟"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"عکس‌ها و ویدیوهایتان را با موقعیت مکانی که گرفته شده‌اند، برچسب بزنید.\n\nدیگر برنامه‌ها می‌توانند همراه با تصاویر ذخیره شده‌تان به این اطلاعات دسترسی داشته باشند."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"محل گرفتن عکس‌ها و ویدیوها را به آنها برچسب کنید.\n\n برنامه‌های دیگر می‌توانند به این اطلاعات به همراه تصاویر ذخیره شده‌تان دسترسی داشته باشند."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"خیر متشکرم"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"بله"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"گزینه‌های بیشتر"</string>
@@ -349,7 +349,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"‏در حال پردازش +HDR ..."</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"مجوزهای منبع باز"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"تنظیمات عمومی"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"وضوح تصویر و کیفیت"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"وضوح و کیفیت"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"درباره"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"نسخه ساخت"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"پایین"</string>
@@ -366,7 +366,7 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"برای فوکوس مجدد، اینجا را لمس کنید"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"پیشرفته"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"نوردهی دستی"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"در تنظیمات، وضوح تصویر و کیفیت را تغییر دهید یا قابلیت‌های پیشرفته را امتحان کنید."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"در تنظیمات، می‌توانید وضوح و کیفیت را تغییر دهید یا قابلیت‌های پیشرفته را امتحان کنید."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"انتخاب اندازه عکس"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"می‌توانید بعداً این مورد را در تنظیمات تغییر دهید."</string>
     <string name="share_to" msgid="5144911209144798122">"اشتراک‌گذاری با"</string>

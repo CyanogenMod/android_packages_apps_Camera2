@@ -365,7 +365,7 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s మెగాపిక్సెల్‌లు"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"మళ్లీ దృష్టి సారించడానికి, ఇక్కడ తాకండి"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"అధునాతనం"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"మాన్యువల్ బహిర్గతం"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"మాన్యువల్ ఎక్స్‌పోజర్"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"సెట్టింగ్‌ల్లో, రిజల్యూషన్ మరియు నాణ్యతను మార్చండి లేదా అధునాతన లక్షణాలను ప్రయత్నించండి."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ఫోటో పరిమాణం ఎంచుకోండి"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"మీరు దీన్ని సెట్టింగ్‌ల్లో తర్వాత మార్చవచ్చు."</string>
