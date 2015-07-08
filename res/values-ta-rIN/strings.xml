@@ -68,6 +68,8 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"கேமராவுடன் இணைக்க முடியவில்லை."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"பாதுகாப்புக் கொள்கைகள் காரணமாக கேமரா முடக்கப்பட்டுள்ளது."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"படம் அல்லது வீடியோவைச் சேமிப்பதில் சிக்கல்."</string>
+    <!-- no translation found for error_permissions (3454167403425651254) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"படத்தைச் சேமிப்பதில் தோல்வி."</string>
     <string name="wait" msgid="765601745709933047">"காத்திருக்கவும்…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"கேமராவைப் பயன்படுத்துவதற்கு முன், SD கார்டைச் செருகவும்."</string>

@@ -68,6 +68,8 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"कॅमेर्‍याशी कनेक्ट करु शकत नाही."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"सुरक्षा धोरणांमुळे कॅमेरा अक्षम केला गेला आहे."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"आपला फोटो किंवा व्हिडिओ जतन करण्यात समस्या आली."</string>
+    <!-- no translation found for error_permissions (3454167403425651254) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"फोटो संचयन बिघाड."</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा करा..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"कॅमेरा वापरण्‍यापूर्वी SD कार्ड घाला."</string>
