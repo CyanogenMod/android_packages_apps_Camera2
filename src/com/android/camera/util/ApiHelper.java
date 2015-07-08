@@ -112,4 +112,9 @@ public class ApiHelper {
         return Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP
                 || Build.VERSION.SDK_INT == 22; // Lollipop MR1
     }
+
+    public static boolean isMOrHigher() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.MNC
+                || "MNC".equals(Build.VERSION.CODENAME);
+    }
 }
