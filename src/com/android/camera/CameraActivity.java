@@ -1904,6 +1904,8 @@ public class CameraActivity extends QuickActivity
         // Close the app if critical permissions are missing.
         if (requestCode == PERMISSIONS_ACTIVITY_REQUEST_CODE && resultCode == PERMISSIONS_RESULT_CODE_FAILED) {
             finish();
+        } else if (requestCode == PERMISSIONS_ACTIVITY_REQUEST_CODE && resultCode == PERMISSIONS_RESULT_CODE_OK) {
+            mHasCriticalPermissions = true;
         }
     }
 
