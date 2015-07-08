@@ -193,8 +193,8 @@ public class CameraActivity extends QuickActivity
     /** Load metadata for 10 items ahead of our current. */
     private static final int FILMSTRIP_PRELOAD_AHEAD_ITEMS = 10;
     private static final int PERMISSIONS_ACTIVITY_REQUEST_CODE = 1;
-    private static final int PERMISSIONS_RESULT_CODE_OK = 0;
-    private static final int PERMISSIONS_RESULT_CODE_FAILED = 1;
+    private static final int PERMISSIONS_RESULT_CODE_OK = 1;
+    private static final int PERMISSIONS_RESULT_CODE_FAILED = 2;
 
     /** Should be used wherever a context is needed. */
     private Context mAppContext;
@@ -1440,7 +1440,6 @@ public class CameraActivity extends QuickActivity
         mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver(),
                 getServices().getMemoryManager());
         mFatalErrorHandler = new FatalErrorHandlerImpl(this);
-        checkPermissions();
         profile.mark();
         if (!Glide.isSetup()) {
             Context context = getAndroidContext();
@@ -1849,6 +1848,11 @@ public class CameraActivity extends QuickActivity
     @Override
     public void onResumeTasks() {
         mPaused = false;
+        checkPermissions();
+        if (!mHasCriticalPermissions) {
+            Log.v(TAG, "Missing critical permissions.");
+            return;
+        }
         if (!mSecureCamera) {
             // Show the dialog if necessary. The rest resume logic will be invoked
             // at the onFirstRunStateReady() callback.
@@ -1900,7 +1904,6 @@ public class CameraActivity extends QuickActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Close the app if critical permissions are missing.
         if (requestCode == PERMISSIONS_ACTIVITY_REQUEST_CODE && resultCode == PERMISSIONS_RESULT_CODE_FAILED) {
             finish();
@@ -1961,10 +1964,6 @@ public class CameraActivity extends QuickActivity
         Profile profile = mProfiler.create("CameraActivity.resume").start();
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
         Log.v(TAG, "Build info: " + Build.DISPLAY);
-        if (!mHasCriticalPermissions) {
-            Log.v(TAG, "Missing critical permissions.");
-            return;
-        }
         preloadFilmstripItems();
         updateStorageSpaceAndHint(null);
 
