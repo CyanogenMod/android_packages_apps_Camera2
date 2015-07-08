@@ -1875,6 +1875,11 @@ public class CameraActivity extends QuickActivity
      * Non-critical permission is location.
      */
     private void checkPermissions() {
+        if (!ApiHelper.isMOrHigher()) {
+            Log.v(TAG, "not running on M, skipping permission checks");
+            mHasCriticalPermissions = true;
+            return;
+        }
 
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
