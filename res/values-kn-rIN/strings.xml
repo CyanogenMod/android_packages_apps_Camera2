@@ -68,6 +68,8 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ಕ್ಯಾಮರಾಗೆ ಸಂಪರ್ಕಪಡಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"ಭದ್ರತೆ ನೀತಿಗಳ ಕಾರಣ ಕ್ಯಾಮರಾವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ನಿಮ್ಮ ಫೋಟೋ ಅಥವಾ ವೀಡಿಯೊವನ್ನು ಉಳಿಸುವಲ್ಲಿ ಸಮಸ್ಯೆ ಉಂಟಾಗಿದೆ."</string>
+    <!-- no translation found for error_permissions (3454167403425651254) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"ಫೋಟೋ ಸಂಗ್ರಹಣೆ ವೈಫಲ್ಯ."</string>
     <string name="wait" msgid="765601745709933047">"ದಯವಿಟ್ಟು ನಿರೀಕ್ಷಿಸಿ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ಕ್ಯಾಮರಾ ಬಳಸುವುದಕ್ಕೂ ಮೊದಲು ಒಂದು SD ಕಾರ್ಡ್ ಸೇರಿಸಿ."</string>
@@ -275,7 +277,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ಅವಧಿಯನ್ನು ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಹೊಂದಿಸಿ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ಪೋಟೋ ತೆಗೆದುಕೊಳ್ಳಲು ಎಣಿಸಲಾಗುತ್ತಿದೆ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ಫೋಟೋ ಸ್ಥಳಗಳನ್ನು ನೆನಪಿಡುವುದೇ?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ನಿಮ್ಮ ಫೋಟೋಗಳು ಮತ್ತು ವೀಡಿಯೊಗಳನ್ನು ಸೆರೆಹಿಡಿದಿರುವ ಸ್ಥಳಗಳನ್ನು ಬಳಸಿಕೊಂಡು ಅವುಗಳನ್ನು ಟ್ಯಾಗ್ ಮಾಡಿ.\n\nನಿಮ್ಮ ಉಳಿಸಲಾಗಿರುವ ಚಿತ್ರಗಳ ಜೊತೆಗೆ ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಈ ಮಾಹಿತಿಯನ್ನು ಪ್ರವೇಶಿಸಬಹುದು."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ನಿಮ್ಮ ಫೋಟೋಗಳು ಮತ್ತು ವೀಡಿಯೊಗಳನ್ನು ಸೆರೆಹಿಡಿದಿರುವ ಸ್ಥಳಗಳ ಪ್ರಕಾರವಾಗಿ ಅವುಗಳನ್ನು ಟ್ಯಾಗ್ ಮಾಡಿ.\n\nಉಳಿಸಲಾದ ನಿಮ್ಮ ಚಿತ್ರಗಳ ಜೊತೆಗೆ ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಈ ಮಾಹಿತಿಯನ್ನು ಪ್ರವೇಶಿಸಬಹುದು."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ಧನ್ಯವಾದಗಳು"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ಹೌದು"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು"</string>
@@ -366,10 +368,10 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ಮರುಕೇಂದ್ರೀಕರಿಸಲು, ಇಲ್ಲಿ ಸ್ಪರ್ಶಿಸಿ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"ಸುಧಾರಿತ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ಮ್ಯಾನ್ಯುಯಲ್ ಎಕ್ಸ್‌‌ಪೋಸರ್‌"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ, ರೆಸಲ್ಯೂಷನ್ ಮತ್ತು ಗುಣಮಟ್ಟವನ್ನು ಬದಲಾಯಿಸಿ ಅಥವಾ ಸುಧಾರಿತ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರಯತ್ನಿಸಿ."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ, ರೆಸಲ್ಯೂಷನ್ ಮತ್ತು ಗುಣಮಟ್ಟ ಬದಲಾಯಿಸಿ ಅಥವಾ ಸುಧಾರಿತ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಬಳಸಿ."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ಫೋಟೋ ಗಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ನೀವು ಇದನ್ನು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ನಂತರ ಬದಲಾಯಿಸಬಹುದು."</string>
-    <string name="share_to" msgid="5144911209144798122">"ಇವುಗಳಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ"</string>
+    <string name="share_to" msgid="5144911209144798122">"ಇವುಗಳೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಿ"</string>
     <string name="edit_with" msgid="615569327230783971">"ಇವರ ಜೊತೆಗೆ ಸಂಪಾದಿಸಿ"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ಮುಂದೆ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ಸರಿ, ಅರ್ಥವಾಯಿತು"</string>

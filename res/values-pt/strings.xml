@@ -68,6 +68,8 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Não é possível conectar à câmera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"A câmera foi desativada devido às políticas de segurança."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Ocorreu um problema ao salvar a foto ou o vídeo."</string>
+    <!-- no translation found for error_permissions (3454167403425651254) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"Falha no armazenamento de fotos."</string>
     <string name="wait" msgid="765601745709933047">"Aguarde…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Insira um cartão SD antes de usar a câmera."</string>

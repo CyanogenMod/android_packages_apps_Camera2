@@ -68,6 +68,8 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ക്യാമറയിൽ കണ‌ക്‌റ്റുചെയ്യാനായില്ല."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"സുരക്ഷാ നയങ്ങൾ കാരണം ക്യാമറ പ്രവർത്തനരഹിതമാക്കി."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"നിങ്ങളുടെ ഫോട്ടോയോ വീഡിയോയൊ സംരക്ഷിക്കുന്നതിൽ പ്രശ്‌നമുണ്ടായി."</string>
+    <!-- no translation found for error_permissions (3454167403425651254) -->
+    <skip />
     <string name="reason_storage_failure" msgid="6818898304774654969">"ഫോട്ടോ സംഭരിക്കുന്നതിൽ ​​പരാജയപ്പെട്ടു."</string>
     <string name="wait" msgid="765601745709933047">"കാത്തിരിക്കൂ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ക്യാമറ ഉപയോഗിക്കുന്നതിന് മുമ്പ് SD കാർഡ് ചേർക്കുക."</string>
@@ -349,7 +351,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ പ്രോസസ്സുചെയ്യുന്നു …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"ഓപ്പൺ സോഴ്‌സ് ലൈസൻസ്"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"പൊതുവായ സജ്ജീകരണങ്ങള്‍"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"മിഴിവും നിലവാരവും"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"റെസല്യൂഷനും നിലവാരവും"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"ആമുഖം"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"ബിൽഡ് പതിപ്പ്"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"കുറഞ്ഞത്"</string>
@@ -366,7 +368,7 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"വീണ്ടും ഫോക്കസ് ചെയ്യാൻ, ഇവിടെ സ്‌പർശിക്കുക"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"വിപുലമായത്"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"സ്വയമേയുള്ള എക്‌സ്പോഷർ"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"ക്രമീകരണങ്ങളിൽ, മിഴിവും നിലവാരവും മാറ്റുക അല്ലെങ്കിൽ വിപുലമായ സവിശേഷതകൾ പരീക്ഷിക്കുക."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"ക്രമീകരണത്തിൽ റെസല്യൂഷനും നിലവാരവും മാറ്റുക അല്ലെങ്കിൽ വിപുലമായ ഫീച്ചറുകൾ പരീക്ഷിക്കുക."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ഫോട്ടോ വലുപ്പം തിരഞ്ഞെടുക്കുക"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"നിങ്ങൾക്ക് ഇത് പിന്നീട് ക്രമീകരണങ്ങളിൽ മാറ്റാനാകും."</string>
     <string name="share_to" msgid="5144911209144798122">"ഇതുമായി പങ്കിടുക"</string>
