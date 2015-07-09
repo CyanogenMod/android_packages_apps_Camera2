@@ -19,8 +19,8 @@ public class PermissionsActivity extends Activity {
     private static final Log.Tag TAG = new Log.Tag("PermissionsActivity");
 
     private static int PERMISSION_REQUEST_CODE = 1;
-    private static int RESULT_CODE_OK = 0;
-    private static int RESULT_CODE_FAILED = 1;
+    private static int RESULT_CODE_OK = 1;
+    private static int RESULT_CODE_FAILED = 2;
 
     private int mIndexPermissionRequestCamera;
     private int mIndexPermissionRequestMicrophone;
