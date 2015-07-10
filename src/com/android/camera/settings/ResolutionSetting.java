@@ -139,7 +139,7 @@ public class ResolutionSetting {
         // fallback, instead of the saved value. This logic should now save a
         // valid picture size to the settings and self-correct the state of the
         // settings.
-        final boolean isPictureSizeFromSettingsValid =
+        final boolean isPictureSizeFromSettingsValid = pictureSize != null &&
                 pictureSize.width() > 0 && pictureSize.height() > 0;
 
         if (!isPictureSizeSettingSet || isPictureSizeBlacklisted || !isPictureSizeFromSettingsValid) {
