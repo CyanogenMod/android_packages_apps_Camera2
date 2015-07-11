@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"يتعذر الاتصال بالكاميرا."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"تم تعطيل الكاميرا بسبب سياسات الأمان."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"حدثت مشكلة أثناء حفظ الصورة أو الفيديو."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"لا يحتاج التطبيق إلى أذونات خطيرة لتشغيله، يرجى التحقق من إعدادات الأذونات."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"أخفق تخزين الصورة."</string>
     <string name="wait" msgid="765601745709933047">"الرجاء الانتظار…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"‏أدرج بطاقة SD قبل استخدام الكاميرا."</string>

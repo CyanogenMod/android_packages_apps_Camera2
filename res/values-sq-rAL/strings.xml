@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nuk mund të lidhet me kamerën."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera është çaktivizuar për shkak të politikave të sigurisë."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Kishte një problem në ruajtjen e fotografisë ose videos."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"Aplikacioni nuk ka leje të rëndësishme të nevojshme për ekzekutimin. Kontrollo cilësimet e lejeve."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Ruajtja e fotografisë dështoi."</string>
     <string name="wait" msgid="765601745709933047">"Qëndro në pritje..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Fut një kartë SD para se të përdorësh kamerën."</string>
@@ -158,7 +159,7 @@
     <string name="dialog_ok" msgid="774141340500181131">"Në rregull!"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Anulo"</string>
     <string name="dialog_report" msgid="7616428760369876209">"Raporto"</string>
-    <string name="dialog_dismiss" msgid="1382550604990470119">"Hiq dorë"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Injoro"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Hapësira e kartës tënde SD po mbaron. Ndrysho parametrin e cilësisë ose fshi disa imazhe apo skedarë të tjerë."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Kufiri i madhësisë u arrit."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Shumë e shpejtë"</string>
@@ -367,8 +368,8 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapikëza"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Për ta ri-fokusuar, prek këtu"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Të përparuara"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ekspozim manual"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"Te \"Cilësimet\", ndrysho rezolucionin dhe cilësinë ose provo funksionet e përparuara."</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ekspozimi manual"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"Te Cilësimet, ndrysho rezolucionin dhe cilësinë ose provo funksionet e përparuara."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Zgjidh madhësinë e fotografisë"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Këtë mund ta ndryshosh më vonë te \"Cilësimet\""</string>
     <string name="share_to" msgid="5144911209144798122">"Shpërnda në"</string>

@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Tidak dapat menyambung kepada kamera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera telah dilumpuhkan kerana dasar keselamatan."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Terdapat masalah menyimpan foto atau video anda."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"Apl ini tiada kebenaran kritikal yang diperlukan untuk berfungsi. Sila semak tetapan kebenaran anda."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Gagal menyimpan foto."</string>
     <string name="wait" msgid="765601745709933047">"Sila tunggu..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Masukkan kad SD sebelum menggunakan kamera."</string>

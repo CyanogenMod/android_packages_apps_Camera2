@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kameraga ulanib bo‘lmadi."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Xavfsizlik siyosati shartlariga asoslanib, Kamerangiz o‘chirib qo‘yildi."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Rasm yoki videoni saqlashda muammo yuz berdi."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"Ilovani ishga tushirish uchun zarur bo‘lgan muhim ruxsat yetishmayapti. Ruxsat sozlamalarini tekshiring."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Rasmni saqlash bilan bog‘liq xato"</string>
     <string name="wait" msgid="765601745709933047">"Kutib turing…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Kamerani yoqishdan avval SD kartani joylashtiring."</string>

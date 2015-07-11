@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"क्यामेरासँग जडान गर्न सक्दैन।"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"सुरक्षा नीतिहरूका कारण क्यामरा निष्क्रिय गरिएको छ।"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"तपाईँको तस्बिर वा भिडियो सुरक्षित गर्दा एउटा समस्या भयो।"</string>
+    <string name="error_permissions" msgid="3454167403425651254">"अनुप्रयोगसँग चलाउनका लागि अति आवश्यकता अनुमति छैन। कृपया तपाईँको अनुमति सेटिङहरू जाँच गर्नुहोस्।"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"तस्बिर भण्डारण विफलता।"</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा गर्नुहोस्..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"क्यामेराको उपयोग गर्नु अघि एउटा SD कार्ड भित्र राख्नुहोस्।"</string>
