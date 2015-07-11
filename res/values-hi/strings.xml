@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"कैमरे से कनेक्‍ट नहीं किया जा सकता."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"सुरक्षा नीतियों के कारण कैमरा अक्षम कर दिया गया है."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"आपकी फ़ोटो या वीडियो को सहेजते समय समस्‍या हुई थी."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"ऐप के पास चलने के लिए महत्‍वपूर्ण अनुमतियां नहीं हैं. कृपया अपनी अनुमतियां सेटिंग जांचें."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"फ़ोटो मेमोरी विफलता."</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा करें..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"कैमरे का उपयोग करने से पहले SD कार्ड डालें."</string>
@@ -277,7 +276,8 @@
     <string name="set_duration" msgid="1638453882581604341">"अवधि को सेकंड में सेट करें"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"फ़ोटो लेने के लिए उल्टी गिनती कर रहा है"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"फ़ोटो का स्थान याद रखना हैं?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"अपने फ़ोटो और वीडियो को उन स्थानों के साथ टैग करें जहां वे लिए गए हैं.\n\nअन्य ऐप्लिकेशन आपके सहेजे गए चित्रों सहित इस जानकारी का उपयोग कर सकते हैं."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"नहीं,रहने दें"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"हां"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"अधिक विकल्प"</string>
