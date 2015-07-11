@@ -275,7 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Itakda ang tagal sa loob ng ilang segundo"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Nagka-count down upang kumuha ng larawan"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Tandaan ang mga lokasyon ng larawan?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"I-tag ang iyong mga larawan at video sa mga lokasyon kung saan kinunan ang mga iyon.\n\nMaaaring i-access ng ibang apps ang impormasyong ito kasama ng iyong mga na-save na larawan."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Hindi, salamat na lang"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Oo"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"HIGIT PANG MGA OPSYON"</string>
@@ -365,7 +366,7 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixels"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Upang mag-refocus, pumindot dito"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Advanced"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manu-manong exposure"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manual na exposure"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Sa Mga Setting, baguhin ang resolution at kalidad, o subukan ang mga advanced na feature."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Pumili ng laki ng larawan"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Maaari mo itong baguhin sa ibang pagkakatoan sa Mga Setting."</string>

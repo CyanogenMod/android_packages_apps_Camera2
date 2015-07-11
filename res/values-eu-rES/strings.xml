@@ -275,7 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Ezarri iraupena segundotan"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Argazkia ateratzeko atzerantz kontatzen"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Argazkien kokapenak gogoratu nahi dituzu?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiketatu argazkiak eta bideoak ateratzeko eta grabatzeko aukeratutako kokapenekin.\n\nBeste aplikazio batzuek informazio hau atzi dezakete, gordetako irudiekin batera."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Ez, eskerrik asko"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Bai"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"AUKERA GEHIAGO"</string>

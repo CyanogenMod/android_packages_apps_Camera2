@@ -212,7 +212,7 @@
     <string name="video_date_content_description" msgid="2151884014634284456">"Видео је снимљен %s"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"Панорама је снимљена %s"</string>
     <string name="photosphere_date_content_description" msgid="4183741743409007876">"Photo Sphere-а је снимљена %s"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"Замагљивање објектива је снимљено %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Слика са ефектом замагљивања је снимљена %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Обрада медија"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Укључи/искључи листу режима"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Листа режима"</string>
@@ -275,7 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Подеси трајање у секундама"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Одбројавање за снимање слике"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Желите ли да запамтите локације слика?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Додајте сликама и видео снимцима ознаке са местима где су снимљени.\n\nДруге апликације могу да приступе овим информацијама заједно са сачуваним сликама."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Не, хвала"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ЈОШ ОПЦИЈА"</string>
@@ -296,12 +297,12 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Снимање у дужем интервалу"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Широки угао"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Замагљивање објектива"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Замагљивање слике"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Пребаците на режим камере"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Пребаците на видео камеру"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Пребаците на режим Photo Sphere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Пребаците на режим панораме"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Пребацивање на режим Замагљивања објектива"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Пребацивање на режим Замагљивања слике"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Отворите подешавања"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Затворите подешавања"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus је искључен"</string>

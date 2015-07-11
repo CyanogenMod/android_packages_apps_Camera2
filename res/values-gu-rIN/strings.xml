@@ -275,7 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"સેકંડમાં અવધિ સેટ કરો"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ફોટો લેવા માટે કાઉન્ટ ડાઉન કરી રહ્યું છે"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ફોટો સ્થાનો યાદ રાખીએ?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"તમારા ફોટા અને વિડિઓઝને તે જ્યાં લેવાયા તે સ્થાનો સાથે ટેગ કરો.\n\nઅન્ય એપ્લિકેશન્સ આ માહિતીને તમારી સાચવેલ છબીઓ સાથે ઍક્સેસ કરી શકે છે."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"નહીં આભાર"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"હા"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"વધુ વિકલ્પો"</string>

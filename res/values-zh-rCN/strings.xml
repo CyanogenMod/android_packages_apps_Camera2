@@ -275,7 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"设置倒数时间（秒）"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"拍照倒计时中"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"要记住照片拍摄地点吗？"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"为您的照片和视频标明拍摄地点。\n\n其他应用在查看您拍摄的照片时将可以使用这些信息。"</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"不用了"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"好"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"更多选项"</string>

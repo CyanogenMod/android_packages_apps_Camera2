@@ -275,7 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Nustatyti trukmę sekundėmis"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Skaičiuojamas laikas iki fotografavimo"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Atsiminti nuotraukų vietoves?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Žymėkite nuotraukas ir vaizdo įrašus nurodydami vietoves, kuriose jie buvo sukurti.\n\nKitos programos gali pasiekti šią informaciją ir išsaugotus vaizdus."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Ačiū, ne"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Taip"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"DAUGIAU PARINKČIŲ"</string>
