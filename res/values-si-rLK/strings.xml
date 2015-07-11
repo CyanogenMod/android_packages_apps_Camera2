@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"කැමරාව වෙත සම්බන්ධ කළ නොහැක."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"ආරක්ෂණ ප්‍රතිපත්ති නිසා කැමරාව අබල කර ඇත."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ඔබේ ඡායාරූපය හෝ වීඩියෝව සුරැකීමේ ප්‍රශ්නයක් ඇති විය."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"මෙම යෙදුම ධාවනය කිරීමට අවශ්‍ය අවශ්‍යම අවසර නැත. කරුණාකර ඔබගේ අවසර සැකසීම් පරික්ෂා කරන්න."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ඡායාරූප ගබඩාව අසාර්ථකයි."</string>
     <string name="wait" msgid="765601745709933047">"කරුණාකර රැඳී සිටින්න..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"කැමරාව භාවිතා කිරීමට පෙර SD කාඩ් පතක් ඇතුලු කරන්න."</string>

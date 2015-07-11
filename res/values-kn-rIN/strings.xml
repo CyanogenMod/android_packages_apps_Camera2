@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ಕ್ಯಾಮರಾಗೆ ಸಂಪರ್ಕಪಡಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"ಭದ್ರತೆ ನೀತಿಗಳ ಕಾರಣ ಕ್ಯಾಮರಾವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ನಿಮ್ಮ ಫೋಟೋ ಅಥವಾ ವೀಡಿಯೊವನ್ನು ಉಳಿಸುವಲ್ಲಿ ಸಮಸ್ಯೆ ಉಂಟಾಗಿದೆ."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"ಅಪ್ಲಿಕೇಶನ್ ರನ್ ಮಾಡಲು ಅಗತ್ಯವಿರುವ ನಿರ್ಣಾಯಕ ಅನುಮತಿಗಳನ್ನು ಹೊಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಅನುಮತಿಗಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ಫೋಟೋ ಸಂಗ್ರಹಣೆ ವೈಫಲ್ಯ."</string>
     <string name="wait" msgid="765601745709933047">"ದಯವಿಟ್ಟು ನಿರೀಕ್ಷಿಸಿ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ಕ್ಯಾಮರಾ ಬಳಸುವುದಕ್ಕೂ ಮೊದಲು ಒಂದು SD ಕಾರ್ಡ್ ಸೇರಿಸಿ."</string>

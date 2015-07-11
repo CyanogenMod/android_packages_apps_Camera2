@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nu se poate realiza conexiunea la camera foto."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Camera foto a fost dezactivată din cauza politicilor de securitate."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"A apărut o problemă la salvarea fotografiei sau a videoclipului."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Aplicația nu are permisiunile esențiale necesare pentru a funcționa. Verificați setările pentru permisiuni."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Eroare la stocarea fotografiei."</string>
     <string name="wait" msgid="765601745709933047">"Așteptați…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Introduceți un card SD înainte de a utiliza camera foto."</string>

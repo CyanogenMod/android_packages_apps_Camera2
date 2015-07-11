@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nedá sa pripojiť k fotoaparátu"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Fotoaparát je zakázaný z dôvodu bezpečnostných pravidiel"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Pri ukladaní vašej fotky alebo videa sa vyskytol problém"</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Aplikácia nemá dôležité povolenia potrebné na spustenie. Skontrolujte nastavenia povolení."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Chyba pri ukladaní fotky"</string>
     <string name="wait" msgid="765601745709933047">"Čakajte..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Pred použitím fotoaparátu vložte SD kartu."</string>

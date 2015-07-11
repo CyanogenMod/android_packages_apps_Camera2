@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"اتصال به دوربین ممکن نیست."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"به دلیل خط‌مشی‌های امنیتی، دوربین غیرفعال شده است."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"هنگام ذخیره عکس یا ویدیوی شما مشکلی پیش آمد."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"برنامه مجوزهای مهم مورد نیاز برای اجرا شدن را ندارد. لطفاً تنظیمات مجوزهایتان را بررسی کنید."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"خطا در فضای ذخیره عکس."</string>
     <string name="wait" msgid="765601745709933047">"لطفاً منتظر بمانید…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"‏قبل از استفاده از دوربین، یک کارت SD در آن قرار دهید."</string>
@@ -196,7 +195,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"تغییر به حالت عکس"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"تغییر به حالت ویدیو"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"تغییر به حالت پانوراما"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"تغییر به عکس کروی"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"‏تغییر به Photo Sphere"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"تغییر به کیفیت بالا"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"تغییر به فوکوس مجدد"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"لغو بازبینی"</string>
@@ -213,7 +212,7 @@
     <string name="photo_date_content_description" msgid="5705865897898465619">"‏عکس در %s گرفته شده است"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"‏ویدیو در %s گرفته شده است"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"‏پانوراما در %s گرفته شده است"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس کروی در %s گرفته شده است"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس Photo Sphere در %s گرفته شده است"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"‏عکس تاری لنز در %s گرفته شده است"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"در حال پردازش رسانه"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"جابجایی لیست حالت"</string>
@@ -294,14 +293,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"تنظیمات"</string>
     <string name="mode_camera" msgid="279763925715250603">"دوربین"</string>
     <string name="mode_video" msgid="8633929034048169139">"ویدیو"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"عکس کروی"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"فاصله زمانی"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاویه باز"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"پانوراما"</string>
     <string name="mode_refocus" msgid="172192967119469061">"تاری لنز"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"تغییر به حالت دوربین"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"تغییر به دوربین فیلمبرداری"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"تغییر به حالت عکس کروی"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"‏تغییر به حالت Photo Sphere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"تغییر به حالت پانوراما"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"تغییر به حالت تاری لنز"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"باز کردن تنظیمات"</string>

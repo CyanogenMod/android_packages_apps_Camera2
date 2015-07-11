@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Повезивање са камером није могуће."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камера је онемогућена због смерница за безбедност."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Дошло је до проблема при чувању слике или видеа."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Апликација нема неопходну дозволу потребну за покретање. Проверите подешавања дозвола."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Чување слике није успело."</string>
     <string name="wait" msgid="765601745709933047">"Сачекајте..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Уметните SD картицу пре коришћења камере."</string>

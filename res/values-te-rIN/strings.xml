@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"కెమెరాకు కనెక్ట్ చేయడం సాధ్యపడదు."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"భద్రతా విధానాల కారణంగా కెమెరా నిలిపివేయబడింది."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"మీ ఫోటో లేదా వీడియోను సేవ్ చేయడంలో సమస్య ఉంది."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"అనువర్తనం అమలు కావడానికి అవసరమయ్యే క్లిష్టమైన అనుమతులను కలిగి లేదు. దయచేసి మీ అనుమతుల సెట్టింగ్‌లను తనిఖీ చేయండి."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ఫోటో నిల్వ వైఫల్యం."</string>
     <string name="wait" msgid="765601745709933047">"దయచేసి వేచి ఉండండి..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"కెమెరాను ఉపయోగించడానికి ముందు SD కార్డును చొప్పించండి."</string>

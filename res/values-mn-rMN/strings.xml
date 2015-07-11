@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Камертай холбогдож чадсангүй."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Аюулгүйн үүднээс камерыг идэвхгүй болгосон."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Зураг эсвэл видеог хадгалахад алдаа гарсан байна."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Апп-г ажиллуулахад шаардлагатай чухал зөвшөөрөл байхгүй байна. Зөвшөөрлийн тохиргоог шалгана уу."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Зураг хадгалахад алдаа гарлаа."</string>
     <string name="wait" msgid="765601745709933047">"Түр хүлээнэ үү..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Камер ашиглахын өмнө SD карт хийнэ үү."</string>

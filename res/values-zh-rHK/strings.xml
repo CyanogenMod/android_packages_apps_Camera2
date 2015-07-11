@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"無法連接相機。"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"基於安全政策，相機已停用。"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"儲存您的相片或影片時發生問題。"</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"應用程式欠缺執行所需的關鍵權限。請檢查您的權限設定。"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"相片儲存失敗。"</string>
     <string name="wait" msgid="765601745709933047">"請稍候…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"使用相機前，請先插入 SD 卡。"</string>

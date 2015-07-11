@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"No es pot connectar a la càmera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"La càmera s\'ha desactivat a causa de les polítiques de seguretat."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"S\'ha produït un problema en desar la foto o el vídeo."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"L\'aplicació no té els permisos importants necessaris per executar-se. Comprova la configuració dels permisos."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Error en desar la foto."</string>
     <string name="wait" msgid="765601745709933047">"Espera…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Per utilitzar la càmera, insereix una targeta SD."</string>

@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nie można połączyć się z aparatem."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Aparat został wyłączony z powodu zasad bezpieczeństwa."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Podczas zapisywania zdjęcia lub filmu wystąpił problem."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Aplikacja nie ma uprawnień niezbędnych do uruchomienia. Sprawdź ustawienia uprawnień."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Błąd przechowywania zdjęcia."</string>
     <string name="wait" msgid="765601745709933047">"Zaczekaj…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Zanim użyjesz aparatu, włóż kartę SD."</string>
