@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Не вдалося під’єднатися до камери."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камеру вимкнено згідно з правилами безпеки."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Не вдалося зберегти фотографію або відео."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Додаток не має обов’язкових дозволів, потрібних для роботи. Перегляньте налаштування дозволів."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Помилка зберігання фото."</string>
     <string name="wait" msgid="765601745709933047">"Зачекайте…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Вставте карту SD перед тим, як користуватися камерою."</string>
@@ -277,7 +276,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Установити тривалість у секундах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Відлік перед фотографуванням"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Зберігати місця зйомки фотографій?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Додавати інформацію про місце зйомки до своїх фотографій і відео.\n\nІнші додатки можуть отримувати доступ до цієї інформації, а також ваших збережених зображень."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Ні, дякую"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Так"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ІНШІ ОПЦІЇ"</string>

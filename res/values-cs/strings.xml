@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nelze se připojit k fotoaparátu."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Fotoaparát byl z důvodu zásad zabezpečení deaktivován."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Při ukládání fotky nebo videa se vyskytl problém."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Aplikace nemá důležitá oprávnění potřebná ke spuštění. Zkontrolujte nastavení oprávnění."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Selhání uložení fotky."</string>
     <string name="wait" msgid="765601745709933047">"Čekejte prosím…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Před použitím fotoaparátu vložte kartu SD."</string>
@@ -277,7 +276,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Nastavit dobu v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítávání spouště fotoaparátu"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Pamatovat si, kde byly fotky pořízeny?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Přidejte do fotek a videí místa, kde jste je pořídili.\n\nOstatní aplikace budou mít k těmto informacím a uloženým obrázkům přístup."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Díky, nemám zájem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ano"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"DALŠÍ MOŽNOSTI"</string>

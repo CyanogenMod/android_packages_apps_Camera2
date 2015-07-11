@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kan geen verbinding maken met de camera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"De camera is uitgeschakeld vanwege het beveiligingsbeleid."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Er is een probleem opgetreden bij het opslaan van uw foto of video."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"De app beschikt niet over bepaalde essentiële rechten. Controleer uw instellingen voor rechten."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Kan foto niet opslaan."</string>
     <string name="wait" msgid="765601745709933047">"Even geduld…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Plaats een SD-kaart voordat u de camera gebruikt."</string>
@@ -277,7 +276,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Duur in seconden instellen"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Aftellen om een foto te nemen"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Fotolocaties onthouden?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Label uw foto\'s en video\'s met de locaties waar ze zijn genomen.\n\nAndere apps hebben toegang tot deze informatie en uw opgeslagen afbeeldingen."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Nee, bedankt"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MEER OPTIES"</string>

@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Камераға қосылу мүмкін емес."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камера қауіпсіздік саясаттарына байланысты өшірілді."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Фотосуретті немесе бейнені сақтау кезінде қате болды."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Қолданбада іске қосылу үшін маңызды рұқсаттар жоқ. Рұқсаттардың параметрлерін қараңыз."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Фотосуретті сақтау қатесі."</string>
     <string name="wait" msgid="765601745709933047">"Күте тұрыңыз..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Камераны қолдануға дейін SD картасын енгізу."</string>
@@ -277,7 +276,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Ұзақтығын секундпен реттеу"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Фотосурет түсіру үшін кері санау"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Фотосуреттің қайда түсірілгені көрсетілсін бе?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Фотосуреттер мен бейнелерде түсірілген жерлері белгіленіп тұрады. \n\nБұл ақпарат сақталған бейнелеріңізбен бірге басқа қолданбаларға қолжетімді болады."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Жоқ рахмет"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Иә"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"Басқа опциялар"</string>

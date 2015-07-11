@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"కెమెరాకు కనెక్ట్ చేయడం సాధ్యపడదు."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"భద్రతా విధానాల కారణంగా కెమెరా నిలిపివేయబడింది."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"మీ ఫోటో లేదా వీడియోను సేవ్ చేయడంలో సమస్య ఉంది."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"అనువర్తనం అమలు కావడానికి అవసరమయ్యే క్లిష్టమైన అనుమతులను కలిగి లేదు. దయచేసి మీ అనుమతుల సెట్టింగ్‌లను తనిఖీ చేయండి."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ఫోటో నిల్వ వైఫల్యం."</string>
     <string name="wait" msgid="765601745709933047">"దయచేసి వేచి ఉండండి..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"కెమెరాను ఉపయోగించడానికి ముందు SD కార్డును చొప్పించండి."</string>
@@ -277,7 +276,8 @@
     <string name="set_duration" msgid="1638453882581604341">"వ్యవధిని సెకన్లలో సెట్ చేయండి"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ఫోటో తీయడానికి కౌంట్ డౌన్ చేస్తోంది"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ఫోటో స్థానాలను గుర్తుంచుకోవాలా?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"మీ ఫోటోలు మరియు వీడియోలను, అవి తీయబడిన స్థానాలతో పాటు ట్యాగ్ చేయండి.\n\nఇతర అనువర్తనాలు మీరు సేవ్ చేసిన చిత్రాలతో పాటు ఈ సమాచారాన్ని ప్రాప్యత చేయవచ్చు."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"వద్దు ధన్యవాదాలు"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"అవును"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"మరిన్ని ఎంపికలు"</string>

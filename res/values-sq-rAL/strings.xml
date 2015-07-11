@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nuk mund të lidhet me kamerën."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera është çaktivizuar për shkak të politikave të sigurisë."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Kishte një problem në ruajtjen e fotografisë ose videos."</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"Aplikacioni nuk ka leje të rëndësishme të nevojshme për ekzekutimin. Kontrollo cilësimet e lejeve."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Ruajtja e fotografisë dështoi."</string>
     <string name="wait" msgid="765601745709933047">"Qëndro në pritje..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Fut një kartë SD para se të përdorësh kamerën."</string>
@@ -279,7 +278,8 @@
     <string name="set_duration" msgid="1638453882581604341">"Cakto kohëzgjatjen në sekonda"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Po numëron mbrapsht për të nxjerrë fotografi"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Të ruhen vendndodhjet e fotografive?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiketoji fotografitë dhe videot e tua me vendndodhjet ku janë realizuar.\n\nAplikacionet e tjera mund të qasen në këto informacione së bashku me imazhet e tua të ruajtura."</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"Jo, faleminderit!"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Po"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"OPSIONE TË TJERA"</string>

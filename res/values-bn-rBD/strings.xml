@@ -68,8 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ক্যামেরা সাথে সংযোগ করতে পারবেন না।"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"নিরাপত্তা নীতিগুলির জন্য ক্যামেরা অক্ষমিত করা হয়েছে।"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"আপনার ফটো বা ভিডিও সংরক্ষণ করার সময় একটি ত্রুটি ঘটেছে৷"</string>
-    <!-- no translation found for error_permissions (3454167403425651254) -->
-    <skip />
+    <string name="error_permissions" msgid="3454167403425651254">"অ্যাপ্লিকেশাটি চালানোর জন্য কোনো গুরুত্বপূর্ণ অনুমতির প্রয়োজন নেই৷ অনুগ্রহ করে আপনার অনুমতি সেটিংস পরীক্ষা করুন৷"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ফটো সঞ্চয় করতে ব্যর্থ হয়েছে৷"</string>
     <string name="wait" msgid="765601745709933047">"দয়া করে অপেক্ষা করুন..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ক্যামেরা ব্যবহার করার পূর্বে একটি SD কার্ড ঢোকান।"</string>
@@ -289,7 +288,8 @@
     <string name="set_duration" msgid="1638453882581604341">"সময়কাল সেকেন্ডে সেট করুন"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"একটি ফটো তুলতে কাউন্ট ডাউন হচ্ছে"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ফটোর অবস্থান মনে রাখবেন?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ফটো ও ভিডিওগুলি যেখানে তোলা হয়েছে সেই অবস্থানের সঙ্গে সেগুলি ট্যাগ করুন।\n\nঅন্য অ্যাপ্লিকেশানগুলি আপনার সংরক্ষিত চিত্রগুলির সহ এই তথ্য অ্যাক্সেস করতে পারবে।"</string>
+    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
+    <skip />
     <string name="remember_location_no" msgid="4412802756840226925">"না থাক"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"হ্যাঁ"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"আরো বিকল্প"</string>
