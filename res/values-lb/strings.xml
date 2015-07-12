@@ -306,6 +306,8 @@
   <string name="grid_lines_off_desc">Gitterlinnen aus</string>
   <string name="grid_lines_on_desc">Gitterlinnen un</string>
   <string name="countdown_timer_off">Sandauer aus</string>
+  <string name="countdown_timer_duration_3s">D\'Dauer fir de Countdown-Timer ass op 3 Sekonne festgeluecht</string>
+  <string name="countdown_timer_duration_10s">D\'Dauer fir de Countdown-Timer ass op 10 Sekonne festgeluecht</string>
   <string name="more_options_desc">Méi Optiounen</string>
   <string name="cancel_button_description">Ofbriechen</string>
   <string name="done_button_description">Fäerdeg</string>
@@ -338,6 +340,9 @@
   <string name="pref_video_quality_entry_high">Héich</string>
   <string name="pref_video_quality_entry_qcif">QCIF</string>
   <string name="pref_video_quality_entry_cif">CIF</string>
+  <string name="pref_video_quality_entry_480p">SD 480p</string>
+  <string name="pref_video_quality_entry_720p">HD 720p</string>
+  <string name="pref_video_quality_entry_1080p">HD 1080p</string>
   <string name="pref_video_quality_entry_qvga">QVGA</string>
   <string name="pref_video_quality_entry_2160p">UHD 4K</string>
   <string name="setting_summary_x_megapixels">%1$s Megapixelen</string>
@@ -345,6 +350,7 @@
   <string name="cling_text_for_refocus_editor_button">Hei drécke fir nei ze fokusséieren</string>
   <string name="pref_category_advanced">Erweidert</string>
   <string name="pref_camera_exposure_compensation">Manuell Beliichtung</string>
+  <string name="settings_cling_text">An den Astellungen, änner d\'Opléisung an d\'Qualitéit oder probéier d\'erweidert Funktiounen.</string>
   <string name="photo_size_selection_title">Fotogréisst auswielen</string>
   <string name="photo_aspect_ratio_selection_content">Dat ka spéider an den Astellunge geännert ginn.</string>
   <string name="share_to">Deelen iwwer</string>
