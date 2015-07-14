@@ -29,7 +29,7 @@
     <string name="undo" msgid="5110048345890050107">"પૂર્વવત્ કરો"</string>
     <string name="details" msgid="4404020741542549488">"વિગતો"</string>
     <string name="close" msgid="4826166926297479820">"બંધ કરો"</string>
-    <string name="show_on_map" msgid="8542853913632649160">"નકશા પર દર્શાવો"</string>
+    <string name="show_on_map" msgid="8542853913632649160">"નકશા પર બતાવો"</string>
     <string name="rotate_left" msgid="2618440058490662604">"ડાબે ફેરવો"</string>
     <string name="rotate_right" msgid="4896096424267838355">"જમણે ફેરવો"</string>
     <string name="edit" msgid="2776879395749004347">"સંપાદન"</string>
@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"કૅમેરા સાથે કનેક્ટ કરી શકાતું નથી."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"સુરક્ષા નીતિઓને કારણે કૅમેરો અક્ષમ કરવામાં આવ્યો છે."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"તમારો ફોટો અથવા વિડિઓ સાચવવામાં સમસ્યા હતી."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"એપ્લિકેશન પાસે શરૂ થવા માટેની મહત્વપૂર્ણ પરવાનગીઓ નથી. કૃપા કરીને તમારી પરવાનગીઓ સેટિંગ્સ તપાસો."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ફોટો સ્ટોરેજ નિષ્ફળતા."</string>
     <string name="wait" msgid="765601745709933047">"કૃપા કરીને રાહ જુઓ..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"કૅમેરાનો ઉપયોગ કરતાં પહેલાં એક SD કાર્ડ દાખલ કરો."</string>
@@ -275,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"સેકંડમાં અવધિ સેટ કરો"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ફોટો લેવા માટે કાઉન્ટ ડાઉન કરી રહ્યું છે"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ફોટો સ્થાનો યાદ રાખીએ?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"તમારા ફોટા અને વિડિઓઝને તે જ્યાં લેવાયા તે સ્થાનો સાથે ટેગ કરો.\n\nઅન્ય એપ્લિકેશન્સ આ માહિતીને તમારી સાચવેલ છબીઓ સાથે ઍક્સેસ કરી શકે છે."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"તમારા ફોટા અને વિડિઓઝને તે જ્યાંથી લેવાયેલા તે સ્થાનો સાથે ટેગ કરો."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"નહીં આભાર"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"હા"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"વધુ વિકલ્પો"</string>

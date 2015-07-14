@@ -276,8 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"कालावधी सेकंदांमध्ये सेट करा"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"फोटो घेण्‍यासाठी उलट गणना करत आहे"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"फोटो स्थान लक्षात ठेवायचे?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"आपले फोटो आणि व्‍हिडिओ जिथून घेतले त्या स्‍थानांसह ते टॅग करा."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"नाही धन्यवाद"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"होय"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"अधिक पर्याय"</string>

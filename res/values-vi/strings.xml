@@ -276,8 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Đặt thời gian trong vài giây"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Đếm ngược để chụp ảnh"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Nhớ vị trí chụp ảnh?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Gắn thẻ cho ảnh và video của bạn với những địa điểm bạn đã chụp/quay chúng."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Không, cảm ơn"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Có"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"TÙY CHỌN KHÁC"</string>
