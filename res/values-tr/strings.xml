@@ -275,8 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Süreyi saniye cinsinden ayarla"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Fotoğraf çekmek için geri sayılıyor"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Fotoğrafların çekildiği konumlar hatırlansın mı?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Fotoğraflarınızı ve videolarınızı çekildikleri konumlarla etiketleyin."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Hayır, teşekkürler"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Evet"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"DİĞER SEÇENEKLER"</string>

@@ -275,8 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Setați durata în secunde"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Numărătoare inversă până la fotografiere"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Se rețin locațiile fotografiilor?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Etichetați fotografiile și videoclipurile cu locațiile în care au fost făcute."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nu, mulțumesc"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Da"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MAI MULTE OPȚIUNI"</string>

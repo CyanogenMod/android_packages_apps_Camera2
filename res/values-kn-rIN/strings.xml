@@ -275,8 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ಅವಧಿಯನ್ನು ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಹೊಂದಿಸಿ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ಪೋಟೋ ತೆಗೆದುಕೊಳ್ಳಲು ಎಣಿಸಲಾಗುತ್ತಿದೆ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ಫೋಟೋ ಸ್ಥಳಗಳನ್ನು ನೆನಪಿಡುವುದೇ?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"ನಿಮ್ಮ ಫೋಟೋಗಳು ಮತ್ತು ವೀಡಿಯೊಗಳನ್ನು ಅವುಗಳನ್ನು ತೆಗೆದ ಸ್ಥಳದಿಂದ ಟ್ಯಾಗ್ ಮಾಡಿ."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ಧನ್ಯವಾದಗಳು"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ಹೌದು"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು"</string>
