@@ -276,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Postavite trajanje u sekundama"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odbrojavanje do snimanja fotografije"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Zapamtiti lokacije fotografija?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Dodajte svojim fotografijama i videozapisima oznake lokacija na kojima su snimljeni.\n\nOstale aplikacije mogu pristupiti tim podacima i vašim spremljenim slikama."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Dodajte svojim fotografijama i videozapisima oznake lokacija na kojima su snimljeni."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ne, hvala"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Da"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"VIŠE OPCIJA"</string>

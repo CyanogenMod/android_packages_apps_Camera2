@@ -276,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ကြာချိန်ကို စက္ကန့်ဖြင့် မှတ်ပါ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ဓာတ်ပုံရိုက်ရန် အမှတ်ရေနေစဉ်"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ဓာတ်ပုံရိုက်ခဲ့တဲ့နေရာ သိမ်းရမလား"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"ဓာတ်ပုံများနှင့် ဗီဒီယိုများအား ရိုက်ကူးခဲ့ရာ နေရာများနှင့်တကွ မှတ်သားပါ\n\nတခြား အပ်ပလီကေးရှင်းများမှ ဒီအချက်အလက်ကို သိမ်းထားသော ပုံများနှင့်အတူ ရယူနိုင်သည်"</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"ဓါတ်ပုံများနှင့် ဗီဒီယိုများနှင့်တကွ ရိုက်ကူးခဲ့သော နေရာများကို တွဲထည့်ပါ။"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ကျေးဇူးပဲ မလိုပါဘူး"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"မှန်ပါသည်"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ပိုမိုရွေးချယ်စရာများ"</string>

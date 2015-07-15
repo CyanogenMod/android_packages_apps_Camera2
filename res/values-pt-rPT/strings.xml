@@ -278,7 +278,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Definir a duração em segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Contagem decrescente para tirar uma fotografia"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Memorizar localizações das fotos?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Insira etiquetas nas fotos e vídeos com as localizações onde foram capturados.\n\nOutras aplicações podem aceder a estas informações juntamente com as suas imagens guardadas."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Adicione etiquetas às fotos e aos vídeos com as localizações onde foram capturados."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Não, obrigado"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sim"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MAIS OPÇÕES"</string>

@@ -276,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ustaw czas w sekundach"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odliczam czas do zrobienia zdjęcia"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Zapisywać lokalizacje zdjęć?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Dodawaj do moich zdjęć i filmów tagi lokalizacji, w których zostały one zrobione lub nagrane.\n\nInne aplikacje mają dostęp do tych informacji oraz zapisanych zdjęć i filmów."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Dodawaj tagi lokalizacji, w których zostały zrobione zdjęcia lub nagrane filmy."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, dziękuję"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Tak"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"WIĘCEJ OPCJI"</string>
