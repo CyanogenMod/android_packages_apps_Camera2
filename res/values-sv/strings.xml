@@ -276,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ange längden i sekunder"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Nedräkning innan fotot tas"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vill du spara platser för foton?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Tagga dina foton och videor med de platser där de tas eller spelas in.\n\nAndra appar kan få åtkomst till den här informationen tillsammans med dina sparade bilder."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Tagga dina foton och videor med de platser där de är tagna eller inspelade."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nej tack"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLER ALTERNATIV"</string>

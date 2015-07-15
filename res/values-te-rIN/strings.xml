@@ -276,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"వ్యవధిని సెకన్లలో సెట్ చేయండి"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ఫోటో తీయడానికి కౌంట్ డౌన్ చేస్తోంది"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ఫోటో స్థానాలను గుర్తుంచుకోవాలా?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"మీ ఫోటోలు మరియు వీడియోలను, అవి తీయబడిన స్థానాలతో పాటు ట్యాగ్ చేయండి.\n\nఇతర అనువర్తనాలు మీరు సేవ్ చేసిన చిత్రాలతో పాటు ఈ సమాచారాన్ని ప్రాప్యత చేయవచ్చు."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"మీ ఫోటోలు మరియు వీడియోలను అవి తీసిన స్థానాలతో ట్యాగ్ చేయండి."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"వద్దు ధన్యవాదాలు"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"అవును"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"మరిన్ని ఎంపికలు"</string>
