@@ -276,8 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Configurar la duración en segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Cuenta regresiva para tomar una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"¿Recordar ubicaciones de las fotos?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Etiqueta tus fotos y videos con la ubicación donde se realizaron."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gracias"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÁS OPCIONES"</string>

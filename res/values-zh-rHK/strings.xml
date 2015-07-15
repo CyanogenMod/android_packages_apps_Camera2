@@ -276,8 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"設定倒數時間 (以秒為單位)"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"為拍照倒數中"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"記錄拍攝地點？"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"為您的相片和影片標記拍攝地點。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"不需要，謝謝"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"是"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"更多選項"</string>

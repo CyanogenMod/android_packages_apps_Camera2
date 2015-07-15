@@ -276,8 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Időtartam megadása másodpercben"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Visszaszámlálás a fényképezésig"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Szeretné tárolni a felvételek helyszínét?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Címkézze fel a fotókat és videókat a hellyel, ahol készítette őket."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Köszönöm, nem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Igen"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"TOVÁBBI LEHETŐSÉGEK"</string>

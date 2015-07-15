@@ -276,8 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ਮਿਆਦ ਨੂੰ ਸਕਿੰਟਾਂ ਵਿੱਚ ਸੈਟ ਕਰੋ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ਇੱਕ ਫੋਟੋ ਲੈਣ ਲਈ ਕਾਊਂਟ ਡਾਊਨ ਕਰ ਰਿਹਾ ਹੈ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ਕੀ ਫੋਟੋ ਨਿਰਧਾਰਿਤ ਸਥਾਨ ਯਾਦ ਹਨ?"</string>
-    <!-- no translation found for remember_location_prompt (3006013504489919474) -->
-    <skip />
+    <string name="remember_location_prompt" msgid="3006013504489919474">"ਆਪਣੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਉਹਨਾਂ ਨਿਰਧਾਰਿਤ ਸਥਾਨਾਂ ਨਾਲ ਟੈਗ ਕਰੋ ਜਿੱਥੇ ਉਹ ਲਏ ਗਏ ਹਨ।"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ਨਹੀਂ ਧੰਨਵਾਦ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ਹਾਂ"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ਹੋਰ ਚੋਣਾਂ"</string>
