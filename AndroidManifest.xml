@@ -74,6 +74,7 @@
         <activity
                 android:name="com.android.camera.PermissionsActivity"
                 android:label="@string/app_name"
+                android:excludeFromRecents="true"
                 android:parentActivityName="com.android.camera.CameraActivity" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
