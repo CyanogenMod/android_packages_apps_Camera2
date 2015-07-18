@@ -214,7 +214,8 @@ public class PermissionsActivity extends QuickActivity {
     }
 
     private void handlePermissionsSuccess() {
-        setResult(RESULT_CODE_OK, null);
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
         finish();
     }
 
@@ -226,7 +227,6 @@ public class PermissionsActivity extends QuickActivity {
                     @Override
                     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                         if (keyCode == KeyEvent.KEYCODE_BACK) {
-                            setResult(RESULT_CODE_FAILED, null);
                             finish();
                         }
                         return true;
@@ -236,7 +236,6 @@ public class PermissionsActivity extends QuickActivity {
                         new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        setResult(RESULT_CODE_FAILED, null);
                         finish();
                     }
                 })
