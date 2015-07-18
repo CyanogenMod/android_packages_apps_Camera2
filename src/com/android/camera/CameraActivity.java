@@ -1440,6 +1440,12 @@ public class CameraActivity extends QuickActivity
         mFeatureConfig = OneCameraFeatureConfigCreator.createDefault(getContentResolver(),
                 getServices().getMemoryManager());
         mFatalErrorHandler = new FatalErrorHandlerImpl(this);
+        checkPermissions();
+        if (!mHasCriticalPermissions) {
+            Log.v(TAG, "onCreate: Missing critical permissions.");
+            finish();
+            return;
+        }
         profile.mark();
         if (!Glide.isSetup()) {
             Context context = getAndroidContext();
@@ -1620,6 +1626,8 @@ public class CameraActivity extends QuickActivity
         profile.mark("Init Current Module UI");
         mCurrentModule.init(this, isSecureCamera(), isCaptureIntent());
         profile.mark("Init CurrentModule");
+
+        preloadFilmstripItems();
 
         setupNfcBeamPush();
 
@@ -1850,7 +1858,8 @@ public class CameraActivity extends QuickActivity
         mPaused = false;
         checkPermissions();
         if (!mHasCriticalPermissions) {
-            Log.v(TAG, "Missing critical permissions.");
+            Log.v(TAG, "onResume: Missing critical permissions.");
+            finish();
             return;
         }
         if (!mSecureCamera) {
@@ -1897,18 +1906,8 @@ public class CameraActivity extends QuickActivity
                 !mSettingsManager.getBoolean(SettingsManager.SCOPE_GLOBAL, Keys.KEY_HAS_SEEN_PERMISSIONS_DIALOGS)) ||
                 !mHasCriticalPermissions) {
             Intent intent = new Intent(this, PermissionsActivity.class);
-            startActivityForResult(intent, PERMISSIONS_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // Close the app if critical permissions are missing.
-        if (requestCode == PERMISSIONS_ACTIVITY_REQUEST_CODE && resultCode == PERMISSIONS_RESULT_CODE_FAILED) {
+            startActivity(intent);
             finish();
-        } else if (requestCode == PERMISSIONS_ACTIVITY_REQUEST_CODE && resultCode == PERMISSIONS_RESULT_CODE_OK) {
-            mHasCriticalPermissions = true;
         }
     }
 
@@ -1964,7 +1963,6 @@ public class CameraActivity extends QuickActivity
         Profile profile = mProfiler.create("CameraActivity.resume").start();
         CameraPerformanceTracker.onEvent(CameraPerformanceTracker.ACTIVITY_RESUME);
         Log.v(TAG, "Build info: " + Build.DISPLAY);
-        preloadFilmstripItems();
         updateStorageSpaceAndHint(null);
 
         mLastLayoutOrientation = getResources().getConfiguration().orientation;
