@@ -16,6 +16,9 @@
 
 package com.android.camera.processing.imagebackend;
 
+import android.os.Process;
+
+import com.android.camera.async.AndroidPriorityThread;
 import com.android.camera.debug.Log;
 import com.android.camera.processing.ProcessingTaskConsumer;
 import com.android.camera.processing.memory.ByteBufferDirectPool;
@@ -84,15 +87,17 @@ import java.util.concurrent.locks.ReentrantLock;
  * already been completed should return immediately on its process call.
  */
 public class ImageBackend implements ImageConsumer, ImageTaskManager {
-    private final static Log.Tag TAG = new Log.Tag("ImageBackend");
-
-    protected static final int FAST_THREAD_PRIORITY = Thread.MAX_PRIORITY;
-    protected static final int AVERAGE_THREAD_PRIORITY = Thread.NORM_PRIORITY - 1;
-    protected static final int SLOW_THREAD_PRIORITY = Thread.MIN_PRIORITY;
+    private static final Log.Tag TAG = new Log.Tag("ImageBackend");
 
     protected static final int NUM_THREADS_FAST = 2;
     protected static final int NUM_THREADS_AVERAGE = 2;
     protected static final int NUM_THREADS_SLOW = 2;
+
+    private static final int FAST_THREAD_PRIORITY = Process.THREAD_PRIORITY_DISPLAY;
+    private static final int AVERAGE_THREAD_PRIORITY = Process.THREAD_PRIORITY_DEFAULT
+            + Process.THREAD_PRIORITY_LESS_FAVORABLE;
+    private static final int SLOW_THREAD_PRIORITY = Process.THREAD_PRIORITY_BACKGROUND
+            + Process.THREAD_PRIORITY_MORE_FAVORABLE;
 
     private static final int IMAGE_BACKEND_HARD_REF_POOL_SIZE = 2;
 
@@ -920,28 +925,25 @@ public class ImageBackend implements ImageConsumer, ImageTaskManager {
 
     // Thread factories for a default constructor
     private class FastThreadFactory implements ThreadFactory {
-
+        @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setPriority(FAST_THREAD_PRIORITY);
+            Thread t = new AndroidPriorityThread(FAST_THREAD_PRIORITY, r);
             return t;
         }
     }
 
     private class AverageThreadFactory implements ThreadFactory {
-
+        @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setPriority(AVERAGE_THREAD_PRIORITY);
+            Thread t = new AndroidPriorityThread(AVERAGE_THREAD_PRIORITY, r);
             return t;
         }
     }
 
     private class SlowThreadFactory implements ThreadFactory {
-
+        @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setPriority(SLOW_THREAD_PRIORITY);
+            Thread t = new AndroidPriorityThread(SLOW_THREAD_PRIORITY, r);
             return t;
         }
     }
