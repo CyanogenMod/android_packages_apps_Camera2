@@ -2169,16 +2169,26 @@ public class CameraActivity extends QuickActivity
             mCameraController.removeCallbackReceiver();
             mCameraController.setCameraExceptionHandler(null);
         }
-        getContentResolver().unregisterContentObserver(mLocalImagesObserver);
-        getContentResolver().unregisterContentObserver(mLocalVideosObserver);
+        if (mLocalImagesObserver != null) {
+            getContentResolver().unregisterContentObserver(mLocalImagesObserver);
+        }
+        if (mLocalVideosObserver != null) {
+            getContentResolver().unregisterContentObserver(mLocalVideosObserver);
+        }
         getServices().getCaptureSessionManager().removeSessionListener(mSessionListener);
-        mCameraAppUI.onDestroy();
-        mModeListView.setVisibilityChangedListener(null);
+        if (mCameraAppUI != null) {
+            mCameraAppUI.onDestroy();
+        }
+        if (mModeListView != null) {
+            mModeListView.setVisibilityChangedListener(null);
+        }
         mCameraController = null;
         mSettingsManager = null;
         mOrientationManager = null;
         mButtonManager = null;
-        mSoundPlayer.release();
+        if (mSoundPlayer != null) {
+          mSoundPlayer.release();
+        }
         CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.API_1);
         CameraAgentFactory.recycle(CameraAgentFactory.CameraApi.AUTO);
     }
