@@ -107,8 +107,8 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"Chaqnoq rejimi"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"CHAQNOQ REJIMI"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"Avto"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Yoqilgan"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"O‘chirilgan"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Yoniq"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"O‘chiq"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"AVTO CHAQNOQ"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"CHAQNOQ YONIQ"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"CHAQNOQ O‘CHIQ"</string>
@@ -227,7 +227,7 @@
     <string name="capital_on" msgid="1118214824959797269">"YONIQ"</string>
     <string name="capital_off" msgid="3020696135020167263">"O‘CHIQ"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Videoni ijro etish"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"O‘chirilgan"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"O‘chiq"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 soniya"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 soniya"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1.5 soniya"</string>
