@@ -179,21 +179,24 @@ public class PermissionsActivity extends QuickActivity {
                 true);
 
         if (mShouldRequestCameraPermission) {
-            if (grantResults[mIndexPermissionRequestCamera] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[mIndexPermissionRequestCamera] ==
+                    PackageManager.PERMISSION_GRANTED) {
                 mFlagHasCameraPermission = true;
             } else {
                 handlePermissionsFailure();
             }
         }
         if (mShouldRequestMicrophonePermission) {
-            if (grantResults[mIndexPermissionRequestMicrophone] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[mIndexPermissionRequestMicrophone] ==
+                    PackageManager.PERMISSION_GRANTED) {
                 mFlagHasMicrophonePermission = true;
             } else {
                 handlePermissionsFailure();
             }
         }
         if (mShouldRequestStoragePermission) {
-            if (grantResults[mIndexPermissionRequestStorage] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[mIndexPermissionRequestStorage] ==
+                    PackageManager.PERMISSION_GRANTED) {
                 mFlagHasStoragePermission = true;
             } else {
                 handlePermissionsFailure();
@@ -201,7 +204,8 @@ public class PermissionsActivity extends QuickActivity {
         }
 
         if (mShouldRequestLocationPermission) {
-            if (grantResults[mIndexPermissionRequestLocation] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[mIndexPermissionRequestLocation] ==
+                    PackageManager.PERMISSION_GRANTED) {
                 // Do nothing
             } else {
                 // Do nothing
