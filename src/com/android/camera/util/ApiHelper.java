@@ -114,7 +114,7 @@ public class ApiHelper {
     }
 
     public static boolean isMOrHigher() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.MNC
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 || "MNC".equals(Build.VERSION.CODENAME);
     }
 }
