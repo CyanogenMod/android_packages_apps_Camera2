@@ -169,7 +169,7 @@
     <string name="pano_capture_indication" msgid="4002128831255023954">"در حال گرفتن عکس پانوراما"</string>
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"در حال انتظار برای پانورامای قبلی"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"در حال ذخیره..."</string>
-    <string name="pano_review_rendering" msgid="2743087719999377155">"درحال پردازش تمام‌نما"</string>
+    <string name="pano_review_rendering" msgid="2743087719999377155">"درحال پردازش پانوراما"</string>
     <string name="tap_to_focus" msgid="3519718196270593468">"برای فوکوس لمس کنید."</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"جلوه‌ها"</string>
     <string name="effect_none" msgid="3102797925086872636">"هیچ‌کدام"</string>
