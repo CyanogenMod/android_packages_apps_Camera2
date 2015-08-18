@@ -16,7 +16,7 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_power_shutter_title">पावर शटर</string>
-  <string name="pref_camera_max_brightness_title">उज्ज्वल स्क्रीन</string>
-  <string name="pref_camera_storage_title">भंडारण स्थान</string>
+  <string name="pref_camera_power_shutter_title">Gumb za vklop/izklop</string>
+  <string name="pref_camera_max_brightness_title">Svetel zaslon</string>
+  <string name="pref_camera_storage_title">Mesto za shranjevanje</string>
 </resources>
