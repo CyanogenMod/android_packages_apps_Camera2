@@ -16,6 +16,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_power_shutter_title">شاتر قدرتمند</string>
-  <string name="pref_camera_max_brightness_title">صفحه ی روشن</string>
+  <string name="pref_camera_power_shutter_title">Gumb za vklop/izklop kot sprožilec</string>
+  <string name="pref_camera_max_brightness_title">Svetel zaslon</string>
 </resources>
