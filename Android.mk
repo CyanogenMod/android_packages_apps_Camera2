@@ -30,6 +30,8 @@ LOCAL_PACKAGE_NAME := Camera2
 
 LOCAL_SDK_VERSION := current
 
+LOCAL_PROGUARD_ENABLED := disabled
+
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 LOCAL_JNI_SHARED_LIBRARIES := libjni_tinyplanet libjni_jpegutil
