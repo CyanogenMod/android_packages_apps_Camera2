@@ -45,7 +45,7 @@
   <string name="error_app_unsupported_hfr">HFR nu este acceptată pentru rezoluția selectată</string>
   <string name="error_app_unsupported_hfr_codec">Numai codarea video H.264 este acceptată atunci când HFR este pornit</string>
   <string name="error_app_unsupported">Rezoluția video nu este acceptată de acest tip de codec</string>
-  <string name="error_app_unsupported_dis">Stabilizarea video nu este acceptată pentru rezoluţia selectată</string>
+  <string name="error_app_unsupported_dis">Stabilizarea video nu este acceptată pentru rezoluția selectată</string>
   <string name="pref_camera_ae_bracket_hdr_title">Rafală cu expunere automată</string>
   <string name="pref_camera_hfr_title">Miscare lenta (HFR)</string>
   <string name="pref_camera_hfr_entry_off">Dezactivat</string>
