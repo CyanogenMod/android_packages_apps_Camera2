@@ -134,5 +134,5 @@
   <string name="camera_menu_asd_label">SCENĂ INTELIGENTĂ</string>
   <string name="pref_camera_power_shutter_title">Obturator de putere</string>
   <string name="pref_camera_max_brightness_title">Ecran luminos</string>
-  <string name="pref_superzoom_title">Mareste</string>
+  <string name="pref_superzoom_title">Marește</string>
 </resources>
