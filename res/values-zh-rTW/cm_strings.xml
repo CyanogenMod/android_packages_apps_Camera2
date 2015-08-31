@@ -17,5 +17,6 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_power_shutter_title">電源鍵快門</string>
-  <string name="pref_camera_max_brightness_title">光亮螢幕</string>
+  <string name="pref_camera_max_brightness_title">使用時保持最大亮度</string>
+  <string name="pref_camera_storage_title">存儲位置</string>
 </resources>
