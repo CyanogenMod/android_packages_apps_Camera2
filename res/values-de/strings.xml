@@ -191,7 +191,7 @@
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"Blende"</string>
     <string name="accessibility_cancel_button" msgid="5679989494636116448">"Abbrechen"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Menüschaltfläche"</string>
-    <string name="accessibility_check_box" msgid="1084094675439953723">"Kontrollkästchen für %1$s"</string>
+    <string name="accessibility_check_box" msgid="1084094675439953723">"Kästchen für %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Zu Kamera wechseln"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Zu Video wechseln"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Zu Panorama wechseln"</string>
