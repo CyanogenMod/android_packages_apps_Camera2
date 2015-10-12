@@ -346,7 +346,7 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Алдыңкы камера сүрөтү"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Алдыңкы камера видеосу"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Абалкы камера"</string>
-    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Жардам &amp; жооп пикир"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Жардам жана жооп пикир"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ иштетилүүдө …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Ачык программа уруксаттамалары"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Жалпы тууралоолор"</string>
