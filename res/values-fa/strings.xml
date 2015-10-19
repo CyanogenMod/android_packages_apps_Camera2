@@ -277,7 +277,7 @@
     <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای عکس گرفتن"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"موقعیت مکانی عکس به خاطر سپرده شود؟"</string>
     <string name="remember_location_prompt" msgid="3006013504489919474">"محل گرفتن عکس‌ها و ویدیوها را به آن‌ها برچسب کنید."</string>
-    <string name="remember_location_no" msgid="4412802756840226925">"خیر متشکرم"</string>
+    <string name="remember_location_no" msgid="4412802756840226925">"نه سپاسگزارم"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"بله"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"گزینه‌های بیشتر"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"تنظیمات"</string>
