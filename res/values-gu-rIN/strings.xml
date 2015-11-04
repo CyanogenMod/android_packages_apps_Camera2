@@ -62,7 +62,7 @@
     <string name="flash_on" msgid="6573457197393807642">"ફ્લેશ ફાયર્ડ"</string>
     <string name="flash_off" msgid="7889323512830926273">"ફ્લેશ નહીં"</string>
     <string name="unknown" msgid="564184550182858146">"અજાણ્યું"</string>
-    <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"આ આઇટમ સ્થાનિક રીતે સંગ્રહિત છે અને ઓફલાઇન ઉપલબ્ધ છે."</string>
+    <string name="try_to_set_local_album_available_offline" msgid="3363125545009254117">"આ આઇટમ સ્થાનિક રીતે સંગ્રહિત છે અને ઑફલાઇન ઉપલબ્ધ છે."</string>
     <string name="please_wait" msgid="1416313324505140068">"કૃપા કરીને રાહ જુઓ"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"કૅમેરા ભૂલ"</string>
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"કૅમેરા સાથે કનેક્ટ કરી શકાતું નથી."</string>
