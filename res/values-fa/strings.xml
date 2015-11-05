@@ -169,7 +169,7 @@
     <string name="pano_capture_indication" msgid="4002128831255023954">"در حال گرفتن عکس پانوراما"</string>
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"در حال انتظار برای پانورامای قبلی"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"در حال ذخیره..."</string>
-    <string name="pano_review_rendering" msgid="2743087719999377155">"در حال تولید تصویر پانوراما"</string>
+    <string name="pano_review_rendering" msgid="2743087719999377155">"درحال پردازش پانوراما"</string>
     <string name="tap_to_focus" msgid="3519718196270593468">"برای فوکوس لمس کنید."</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"جلوه‌ها"</string>
     <string name="effect_none" msgid="3102797925086872636">"هیچ‌کدام"</string>
@@ -199,14 +199,14 @@
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"تغییر به کیفیت بالا"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"تغییر به فوکوس مجدد"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"لغو بازبینی"</string>
-    <string name="accessibility_review_ok" msgid="3486465319880320270">"بازبینی انجام شد"</string>
+    <string name="accessibility_review_ok" msgid="3486465319880320270">"بازبینی تمام"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"بازبینی عکس/ویدیوی دوباره ضبط شده"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"گزینه‌ها"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"لیست حالت بسته است"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"لیست حالت باز است"</string>
     <string name="media_accessibility_peek" msgid="234540330161031946">"عکس گرفته‌ شد"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"عکس گرفته شد"</string>
-    <string name="video_accessibility_peek" msgid="7845916149291383132">"فیلم‌برداری انجام شد"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"فیلم‌برداری تمام"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"بازگشایی در حالت دوربین"</string>
     <string name="media_date_content_description" msgid="2155634843596817141">"‏رسانه در %s گرفته شده است"</string>
     <string name="photo_date_content_description" msgid="5705865897898465619">"‏عکس در %s گرفته شده است"</string>
@@ -270,7 +270,7 @@
     <string name="time_lapse_seconds" msgid="7319683099532506270">"ثانیه"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"دقیقه"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"ساعت"</string>
-    <string name="time_lapse_interval_set" msgid="2418594453248958440">"انجام شد"</string>
+    <string name="time_lapse_interval_set" msgid="2418594453248958440">"تمام"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"تنظیم فاصله زمانی"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"قابلیت گذر زمان خاموش است. برای تنظیم فاصله زمانی آن را روشن کنید."</string>
     <string name="set_duration" msgid="1638453882581604341">"تنظیم مدت زمان به ثانیه"</string>
@@ -326,7 +326,7 @@
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"مدت زمان تایمر شمارش معکوس روی ۱۰ ثانیه تنظیم شده است"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"گزینه‌های بیشتر"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"لغو"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"انجام شد"</string>
+    <string name="done_button_description" msgid="1334963435441544592">"تمام"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"عکس گرفتن مجدد"</string>
     <string name="review_button_description" msgid="7932122063748430080">"نظر"</string>
     <string name="share_button_description" msgid="5108508790540832053">"اشتراک‏‌گذاری"</string>
