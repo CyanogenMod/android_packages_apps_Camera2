@@ -95,8 +95,7 @@ public class TaskCompressImageToJpeg extends TaskJpegEncode {
      */
     public Map<Integer, Integer> exifGetMinimalTags(ExifInterface exif) {
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.getRotationForOrientationValue((short) Exif.getOrientation(exif)));
+        map.put(ExifInterface.TAG_ORIENTATION, Exif.getOrientation(exif));
         map.put(ExifInterface.TAG_PIXEL_X_DIMENSION, exif.getTagIntValue(
                 ExifInterface.TAG_PIXEL_X_DIMENSION));
         map.put(ExifInterface.TAG_PIXEL_Y_DIMENSION, exif.getTagIntValue(
