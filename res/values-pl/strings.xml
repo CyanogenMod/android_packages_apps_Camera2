@@ -288,7 +288,7 @@
     <string name="photo_editor" msgid="1521994560971367225">"Edytor zdjęć"</string>
     <string name="crop_save" msgid="2841974981340098579">"Zapisz"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Nie można wczytać obrazu."</string>
-    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Widok taśmy filmowej"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Widok paska zdjęć"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Ustawiam tapetę"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Ustawienia"</string>
     <string name="mode_camera" msgid="279763925715250603">"Aparat"</string>
