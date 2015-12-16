@@ -32,6 +32,9 @@ LOCAL_SDK_VERSION := current
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
+# Guava uses deprecated org.apache.http.legacy classes.
+LOCAL_JAVA_LIBRARIES += org.apache.http.legacy
+
 LOCAL_JNI_SHARED_LIBRARIES := libjni_tinyplanet libjni_jpegutil
 
 include $(BUILD_PACKAGE)

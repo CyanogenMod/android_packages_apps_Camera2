@@ -43,3 +43,6 @@
   *** closeSilently(...);
 }
 
+# TODO: remove or rename android.util.Pools.java from our source.
+-dontwarn android.util.Pools*
+
