@@ -217,8 +217,8 @@
     <string name="media_processing_content_description" msgid="8138587719107183754">"Procesamento de ficheiro multimedia"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Alternar lista de modos"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Lista de modos"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alternar tira de vídeo"</string>
-    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de vídeo"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Alternar tira de película"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de película"</string>
     <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"Achegar"</string>
     <string name="btn_zoom_plus" msgid="4645138949375961656">"Z+"</string>
     <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"Afastar"</string>
@@ -288,7 +288,7 @@
     <string name="photo_editor" msgid="1521994560971367225">"Editor de fotos"</string>
     <string name="crop_save" msgid="2841974981340098579">"Gardar"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Non se pode cargar a imaxe"</string>
-    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Vista de película"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Vista de tira de película"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Establecendo fondo de pantalla"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Configuración"</string>
     <string name="mode_camera" msgid="279763925715250603">"Cámara"</string>
