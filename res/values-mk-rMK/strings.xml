@@ -91,8 +91,8 @@
     <string name="setting_on" msgid="9086728135773197891">"Вклучено"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Квалитет на видео"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Забрзано снимање"</string>
-    <string name="pref_camera_settings_category" msgid="4274141528139077830">"Подесувања на фотоапарат"</string>
-    <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Подесувања на видео камера"</string>
+    <string name="pref_camera_settings_category" msgid="4274141528139077830">"Поставки на фотоапарат"</string>
+    <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Поставки на видео камера"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"Големина на слика"</string>
     <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"Голема"</string>
     <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"Средна"</string>
@@ -290,7 +290,7 @@
     <string name="cannot_load_image" msgid="4100136187076585580">"Не може да се вчита сликата!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Приказ на филмска лента"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Поставување тапет"</string>
-    <string name="mode_settings" msgid="2021937261522670921">"Подесувања"</string>
+    <string name="mode_settings" msgid="2021937261522670921">"Поставки"</string>
     <string name="mode_camera" msgid="279763925715250603">"Фотоапарат"</string>
     <string name="mode_video" msgid="8633929034048169139">"Видео"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Фотосфера"</string>
