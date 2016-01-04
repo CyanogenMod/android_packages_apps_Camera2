@@ -16,6 +16,7 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_power_shutter_title">ปุ่มชัตเตอร์เพาเวอร์</string>
+  <string name="pref_camera_power_shutter_title">ปุ่มชัตเตอร์พาวเวอร์</string>
   <string name="pref_camera_max_brightness_title">หน้าจอสว่าง</string>
+  <string name="pref_camera_storage_title">ตำแหน่งพื้นที่จัดเก็บ</string>
 </resources>
