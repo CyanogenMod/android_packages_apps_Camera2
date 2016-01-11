@@ -18,4 +18,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="pref_camera_power_shutter_title">ಪವರ್ ಷಟರ್</string>
   <string name="pref_camera_max_brightness_title">ಪ್ರಕಾಶಮಾನ ಪರದೆ</string>
+  <string name="pref_camera_storage_title">ಸಂಗ್ರಹಣೆ ಸ್ಥಳ</string>
 </resources>
