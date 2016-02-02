@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Не може да се поврзе со камерата."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камерата е оневозможена поради безбедносните политики."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Настана проблем при зачувување на фотографијата или видеото."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"Апликацијата нема критични дозволи што се потребни за да се извршува. Проверете ги поставките за дозволи."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Неуспешно зачувување на фотографијата."</string>
     <string name="wait" msgid="765601745709933047">"Почекај..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Вметнете СД картичка пред да ја користите камерата."</string>
@@ -90,8 +91,8 @@
     <string name="setting_on" msgid="9086728135773197891">"Вклучено"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Квалитет на видео"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Забрзано снимање"</string>
-    <string name="pref_camera_settings_category" msgid="4274141528139077830">"Подесувања на фотоапарат"</string>
-    <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Подесувања на видео камера"</string>
+    <string name="pref_camera_settings_category" msgid="4274141528139077830">"Поставки на фотоапарат"</string>
+    <string name="pref_camcorder_settings_category" msgid="3553148484755353397">"Поставки на видео камера"</string>
     <string name="pref_camera_picturesize_title" msgid="686045304547541815">"Големина на слика"</string>
     <string name="pref_camera_picturesize_entry_large" msgid="9014447075089601575">"Голема"</string>
     <string name="pref_camera_picturesize_entry_medium" msgid="7708839551627003154">"Средна"</string>
@@ -275,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Постави времетраење во секунди"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Одбројува за да фотографира"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Се сеќавате на локациите на фотографиите?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Означете ги вашите фотографии и видеа со локациите каде што се направени.\n\nДруги апликации може да пристапат кон овие информации, заедно со вашите зачувани слики."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Означете ги фотографиите и видеата со локациите каде што се создадени."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Не, благодарам"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ПОВЕЌЕ ОПЦИИ"</string>
@@ -289,7 +290,7 @@
     <string name="cannot_load_image" msgid="4100136187076585580">"Не може да се вчита сликата!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Приказ на филмска лента"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Поставување тапет"</string>
-    <string name="mode_settings" msgid="2021937261522670921">"Подесувања"</string>
+    <string name="mode_settings" msgid="2021937261522670921">"Поставки"</string>
     <string name="mode_camera" msgid="279763925715250603">"Фотоапарат"</string>
     <string name="mode_video" msgid="8633929034048169139">"Видео"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Фотосфера"</string>
