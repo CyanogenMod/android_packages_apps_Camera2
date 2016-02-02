@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nevar izveidot savienojumu ar kameru."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera ir atspējota drošības politiku dēļ."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Saglabājot fotoattēlu vai videoklipu, radās problēma."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"Lietotnei nav būtisku atļauju, kas nepieciešamas, lai tā darbotos. Lūdzu, pārbaudiet atļauju iestatījumus."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Fotoattēla saglabāšanas kļūda."</string>
     <string name="wait" msgid="765601745709933047">"Lūdzu, uzgaidiet..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Pirms kameras izmantošanas ievietojiet SD karti."</string>
@@ -212,7 +213,7 @@
     <string name="video_date_content_description" msgid="2151884014634284456">"Videoklipa uzņemšanas datums: %s"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"Panorāmas fotoattēla uzņemšanas datums: %s"</string>
     <string name="photosphere_date_content_description" msgid="4183741743409007876">"Sfēriskā panorāmas fotoattēla uzņemšanas datums: %s"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"Objektīva aizmiglojuma fotoattēla uzņemšanas datums: %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Aizmiglojuma fotoattēla uzņemšanas datums: %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Notiek multivides satura apstrāde"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Pārslēgt režīmu sarakstu"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Režīmu saraksts"</string>
@@ -275,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ilguma iestatīšana (sekundēs)"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Notiek laika skaitīšana līdz fotoattēla uzņemšanai."</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vai atcerēties fotoattēlu uzņemšanas vietas?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Atzīmējiet savos fotoattēlos un videoklipos atrašanās vietas, kur tie tika uzņemti.\n\nCitas lietotnes var piekļūt šai informācijai līdz ar saglabātajiem attēliem."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Atzīmējiet savos fotoattēlos un videoklipos atrašanās vietas, kur tie tika uzņemti."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nē, paldies"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Jā"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"VAIRĀK OPCIJU"</string>
@@ -296,12 +297,12 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"Intervāla fotografēšana"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Platleņķa režīms"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorāma"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Objektīva aizmiglojums"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Aizmiglojums"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Pārslēgt uz kameras režīmu"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Pārslēgt uz videokameru"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Pārslēgt uz sfēriskā panorāmas fotoattēla režīmu"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Pārslēgt uz panorāmas režīmu"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Pārslēgt uz objektīva aizmiglojuma režīmu"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Pārslēgt uz aizmiglojuma režīmu"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Atvērt iestatījumus"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Aizvērt iestatījumus"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"Režīms “HDR plus” izslēgts"</string>

@@ -68,6 +68,7 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Não é possível conectar à câmera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"A câmera foi desativada devido às políticas de segurança."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Ocorreu um problema ao salvar a foto ou o vídeo."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"O app não tem as permissões necessárias para ser executado. Verifique suas configurações de permissões."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Falha no armazenamento de fotos."</string>
     <string name="wait" msgid="765601745709933047">"Aguarde…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Insira um cartão SD antes de usar a câmera."</string>
@@ -82,7 +83,7 @@
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Frontal"</string>
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Salvar localização"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"LOCAL"</string>
-    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Contagem regressiva"</string>
+    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Timer de contagem regressiva"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Aviso sonoro"</string>
@@ -140,7 +141,7 @@
     <string name="pref_camera_scenemode_label_night" msgid="7764371228088101131">"NOITE"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="3443610538453611123">"PÔR-DO-SOL"</string>
     <string name="pref_camera_scenemode_label_party" msgid="917499272505930322">"FESTA"</string>
-    <string name="pref_camera_countdown_label_off" msgid="3986433580620011481">"TEMPORIZADOR DESLIGADO"</string>
+    <string name="pref_camera_countdown_label_off" msgid="3986433580620011481">"TIMER DESATIVADO"</string>
     <string name="pref_camera_countdown_label_one" msgid="7647972711796868848">"1 SEGUNDO"</string>
     <string name="pref_camera_countdown_label_three" msgid="3154170918067103541">"3 SEGUNDOS"</string>
     <string name="pref_camera_countdown_label_ten" msgid="4372650985906500604">"10 SEGUNDOS"</string>
@@ -275,7 +276,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Definir duração em segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Contagem regressiva para tirar foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Memorizar locais de fotos?"</string>
-    <string name="remember_location_prompt" msgid="5104210757873140169">"Marque seus vídeos e fotos com os locais onde foram gerados.\n\nOutros apps podem acessar essas informações juntamente com suas imagens salvas."</string>
+    <string name="remember_location_prompt" msgid="3006013504489919474">"Marque seus vídeos e fotos com os locais onde foram gerados."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Não, obrigado"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sim"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MAIS OPÇÕES"</string>
@@ -320,9 +321,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Câmera frontal"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Linhas de grade desativadas"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Linhas de grade ativadas"</string>
-    <string name="countdown_timer_off" msgid="1663008439564495948">"Temporizador desativado"</string>
-    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Duração do temporizador definida como 3 segundos"</string>
-    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Duração do temporizador definida como 10 segundos"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Timer de contagem regressiva desativado"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Duração do timer de contagem regressiva definida para 3 segundos"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Duração do timer de contagem regressiva definida para 10 segundos"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Mais opções"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Cancelar"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Concluído"</string>
@@ -369,7 +370,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Em \"Configurações\", altere a resolução e a qualidade ou explore os recursos avançados."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolher tamanho da foto"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Você pode alterar isto mais tarde em \"Configurações\"."</string>
-    <string name="share_to" msgid="5144911209144798122">"Compartilhar em"</string>
+    <string name="share_to" msgid="5144911209144798122">"Compartilhar via"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar com"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"PRÓXIMO"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, ENTENDI"</string>
