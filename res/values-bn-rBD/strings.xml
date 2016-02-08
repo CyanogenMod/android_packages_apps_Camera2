@@ -22,9 +22,9 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"এই হিসাবে ছবি সেট করুন"</string>
     <string name="delete" msgid="2714492172818940424">"মুছুন"</string>
-    <string name="share" msgid="8581089487762243115">"ভাগ করুন"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"প্যানোরামা ভাগ করুন"</string>
-    <string name="share_as_photo" msgid="4831213580709167218">"ফটো হিসাবে ভাগ করুন"</string>
+    <string name="share" msgid="8581089487762243115">"শেয়ার করুন"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"প্যানোরামা শেয়ার করুন"</string>
+    <string name="share_as_photo" msgid="4831213580709167218">"ফটো হিসাবে শেয়ার করুন"</string>
     <string name="deleted" msgid="2036165115527228127">"মোছা হয়েছে"</string>
     <string name="undo" msgid="5110048345890050107">"পূর্বাবস্থায় ফিরুন"</string>
     <string name="details" msgid="4404020741542549488">"বিশদ বিবরণ"</string>
@@ -341,7 +341,7 @@
     <string name="done_button_description" msgid="1334963435441544592">"সম্পন্ন"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"পুনরায় নিন"</string>
     <string name="review_button_description" msgid="7932122063748430080">"পর্যালোচনা"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"ভাগ করুন"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"শেয়ার করুন"</string>
     <string name="view_button_description" msgid="4985768837891362075">"দেখুন"</string>
     <string name="edit_button_description" msgid="98550816724901925">"সম্পাদনা করুন"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"মুছুন"</string>
@@ -382,7 +382,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"সেটিংস-এ, রেজোলিউশন এবং গুণমান পরিবর্তন করুন, বা উন্নত বৈশিষ্ট্যগুলি ব্যবহার করে দেখুন৷"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ফটোর আকার চয়ন করুন"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"আপনি এই সেটিংসটি পরে পরিবর্তন করতে পারেন৷"</string>
-    <string name="share_to" msgid="5144911209144798122">"এর সাথে ভাগ করুন"</string>
+    <string name="share_to" msgid="5144911209144798122">"এর সাথে শেয়ার করুন"</string>
     <string name="edit_with" msgid="615569327230783971">"এর মাধ্যমে সম্পাদনা করুন"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"পরবর্তী"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ঠিক আছে, বুঝেছি"</string>
