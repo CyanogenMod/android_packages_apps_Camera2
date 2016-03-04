@@ -16,7 +16,10 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <!-- More Settings screen, power button title -->
   <string name="pref_camera_power_shutter_title">ಪವರ್ ಷಟರ್</string>
+  <!-- More Settings screen, max brightness title -->
   <string name="pref_camera_max_brightness_title">ಪ್ರಕಾಶಮಾನ ಪರದೆ</string>
+  <!-- More Settings screen, storage title -->
   <string name="pref_camera_storage_title">ಸಂಗ್ರಹಣೆ ಸ್ಥಳ</string>
 </resources>

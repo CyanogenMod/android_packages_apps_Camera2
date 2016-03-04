@@ -16,7 +16,10 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="pref_camera_power_shutter_title">Déclencheur par bouton marche</string>
+  <!-- More Settings screen, power button title -->
+  <string name="pref_camera_power_shutter_title">Bouton marche/arrêt</string>
+  <!-- More Settings screen, max brightness title -->
   <string name="pref_camera_max_brightness_title">Luminosité maximale</string>
+  <!-- More Settings screen, storage title -->
   <string name="pref_camera_storage_title">Emplacement de stockage</string>
 </resources>
