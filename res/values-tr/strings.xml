@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kameraya bağlanılamıyor."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Güvenlik politikaları nedeniyle kamera devre dışı bırakıldı."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Fotoğrafınız veya videonuz kaydedilirken bir sorun oluştu."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Uygulamanın, çalışması için gerekli olan kritik izinleri yok. Lütfen izin ayarlarınızı kontrol edin."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Fotoğraf depolama hatası."</string>
     <string name="wait" msgid="765601745709933047">"Lütfen bekleyin…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Kamerayı kullanmadan önce bir SD kart takın."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Süreyi saniye cinsinden ayarla"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Fotoğraf çekmek için geri sayılıyor"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Fotoğrafların çekildiği konumlar hatırlansın mı?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Fotoğraflarınızı ve videolarınızı çekildikleri konumlarla etiketleyin."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Fotoğraflarınızı ve videolarınızı çekildikleri konumlarla etiketleyin.\n\nDiğer uygulamalar, kaydedilen görüntülerle birlikte bu bilgilere erişebilir."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Hayır, teşekkürler"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Evet"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"DİĞER SEÇENEKLER"</string>
@@ -321,9 +320,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Ön kamera"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Kılavuz çizgileri kapalı"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Kılavuz çizgileri açık"</string>
-    <string name="countdown_timer_off" msgid="1663008439564495948">"Geri sayım zamanlayıcısı kapalı"</string>
-    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Geri sayım süresi 3 saniyeye ayarlandı"</string>
-    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Geri sayım süresi 10 saniyeye ayarlandı"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Geri sayım kronometresi kapalı"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Geri sayım kronometresinin süresi 3 saniyeye ayarlandı"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Geri sayım kronometresinin süresi 10 saniyeye ayarlandı"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Diğer Seçenekler"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"İptal"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Bitti"</string>

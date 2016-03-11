@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"اتصال به دوربین ممکن نیست."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"به دلیل خط‌مشی‌های امنیتی، دوربین غیرفعال شده است."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"هنگام ذخیره عکس یا ویدیوی شما مشکلی پیش آمد."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"برنامه مجوزهای مهم مورد نیاز برای اجرا شدن را ندارد. لطفاً تنظیمات مجوزهایتان را بررسی کنید."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"خطا در فضای ذخیره عکس."</string>
     <string name="wait" msgid="765601745709933047">"لطفاً منتظر بمانید…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"‏قبل از استفاده از دوربین، یک کارت SD در آن قرار دهید."</string>
@@ -81,7 +80,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"انتخاب دوربین"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"برگشت"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"جلو"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ذخیره موقعیت مکانی"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ذخیره مکان"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"موقعیت مکانی"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"تایمر شمارش معکوس"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -169,7 +168,7 @@
     <string name="pano_capture_indication" msgid="4002128831255023954">"در حال گرفتن عکس پانوراما"</string>
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"در حال انتظار برای پانورامای قبلی"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"در حال ذخیره..."</string>
-    <string name="pano_review_rendering" msgid="2743087719999377155">"درحال پردازش پانوراما"</string>
+    <string name="pano_review_rendering" msgid="2743087719999377155">"در حال تولید تصویر پانوراما"</string>
     <string name="tap_to_focus" msgid="3519718196270593468">"برای فوکوس لمس کنید."</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"جلوه‌ها"</string>
     <string name="effect_none" msgid="3102797925086872636">"هیچ‌کدام"</string>
@@ -182,7 +181,7 @@
     <string name="effect_backdropper_space" msgid="9133825395915767627">"در فضا"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"غروب آفتاب"</string>
     <string name="effect_backdropper_gallery" msgid="2333888391153564920">"ویدیوی شما"</string>
-    <string name="video_snapshot_hint" msgid="2707403607250082339">"برای عکس گرفتن در هنگام ضبط، لمس کنید."</string>
+    <string name="video_snapshot_hint" msgid="2707403607250082339">"برای گرفتن عکس در هنگام ضبط لمس کنید."</string>
     <string name="video_recording_started" msgid="3374878415050991030">"ضبط ویدیو شروع شد."</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"ضبط ویدیو متوقف شد."</string>
     <string name="clear_effects" msgid="6192797848995967992">"پاک کردن جلوه‌ها"</string>
@@ -199,21 +198,21 @@
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"تغییر به کیفیت بالا"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"تغییر به فوکوس مجدد"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"لغو بازبینی"</string>
-    <string name="accessibility_review_ok" msgid="3486465319880320270">"بازبینی تمام"</string>
+    <string name="accessibility_review_ok" msgid="3486465319880320270">"بازبینی انجام شد"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"بازبینی عکس/ویدیوی دوباره ضبط شده"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"گزینه‌ها"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"لیست حالت بسته است"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"لیست حالت باز است"</string>
     <string name="media_accessibility_peek" msgid="234540330161031946">"عکس گرفته‌ شد"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"عکس گرفته شد"</string>
-    <string name="video_accessibility_peek" msgid="7845916149291383132">"فیلم‌برداری تمام"</string>
+    <string name="video_accessibility_peek" msgid="7845916149291383132">"فیلم‌برداری انجام شد"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"بازگشایی در حالت دوربین"</string>
     <string name="media_date_content_description" msgid="2155634843596817141">"‏رسانه در %s گرفته شده است"</string>
     <string name="photo_date_content_description" msgid="5705865897898465619">"‏عکس در %s گرفته شده است"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"‏ویدیو در %s گرفته شده است"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"‏پانوراما در %s گرفته شده است"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس Photo Sphere در %s گرفته شده است"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"‏عکس تاری لنز در %s گرفته شده است"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس پانوراما در %s گرفته شده است"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"‏Lens blur در %s گرفته شده است"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"در حال پردازش رسانه"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"جابجایی لیست حالت"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"لیست حالت"</string>
@@ -270,13 +269,13 @@
     <string name="time_lapse_seconds" msgid="7319683099532506270">"ثانیه"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"دقیقه"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"ساعت"</string>
-    <string name="time_lapse_interval_set" msgid="2418594453248958440">"تمام"</string>
+    <string name="time_lapse_interval_set" msgid="2418594453248958440">"انجام شد"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"تنظیم فاصله زمانی"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"قابلیت گذر زمان خاموش است. برای تنظیم فاصله زمانی آن را روشن کنید."</string>
     <string name="set_duration" msgid="1638453882581604341">"تنظیم مدت زمان به ثانیه"</string>
-    <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای عکس گرفتن"</string>
+    <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای گرفتن عکس"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"موقعیت مکانی عکس به خاطر سپرده شود؟"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"محل گرفتن عکس‌ها و ویدیوها را به آن‌ها برچسب کنید."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"عکس‌ها و ویدیوهایتان را با موقعیت مکانی که گرفته شده‌اند، برچسب بزنید.\n\nدیگر برنامه‌ها می‌توانند همراه با تصاویر ذخیره شده‌تان به این اطلاعات دسترسی داشته باشند."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"خیر متشکرم"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"بله"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"گزینه‌های بیشتر"</string>
@@ -289,20 +288,20 @@
     <string name="crop_save" msgid="2841974981340098579">"ذخیره"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"تصویر بارگیری نمی‌شود!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"نمای نوار فیلم"</string>
-    <string name="setting_wallpaper" msgid="2397759659347872725">"درحال تنظیم کاغذدیواری"</string>
+    <string name="setting_wallpaper" msgid="2397759659347872725">"تنظیم کاغذ دیواری"</string>
     <string name="mode_settings" msgid="2021937261522670921">"تنظیمات"</string>
     <string name="mode_camera" msgid="279763925715250603">"دوربین"</string>
     <string name="mode_video" msgid="8633929034048169139">"ویدیو"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"عکس پانوراما"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"فاصله زمانی"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاویه باز"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"پانوراما"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"تاری لنز"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Lens Blur"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"تغییر به حالت دوربین"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"تغییر به دوربین فیلمبرداری"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"‏تغییر به حالت Photo Sphere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"تغییر به حالت پانوراما"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"تغییر به حالت تاری لنز"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"‏تغییر به حالت Lens Blur"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"باز کردن تنظیمات"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"بستن تنظیمات"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"‏HDR Plus خاموش"</string>
@@ -326,7 +325,7 @@
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"مدت زمان تایمر شمارش معکوس روی ۱۰ ثانیه تنظیم شده است"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"گزینه‌های بیشتر"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"لغو"</string>
-    <string name="done_button_description" msgid="1334963435441544592">"تمام"</string>
+    <string name="done_button_description" msgid="1334963435441544592">"انجام شد"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"عکس گرفتن مجدد"</string>
     <string name="review_button_description" msgid="7932122063748430080">"نظر"</string>
     <string name="share_button_description" msgid="5108508790540832053">"اشتراک‏‌گذاری"</string>
@@ -350,7 +349,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"‏در حال پردازش +HDR ..."</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"مجوزهای منبع باز"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"تنظیمات عمومی"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"وضوح و کیفیت"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"وضوح تصویر و کیفیت"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"درباره"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"نسخه ساخت"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"پایین"</string>
@@ -367,13 +366,13 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"برای فوکوس مجدد، اینجا را لمس کنید"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"پیشرفته"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"نوردهی دستی"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"در تنظیمات، می‌توانید وضوح و کیفیت را تغییر دهید یا قابلیت‌های پیشرفته را امتحان کنید."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"در تنظیمات، وضوح تصویر و کیفیت را تغییر دهید یا قابلیت‌های پیشرفته را امتحان کنید."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"انتخاب اندازه عکس"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"می‌توانید بعداً این مورد را در تنظیمات تغییر دهید."</string>
     <string name="share_to" msgid="5144911209144798122">"اشتراک‌گذاری با"</string>
     <string name="edit_with" msgid="615569327230783971">"ویرایش با"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"بعدی"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"بله، متوجه شدم"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"بسیار خوب، متوجه شدم"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"حسگر کامل \n‏(۴:۳)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"حسگر برش داده شده \n‏(۱۶:۹)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"۰"</string>

@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"क्यामेरासँग जडान गर्न सक्दैन।"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"सुरक्षा नीतिहरूका कारण क्यामरा निष्क्रिय गरिएको छ।"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"तपाईँको तस्बिर वा भिडियो सुरक्षित गर्दा एउटा समस्या भयो।"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"सञ्चालन गर्नका लागि अनुप्रयोगसँग अति आवश्यकता अनुमति छैन। कृपया तपाईँको अनुमति सेटिङहरू जाँच गर्नुहोस्।"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"तस्बिर भण्डारण विफलता।"</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा गर्नुहोस्..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"क्यामेराको उपयोग गर्नु अघि एउटा SD कार्ड भित्र राख्नुहोस्।"</string>
@@ -278,7 +277,7 @@
     <string name="set_duration" msgid="1638453882581604341">"सेकेन्डमा अवधि निर्धारित गर्नुहोस्"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"एउटा तस्बिर लिनका लागि काउन्ट गरिँदै"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"फोटा स्थानहरू याद गर्नुभयो?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"खिचेका स्थानहरूसहित तस्बिरहरू र भिडियोहरूलाई ट्याग गर्नुहोस्।"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"जहाँ लिइएको स्थानका साथ आफ्ना फोटा र भिडियोहरू ट्याग गर्नुहोस्। \n \n तपाईँले सुरक्षित गरेका तस्बिरहरूका साथै अरू अनुप्रयोगहरूले यी जानकारीहरू उपयोग गर्न सक्छन्।"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"धन्यबाद, पर्दैन"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"हो"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MORE OPTIONS"</string>

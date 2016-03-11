@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Không thể kết nối với máy ảnh."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Máy ảnh đã bị tắt do chính sách bảo mật."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Đã xảy ra sự cố khi lưu ảnh hoặc video của bạn."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Ứng dụng không có quyền quan trọng cần thiết để chạy. Hãy kiểm tra cài đặt quyền của bạn."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Lỗi lưu trữ ảnh."</string>
     <string name="wait" msgid="765601745709933047">"Vui lòng đợi..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Lắp thẻ SD trước khi sử dụng máy ảnh."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Đặt thời gian trong vài giây"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Đếm ngược để chụp ảnh"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Nhớ vị trí chụp ảnh?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Gắn thẻ cho ảnh và video của bạn với những địa điểm bạn đã chụp/quay chúng."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Gắn thẻ cho ảnh và video của bạn với những địa điểm mà ảnh đó được chụp và video đó được quay.\n\nCác ứng dụng khác có thể truy cập vào thông tin này cùng với các hình ảnh đã lưu của bạn."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Không, cảm ơn"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Có"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"TÙY CHỌN KHÁC"</string>

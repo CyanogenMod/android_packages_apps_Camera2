@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Не може да се поврзе со камерата."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камерата е оневозможена поради безбедносните политики."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Настана проблем при зачувување на фотографијата или видеото."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Апликацијата нема критични дозволи што се потребни за да се извршува. Проверете ги поставките за дозволи."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Неуспешно зачувување на фотографијата."</string>
     <string name="wait" msgid="765601745709933047">"Почекај..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Вметнете СД картичка пред да ја користите камерата."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Постави времетраење во секунди"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Одбројува за да фотографира"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Се сеќавате на локациите на фотографиите?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Означете ги фотографиите и видеата со локациите каде што се создадени."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Означете ги вашите фотографии и видеа со локациите каде што се направени.\n\nДруги апликации може да пристапат кон овие информации, заедно со вашите зачувани слики."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Не, благодарам"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ПОВЕЌЕ ОПЦИИ"</string>

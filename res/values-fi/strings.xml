@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Ei yhteyttä kameraan."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera on poistettu käytöstä suojauskäytäntöjen vuoksi."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Kuvan tai videon tallentamisessa oli ongelma."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Sovelluksella ei ole sen suorittamiseen tarvittavia oikeuksia. Tarkista käyttöoikeusasetuksesi."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Kuvan tallennusvirhe."</string>
     <string name="wait" msgid="765601745709933047">"Odota…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Aseta SD-kortti ennen kameran käyttämistä."</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Intervallikuvaus ei ole käytössä. Ota ominaisuus käyttöön, jos haluat määrittää aikavälin."</string>
     <string name="set_duration" msgid="1638453882581604341">"Aseta kesto sekunteina"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Kuva otetaan, kun ajastin saavuttaa nollan"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Merkitäänkö valokuviin sijainti?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Merkitse valokuviin ja videoihin kuvauspaikat."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Muistetaanko valokuvien sijainnit?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Merkitse valokuviin ja videoihin niiden kuvauspaikat.\n\nMuut sovellukset voivat käyttää näitä tietoja tallennettujen kuviesi yhteydessä."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ei kiitos"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Kyllä"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"LISÄÄ"</string>

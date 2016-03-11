@@ -57,7 +57,7 @@
     <string name="exposure_time" msgid="949787291620767754">"Ekspoz-ya vaqti"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"mm"</string>
-    <string name="manual" msgid="2444400953521760140">"Qo‘lda"</string>
+    <string name="manual" msgid="2444400953521760140">"Qo‘lbola"</string>
     <string name="auto" msgid="2552649885114400474">"Avto"</string>
     <string name="flash_on" msgid="6573457197393807642">"Chaqnoq yoqildi"</string>
     <string name="flash_off" msgid="7889323512830926273">"Chaqnoqsiz"</string>
@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kameraga ulanib bo‘lmadi."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Xavfsizlik siyosati shartlariga asoslanib, Kamerangiz o‘chirib qo‘yildi."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Rasm yoki videoni saqlashda muammo yuz berdi."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Ilovani ishga tushirish uchun zarur bo‘lgan muhim ruxsat yetishmayapti. Ruxsat sozlamalarini tekshiring."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Rasmni saqlash bilan bog‘liq xato"</string>
     <string name="wait" msgid="765601745709933047">"Kutib turing…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Kamerani yoqishdan avval SD kartani joylashtiring."</string>
@@ -81,7 +80,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Kamera tanlash"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Orqaga"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Oldingi"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Suratga olish joyi"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Joylashuvni saqlash"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"JOYLASHUV"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Ortga sanash taymeri"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -107,8 +106,8 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"Chaqnoq rejimi"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"CHAQNOQ REJIMI"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"Avto"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Yoniq"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"O‘chiq"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Yoqilgan"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"O‘chirilgan"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"AVTO CHAQNOQ"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"CHAQNOQ YONIQ"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"CHAQNOQ O‘CHIQ"</string>
@@ -195,7 +194,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Rasmga o‘tish"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Videoga o‘tish"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Panorama rejimiga o‘tish"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphere"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Panoramaga o‘tish"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Yuqori sifatli rejimga o‘tish"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Qayta fokuslashga o‘tish"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Ko‘rib chiqishni bekor qilish"</string>
@@ -227,7 +226,7 @@
     <string name="capital_on" msgid="1118214824959797269">"YONIQ"</string>
     <string name="capital_off" msgid="3020696135020167263">"O‘CHIQ"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Videoni ijro etish"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"O‘chiq"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"O‘chirilgan"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 soniya"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 soniya"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1.5 soniya"</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Vaqt oralig‘i imkoniyati o‘chiq. Yoqish uchun oraliq vaqtini belgilang."</string>
     <string name="set_duration" msgid="1638453882581604341">"Davomiylikni soniyalarda belgilang"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Rasm suratga olish uchun ortga sanalmoqda"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Suratga olish joyi saqlansinmi?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Rasm va videolaringizga suratga olish joyi haqidagi ma’lumotni qo‘shing."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Rasm manzillari saqlab qolinsinmi?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Rasmlar va videolaringizning olingan joylarini teglar bilan belgilang.\n\nBoshqa ilovalar ushbu ma’lumotlarni ko‘rib chiqish imkoniyatiga ega bo‘ladi."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Yo‘q, kerak emas"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ha"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"QO‘SHIMCHA MOSLAMALAR"</string>
@@ -293,11 +292,11 @@
     <string name="mode_settings" msgid="2021937261522670921">"Sozlamalar"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Panorama"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Sekinlashtirish vaqti"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Keng burchakli"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Xiralashtirish"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Xiralashtirish effekti"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Kamera rejimini o‘zgartirish"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Video kamerani yoqish/o‘chirish"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Panorama rejimiga o‘tish"</string>
@@ -341,20 +340,20 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Ekspokorreksiya +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Joriy tugma - %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Joylashuv"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Orqa kamera: foto"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Orqa kamera: video"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Old kamera: foto"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Asosiy kamera: rasm"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Asosiy kamera: video"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Old kamera: rasm"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Old kamera: video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standart kamera"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Yordam va fikr-mulohaza"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ bajarilmoqda …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Ochiq kodli DT litsenziyalari"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Umumiy sozlamalar"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Rasm sig‘imi va sifati"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Sig‘im va sifat"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Ilova haqida"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Ishlab chiqilgan versiyasi"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Past"</string>
-    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Yuqori"</string>
+    <string name="pref_video_quality_entry_high" msgid="1613578418842803393">"Baland"</string>
     <string name="pref_video_quality_entry_qcif" msgid="1717816794399266216">"QCIF"</string>
     <string name="pref_video_quality_entry_cif" msgid="645414019445016434">"CIF"</string>
     <string name="pref_video_quality_entry_480p" msgid="5880250731066854583">"SD 480p"</string>
@@ -366,11 +365,11 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapiksel"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Qayta fokuslash uchun bu yerga bosing"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Qo‘shimcha"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ekspozitsiyani qo‘lda tuzatish"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Qo‘lda ekspozitsiya"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Sozlamalardan rasm sig‘imi va sifatini o‘zgartiring yoki qo‘shimcha funksiyalarni sinab ko‘ring."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Rasm o‘lchamini tanlash"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Buni keyinroq sozlamalardan o‘zgartirishingiz mumkin."</string>
-    <string name="share_to" msgid="5144911209144798122">"Ilovani tanlang"</string>
+    <string name="share_to" msgid="5144911209144798122">"Ulashish"</string>
     <string name="edit_with" msgid="615569327230783971">"Tahrirlash…"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"KEYINGI"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, TUSHUNARLI"</string>

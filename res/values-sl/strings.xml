@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Povezava s fotoaparatom ni mogoča."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Fotoaparat je onemogočen zaradi varnostnih pravilnikov."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Pri shranjevanju fotografije ali videoposnetka je prišlo do težave."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplikacija nima nujnih dovoljenj, potrebnih za izvajanje. Preverite nastavitve dovoljenj."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Napaka pri shranjevanju fotografije."</string>
     <string name="wait" msgid="765601745709933047">"Počakajte …"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Pred uporabo fotoaparata vstavite kartico SD."</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funkcija časovnega zamika je izklopljena. Vklopite jo, da nastavite časovni interval."</string>
     <string name="set_duration" msgid="1638453882581604341">"Nastavite trajanje v sekundah"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odštevanje pred fotografiranjem"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Želite beležiti lokacije fotografij?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Fotografije in videoposnetke označite z lokacijami, na katerih so posneti."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Beleženje lokacije fotografije?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Fotografije in videoposnetke označite z lokacijami, na katerih so posneti.\n\nDruge aplikacije lahko dostopajo do teh podatkov skupaj s shranjenimi slikami."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ne, hvala"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Da"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"VEČ MOŽNOSTI"</string>
@@ -370,10 +369,10 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"V nastavitvah spremenite ločljivost in kakovost ali preskusite dodatne funkcije."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Izberite velikost fotografij"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"To lahko spremenite pozneje v nastavitvah."</string>
-    <string name="share_to" msgid="5144911209144798122">"Skupna raba prek:"</string>
+    <string name="share_to" msgid="5144911209144798122">"Objava v:"</string>
     <string name="edit_with" msgid="615569327230783971">"Uredi z aplikacijo"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"NAPREJ"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"RAZUMEM"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"V REDU, RAZUMEM"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Polno tipalo \n(4 : 3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Obrezano tipalo \n(16 : 9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>

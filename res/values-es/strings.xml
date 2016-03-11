@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"No se puede establecer conexión con la cámara."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Se ha inhabilitado la cámara debido a las políticas de seguridad."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Ha habido un problema al guardar la foto o el vídeo."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"La aplicación no tiene permisos críticos necesarios para ejecutarse. Comprueba la configuración de los permisos."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Error al almacenar la foto."</string>
     <string name="wait" msgid="765601745709933047">"Espera, por favor…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Para poder usar la cámara, inserta una tarjeta SD."</string>
@@ -159,7 +158,7 @@
     <string name="dialog_ok" msgid="774141340500181131">"Aceptar"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Cancelar"</string>
     <string name="dialog_report" msgid="7616428760369876209">"Informar"</string>
-    <string name="dialog_dismiss" msgid="1382550604990470119">"Aceptar"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"Ignorar"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"No queda espacio en la tarjeta SD. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Se ha alcanzado el límite de tamaño."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Muy rápido"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Define la duración en segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Cuenta atrás para hacer una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"¿Recordar ubicaciones de las fotos?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Etiqueta tus fotos y vídeos con las ubicaciones en las que se han realizado."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiquetar tus fotos y vídeos con las ubicaciones donde se han realizado\n\nOtras aplicaciones pueden acceder a esta información y a imágenes guardadas."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gracias"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÁS OPCIONES"</string>
@@ -341,10 +340,10 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Compensación de exposición +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Ahora el botón es %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Ubicación"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto de la cámara trasera"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo de la cámara trasera"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto de la cámara frontal"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo de la cámara frontal"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Foto de cámara trasera"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Vídeo de cámara trasera"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Foto de cámara frontal"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Vídeo de cámara frontal"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Cámara predeterminada"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Ayuda y sugerencias"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Procesando HDR+…"</string>
@@ -365,12 +364,12 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeles"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s MP"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Toca para volver a enfocar"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"Opciones avanzadas"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"Avanzado"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Exposición manual"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Cambia la resolución y la calidad en Ajustes o prueba las funciones avanzadas."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Selecciona un tamaño de foto"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Puedes cambiar esta opción más tarde en Ajustes."</string>
-    <string name="share_to" msgid="5144911209144798122">"Compartir vía"</string>
+    <string name="share_to" msgid="5144911209144798122">"Compartir en"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar con"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"SIGUIENTE"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ENTENDIDO"</string>

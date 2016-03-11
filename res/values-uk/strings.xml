@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Не вдалося під’єднатися до камери."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камеру вимкнено згідно з правилами безпеки."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Не вдалося зберегти фотографію або відео."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Додаток не має обов’язкових дозволів, потрібних для роботи. Перегляньте налаштування дозволів."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Помилка зберігання фото."</string>
     <string name="wait" msgid="765601745709933047">"Зачекайте…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Вставте карту SD перед тим, як користуватися камерою."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Установити тривалість у секундах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Відлік перед фотографуванням"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Зберігати місця зйомки фотографій?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Додавайте геотеги місць зйомки до своїх фотографій і відео."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Додавайте геотеги до своїх фотографій і відео, щоб указати, де ви їх зняли.\n\nІнші програми можуть отримувати доступ до цієї інформації, а також ваших збережених зображень."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ні, дякую"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Так"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ІНШІ ОПЦІЇ"</string>
@@ -348,7 +347,7 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Камера за умовчанням"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Довідка й відгуки"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Обробка HDR+…"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"Ліцензії відкритого коду"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Ліцензії ПЗ з відкритим кодом"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Загальні налаштування"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Роздільна здатність і якість"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Про програму"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Змініть роздільну здатність і якість або спробуйте розширені функції в налаштуваннях."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Виберіть розмір фотографії"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Можна потім змінити в налаштуваннях."</string>
-    <string name="share_to" msgid="5144911209144798122">"Поділитися через:"</string>
+    <string name="share_to" msgid="5144911209144798122">"Кому надіслати:"</string>
     <string name="edit_with" msgid="615569327230783971">"Чим редагувати:"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ДАЛІ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ЗРОЗУМІЛО"</string>

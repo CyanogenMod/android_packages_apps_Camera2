@@ -39,7 +39,7 @@
     <string name="video_err" msgid="1562566029875081552">"No es pot reproduir el vídeo."</string>
     <string name="title" msgid="8061744305671964703">"Títol"</string>
     <string name="description" msgid="8193138501982849808">"Descripció"</string>
-    <string name="time" msgid="5248213506417024287">"Hora"</string>
+    <string name="time" msgid="5248213506417024287">"Temps"</string>
     <string name="location" msgid="564326205780827668">"Ubicació"</string>
     <string name="path" msgid="5927003361865586353">"Camí"</string>
     <string name="width" msgid="7045750687833828758">"Amplada"</string>
@@ -48,13 +48,13 @@
     <string name="duration" msgid="5316211067383665008">"Durada"</string>
     <string name="mimetype" msgid="6415940055077963944">"Tipus MIME"</string>
     <string name="file_size" msgid="6841070748357980676">"Mida de fitxer"</string>
-    <string name="maker" msgid="698691509121545856">"Fabricant"</string>
+    <string name="maker" msgid="698691509121545856">"Creador"</string>
     <string name="model" msgid="8547493604023069452">"Model"</string>
     <string name="flash" msgid="995041910749174196">"Flaix"</string>
     <string name="aperture" msgid="2453802098282814022">"Obertura"</string>
     <string name="focal_length" msgid="8351221512187346229">"Longitud focal"</string>
     <string name="white_balance" msgid="1600142743496129085">"Balanç de blancs"</string>
-    <string name="exposure_time" msgid="949787291620767754">"Temps exposició"</string>
+    <string name="exposure_time" msgid="949787291620767754">"Temps d\'expos."</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"mm"</string>
     <string name="manual" msgid="2444400953521760140">"Manual"</string>
@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"No es pot connectar a la càmera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"La càmera s\'ha desactivat a causa de les polítiques de seguretat."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"S\'ha produït un problema en desar la foto o el vídeo."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"L\'aplicació no té els permisos importants necessaris per executar-se. Comprova la configuració dels permisos."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Error en desar la foto."</string>
     <string name="wait" msgid="765601745709933047">"Espera…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Per utilitzar la càmera, insereix una targeta SD."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Configuració de la durada en segons"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Compte enrere per fer una foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vols que es recordin les ubicacions de les fotos?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Etiqueta les fotos i els vídeos amb les ubicacions en què s\'han fet."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiqueta les teves fotos i els teus vídeos amb les ubicacions des de les quals s\'han fet.\n\nAltres aplicacions podran accedir a aquesta informació i a les imatges desades."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, gràcies"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sí"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MÉS OPCIONS"</string>

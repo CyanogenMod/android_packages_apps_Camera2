@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kan nie aan die kamera koppel nie."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera is vanweë sekuriteitbeleid gedeaktiveer."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Kon nie jou foto of video stoor nie."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Die program het nie belangrike toestemmings wat nodig is om te werk nie. Gaan asseblief jou toestemminginstellings na."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Mislukking van fotoberging."</string>
     <string name="wait" msgid="765601745709933047">"Wag asseblief…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Sit \'n SD-kaart in voor jy die kamera gebruik."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Stel tydsduur in sekondes"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Tel tans af om \'n foto te neem"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Moet foto-liggings onthou word?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Merk jou foto\'s en video\'s met die liggings waar hulle geneem word."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Merk jou foto\'s en video\'s met die liggings waar hulle geneem is.\n\nAnder programme kan toegang kry tot hierdie inligting saam met jou gestoorde beelde."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nee, dankie"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"NOG OPSIES"</string>

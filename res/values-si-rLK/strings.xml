@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"කැමරාව වෙත සම්බන්ධ කළ නොහැක."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"ආරක්ෂණ ප්‍රතිපත්ති නිසා කැමරාව අබල කර ඇත."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ඔබේ ඡායාරූපය හෝ වීඩියෝව සුරැකීමේ ප්‍රශ්නයක් ඇති විය."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"මෙම යෙදුම ධාවනය කිරීමට අවශ්‍ය අවශ්‍යම අවසර නැත. කරුණාකර ඔබගේ අවසර සැකසීම් පරික්ෂා කරන්න."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ඡායාරූප ගබඩාව අසාර්ථකයි."</string>
     <string name="wait" msgid="765601745709933047">"කරුණාකර රැඳී සිටින්න..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"කැමරාව භාවිතා කිරීමට පෙර SD කාඩ් පතක් ඇතුලු කරන්න."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"තත්පර වලින් කාල පරාස සකසන්න"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ඡායාරූපයක් ගැනීමට ආපස්සට ගණන් කෙරේ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ඡායාරූප ස්ථාන මතක තියාගන්නද?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"ඔබගේ ඡායාරූප සහ වීඩියෝ ඒවා ගත් ස්ථාන සමගින් ටැග් කරන්න."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ඔබගේ ඡායාරූප සහ වීඩියෝ ඒවා ගත් ස්ථානය සමගින් ටැග් කරන්න.\n\nවෙනත් යෙදුම් වලට ඔබගේ සුරැකි පින්තුර සමගින් මෙම තොරතුරු වෙත ප්‍රවේශ විය හැක."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"එපා ස්තූතියි"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ඔව්"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"තව විකල්ප"</string>

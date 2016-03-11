@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Ekki er hægt að tengjast myndavélinni."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Myndavélin hefur verið gerð óvirk vegna öryggisstefnu."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Vandamál kom upp við vistun myndarinnar eða myndskeiðsins."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Forritið er ekki með nauðsynlegar heimildir til að geta keyrt. Athugaðu stillingar heimilda."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Ekki tókst að vista mynd."</string>
     <string name="wait" msgid="765601745709933047">"Augnablik…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Settu SD-kort í áður en þú notar myndavélina."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Veldu lengd í sekúndum"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Telur niður að myndatöku"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Muna tökustaðsetningar?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Merktu myndir og myndskeið með tökustaðsetningum þeirra."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Merktu myndirnar þínar og myndskeið með þeim staðsetningum þar sem myndataka fór fram.\n\nÖnnur forrit hafa aðgang að þessum upplýsingum ásamt vistuðu myndunum."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nei, takk"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Já"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLEIRI VALKOSTIR"</string>

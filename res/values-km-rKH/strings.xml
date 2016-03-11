@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"មិនអាចភ្ជាប់ទៅកាមេរ៉ាបានទេ។"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"បានបិទដំណើរការកាមេរ៉ា ដោយសារគោលការណ៍សុវត្ថិភាព។"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"មានបញ្ហាក្នុងការរក្សាទុករូបថត ឬវីដេអូរបស់អ្នក។"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"កម្មវិធីនេះមិនមានសិទ្ធិអនុញ្ញាតគ្រប់គ្រាន់ដើម្បីដំណើរការទេ។ សូមពិនិត្យការកំណត់សិទ្ធិអនុញ្ញាតរបស់អ្នក។"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"បរាជ័យក្នុងការផ្ទុករូបថត។"</string>
     <string name="wait" msgid="765601745709933047">"សូម​រង់ចាំ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"បញ្ចូល​កាត​អេសឌី​មុន​នឹង​ប្រើ​ម៉ាស៊ីន​ថត។"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"កំណត់​រយៈពេល​គិត​ជា​វិនាទី"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"កំពុង​រាប់​ថយក្រោយ​ដើម្បី​ថត"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ចងចាំ​ទីតាំង​រូបថត?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"ដាក់ស្លាករូបថត និងវីដេអូរបស់អ្នកជាមួយទីតាំងដែលអ្នកបានថត។"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ដាក់​ស្លាក​រូបថត និង​វីដេអូ​​របស់​អ្នក​​ពី​ទីតាំង​ដែល​អ្នក​បាន​ថត។\n\nកម្មវិធី​ផ្សេង​អាច​ចូល​ប្រើ​ព័ត៌មាន​នេះ​តាមរយៈ​រូបភាព​ដែល​បាន​រក្សាទុក​របស់​អ្នក។"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ទេ អរគុណ!"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"បាទ/ចាស"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ជម្រើស​ច្រើន​ទៀត"</string>

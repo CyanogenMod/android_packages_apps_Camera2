@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ক্যামেরা সাথে সংযোগ করতে পারবেন না।"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"নিরাপত্তা নীতিগুলির জন্য ক্যামেরা অক্ষমিত করা হয়েছে।"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"আপনার ফটো বা ভিডিও সংরক্ষণ করার সময় একটি ত্রুটি ঘটেছে৷"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"অ্যাপ্লিকেশাটি চালানোর জন্য কোনো গুরুত্বপূর্ণ অনুমতির প্রয়োজন নেই৷ অনুগ্রহ করে আপনার অনুমতি সেটিংস পরীক্ষা করুন৷"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ফটো সঞ্চয় করতে ব্যর্থ হয়েছে৷"</string>
     <string name="wait" msgid="765601745709933047">"দয়া করে অপেক্ষা করুন..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ক্যামেরা ব্যবহার করার পূর্বে একটি SD কার্ড ঢোকান।"</string>
@@ -288,8 +287,8 @@
     <string name="set_duration" msgid="1638453882581604341">"সময়কাল সেকেন্ডে সেট করুন"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"একটি ফটো তুলতে কাউন্ট ডাউন হচ্ছে"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ফটোর অবস্থান মনে রাখবেন?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"আপনার ফটো ও ভিডিওগুলির তোলার অবস্থান সহ সেগুলিকে ট্যাগ করুন৷"</string>
-    <string name="remember_location_no" msgid="4412802756840226925">"না থাক"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ফটো ও ভিডিওগুলি যেখানে তোলা হয়েছে সেই অবস্থানের সঙ্গে সেগুলি ট্যাগ করুন।\n\nঅন্য অ্যাপ্লিকেশানগুলি আপনার সংরক্ষিত চিত্রগুলির সহ এই তথ্য অ্যাক্সেস করতে পারবে।"</string>
+    <string name="remember_location_no" msgid="4412802756840226925">"না ধন্যবাদ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"হ্যাঁ"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"আরো বিকল্প"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"সেটিংস"</string>
@@ -353,10 +352,10 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"এক্সপোজার ঘাটতিপূরণ: +২"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"এখন বোতাম হল %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"অবস্থান"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"ডিভাইসের পিছনের ক্যামেরার ফটো"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"ডিভাইসের পিছনের ক্যামেরার ভিডিও"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"সামনের ক্যামেরার ফটো"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"সামনের ক্যামেরার ভিডিও"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"ডিভাইসের পিছনের ক্যামেরার ফটোর"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"ডিভাইসের পিছনের ক্যামেরার ভিডিওর"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"সামনের ক্যামেরার ফটোর"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"সামনের ক্যামেরার ভিডিওর"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ডিফল্ট ক্যামেরা"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"সহায়তা এবং প্রতিক্রিয়া"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ প্রক্রিয়াকরণ করা হচ্ছে…"</string>

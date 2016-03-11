@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Povezivanje s fotoaparatom nije moguće."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Fotoaparat je onemogućen zbog sigurnosnih pravila."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Pojavio se problem prilikom spremanja fotografije ili videozapisa."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplikacija nema važna dopuštenja potrebna za pokretanje. Provjerite svoje postavke dopuštenja."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Pohranjivanje fotografije nije uspjelo."</string>
     <string name="wait" msgid="765601745709933047">"Pričekajte…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Prije upotrebe fotoaparata umetnite SD karticu."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Postavite trajanje u sekundama"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odbrojavanje do snimanja fotografije"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Zapamtiti lokacije fotografija?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Dodajte svojim fotografijama i videozapisima oznake lokacija na kojima su snimljeni."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Dodajte svojim fotografijama i videozapisima oznake lokacija na kojima su snimljeni.\n\nOstale aplikacije mogu pristupiti tim podacima i vašim spremljenim slikama."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ne, hvala"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Da"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"VIŠE OPCIJA"</string>
@@ -373,7 +372,7 @@
     <string name="share_to" msgid="5144911209144798122">"Dijeljenje"</string>
     <string name="edit_with" msgid="615569327230783971">"Uređivanje pomoću"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"DALJE"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"SHVAĆAM"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"U REDU, SHVAĆAM"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Cijeli senzor \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Obrezani senzor \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>

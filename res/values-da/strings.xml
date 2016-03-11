@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Der kan ikke oprettes forbindelse til kameraet."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kameraet er deaktiveret på grund af sikkerhedspolitikker."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Dit billede eller din video kunne ikke gemmes."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Appen mangler kritiske tilladelser for at kunne køre. Kontrollér dine indstillinger for tilladelser."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Billedet blev ikke gemt."</string>
     <string name="wait" msgid="765601745709933047">"Vent…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Indsæt et SD-kort, før kameraet tages i brug."</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funktionen Tidsforløb er deaktiveret. Aktivér den for at angive tidsintervallet."</string>
     <string name="set_duration" msgid="1638453882581604341">"Angiv varigheden i sekunder"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Der tælles ned for at tage et billede"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Skal dine billedplaceringer huskes?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Dine billeder og videoer tagges med de steder, hvor de blev taget."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Skal billedplaceringer huskes?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Dine billeder og videoer tagges med de placeringer, hvor de blev taget.\n\nAndre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nej tak"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLERE VALGMULIGHEDER"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"I Indstillinger kan du ændre opløsningen og kvaliteten eller prøve avancerede funktioner."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Vælg billedstørrelse"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Du kan ændre dette senere i Indstillinger."</string>
-    <string name="share_to" msgid="5144911209144798122">"Del via"</string>
+    <string name="share_to" msgid="5144911209144798122">"Del til"</string>
     <string name="edit_with" msgid="615569327230783971">"Rediger med"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"NÆSTE"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, FORSTÅET"</string>

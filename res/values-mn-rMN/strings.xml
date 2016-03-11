@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Камертай холбогдож чадсангүй."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Аюулгүйн үүднээс камерыг идэвхгүй болгосон."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Зураг эсвэл видеог хадгалахад алдаа гарсан байна."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Апп-г ажиллуулахад шаардлагатай чухал зөвшөөрөл байхгүй байна. Зөвшөөрлийн тохиргоог шалгана уу."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Зураг хадгалахад алдаа гарлаа."</string>
     <string name="wait" msgid="765601745709933047">"Түр хүлээнэ үү..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Камер ашиглахын өмнө SD карт хийнэ үү."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Үргэлжлэх хугацааг секундээр тохируулах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Зураг авахаар цаг тоолж байна"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Зургийн байршлыг санаж байна уу?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Өөрийн зураг болон бичлэгийг авсан газрын байршлаар нь таг хийнэ үү."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Өөрийн зураг болон видеог авсан газрын байршлаар нь шошго өгнө үү.\n\nБусад апп-с энэ мэдээлэл болон хадгалагдсан зурагт хандах боломжтой."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Үгүй"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Тийм"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"НЭМЭЛТ СОНГОЛТУУД"</string>

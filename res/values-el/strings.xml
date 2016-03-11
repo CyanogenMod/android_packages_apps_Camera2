@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Δεν είναι δυνατή η σύνδεση με την κάμερα."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Η κάμερα απενεργοποιήθηκε λόγω των πολιτικών ασφαλείας."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Παρουσιάστηκε ένα πρόβλημα κατά την αποθήκευση της φωτογραφίας ή του βίντεο σας."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Η εφαρμογή δεν διαθέτει κρίσιμα δικαιώματα που απαιτούνται για την εκτέλεσή της. Ελέγξτε τις ρυθμίσεις δικαιωμάτων."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Σφάλμα αποθηκευτικού χώρου φωτογραφιών."</string>
     <string name="wait" msgid="765601745709933047">"Περιμένετε…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Εισαγάγετε κάρτα SD πριν χρησιμοποιήσετε τη φωτογραφική μηχανή."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ορισμός διάρκειας σε δευτερόλεπτα"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Αντίστροφη μέτρηση για λήψη φωτογραφίας"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Απομνημόνευση τοποθεσίας φωτογραφιών;"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Προσθέστε ετικέτες στις φωτογραφίες και στα βίντεό σας με τις τοποθεσίες στις οποίες λήφθησαν."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Προσθέστε ετικέτες στις φωτογραφίες και τα βίντεό σας με την τοποθεσία στην οποία έχουν τραβηχτεί.\n\nΟι άλλες εφαρμογές μπορούν να αποκτήσουν πρόσβαση σε αυτές τις πληροφορίες μαζί με τις αποθηκευμένες σας εικόνες."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Όχι, ευχαριστώ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ναι"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ΠΕΡΙΣΣΟΤΕΡΕΣ ΕΠΙΛΟΓΕΣ"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Στις Ρυθμίσεις, αλλάξτε την ανάλυση και την ποιότητα ή δοκιμάστε τις σύνθετες λειτουργίες."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Επιλογή μεγέθους φωτογραφίας"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Μπορείτε να το αλλάξετε αυτό αργότερα στις Ρυθμίσεις."</string>
-    <string name="share_to" msgid="5144911209144798122">"Κοινοποίηση στο"</string>
+    <string name="share_to" msgid="5144911209144798122">"Κοινή χρήση στο"</string>
     <string name="edit_with" msgid="615569327230783971">"Επεξεργασία με"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ΕΠΟΜΕΝΟ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ΤΟ ΚΑΤΑΛΑΒΑ"</string>

@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ไม่สามารถเชื่อมต่อกับกล้องถ่ายรูป"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"กล้องถ่ายรูปถูกปิดใช้งานเนื่องจากนโยบายด้านความปลอดภัย"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"เกิดปัญหาในการบันทึกรูปภาพหรือวิดีโอ"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"แอปไม่มีสิทธิ์ที่จำเป็นในการเรียกใช้ โปรดตรวจสอบการตั้งค่าสิทธิ์ของคุณ"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"การจัดเก็บรูปภาพล้มเหลว"</string>
     <string name="wait" msgid="765601745709933047">"โปรดรอสักครู่…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ใส่การ์ด SD ก่อนใช้กล้องถ่ายรูป"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ตั้งระยะเวลาเป็นวินาที"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"นับถอยหลังเพื่อถ่ายภาพ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"จดจำตำแหน่งภาพไหม"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"แท็กรูปภาพและวิดีโอตามสถานที่ที่คุณถ่ายมา"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ใส่ตำแหน่งที่ถ่ายภาพในรูปและวิดีโอ\n\nแอปอื่นๆ สามารถเข้าถึงข้อมูลนี้ ตลอดจนภาพที่บันทึกไว้ของคุณได้"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ไม่ ขอบคุณ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ใช่"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ตัวเลือกเพิ่มเติม"</string>

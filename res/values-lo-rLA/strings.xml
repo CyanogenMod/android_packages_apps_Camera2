@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບກ້ອງຖ່າຍ​ຮູບໄດ້."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"ກ້ອງຖ່າຍ​ຮູບຖືກປິດໃຊ້​ງານໄວ້ເນື່ອງຈາກນະໂຍບາຍຄວາມປອດໄພ."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ມີ​ບັນ​ຫາ​ການ​ບັນ​ທຶກ​ຮູບ ຫຼື​ວິ​ດີ​ໂອ​ຂອງ​ທ່ານ."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"ແອັບ​ບໍ່​ມີ​ການ​ອະ​ນຸ​ຍາດ​ສຳ​ຄັນ​ຈຳ​ເປັນເພື່ອ​ແລ່ນ. ກະ​ລຸ​ນາ​ກວດ​ເບິ່ງ​ການ​ຕັ້ງ​ຄ່າ​ການ​ອະ​ນຸ​ຍາດ​ຂອງ​ທ່ານ."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ຄວາມ​ບໍ່​ສຳ​ເລັດ​ກາ​ນ​ຈັດ​ເກັບ​ຮູບ."</string>
     <string name="wait" msgid="765601745709933047">"ກະລຸນາລໍຖ້າ..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ໃສ່ SD card ກ່ອນນຳໃຊ້ກ້ອງ."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ຕັ້ງໄລຍະເວລາເປັນວິນາທີ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ກຳລັງນັບຖອຍຫຼັງເພື່ອຖ່າຍຮູບ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ຈື່ຂໍ້ມູນສະຖານທີ່ຂອງຮູບບໍ່?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"ໃສ່​ຂໍ້ມູນ​ສະຖານທີ່​ໃຫ້​ກັບ​ຮູບພາບ ແລະ ​ວິດີໂອ​ທີ່​ທ່ານ​ຖ່າຍ."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ໃສ່​ຂໍ້ມູນ​ສະຖານທີ່​ໃຫ້​ກັບ​ຮູບພາບ ແລະ​ວິດີໂອ​ທີ່​ທ່ານ​ຖ່າຍ.\n\nແອັບຯ​ອື່ນໆ​ສາມາດ​ເຂົ້າ​ເຖິງ​ຂໍ້ມູນ​ນີ້​ໄດ້​ພ້ອມ​ກັບ​ຮູບ​ທີ່​ທ່ານ​ບັນທຶກ."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ບໍ່, ຂອບໃຈ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ຕົກລົງ"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ຕົວເລືອກເພີ່ມເຕີມ"</string>

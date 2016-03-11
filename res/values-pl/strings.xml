@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nie można połączyć się z aparatem."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Aparat został wyłączony z powodu zasad bezpieczeństwa."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Podczas zapisywania zdjęcia lub filmu wystąpił problem."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplikacja nie ma uprawnień niezbędnych do uruchomienia. Sprawdź ustawienia uprawnień."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Błąd przechowywania zdjęcia."</string>
     <string name="wait" msgid="765601745709933047">"Zaczekaj…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Zanim użyjesz aparatu, włóż kartę SD."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ustaw czas w sekundach"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odliczam czas do zrobienia zdjęcia"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Zapisywać lokalizacje zdjęć?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Dodawaj tagi lokalizacji, w których zostały zrobione zdjęcia lub nagrane filmy."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Dodawaj do moich zdjęć i filmów tagi lokalizacji, w których zostały one zrobione lub nagrane.\n\nInne aplikacje mają dostęp do tych informacji oraz zapisanych zdjęć i filmów."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, dziękuję"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Tak"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"WIĘCEJ OPCJI"</string>
@@ -367,10 +366,10 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Aby zmienić ostrość, dotknij tutaj"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Zaawansowane"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ekspozycja ręczna"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"W Ustawieniach możesz zmienić rozdzielczość i jakość oraz ustawić funkcje zaawansowane."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"W Ustawieniach możesz zmienić rozdzielczość i jakość oraz wybrać funkcje zaawansowane."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Wybierz rozmiar zdjęcia"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Swój wybór możesz później zmienić w Ustawieniach."</string>
-    <string name="share_to" msgid="5144911209144798122">"Udostępnij przez:"</string>
+    <string name="share_to" msgid="5144911209144798122">"Udostępnij"</string>
     <string name="edit_with" msgid="615569327230783971">"Edytuj"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"DALEJ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK"</string>

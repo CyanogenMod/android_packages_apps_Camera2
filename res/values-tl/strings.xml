@@ -27,7 +27,7 @@
     <string name="share_as_photo" msgid="4831213580709167218">"Ibahagi bilang larawan"</string>
     <string name="deleted" msgid="2036165115527228127">"Tinanggal"</string>
     <string name="undo" msgid="5110048345890050107">"I-UNDO"</string>
-    <string name="details" msgid="4404020741542549488">"Mga Detalye"</string>
+    <string name="details" msgid="4404020741542549488">"Mga detalye"</string>
     <string name="close" msgid="4826166926297479820">"Isara"</string>
     <string name="show_on_map" msgid="8542853913632649160">"Ipakita sa mapa"</string>
     <string name="rotate_left" msgid="2618440058490662604">"I-rotate pakaliwa"</string>
@@ -57,7 +57,7 @@
     <string name="exposure_time" msgid="949787291620767754">"Exposure time"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"mm"</string>
-    <string name="manual" msgid="2444400953521760140">"Manu-mano"</string>
+    <string name="manual" msgid="2444400953521760140">"Manual"</string>
     <string name="auto" msgid="2552649885114400474">"Auto"</string>
     <string name="flash_on" msgid="6573457197393807642">"Flash fired"</string>
     <string name="flash_off" msgid="7889323512830926273">"Walang flash"</string>
@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Hindi makakonekta sa camera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Na-disable ang camera dahil sa mga patakaran sa seguridad."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Nagkaroon ng problema sa pagse-save ng iyong larawan o video."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Walang mga kinakailangang kritikal na pahintulot ang app upang tumakbo. Pakitingnan ang mga setting ng iyong mga pahintulot."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Hindi naimbak ang larawan."</string>
     <string name="wait" msgid="765601745709933047">"Mangyaring maghintay…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Magpasok ng SD card bago gamitin ang camera."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Itakda ang tagal sa loob ng ilang segundo"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Nagka-count down upang kumuha ng larawan"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Tandaan ang mga lokasyon ng larawan?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"I-tag ang iyong mga larawan at video gamit ang mga lokasyon kung saan kinunan ang mga ito."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"I-tag ang iyong mga larawan at video sa mga lokasyon kung saan kinunan ang mga iyon.\n\nMaaaring i-access ng ibang apps ang impormasyong ito kasama ng iyong mga na-save na larawan."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Hindi, salamat na lang"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Oo"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"HIGIT PANG MGA OPSYON"</string>
@@ -350,7 +349,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Pinoproseso ang HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Mga lisensya na open source"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Mga Pangkalahatang Setting"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Resolution at kalidad"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Resolution at Kalidad"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Tungkol dito"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Bersyon ng build"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Mababa"</string>
@@ -366,7 +365,7 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixels"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Upang mag-refocus, pumindot dito"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Advanced"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manual na exposure"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manu-manong exposure"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Sa Mga Setting, baguhin ang resolution at kalidad, o subukan ang mga advanced na feature."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Pumili ng laki ng larawan"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Maaari mo itong baguhin sa ibang pagkakatoan sa Mga Setting."</string>

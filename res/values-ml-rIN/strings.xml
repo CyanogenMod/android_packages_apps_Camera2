@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ക്യാമറയിൽ കണ‌ക്‌റ്റുചെയ്യാനായില്ല."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"സുരക്ഷാ നയങ്ങൾ കാരണം ക്യാമറ പ്രവർത്തനരഹിതമാക്കി."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"നിങ്ങളുടെ ഫോട്ടോയോ വീഡിയോയൊ സംരക്ഷിക്കുന്നതിൽ പ്രശ്‌നമുണ്ടായി."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"പ്രവർത്തിക്കുന്നതിന് ആവശ്യമായ സുപ്രധാന അനുമതികൾ ആപ്പിനില്ല. നിങ്ങളുടെ അനുമതി ക്രമീകരണം പരിശോധിക്കുക."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ഫോട്ടോ സംഭരിക്കുന്നതിൽ ​​പരാജയപ്പെട്ടു."</string>
     <string name="wait" msgid="765601745709933047">"കാത്തിരിക്കൂ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ക്യാമറ ഉപയോഗിക്കുന്നതിന് മുമ്പ് SD കാർഡ് ചേർക്കുക."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ദൈർഘ്യം സെക്കൻഡിൽ സജ്ജീകരിക്കുക"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ഒരു ഫോട്ടോ എടുക്കുന്നതിന് കൗണ്ട്‌ഡൗൺ ചെയ്യുന്നു"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ഫോട്ടോ ലൊക്കേഷനുകൾ ഓർമ്മിക്കണോ?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"ഫോട്ടോകളും ലൊക്കേഷനുകളും എടുത്ത ലൊക്കേഷനുകൾ ഉപയോഗിച്ച് അവയെ ടാഗുചെയ്യുക."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"നിങ്ങളുടെ ഫോട്ടോകളിലും വീഡിയോകളിലും അവയെടുത്ത ലൊക്കേഷനുകൾ ടാഗുചെയ്യുക.\n\nനിങ്ങളുടെ സംരക്ഷിക്കപ്പെട്ട ചിത്രങ്ങളോടൊപ്പം മറ്റ് അപ്ലിക്കേഷനുകൾക്ക് ഈ വിവരവും ആക്‌‌സസ്സുചെയ്യാനാകും."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"വേണ്ട, നന്ദി"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ശരി"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"കൂടുതൽ ഓപ്ഷനുകൾ"</string>
@@ -333,7 +332,7 @@
     <string name="view_button_description" msgid="4985768837891362075">"കാണുക"</string>
     <string name="edit_button_description" msgid="98550816724901925">"എഡിറ്റുചെയ്യുക"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ഇല്ലാതാക്കുക"</string>
-    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"സ്വയമേയുള്ള എക്‌സ്പോഷർ കോമ്പൻസേഷൻ"</string>
+    <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"സ്വമേധയായുള്ള എക്‌സ്‌പോഷർ കോമ്പൻസേഷൻ"</string>
     <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"എക്‌സ്‌പോഷർ കോമ്പൻസേഷൻ -2"</string>
     <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"എക്‌സ്‌പോഷർ കോമ്പൻസേഷൻ -1"</string>
     <string name="exposure_compensation_desc_0" msgid="2820273752287040523">"എക്‌സ്‌പോഷർ കോമ്പൻസേഷൻ 0"</string>
@@ -341,16 +340,16 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"എക്‌സ്‌പോഷർ കോമ്പൻസേഷൻ +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ബട്ടൺ ഇപ്പോൾ %s ആണ്"</string>
     <string name="setting_location" msgid="4459859689227893838">"ലൊക്കേഷൻ"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"പിൻ ക്യാമറ ഫോട്ടോ"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"പിൻ ക്യാമറ വീഡിയോ"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"മുൻ ക്യാമറ ഫോട്ടോ"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"മുൻ ക്യാമറ വീഡിയോ"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"പിന്നിലെ ക്യാമറ ഫോട്ടോ"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"പിന്നിലെ ക്യാമറ വീഡിയോ"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"മുമ്പിലെ ക്യാമറ ഫോട്ടോ"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"മുമ്പിലെ ക്യാമറ വീഡിയോ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"സ്ഥിരമായ ക്യാമറ"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"സഹായവും ഫീഡ്‌ബാക്കും"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ പ്രോസസ്സുചെയ്യുന്നു …"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"ഓപ്പൺ സോഴ്‌സ് ലൈസൻസ്"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"ഓപ്പൺ സോഴ്‌സ് ലൈസൻസുകൾ"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"പൊതുവായ സജ്ജീകരണങ്ങള്‍"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"റെസല്യൂഷനും നിലവാരവും"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"മിഴിവും നിലവാരവും"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"ആമുഖം"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"ബിൽഡ് പതിപ്പ്"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"കുറഞ്ഞത്"</string>
@@ -365,9 +364,9 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s മെഗാപിക്‌സലുകൾ"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s മെഗാപിക്‌സലുകൾ"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"വീണ്ടും ഫോക്കസ് ചെയ്യാൻ, ഇവിടെ സ്‌പർശിക്കുക"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"വിപുലമായത്"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"സ്വയമേയുള്ള എക്‌സ്പോഷർ"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"ക്രമീകരണത്തിൽ റെസല്യൂഷനും നിലവാരവും മാറ്റുക അല്ലെങ്കിൽ വിപുലമായ ഫീച്ചറുകൾ പരീക്ഷിക്കുക."</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"വിപുലമായ"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"സ്വമേധയായുള്ള എക്‌സ്പോഷർ"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"ക്രമീകരണങ്ങളിൽ, മിഴിവും നിലവാരവും മാറ്റുക അല്ലെങ്കിൽ വിപുലമായ സവിശേഷതകൾ പരീക്ഷിക്കുക."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ഫോട്ടോ വലുപ്പം തിരഞ്ഞെടുക്കുക"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"നിങ്ങൾക്ക് ഇത് പിന്നീട് ക്രമീകരണങ്ങളിൽ മാറ്റാനാകും."</string>
     <string name="share_to" msgid="5144911209144798122">"ഇതുമായി പങ്കിടുക"</string>

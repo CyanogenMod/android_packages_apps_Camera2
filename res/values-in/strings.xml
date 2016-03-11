@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Tidak dapat terhubung ke kamera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera telah dinonaktifkan karena kebijakan keamanan."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Ada masalah saat menyimpan foto atau video."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplikasi ini tidak memiliki izin kritis yang diperlukan untuk berjalan. Periksa setelan izin."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Kegagalan penyimpanan foto."</string>
     <string name="wait" msgid="765601745709933047">"Harap tunggu..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Masukkan kartu SD sebelum menggunakan kamera."</string>
@@ -81,7 +80,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Pilih kamera"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Kembali"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Depan"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Simpan lokasi"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Menyimpan lokasi"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"LOKASI"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Penghitung mundur"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Setel durasi dalam detik"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Menghitung mundur untuk mengambil foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Ingat lokasi foto?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Beri tag foto dan video Anda dengan lokasi tempat pengambilannya."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Beri tag foto dan video Anda dengan lokasi tempat pengambilannya.\n\nAplikasi lain dapat mengakses informasi ini beserta gambar Anda yang tersimpan."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Mungkin lain kali"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ya"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"OPSI LAINNYA"</string>

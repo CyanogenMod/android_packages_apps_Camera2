@@ -68,12 +68,11 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nedá sa pripojiť k fotoaparátu"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Fotoaparát je zakázaný z dôvodu bezpečnostných pravidiel"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Pri ukladaní vašej fotky alebo videa sa vyskytol problém"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplikácia nemá dôležité povolenia potrebné na spustenie. Skontrolujte nastavenia povolení."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Chyba pri ukladaní fotky"</string>
     <string name="wait" msgid="765601745709933047">"Čakajte..."</string>
-    <string name="no_storage" product="default" msgid="5922012950780548098">"Pred použitím fotoaparátu vložte SD kartu."</string>
-    <string name="preparing_sd" product="default" msgid="7435693655017362767">"Príprava SD karty..."</string>
-    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Nepodarilo sa získať prístup ku SD karte."</string>
+    <string name="no_storage" product="default" msgid="5922012950780548098">"Pred použitím fotoaparátu vložte kartu SD."</string>
+    <string name="preparing_sd" product="default" msgid="7435693655017362767">"Príprava karty SD..."</string>
+    <string name="access_sd_fail" product="default" msgid="2634861611082499811">"Nepodarilo sa získať prístup ku karte SD."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"Časozberný záznam"</string>
     <string name="feedback_description_camera_access" msgid="419090951070170132">"Aplikácii sa nepodarilo pripojiť k fotoaparátu"</string>
     <string name="feedback_description_save_photo" msgid="8658767358989083228">"Fotka alebo video sa neuložilo do zariadenia"</string>
@@ -160,7 +159,7 @@
     <string name="dialog_cancel" msgid="692365061128351656">"Zrušiť"</string>
     <string name="dialog_report" msgid="7616428760369876209">"Prehľad"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"Odmietnuť"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Na SD karte je málo miesta. Zmeňte nastavenie kvality alebo odstráňte niektoré obrázky či iné súbory."</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Na karte SD je málo miesta. Zmeňte nastavenie kvality alebo odstráňte niektoré obrázky či iné súbory."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Bolo dosiahnuté obmedzenie veľkosti."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Príliš rýchlo"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Príprava panorámy"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Nastavte dobu trvania v sekundách"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Odpočítavanie spúšte fotoaparátu"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Pamätať si, kde boli fotky vytvorené?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Pridajte k fotkám a videám označenia miest, kde boli zaznamenané."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Pridávať k fotkám a videám označenia miest, kde boli zaznamenané\n\nOstatné aplikácie môžu pristupovať k týmto informáciám spolu s prístupom k vašim uloženým snímkam."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nie, nemám záujem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Áno"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ĎALŠIE MOŽNOSTI"</string>
@@ -293,7 +292,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Nastavenia"</string>
     <string name="mode_camera" msgid="279763925715250603">"Fotoaparát"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Sférické fotky"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Časozberné video"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Širokouhlý režim"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoráma"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"V nastaveniach môžete zmeniť rozlíšenie a kvalitu alebo vyskúšať pokročilé funkcie."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Výber veľkosti fotky"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Svoju voľbu môžete neskôr zmeniť v nastaveniach."</string>
-    <string name="share_to" msgid="5144911209144798122">"Zdieľať"</string>
+    <string name="share_to" msgid="5144911209144798122">"Zdieľať na stránkach"</string>
     <string name="edit_with" msgid="615569327230783971">"Upraviť pomocou"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ĎALEJ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, DOBRE"</string>

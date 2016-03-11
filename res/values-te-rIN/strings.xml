@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"కెమెరాకు కనెక్ట్ చేయడం సాధ్యపడదు."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"భద్రతా విధానాల కారణంగా కెమెరా నిలిపివేయబడింది."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"మీ ఫోటో లేదా వీడియోను సేవ్ చేయడంలో సమస్య ఉంది."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"అనువర్తనం అమలు కావడానికి అవసరమయ్యే క్లిష్టమైన అనుమతులను కలిగి లేదు. దయచేసి మీ అనుమతుల సెట్టింగ్‌లను తనిఖీ చేయండి."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ఫోటో నిల్వ వైఫల్యం."</string>
     <string name="wait" msgid="765601745709933047">"దయచేసి వేచి ఉండండి..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"కెమెరాను ఉపయోగించడానికి ముందు SD కార్డును చొప్పించండి."</string>
@@ -81,7 +80,7 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"కెమెరాను ఎంచుకోండి"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"వెనుక వైపు ఉండేది"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"ముందువైపు"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"స్థానం సేవ్ చేయి"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"సేవ్ అయ్యే స్థానం"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"స్థానం"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"కౌంట్‍డౌన్ టైమర్"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"వ్యవధిని సెకన్లలో సెట్ చేయండి"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ఫోటో తీయడానికి కౌంట్ డౌన్ చేస్తోంది"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ఫోటో స్థానాలను గుర్తుంచుకోవాలా?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"మీ ఫోటోలు మరియు వీడియోలను అవి తీసిన స్థానాలతో ట్యాగ్ చేయండి."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"మీ ఫోటోలు మరియు వీడియోలను, అవి తీయబడిన స్థానాలతో పాటు ట్యాగ్ చేయండి.\n\nఇతర అనువర్తనాలు మీరు సేవ్ చేసిన చిత్రాలతో పాటు ఈ సమాచారాన్ని ప్రాప్యత చేయవచ్చు."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"వద్దు ధన్యవాదాలు"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"అవును"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"మరిన్ని ఎంపికలు"</string>
@@ -366,7 +365,7 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s మెగాపిక్సెల్‌లు"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"మళ్లీ దృష్టి సారించడానికి, ఇక్కడ తాకండి"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"అధునాతనం"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"మాన్యువల్ ఎక్స్‌పోజర్"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"మాన్యువల్ బహిర్గతం"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"సెట్టింగ్‌ల్లో, రిజల్యూషన్ మరియు నాణ్యతను మార్చండి లేదా అధునాతన లక్షణాలను ప్రయత్నించండి."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ఫోటో పరిమాణం ఎంచుకోండి"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"మీరు దీన్ని సెట్టింగ్‌ల్లో తర్వాత మార్చవచ్చు."</string>

@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Повезивање са камером није могуће."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камера је онемогућена због смерница за безбедност."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Дошло је до проблема при чувању слике или видеа."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Апликација нема неопходну дозволу потребну за покретање. Проверите подешавања дозвола."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Чување слике није успело."</string>
     <string name="wait" msgid="765601745709933047">"Сачекајте..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Уметните SD картицу пре коришћења камере."</string>
@@ -195,7 +194,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Пребаци на слику"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Пребаци на видео"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Пребаци на панораму"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Пребаци на Photo Sphere-у"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Пребаци на фото-сферу"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Пребаци на високи квалитет"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Пребаци на Рефокусирање"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Откажи преглед"</string>
@@ -212,8 +211,8 @@
     <string name="photo_date_content_description" msgid="5705865897898465619">"Слика је снимљена %s"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"Видео је снимљен %s"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"Панорама је снимљена %s"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Photo Sphere-а је снимљена %s"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"Слика са ефектом замагљивања је снимљена %s"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"Фото-сфера је снимљена %s"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"Замагљивање објектива је снимљено %s"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"Обрада медија"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Укључи/искључи листу режима"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Листа режима"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Подеси трајање у секундама"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Одбројавање за снимање слике"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Желите ли да запамтите локације слика?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Додајте сликама и видео снимцима ознаке са локацијама где су снимљени."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Додајте сликама и видео снимцима ознаке са местима где су снимљени.\n\nДруге апликације могу да приступе овим информацијама заједно са сачуваним сликама."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Не, хвала"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ЈОШ ОПЦИЈА"</string>
@@ -293,16 +292,16 @@
     <string name="mode_settings" msgid="2021937261522670921">"Подешавања"</string>
     <string name="mode_camera" msgid="279763925715250603">"Камера"</string>
     <string name="mode_video" msgid="8633929034048169139">"Видео"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Фото-сфера"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Снимање у дужем интервалу"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Широки угао"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Панорама"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"Замагљивање слике"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"Замагљивање објектива"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"Пребаците на режим камере"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Пребаците на видео камеру"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Пребаците на режим Photo Sphere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"Пребаците на режим панораме"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"Пребацивање на режим Замагљивања слике"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"Пребацивање на режим Замагљивања објектива"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Отворите подешавања"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Затворите подешавања"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"HDR Plus је искључен"</string>
@@ -346,7 +345,7 @@
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Слика са предње камере"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Видео са предње камере"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Подразумевана камера"</string>
-    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Помоћ и повратне информације"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Помоћ и повр. информације"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Обрађује се HDR+…"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Лиценце отвореног кода"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Општа подешавања"</string>
@@ -372,7 +371,7 @@
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Ово можете да промените касније у Подешавањима"</string>
     <string name="share_to" msgid="5144911209144798122">"Делите на"</string>
     <string name="edit_with" msgid="615569327230783971">"Измените помоћу"</string>
-    <string name="startup_dialog_button_next" msgid="1011831256978228993">"ДАЉЕ"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"СЛЕДЕЋА"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ВАЖИ"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Цели сензор \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Опсечени сензор \n(16:9)"</string>

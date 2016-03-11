@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"לא ניתן להתחבר למצלמה."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"המצלמה הושבתה בשל מדיניות אבטחה."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"הייתה בעיה בשמירת התמונה או הסרטון."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"האפליקציה זקוקה להרשאות קריטיות בשביל לפעול. בדוק את הגדרת ההרשאות."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"כשל באחסון תמונה."</string>
     <string name="wait" msgid="765601745709933047">"המתן…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"‏הכנס כרטיס SD לפני השימוש במצלמה."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"הגדר משך זמן בשניות"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"סופר לאחור עד לצילום תמונה"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"האם לזכור מיקומי תמונות?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"תייג את התמונות והסרטונים כדי לציין היכן הם צולמו."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"תייג תמונות וסרטונים כדי לציין היכן הם צולמו.\n\nאפליקציות אחרות יכולות לגשת למידע הזה, כולל תמונות שנשמרו."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"לא תודה"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"כן"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"עוד אפשרויות"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"ב\'הגדרות\', שנה את הרזולוציה והאיכות או נסה תכונות מתקדמות."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"בחר גודל תמונה"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ניתן לשנות זאת יותר מאוחר בהגדרות."</string>
-    <string name="share_to" msgid="5144911209144798122">"שתף באמצעות"</string>
+    <string name="share_to" msgid="5144911209144798122">"שתף ב"</string>
     <string name="edit_with" msgid="615569327230783971">"ערוך באמצעות"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"הבא"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"הבנתי"</string>

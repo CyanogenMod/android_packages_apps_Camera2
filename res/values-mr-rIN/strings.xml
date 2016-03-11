@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"कॅमेर्‍याशी कनेक्ट करु शकत नाही."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"सुरक्षा धोरणांमुळे कॅमेरा अक्षम केला गेला आहे."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"आपला फोटो किंवा व्हिडिओ जतन करण्यात समस्या आली."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"अॅपला चालविण्यासाठी आवश्यक गंभीर परवानग्या नाहीत. कृपया आपल्या परवानग्या सेटिंग्ज तपासा."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"फोटो संचयन बिघाड."</string>
     <string name="wait" msgid="765601745709933047">"कृपया प्रतीक्षा करा..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"कॅमेरा वापरण्‍यापूर्वी SD कार्ड घाला."</string>
@@ -154,9 +153,9 @@
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
-    <string name="pref_camera_id_label_back" msgid="1645608049757733858">"पुढील कॅमेरा"</string>
+    <string name="pref_camera_id_label_back" msgid="1645608049757733858">"समोरचा कॅमेरा"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"मागील कॅमेरा"</string>
-    <string name="dialog_ok" msgid="774141340500181131">"ठीक आहे"</string>
+    <string name="dialog_ok" msgid="774141340500181131">"ठिक आहे"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"रद्द करा"</string>
     <string name="dialog_report" msgid="7616428760369876209">"अहवाल द्या"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"डिसमिस करा"</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"वेळ समाप्ती वैशिष्ट्य बंद आहे. वेळ मध्यांतर सेट करण्यासाठी ते चालू करा."</string>
     <string name="set_duration" msgid="1638453882581604341">"कालावधी सेकंदांमध्ये सेट करा"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"फोटो घेण्‍यासाठी उलट गणना करत आहे"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"फोटो स्थान लक्षात ठेवायचे?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"आपले फोटो आणि व्‍हिडिओ जिथून घेतले त्या स्‍थानांसह ते टॅग करा."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"फोटो स्थाने लक्षात आहेत?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"आपले फोटो आणि व्‍हिडिओ जिथून घेतले त्या स्‍थानांसह टॅग करा.\n\nइतर अ‍ॅप्‍स आपल्‍या जतन केलेल्‍या प्रतिमांसह या माहितीमध्‍ये प्रवेश करु शकतात."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"नाही धन्यवाद"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"होय"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"अधिक पर्याय"</string>
@@ -318,7 +317,7 @@
     <string name="torch_on_desc" msgid="3069836196559213365">"टॉर्च चालू"</string>
     <string name="torch_off_desc" msgid="8304675202998742618">"टॉर्च बंद"</string>
     <string name="camera_id_back_desc" msgid="3566327490758890635">"मागील कॅमेरा"</string>
-    <string name="camera_id_front_desc" msgid="7497517948130254220">"पुढील कॅमेरा"</string>
+    <string name="camera_id_front_desc" msgid="7497517948130254220">"समोरील कॅमेरा"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"ग्रीड ओळी बंद"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"ग्रीड ओळी चालू"</string>
     <string name="countdown_timer_off" msgid="1663008439564495948">"उलटगणती समयदर्शक बंद आहे"</string>
@@ -341,10 +340,10 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"उघडिप प्रतिपूर्ती + 2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"बटण आता %s आहे"</string>
     <string name="setting_location" msgid="4459859689227893838">"स्थान"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"मागील कॅमेऱ्याचे फोटो"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"मागील कॅमेऱ्याचे व्‍हिडिओ"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"पुढील कॅमेऱ्याचे फोटो"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"पुढील कॅमेऱ्याचे व्‍हिडिओ"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"कॅमेरा मागचा फोटो"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"कॅमेरा मागे व्‍हिडिओ"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"कॅमेरा पुढील फोटो"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"कॅमेरा पुढील व्‍हिडिओ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"डीफॉल्ट कॅमेरा"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"मदत आणि अभिप्राय"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ प्रक्रिया करत आहे …"</string>

@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"카메라에 연결할 수 없습니다."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"보안 정책으로 인해 카메라 사용이 중지되었습니다."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"사진이나 동영상을 저장하는 중에 문제가 발생했습니다."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"앱이 실행에 필요한 중요한 권한을 보유하고 있지 않습니다. 권한 설정을 확인하세요."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"사진을 저장하지 못했습니다."</string>
     <string name="wait" msgid="765601745709933047">"잠시 기다려 주세요..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"카메라를 사용하기 전에 SD 카드를 삽입하세요."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"시간 설정(초)"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"사진을 찍으려면 카운트다운하세요."</string>
     <string name="remember_location_title" msgid="3045040613094030429">"사진 위치를 기록하시겠습니까?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"촬영된 위치를 사진과 동영상에 태그로 지정하세요."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"촬영한 위치로 사진과 동영상에 태그를 지정하세요.\n\n다른 앱이 저장된 이미지와 함께 이 정보를 볼 수 있습니다."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"아니요"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"예"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"옵션 더보기"</string>

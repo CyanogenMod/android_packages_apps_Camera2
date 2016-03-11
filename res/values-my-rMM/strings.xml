@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ကင်မရာနဲ့ ချိတ်ဆက်မရနိုင်"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"လုံခြုံရေးမူဝါဒကြောင့် ကင်မရာအား ပိတ်ထားပါသည်"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"သင့်ဓာတ်ပုံ သို့မဟုတ်ဗီဒီယိုအား သိမ်းဆည်းရာတွင် ပြဿနာတစ်ခုရှိခဲ့သည်။"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"အပ်ဖ်ကိုဖွင့်ရန် အရေးကြီးသည့်ခွင့်ပြုချက် မရှိပါ။ ကျေးဇူးပြု၍ သင့်ခွင့်ပြုချက် ချိန်ညှိမှုများကို စစ်ဆေးပါ။"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"သ"</string>
     <string name="wait" msgid="765601745709933047">"ကျေးဇူးပြု၍ ခဏစောင့်ပါ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ကင်မရာမသုံးခင် SDကဒ်အရင် ထည့်ပါ"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"ကြာချိန်ကို စက္ကန့်ဖြင့် မှတ်ပါ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ဓာတ်ပုံရိုက်ရန် အမှတ်ရေနေစဉ်"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ဓာတ်ပုံရိုက်ခဲ့တဲ့နေရာ သိမ်းရမလား"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"ဓါတ်ပုံများနှင့် ဗီဒီယိုများနှင့်တကွ ရိုက်ကူးခဲ့သော နေရာများကို တွဲထည့်ပါ။"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ဓာတ်ပုံများနှင့် ဗီဒီယိုများအား ရိုက်ကူးခဲ့ရာ နေရာများနှင့်တကွ မှတ်သားပါ\n\nတခြား အပ်ပလီကေးရှင်းများမှ ဒီအချက်အလက်ကို သိမ်းထားသော ပုံများနှင့်အတူ ရယူနိုင်သည်"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ကျေးဇူးပဲ မလိုပါဘူး"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"မှန်ပါသည်"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ပိုမိုရွေးချယ်စရာများ"</string>

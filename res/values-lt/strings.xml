@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nepavyksta prisijungti prie fotoaparato."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Dėl saugos politikos fotoaparatas išjungtas."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Išsaugant nuotrauką arba vaizdo įrašą kilo problema."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Programa neturi kritinių leidimų, kurių reikia paleidžiant. Patikrinkite leidimų nustatymus."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Nuotraukos saugojimo klaida."</string>
     <string name="wait" msgid="765601745709933047">"Palaukite…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Prieš naudodami fotoaparatą įdėkite SD kortelę."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Nustatyti trukmę sekundėmis"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Skaičiuojamas laikas iki fotografavimo"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Atsiminti nuotraukų vietoves?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Žymėkite nuotraukas ir vaizdo įrašus nurodydami vietoves, kuriose jie buvo sukurti."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Žymėkite nuotraukas ir vaizdo įrašus nurodydami vietoves, kuriose jie buvo sukurti.\n\nKitos programos gali pasiekti šią informaciją ir išsaugotus vaizdus."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ačiū, ne"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Taip"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"DAUGIAU PARINKČIŲ"</string>

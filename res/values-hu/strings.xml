@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nem lehet csatlakozni a kamerához."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"A biztonsági házirendek miatt a kamera le van tiltva."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Hiba történt a fotó vagy videó mentése során."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Az alkalmazás nem rendelkezik a futtatáshoz szükséges alapvető engedélyekkel. Ellenőrizze az engedélybeállításokat."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Fotótárolási hiba."</string>
     <string name="wait" msgid="765601745709933047">"Kérjük, várjon..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"A kamera használatához helyezzen be egy SD-kártyát."</string>
@@ -79,8 +78,8 @@
     <string name="feedback_description_save_photo" msgid="8658767358989083228">"A fotót vagy videót nem sikerült menteni az eszközre."</string>
     <string name="capturing" msgid="5255164204641920893">"Rögzítés"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Kameraválasztás"</string>
-    <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Hátlapi"</string>
-    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Előlapi"</string>
+    <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Hátsó"</string>
+    <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Elülső"</string>
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Hely mentése"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"HELY"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Visszaszámlálás-időzítő"</string>
@@ -154,8 +153,8 @@
     <!-- no translation found for pref_camera_hdr_plus_default (4827897029274554907) -->
     <skip />
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
-    <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ELŐLAPI KAMERA"</string>
-    <string name="pref_camera_id_label_front" msgid="349308803062874842">"HÁTLAPI KAMERA"</string>
+    <string name="pref_camera_id_label_back" msgid="1645608049757733858">"ELÜLSŐ KAMERA"</string>
+    <string name="pref_camera_id_label_front" msgid="349308803062874842">"HÁTSÓ KAMERA"</string>
     <string name="dialog_ok" msgid="774141340500181131">"OK"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"Mégse"</string>
     <string name="dialog_report" msgid="7616428760369876209">"Visszajelzés"</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"A Gyorsított felvétel funkció ki van kapcsolva. Kapcsolja be az időintervallum beállításához."</string>
     <string name="set_duration" msgid="1638453882581604341">"Időtartam megadása másodpercben"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Visszaszámlálás a fényképezésig"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Szeretné tárolni a felvételek helyszínét?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Címkézze fel a fotókat és videókat a hellyel, ahol készítette őket."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Szeretné eltárolni a felvételek helyszínét?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Címkézze fel a fotókat és videókat a hellyel, ahol készítette őket.\n\nMás alkalmazások hozzáférnek ehhez az információhoz és a mentett képekhez."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Köszönöm, nem"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Igen"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"TOVÁBBI LEHETŐSÉGEK"</string>
@@ -317,8 +316,8 @@
     <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"HDR+ vaku be"</string>
     <string name="torch_on_desc" msgid="3069836196559213365">"Lámpa bekapcsolva"</string>
     <string name="torch_off_desc" msgid="8304675202998742618">"Lámpa kikapcsolva"</string>
-    <string name="camera_id_back_desc" msgid="3566327490758890635">"Hátlapi kamera"</string>
-    <string name="camera_id_front_desc" msgid="7497517948130254220">"Előlapi kamera"</string>
+    <string name="camera_id_back_desc" msgid="3566327490758890635">"Hátsó kamera"</string>
+    <string name="camera_id_front_desc" msgid="7497517948130254220">"Elülső kamera"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Rácsvonalak elrejtése"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Rácsvonalak megjelenítése"</string>
     <string name="countdown_timer_off" msgid="1663008439564495948">"Az időzítő nincs beállítva"</string>
@@ -341,10 +340,10 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Expozíciókompenzáció: +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"A gomb beállítása jelenleg: %s"</string>
     <string name="setting_location" msgid="4459859689227893838">"Hely"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Hátlapi kamera – fotó"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Hátlapi kamera – videó"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Előlapi kamera – fotó"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"Előlapi kamera – videó"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Hátsó kamera – fotó"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Hátsó kamera – videó"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Elülső kamera – fotó"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Elülső kamera – videó"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Alapértelmezett kamera"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Súgó és visszajelzés"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ feldolgozása…"</string>
@@ -365,7 +364,7 @@
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixel"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixel"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Az újrafókuszáláshoz érintse meg itt"</string>
-    <string name="pref_category_advanced" msgid="5921085080077574872">"Speciális"</string>
+    <string name="pref_category_advanced" msgid="5921085080077574872">"Haladó"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manuális expozíció"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"Változtassa meg a felbontást és a minőséget a Beállítások menüben, vagy próbálja ki a speciális funkciókat."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Fotóméret kiválasztása"</string>

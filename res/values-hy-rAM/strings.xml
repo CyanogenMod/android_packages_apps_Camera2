@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Հնարավոր չէ միանալ ֆոտոխցիկին:"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Ֆոտոխցիկն անջատված է՝ անվտանգության քաղաքականության նկատառումներից ելնելով:"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Ձեր լուսանկարը կամ տեսանյութը պահելիս առաջացել է խնդիր:"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Հավելվածը չունի գործարկման համար անհրաժեշտ թույլտվություններ: Ստուգեք թույլտվությունների կարգավորումները:"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Չհաջողվեց պահել լուսանկարը:"</string>
     <string name="wait" msgid="765601745709933047">"Խնդրում ենք սպասել..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Տեսախցիկն օգտագործելուց առաջ տեղադրեք SD քարտ:"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Սահմանել տևողությունը վայրկյաններով"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Լուսանկարման հետհաշվարկ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Հիշե՞լ լուսանկարների վայրերը:"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Լուսանկարների և տեսանյութերի վրա նշել նկարահանման վայրը:"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Լուսանկարներում և տեսանյութերում նշել, թե որտեղ են դրանք արվել:\n\nԱյլ ծրագրեր կարող են օգտվել այդ տեղեկատվությունից՝ ձեր պահած նկարների հետ մեկտեղ:"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ոչ, շնորհակալություն"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Այո"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ԱՅԼ ԸՆՏՐԱՆՔՆԵՐ"</string>

@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kan ikke koble til kameraet."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kameraet er deaktivert på grunn av retningslinjene for sikkerhet."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Det oppsto et problem under lagringen av bildet eller videoen din."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Appen mangler tillatelser som er avgjørende for å kunne kjøres. Sjekk innstillingene for tillatelsene dine."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Feil under bildelagring."</string>
     <string name="wait" msgid="765601745709933047">"Vent litt …"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Sett inn et SD-kort før du bruker kameraet."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Still varighet i sekunder"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Teller ned før bildet tas"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vil du huske bildestedene?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Merk bildene og videoene dine med hvor de ble tatt."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Merk bildene og videoene med hvor de ble tatt.\n\nAndre apper kan bruke denne informasjonen med de lagrede bildene dine."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nei takk"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLERE ALTERNATIVER"</string>
@@ -343,10 +342,10 @@
     <string name="setting_location" msgid="4459859689227893838">"Plassering"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"Bilde med baksidekamera"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"Video med baksidekamera"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Bilde med frontkamera"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"Video med frontkamera"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"Bilde med forsidekamera"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"Video med forsidekamera"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
-    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Hjelp og tilbakemelding"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Hjelp og tilbakemeldinger"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Behandler HDR + …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Lisenser for åpen kildekode"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Generelle innstillinger"</string>
@@ -367,13 +366,13 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Trykk her for å endre fokus"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Avansert"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Manuell eksponering"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"I Innstillinger kan du endre oppløsning og kvalitet, eller prøve avanserte funksjoner."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"I Innstillinger kan du endre oppløsning og kvalitet eller prøve avanserte funksjoner."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Velg fotostørrelse"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Du kan endre dette senere i Innstillinger."</string>
     <string name="share_to" msgid="5144911209144798122">"Del til"</string>
     <string name="edit_with" msgid="615569327230783971">"Rediger med"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"NESTE"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"OK, SKJØNNER"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"OK, SKJØNNER."</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"Fullstendig sensor \n(04:03)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"Beskåret sensor \n(16:09)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>

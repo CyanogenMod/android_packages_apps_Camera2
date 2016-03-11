@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Det går inte att ansluta till kameran."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kameran har inaktiverats på grund av gällande säkerhetspolicyer."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Det gick inte att spara fotot eller videon."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Det saknas behörigheter som är avgörande för att appen ska fungera. Kontrollera behörighetsinställningarna."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Fotolagringen misslyckades."</string>
     <string name="wait" msgid="765601745709933047">"Vänta …"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Sätt i ett SD-kort innan du använder kameran."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ange längden i sekunder"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Nedräkning innan fotot tas"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vill du spara platser för foton?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Tagga dina foton och videor med de platser där de är tagna eller inspelade."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Tagga dina foton och videor med de platser där de tas eller spelas in.\n\nAndra appar kan få åtkomst till den här informationen tillsammans med dina sparade bilder."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nej tack"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLER ALTERNATIV"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Under Inställningar ändrar du upplösning och kvalitet, eller testar avancerade funktioner."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Välj fotostorlek"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Det här kan ändras senare under Inställningar."</string>
-    <string name="share_to" msgid="5144911209144798122">"Dela via"</string>
+    <string name="share_to" msgid="5144911209144798122">"Dela på"</string>
     <string name="edit_with" msgid="615569327230783971">"Redigera med"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"NÄSTA"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, JAG FÖRSTÅR"</string>

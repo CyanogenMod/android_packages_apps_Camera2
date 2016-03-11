@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Kaameraga ei saa ühendada."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kaamera on keelatud turvaeeskirjade tõttu."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Foto või video salvestamisel ilmnes probleem."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Rakendusel pole käitamiseks kriitilise tähtsusega lube. Kontrollige lubade seadeid."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Viga foto salvestamisel."</string>
     <string name="wait" msgid="765601745709933047">"Oodake …"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Enne kaamera kasutamist sisestage SD-kaart."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Määra kestus sekundites"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Loendus foto jäädvustamiseni"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Kas jätta meelde fotode jäädvustamise asukohad?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Märkige fotodele ja videotele jäädvustamise asukoht."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Märkige oma fotodele ja videotele jäädvustamise asukoht.\n\nMuud rakendused pääsevad lisaks salvestatud piltidele juurde ka sellele teabele."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ei, aitäh"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Jah"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ROHKEM VALIKUID"</string>

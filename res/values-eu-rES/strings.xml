@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Ezin da kamerara konektatu."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Segurtasun-gidalerroak direla medio, kamera desgaitu egin da."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Arazo bat izan da argazkia edo bideoa gordetzean."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplikazioak ez du exekutatu ahal izateko derrigorrez beharrezko baimenik. Egiaztatu baimenen ezarpenak."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Errore bat gertatu da argazki-biltegian."</string>
     <string name="wait" msgid="765601745709933047">"Itxaron, mesedez…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Txertatu SD txartela kamera erabili aurretik."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Ezarri iraupena segundotan"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Argazkia ateratzeko atzerantz kontatzen"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Argazkien kokapenak gogoratu nahi dituzu?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Etiketatu argazkiak eta bideoak bakoitzaren kokapenarekin."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etiketatu argazkiak eta bideoak ateratzeko eta grabatzeko aukeratutako kokapenekin.\n\nBeste aplikazio batzuek informazio hau atzi dezakete, gordetako irudiekin batera."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Ez, eskerrik asko"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Bai"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"AUKERA GEHIAGO"</string>

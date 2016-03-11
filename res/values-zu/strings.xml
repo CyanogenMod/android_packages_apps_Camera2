@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Ayikwazi ukuxhumeka kukhamela."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Ikhamela ikhutshaziwe ngenxa yezinqubomgomo zokuphepha."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Kube nenkinga yokulondoloza isithombe sakho noma ividiyo."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Uhlelo lokusebenza alinazo izimvume ezidingekayo ukusebenza. Sicela uhlole izilungiselelo zezimvume zakho."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Ukuhluleka kwesitoreji sesithombe."</string>
     <string name="wait" msgid="765601745709933047">"Sicela ulinde..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Faka ikhadi le-SD ngaphambi kokusebenzisa ikhamela."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Setha ubude besikhathi ngamasekhondi"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Kubalwa ngokwehla kuze kufike ekuthatheni isithombe"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Khumbula izindawo zesithombe?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Maka izithombe zakho namavidiyo ngezindawo lapho zithathwe khona."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Maka izithombe zakho namavidiyo ngezindawo lapho ezithathwe khona.\n\nEzinye izinhlelo zokusebenza zingafinyelela lolu lwazi nezithombe zakho ezilondoloziwe."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Cha ngiyabonga"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Yebo"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"IZINKETHO EZININGI"</string>

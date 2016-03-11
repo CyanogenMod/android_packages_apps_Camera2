@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Не удалось подключиться к камере."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Камера отключена в соответствии с политикой безопасности."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Не удалось сохранить фото или видео."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Для запуска приложения требуются определенные разрешения. Предоставьте их в настройках."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Ошибка хранилища фотографий."</string>
     <string name="wait" msgid="765601745709933047">"Подождите…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Чтобы использовать камеру, вставьте SD-карту"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Время отсчета в секундах"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Обратный отсчет перед съемкой"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Сохранять место съемки?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Добавлять информацию о месте съемки к фотографиям и видео?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"К вашим фотографиям и видеозаписям будет автоматически добавляться информация о месте съемки.\n\nЭти данные будут доступны другим приложениям, у которых есть доступ к фотографиям и видео."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Нет"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Да"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ЕЩЁ"</string>

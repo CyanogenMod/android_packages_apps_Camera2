@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Não é possível conectar à câmera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"A câmera foi desativada devido às políticas de segurança."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Ocorreu um problema ao salvar a foto ou o vídeo."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"O app não tem as permissões necessárias para ser executado. Verifique suas configurações de permissões."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Falha no armazenamento de fotos."</string>
     <string name="wait" msgid="765601745709933047">"Aguarde…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Insira um cartão SD antes de usar a câmera."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Definir duração em segundos"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Contagem regressiva para tirar foto"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Memorizar locais de fotos?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Marque seus vídeos e fotos com os locais onde foram gerados."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Marque seus vídeos e fotos com os locais onde foram gerados.\n\nOutros apps podem acessar essas informações juntamente com suas imagens salvas."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Não, obrigado"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Sim"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MAIS OPÇÕES"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Em \"Configurações\", altere a resolução e a qualidade ou explore os recursos avançados."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Escolher tamanho da foto"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Você pode alterar isto mais tarde em \"Configurações\"."</string>
-    <string name="share_to" msgid="5144911209144798122">"Compartilhar via"</string>
+    <string name="share_to" msgid="5144911209144798122">"Compartilhar em"</string>
     <string name="edit_with" msgid="615569327230783971">"Editar com"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"PRÓXIMO"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, ENTENDI"</string>

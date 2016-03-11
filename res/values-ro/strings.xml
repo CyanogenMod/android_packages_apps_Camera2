@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Nu se poate realiza conexiunea la camera foto."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Camera foto a fost dezactivată din cauza politicilor de securitate."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"A apărut o problemă la salvarea fotografiei sau a videoclipului."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Aplicația nu are permisiunile esențiale necesare pentru a funcționa. Verificați setările pentru permisiuni."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Eroare la stocarea fotografiei."</string>
     <string name="wait" msgid="765601745709933047">"Așteptați…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Introduceți un card SD înainte de a utiliza camera foto."</string>
@@ -275,8 +274,8 @@
     <string name="set_time_interval_help" msgid="64145154088021389">"Funcția Filmare lentă este dezactivată. Activați-o pentru a seta intervalul de timp."</string>
     <string name="set_duration" msgid="1638453882581604341">"Setați durata în secunde"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Numărătoare inversă până la fotografiere"</string>
-    <string name="remember_location_title" msgid="3045040613094030429">"Se rețin locațiile fotografiilor?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Etichetați fotografiile și videoclipurile cu locațiile în care au fost făcute."</string>
+    <string name="remember_location_title" msgid="3045040613094030429">"Rețineți locațiile fotografiilor?"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Etichetați-vă fotografiile și videoclipurile cu locațiile în care au fost create.\n\nAlte aplicații pot accesa aceste informații și imaginile salvate."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nu, mulțumesc"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Da"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MAI MULTE OPȚIUNI"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"Modificați rezoluția și calitatea în Setări sau încercați funcțiile avansate."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Alegeți dimensiunile fotografiei"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Puteți modifica ulterior în Setări"</string>
-    <string name="share_to" msgid="5144911209144798122">"Trimiteți prin"</string>
+    <string name="share_to" msgid="5144911209144798122">"Postați pe"</string>
     <string name="edit_with" msgid="615569327230783971">"Editați cu"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ÎNAINTE"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK, AM ÎNȚELES"</string>

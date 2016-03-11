@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Keine Verbindung zur Kamera möglich"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Die Kamera wurde aufgrund von Sicherheitsrichtlinien deaktiviert."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Beim Speichern Ihres Fotos oder Videos ist ein Problem aufgetreten."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Dieser App fehlen wichtige Berechtigungen, ohne die sie nicht ausgeführt werden kann. Bitte überprüfen Sie Ihre Einstellungen für Berechtigungen."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Fehler beim Speichern des Fotos"</string>
     <string name="wait" msgid="765601745709933047">"Bitte warten…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Legen Sie vor Verwendung der Kamera eine SD-Karte ein."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Dauer in Sekunden festlegen"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Countdown für Fotoaufnahme"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Aufnahmeort für Fotos speichern?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Taggen Sie Ihre Fotos und Videos mit den Standorten, an denen sie aufgenommen wurden."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Taggen Sie Ihre Fotos und Videos mit den Standorten, an denen sie aufgenommen wurden.\n\nAndere Apps können auf diese Informationen und Ihre gespeicherten Bilder zugreifen."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Nein danke"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"Weitere Optionen"</string>
@@ -341,8 +340,8 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"Belichtungskorrektur +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"Schaltfläche ist jetzt %s."</string>
     <string name="setting_location" msgid="4459859689227893838">"Standort"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"Rückseitenkamera – Foto"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"Rückseitenkamera – Video"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"Rückkamera – Foto"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"Rückkamera – Video"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"Frontkamera – Foto"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"Frontkamera – Video"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"Standardkamera"</string>
@@ -370,7 +369,7 @@
     <string name="settings_cling_text" msgid="5368054627268181292">"In den Einstellungen können Sie die Auflösung und die Qualität ändern oder erweiterte Funktionen ausprobieren."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Fotogröße auswählen"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Sie können dies später in den Einstellungen ändern."</string>
-    <string name="share_to" msgid="5144911209144798122">"Teilen über"</string>
+    <string name="share_to" msgid="5144911209144798122">"Teilen auf"</string>
     <string name="edit_with" msgid="615569327230783971">"Bearbeiten mit"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"Weiter"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"OK"</string>

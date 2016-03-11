@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Tidak dapat menyambung kepada kamera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Kamera telah dilumpuhkan kerana dasar keselamatan."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Terdapat masalah menyimpan foto atau video anda."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"Apl ini tiada kebenaran kritikal yang diperlukan untuk berfungsi. Sila semak tetapan kebenaran anda."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Gagal menyimpan foto."</string>
     <string name="wait" msgid="765601745709933047">"Sila tunggu..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Masukkan kad SD sebelum menggunakan kamera."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Tetapkan tempoh dalam saat"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Menghitung detik untuk mengambil gambar"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Ingat lokasi foto?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Tandai foto dan video anda dengan lokasi foto dan video itu dirakam."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Teg foto dan video anda dengan lokasi tempat diambil.\n\nApl lain boleh mengakses maklumat ini bersama imej disimpan."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Tidak, terima kasih"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ya"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"LAGI PILIHAN"</string>
@@ -350,7 +349,7 @@
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Memproses HDR+ …"</string>
     <string name="open_source_licenses" msgid="2169711954264883060">"Lesen sumber terbuka"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Tetapan Umum"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Peleraian &amp; kualiti"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Resolusi &amp; kualiti"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Perihal"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"Versi binaan"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"Rendah"</string>
@@ -367,7 +366,7 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Untuk memfokus semula, sentuh di sini"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Lanjutan"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Dedahan manual"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"Dalam Tetapan, tukar peleraian dan kualiti atau cuba ciri lanjutan."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"Dalam Tetapan, tukar resolusi dan kualiti atau cuba ciri lanjutan."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"Pilih saiz foto"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"Anda boleh menukar ini kemudian dalam Tetapan."</string>
     <string name="share_to" msgid="5144911209144798122">"Kongsi di"</string>

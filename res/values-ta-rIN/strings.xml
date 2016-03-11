@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"கேமராவுடன் இணைக்க முடியவில்லை."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"பாதுகாப்புக் கொள்கைகள் காரணமாக கேமரா முடக்கப்பட்டுள்ளது."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"படம் அல்லது வீடியோவைச் சேமிப்பதில் சிக்கல்."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"இயக்குவதற்குத் தேவைப்படும் முக்கியமான அனுமதிகள் பயன்பாட்டில் இல்லை. உங்கள் அனுமதிகளின் அமைப்புகளைச் சரிபார்க்கவும்."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"படத்தைச் சேமிப்பதில் தோல்வி."</string>
     <string name="wait" msgid="765601745709933047">"காத்திருக்கவும்…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"கேமராவைப் பயன்படுத்துவதற்கு முன், SD கார்டைச் செருகவும்."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"வினாடியில் கால அளவை அமை"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"படத்தை எடுப்பதற்கான நேரக் கணிப்பான்"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"பட இருப்பிடங்களை நினைவில் வைக்கவா?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"உங்கள் படங்கள் மற்றும் வீடியோக்களை, அவை எடுக்கப்பட்ட இடங்களுடன் குறியிடவும்."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"உங்கள் படங்கள், வீடியோக்கள் எடுக்கப்பட்ட இடங்களைக் குறியிடவும்.\n\nபிற பயன்பாடுகள், சேமிக்கப்பட்ட படங்களுடனான இந்தத் தகவலை அணுகலாம்."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"நன்றி, வேண்டாம்"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ஆம்"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"மேலும் விருப்பங்கள்"</string>
@@ -366,11 +365,11 @@
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s மெகாபிக்சல்கள்"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"மறுகவனம் செலுத்த, இங்கு தொடவும்"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"மேம்பட்டவை"</string>
-    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"கைமுறை எக்ஸ்போஷர்"</string>
+    <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"பயனராக வெளிக்காட்டுதல்"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"அமைப்புகளில், தெளிவுத்திறனையும் தரத்தையும் மாற்றவும் அல்லது மேம்பட்ட அம்சங்களை முயற்சிக்கவும்."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"பட அளவைத் தேர்வுசெய்க"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"இதைப் பின்பு அமைப்புகளில் மாற்றலாம்."</string>
-    <string name="share_to" msgid="5144911209144798122">"இதில் பகிர்"</string>
+    <string name="share_to" msgid="5144911209144798122">"இவற்றுடன் பகிர்"</string>
     <string name="edit_with" msgid="615569327230783971">"இதன் மூலம் திருத்து"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"அடுத்து"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"சரி, புரிந்தது"</string>

@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"カメラに接続できません。"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"カメラはセキュリティポリシーにより無効になっています。"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"写真または動画の保存で問題が発生しました。"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"このアプリには実行に必要な重要な権限が付与されていません。権限の設定をご確認ください。"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"写真の保存に失敗しました。"</string>
     <string name="wait" msgid="765601745709933047">"お待ちください…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"カメラを使用する前にSDカードを挿入してください。"</string>
@@ -195,7 +194,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"写真に切り替え"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"動画に切り替え"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"パノラマに切り替え"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"360°パノラマに切り替え"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Photo Sphereに切り替え"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"高画質に切り替え"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"リフォーカスに切り替える"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"レビュー - キャンセル"</string>
@@ -212,7 +211,7 @@
     <string name="photo_date_content_description" msgid="5705865897898465619">"%sに撮影した写真"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"%sに撮影した動画"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"%sに撮影したパノラマ写真"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%sに撮影した360°パノラマ写真"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%sに撮影したPhoto Sphere写真"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"%sに撮影したレンズぼかし写真"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"メディアを処理しています"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"モードリストを切り替え"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"設定時間（秒数）"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"画像を撮影するまでカウントダウンします"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"撮影場所を記録しますか？"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"写真や動画に撮影場所のタグを付けられます。"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"画像や動画に撮影場所のタグを付ける。\n\n他のアプリから、保存された画像とともに撮影場所の情報にもアクセスできるようになります。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"いいえ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"はい"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"その他のオプション"</string>
@@ -293,14 +292,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"設定"</string>
     <string name="mode_camera" msgid="279763925715250603">"カメラ"</string>
     <string name="mode_video" msgid="8633929034048169139">"動画"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"360°パノラマ"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"低速度撮影"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"広角"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"パノラマ"</string>
     <string name="mode_refocus" msgid="172192967119469061">"レンズぼかし"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"カメラモードに切り替え"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"動画カメラに切り替え"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"360°パノラマモードに切り替え"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"Photo Sphereモードに切り替え"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"パノラマモードに切り替え"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"レンズぼかしモードに切り替え"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"設定を開く"</string>

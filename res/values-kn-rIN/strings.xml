@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ಕ್ಯಾಮರಾಗೆ ಸಂಪರ್ಕಪಡಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"ಭದ್ರತೆ ನೀತಿಗಳ ಕಾರಣ ಕ್ಯಾಮರಾವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ನಿಮ್ಮ ಫೋಟೋ ಅಥವಾ ವೀಡಿಯೊವನ್ನು ಉಳಿಸುವಲ್ಲಿ ಸಮಸ್ಯೆ ಉಂಟಾಗಿದೆ."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"ಅಪ್ಲಿಕೇಶನ್ ರನ್ ಮಾಡಲು ಅಗತ್ಯವಿರುವ ನಿರ್ಣಾಯಕ ಅನುಮತಿಗಳನ್ನು ಹೊಂದಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಅನುಮತಿಗಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ಫೋಟೋ ಸಂಗ್ರಹಣೆ ವೈಫಲ್ಯ."</string>
     <string name="wait" msgid="765601745709933047">"ದಯವಿಟ್ಟು ನಿರೀಕ್ಷಿಸಿ…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"ಕ್ಯಾಮರಾ ಬಳಸುವುದಕ್ಕೂ ಮೊದಲು ಒಂದು SD ಕಾರ್ಡ್ ಸೇರಿಸಿ."</string>
@@ -88,7 +87,7 @@
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"ಕ್ಷಣಗಣನೆ ಸಮಯದಲ್ಲಿ ಬೀಪ್"</string>
     <string name="setting_off" msgid="6782191065550276632">"ಆಫ್ ಆಗಿದೆ"</string>
-    <string name="setting_on" msgid="9086728135773197891">"ಆನ್"</string>
+    <string name="setting_on" msgid="9086728135773197891">"ಆನ್ ಆಗಿದೆ"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"ವೀಡಿಯೊ ಗುಣಮಟ್ಟ"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"ಸಮಯದ ಅಂತರ"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"ಕ್ಯಾಮರಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"</string>
@@ -107,7 +106,7 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"ಫ್ಲ್ಯಾಶ್ ಮೋಡ್"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"ಫ್ಲ್ಯಾಶ್ ಮೋಡ್"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"ಸ್ವಯಂ"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"ಆನ್"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"ಆನ್ ಆಗಿದೆ"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"ಆಫ್ ಆಗಿದೆ"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"ಫ್ಲ್ಯಾಶ್ ಆಟೋ"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"ಫ್ಲ್ಯಾಶ್ ಆನ್"</string>
@@ -276,8 +275,8 @@
     <string name="set_duration" msgid="1638453882581604341">"ಅವಧಿಯನ್ನು ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಹೊಂದಿಸಿ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ಪೋಟೋ ತೆಗೆದುಕೊಳ್ಳಲು ಎಣಿಸಲಾಗುತ್ತಿದೆ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ಫೋಟೋ ಸ್ಥಳಗಳನ್ನು ನೆನಪಿಡುವುದೇ?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"ನಿಮ್ಮ ಫೋಟೋಗಳು ಮತ್ತು ವೀಡಿಯೊಗಳನ್ನು ಅವುಗಳನ್ನು ತೆಗೆದ ಸ್ಥಳದಿಂದ ಟ್ಯಾಗ್ ಮಾಡಿ."</string>
-    <string name="remember_location_no" msgid="4412802756840226925">"ಧನ್ಯವಾದಗಳು"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"ನಿಮ್ಮ ಫೋಟೋಗಳು ಮತ್ತು ವೀಡಿಯೊಗಳನ್ನು ಸೆರೆಹಿಡಿದಿರುವ ಸ್ಥಳಗಳನ್ನು ಬಳಸಿಕೊಂಡು ಅವುಗಳನ್ನು ಟ್ಯಾಗ್ ಮಾಡಿ.\n\nನಿಮ್ಮ ಉಳಿಸಲಾಗಿರುವ ಚಿತ್ರಗಳ ಜೊತೆಗೆ ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಈ ಮಾಹಿತಿಯನ್ನು ಪ್ರವೇಶಿಸಬಹುದು."</string>
+    <string name="remember_location_no" msgid="4412802756840226925">"ಬೇಡ ಧನ್ಯವಾದಗಳು"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ಹೌದು"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"ಸೆಟ್ಟಿಂಗ್‌ಗಳು"</string>
@@ -342,9 +341,9 @@
     <string name="button_change_announcement" msgid="3759686152778772111">"ಬಟನ್ ಇದೀಗ %s ಆಗಿದೆ"</string>
     <string name="setting_location" msgid="4459859689227893838">"ಸ್ಥಾನ"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"ಬ್ಯಾಕ್ ಕ್ಯಾಮರಾ ಫೋಟೋ"</string>
-    <string name="setting_back_camera_video" msgid="5220819479408164689">"ಬ್ಯಾಕ್‌‌ ಕ್ಯಾಮರಾ ವೀಡಿಯೊ"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"ಫ್ರಂಟ್ ಕ್ಯಾಮರಾ ಫೋಟೋ"</string>
-    <string name="setting_front_camera_video" msgid="2178799452805359752">"ಫ್ರಂಟ್‌ ಕ್ಯಾಮರಾ ವೀಡಿಯೊ"</string>
+    <string name="setting_back_camera_video" msgid="5220819479408164689">"ಬ್ಯಾಕ್‌‌ ಕ್ಯಾಮೆರಾ ವೀಡಿಯೊ"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"ಫ್ರಂಟ್ ಕ್ಯಾಮೆರಾ ಫೋಟೋ"</string>
+    <string name="setting_front_camera_video" msgid="2178799452805359752">"ಫ್ರಂಟ್‌ ಕ್ಯಾಮರಾ ವಿಡಿಯೋ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ಡೀಫಾಲ್ಟ್ ಕ್ಯಾಮರಾ"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"ಸಹಾಯ &amp; ಪ್ರತಿಕ್ರಿಯೆ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ ಪ್ರಕ್ರಿಯೆಯಲ್ಲಿದೆ…"</string>
@@ -367,10 +366,10 @@
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ಮರುಕೇಂದ್ರೀಕರಿಸಲು, ಇಲ್ಲಿ ಸ್ಪರ್ಶಿಸಿ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"ಸುಧಾರಿತ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ಮ್ಯಾನ್ಯುಯಲ್ ಎಕ್ಸ್‌‌ಪೋಸರ್‌"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ, ರೆಸಲ್ಯೂಷನ್ ಮತ್ತು ಗುಣಮಟ್ಟ ಬದಲಾಯಿಸಿ ಅಥವಾ ಸುಧಾರಿತ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಬಳಸಿ."</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ, ರೆಸಲ್ಯೂಷನ್ ಮತ್ತು ಗುಣಮಟ್ಟವನ್ನು ಬದಲಾಯಿಸಿ ಅಥವಾ ಸುಧಾರಿತ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಪ್ರಯತ್ನಿಸಿ."</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ಫೋಟೋ ಗಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ನೀವು ಇದನ್ನು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ನಂತರ ಬದಲಾಯಿಸಬಹುದು."</string>
-    <string name="share_to" msgid="5144911209144798122">"ಇವುಗಳೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಿ"</string>
+    <string name="share_to" msgid="5144911209144798122">"ಇದಕ್ಕೆ ಹಂಚಿರಿ"</string>
     <string name="edit_with" msgid="615569327230783971">"ಇವರ ಜೊತೆಗೆ ಸಂಪಾದಿಸಿ"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ಮುಂದೆ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ಸರಿ, ಅರ್ಥವಾಯಿತು"</string>

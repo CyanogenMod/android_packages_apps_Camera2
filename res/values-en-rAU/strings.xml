@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Can\'t connect to the camera."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"Camera has been disabled because of security policies."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"There was a problem saving your photo or video."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"The app does not have critical permissions needed to run. Please check your permissions settings."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Photo storage failure."</string>
     <string name="wait" msgid="765601745709933047">"Please wait…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Insert an SD card before using the camera."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Set duration in seconds"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Counting down to take a photo"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Remember photo locations?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Tag your photos and videos with the locations where they\'re taken."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Tag your photos and videos with the locations where they are taken.\n\nOther apps can access this information along with your saved images."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"No, thanks"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Yes"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"MORE OPTIONS"</string>

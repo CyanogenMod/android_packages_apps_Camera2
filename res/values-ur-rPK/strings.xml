@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"کیمرہ سے منسلک نہیں ہو سکتا ہے۔"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"سیکیورٹی کی پالیسیوں کی وجہ سے کیمرہ غیر فعال کر دیا گیا ہے۔"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"آپ کی تصویر یا ویڈیو کو محفوظ کرتے ہوئے ایک مسئلہ پیش آگیا۔"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"ایپ چلانے کیلئے درکار انتہائی اہم اجازتیں ایپ کے پاس نہیں ہیں۔ براہ کرم اپنی اجازتوں کی ترتیبات چیک کریں۔"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"تصویر کے اسٹوریج کی ناکامی۔"</string>
     <string name="wait" msgid="765601745709933047">"براہ کرم انتظار کریں…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"‏کیمرہ استعمال کرنے سے پہلے ایک SD کارڈ داخل کریں۔"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"سیکنڈ میں دورانیہ سیٹ کریں"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ایک تصویر لینے کیلئے الٹی گنتی گن رہا ہے"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"تصویر کے مقامات یاد رکھیں؟"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"اپنی تصاویر اور ویڈیوز کو ان مقامات کے ساتھ ٹیگ کریں، جہاں انہیں لیا جاتا ہے۔"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"اپنی تصاویر اور ویڈیوز کو ان مقامات کے ساتھ ٹیگ کریں، جہاں انہیں لیا گیا تھا۔\n\nدیگر ایپس آپ کی محفوظ کردہ تصاویر کے ساتھ اس معلومات تک رسائی حاصل کر سکتی ہیں۔"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"نہیں، شکریہ"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"ہاں"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"مزید اختیارات"</string>

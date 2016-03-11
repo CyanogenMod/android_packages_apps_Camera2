@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"无法连接到相机。"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"由于安全规范的限制，相机已被禁用。"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"保存您的照片或视频时出现问题。"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"此应用缺少运行所需的必要权限。请检查您的权限设置。"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"照片存储失败。"</string>
     <string name="wait" msgid="765601745709933047">"请稍候…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"使用相机前请先插入SD卡。"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"设置倒数时间（秒）"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"拍照倒计时中"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"要记住照片拍摄地点吗？"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"为您的照片和视频标明拍摄地点。"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"为您的照片和视频标明拍摄地点。\n\n其他应用在查看您拍摄的照片时将可以使用这些信息。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"不用了"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"好"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"更多选项"</string>

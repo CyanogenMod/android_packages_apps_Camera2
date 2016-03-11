@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"Impossible d\'établir une connexion avec l\'appareil photo."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"L\'appareil photo a été désactivé en raison des politiques de sécurité."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"Un problème est survenu lors de l\'enregistrement de la photo ou de la vidéo."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"L\'application ne dispose pas de certaines autorisations nécessaires à son exécution. Veuillez vérifier vos paramètres relatifs aux autorisations."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"Échec du stockage de la photo."</string>
     <string name="wait" msgid="765601745709933047">"Veuillez patienter…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"Veuillez insérer une carte SD avant d\'utiliser l\'appareil photo."</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"Définir la durée en secondes"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"Compte à rebours avant la photo"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Mémoriser le lieu des photos?"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"Ajoutez des balises à vos photos et à vos vidéos pour marquer l\'endroit où vous les avez prises."</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"Ajoutez des balises à vos photos et à vos vidéos pour identifier l\'endroit de la prise de vue.\n\nD\'autres applications peuvent accéder à ces données et aux images enregistrées."</string>
     <string name="remember_location_no" msgid="4412802756840226925">"Non, merci"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Oui"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"PLUS D\'OPTIONS"</string>

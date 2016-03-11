@@ -68,7 +68,6 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"無法連接相機。"</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"基於安全政策，相機已停用。"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"儲存您的相片或影片時發生問題。"</string>
-    <string name="error_permissions" msgid="3454167403425651254">"應用程式欠缺執行所需的關鍵權限。請檢查您的權限設定。"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"相片儲存失敗。"</string>
     <string name="wait" msgid="765601745709933047">"請稍候…"</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"使用相機前，請先插入 SD 卡。"</string>
@@ -276,7 +275,7 @@
     <string name="set_duration" msgid="1638453882581604341">"設定倒數時間 (以秒為單位)"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"為拍照倒數中"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"記錄拍攝地點？"</string>
-    <string name="remember_location_prompt" msgid="3006013504489919474">"為您的相片和影片標記拍攝地點。"</string>
+    <string name="remember_location_prompt" msgid="5104210757873140169">"為您的相片和影片標記拍攝地點。\n\n其他應用程式存取您所儲存的影像時，也可以存取這項資料。"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"不需要，謝謝"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"是"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"更多選項"</string>
