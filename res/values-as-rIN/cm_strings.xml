@@ -17,6 +17,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- More Settings screen, power button title -->
+  <string name="pref_camera_power_shutter_title">পাৱাৰ শ্বাটাৰ</string>
   <!-- More Settings screen, max brightness title -->
+  <string name="pref_camera_max_brightness_title">উজ্জ্বল স্ক্ৰীণ</string>
   <!-- More Settings screen, storage title -->
+  <string name="pref_camera_storage_title">ষ্ট\'ৰেজ অৱস্থান</string>
 </resources>

@@ -21,4 +21,5 @@
   <!-- More Settings screen, max brightness title -->
   <string name="pref_camera_max_brightness_title">يورۇق ئېكران</string>
   <!-- More Settings screen, storage title -->
+  <string name="pref_camera_storage_title">ساقلاش ئورنى</string>
 </resources>
