@@ -277,7 +277,7 @@
     <string name="count_down_title_text" msgid="7586031110595513050">"Teller ned før bildet tas"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"Vil du huske bildestedene?"</string>
     <string name="remember_location_prompt" msgid="3006013504489919474">"Merk bildene og videoene dine med hvor de ble tatt."</string>
-    <string name="remember_location_no" msgid="4412802756840226925">"Nei, takk"</string>
+    <string name="remember_location_no" msgid="4412802756840226925">"Nei takk"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"Ja"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"FLERE ALTERNATIVER"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"INNSTILLINGER"</string>
