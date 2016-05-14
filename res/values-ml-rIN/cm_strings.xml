@@ -17,6 +17,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- More Settings screen, power button title -->
+  <string name="pref_camera_power_shutter_title">പവർ ബട്ടൺ ഷട്ടർ</string>
   <!-- More Settings screen, max brightness title -->
+  <string name="pref_camera_max_brightness_title">ബ്രൈറ്റ് സ്ക്രീൻ</string>
   <!-- More Settings screen, storage title -->
+  <string name="pref_camera_storage_title">സ്റ്റോറേജ് ലൊക്കേഷൻ</string>
 </resources>
