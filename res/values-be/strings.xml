@@ -21,9 +21,16 @@
   <!-- Used to format video duration in Details dialog. hours:minutes:seconds e.g. 0:21:30 -->
   <!-- Displayed in the title of the dialog for things to do with a picture
              that is to be "set as" (e.g. set as contact photo or set as wallpaper) -->
+  <string name="set_image">Усталяваць як</string>
   <!-- Details dialog "OK" button. Dismisses dialog. -->
+  <string name="delete">Выдалiць</string>
+  <string name="share">Падзяліцца</string>
+  <string name="share_as_photo">Падзяліцца фотаздымкам</string>
   <!-- The label shown after an image is deleted [CHAR LIMIT=16] -->
+  <string name="deleted">Выдалены</string>
   <!-- The label on the button which when clicked will undo a deletion of image [CHAR LIMIT=16]-->
+  <string name="undo">СКАСАВАЦЬ</string>
+  <string name="details">Дэталёва</string>
   <!-- String indicating timestamp of photo or video -->
   <!-- String used as a menu label. The user can choose to edit the image
          [CHAR_LIMIT=20]-->
@@ -365,6 +372,7 @@
   <!-- Message shown in the settings summary that includes the the aspect ratio of the selected resolution i.e. (4:3) and the size of the selected resolution in megapixels. [CHAR LIMIT=24]-->
   <!-- Text shown above the button that opens to editor for images created from lens blur mode. [CHAR LIMIT=60] -->
   <!-- Title of a preference group for advanced preferences. [CHAR LIMIT=30] -->
+  <string name="pref_category_advanced">Падрабязьней</string>
   <!-- Title of a preference for enabling manual exposure compensation. [CHAR LIMIT=20] -->
   <!-- Text shown next to the settings button to explain what is in settings menu. [CHAR LIMIT=120] !-->
   <!-- Title on the startup screen that lets user select photo aspect ratio. [CHAR LIMIT=40]-->
