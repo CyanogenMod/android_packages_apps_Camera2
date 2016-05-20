@@ -2251,10 +2251,10 @@ public class CameraActivity extends QuickActivity
         mPowerShutter = Keys.isPowerShutterOn(mSettingsManager);
         if (mPowerShutter) {
             getWindow().addPrivateFlags(
-                    WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY);
+                    WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_SYSTEM_KEYS);
         } else {
             getWindow().clearPrivateFlags(
-                    WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_POWER_KEY);
+                    WindowManager.LayoutParams.PRIVATE_FLAG_PREVENT_SYSTEM_KEYS);
         }
     }
 
