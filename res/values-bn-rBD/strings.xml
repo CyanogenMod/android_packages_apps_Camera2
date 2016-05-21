@@ -78,7 +78,7 @@
     <string name="feedback_description_camera_access" msgid="419090951070170132">"অ্যাপ্লিকেশানটি ক্যামেরার সাথে সংযোগ করা যায়নি।"</string>
     <string name="feedback_description_save_photo" msgid="8658767358989083228">"ফটো বা ভিডিও ডিভাইসে সংরক্ষণ করা যায়নি৷"</string>
     <string name="capturing" msgid="5255164204641920893">"ক্যাপচার করা হচ্ছে"</string>
-    <string name="pref_camera_id_title" msgid="4680648115225411185">"ক্যামেরা চয়ন করুন"</string>
+    <string name="pref_camera_id_title" msgid="4680648115225411185">"ক্যামেরা বেছে নিন"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"পিছনে"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"সামনের"</string>
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"অবস্থান সংরক্ষণ করুন"</string>
@@ -380,7 +380,7 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"আরো বিকল্প"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ম্যানুয়াল এক্সপোজার"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"সেটিংস-এ, রেজোলিউশন এবং গুণমান পরিবর্তন করুন, বা উন্নত বৈশিষ্ট্যগুলি ব্যবহার করে দেখুন৷"</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"ফটোর আকার চয়ন করুন"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"ফটোর আকার বেছে নিন"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"আপনি এই সেটিংসটি পরে পরিবর্তন করতে পারেন৷"</string>
     <string name="share_to" msgid="5144911209144798122">"এর সাথে শেয়ার করুন"</string>
     <string name="edit_with" msgid="615569327230783971">"এর মাধ্যমে সম্পাদনা করুন"</string>
