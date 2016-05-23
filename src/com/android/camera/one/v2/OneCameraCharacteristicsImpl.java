@@ -139,11 +139,11 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
 
     @Override
     public SupportedHardwareLevel getSupportedHardwareLevel() {
-        Integer supportedHardwareLevel = mCameraCharacteristics.get(CameraCharacteristics
-                .INFO_SUPPORTED_HARDWARE_LEVEL);
+        Integer supportedHardwareLevel = mCameraCharacteristics
+                .get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
         // If this fails, it is a framework bug, per API documentation.
         checkNotNull(supportedHardwareLevel, "INFO_SUPPORTED_HARDWARE_LEVEL not found");
-        switch ((int) supportedHardwareLevel) {
+        switch (supportedHardwareLevel) {
             case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL:
                 return SupportedHardwareLevel.FULL;
             case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED:
@@ -151,6 +151,12 @@ public class OneCameraCharacteristicsImpl implements OneCameraCharacteristics {
             case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY:
                 return SupportedHardwareLevel.LEGACY;
             default:
+                if (supportedHardwareLevel >
+                        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL) {
+                    Log.i(TAG, "Unknown higher hardware level mapped to FULL: "
+                            + supportedHardwareLevel);
+                    return SupportedHardwareLevel.FULL;
+                }
                 throw new IllegalStateException("Invalid value for INFO_SUPPORTED_HARDWARE_LEVEL");
         }
     }
