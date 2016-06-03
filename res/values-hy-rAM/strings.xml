@@ -22,7 +22,7 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"Սահմանել նկարը որպես"</string>
     <string name="delete" msgid="2714492172818940424">"Ջնջել"</string>
-    <string name="share" msgid="8581089487762243115">"Տարածել"</string>
+    <string name="share" msgid="8581089487762243115">"Կիսվել"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Տարածել համայնապատկերը"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Տարածել որպես լուսանկար"</string>
     <string name="deleted" msgid="2036165115527228127">"Ջնջված է"</string>
@@ -329,7 +329,7 @@
     <string name="done_button_description" msgid="1334963435441544592">"Պատրաստ է"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Վերանկարել"</string>
     <string name="review_button_description" msgid="7932122063748430080">"Դիտարկել"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"Տարածել"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"Կիսվել"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Դիտել"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Փոփոխել"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Ջնջել"</string>
