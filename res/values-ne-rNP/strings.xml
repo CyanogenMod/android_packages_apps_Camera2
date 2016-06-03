@@ -57,7 +57,7 @@
     <string name="exposure_time" msgid="949787291620767754">"एक्सपोजर समय"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"मिलिमिटर"</string>
-    <string name="manual" msgid="2444400953521760140">"म्यानुएल"</string>
+    <string name="manual" msgid="2444400953521760140">"म्यानुअल"</string>
     <string name="auto" msgid="2552649885114400474">"स्वतः"</string>
     <string name="flash_on" msgid="6573457197393807642">"फ्ल्यास चलाइयो"</string>
     <string name="flash_off" msgid="7889323512830926273">"कुनै फ्ल्यास छैन"</string>
@@ -76,7 +76,7 @@
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD कार्ड प्रयोग गर्न सकेन।"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"समय ल्याप्स रेकर्डिङ"</string>
     <string name="feedback_description_camera_access" msgid="419090951070170132">"अनुप्रयोग क्यामेरामा जडान हुन सकेन"</string>
-    <string name="feedback_description_save_photo" msgid="8658767358989083228">"फोटो वा भिडियो यन्त्रमा सुरक्षित भएन।"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"तस्बिर वा भिडियो यन्त्रमा सुरक्षित भएन।"</string>
     <string name="capturing" msgid="5255164204641920893">"क्याप्चर गरिँदै"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"क्यामेरा चयन गर्नुहोस्"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"पछाडि"</string>
@@ -156,7 +156,7 @@
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"FRONT CAMERA"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"BACK CAMERA"</string>
-    <string name="dialog_ok" msgid="774141340500181131">"ठिक छ"</string>
+    <string name="dialog_ok" msgid="774141340500181131">"ठीक छ"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"रद्द गर्नुहोस्"</string>
     <string name="dialog_report" msgid="7616428760369876209">"रिपोर्ट गर्नुहोस्"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"खारेज गर्नुहोस्"</string>
@@ -197,7 +197,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"फोटामा स्विच गर्नुहोस्"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"भिडियोमा स्विच गर्नुहोस्"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"परिदृश्यमा स्विच गर्नुहोस्"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"फोटो स्फेयरमा स्विच गर्नुहोस्"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"तस्बिर स्फेयरमा स्विच गर्नुहोस्"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"उच्च गुणस्तरमा स्विच गर्नुहोस्"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Refocus मा स्विच गर्नुहोस्"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"समीक्षा रद्द गर्नुहोस्"</string>
@@ -206,15 +206,15 @@
     <string name="accessibility_mode_options" msgid="6376831760155403217">"विकल्पहरू"</string>
     <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"ढाँचा सूची बन्द भयो"</string>
     <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"ढाँचा सूची खुला भयो"</string>
-    <string name="media_accessibility_peek" msgid="234540330161031946">"फोटो लिइयो"</string>
-    <string name="photo_accessibility_peek" msgid="5934133371001677250">"फोटो लिइयो"</string>
+    <string name="media_accessibility_peek" msgid="234540330161031946">"तस्बिर लिइयो"</string>
+    <string name="photo_accessibility_peek" msgid="5934133371001677250">"तस्बिर लिइयो"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"भिडियो लिइयो"</string>
     <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"क्यामेरा खोल्नुहोस्"</string>
     <string name="media_date_content_description" msgid="2155634843596817141">"%s मा लिएको मिडिया"</string>
-    <string name="photo_date_content_description" msgid="5705865897898465619">"%s मा लिएको फोटो"</string>
+    <string name="photo_date_content_description" msgid="5705865897898465619">"%s मा लिएको तस्बिर"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"%s मा लिएको भिडियो"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"%s मा लिएको परिदृश्य"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%s मा लिएको फोटो क्षेत्र"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%s मा लिएको तस्बिर क्षेत्र"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"%s मा लिएको लेन्स ब्लर"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"मिडिया प्रशोधन गर्दै"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"टगल ढाँचा सूची"</string>
@@ -295,14 +295,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"सेटिङहरू"</string>
     <string name="mode_camera" msgid="279763925715250603">"क्यामेरा"</string>
     <string name="mode_video" msgid="8633929034048169139">"भिडियो"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"फोटो क्षेत्र"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"तस्बिर क्षेत्र"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"समय ल्याप्स"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"चौडा कोणिय"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"पानोरामा"</string>
     <string name="mode_refocus" msgid="172192967119469061">"लेन्स ब्लर"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"क्यामेरा मोडमा स्विच गर्नुहोस्"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"भिडियो क्यामेरा स्विच गर्नुहोस्"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"फोटो क्षेत्र मोडमा स्विच गर्नुहोस्"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"तस्बिर क्षेत्र मोडमा स्विच गर्नुहोस्"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"परिदृश्य मोडमा स्विच गर्नुहोस्"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"लेन्स ब्लर मोडमा स्विच गर्नुहोस्"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"सेटिंग्सहरू खोल्नुहोस्"</string>
@@ -343,9 +343,9 @@
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"एक्सपोजर क्षतिपुर्ती +२"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"बटन अब %s छ"</string>
     <string name="setting_location" msgid="4459859689227893838">"स्थान"</string>
-    <string name="setting_back_camera_photo" msgid="256738900473265017">"पछाडि क्यामेरा फोटो"</string>
+    <string name="setting_back_camera_photo" msgid="256738900473265017">"पछाडि क्यामेरा तस्बिर"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"पछाडि क्यामेरा भिडियो"</string>
-    <string name="setting_front_camera_photo" msgid="4131886734622868637">"अगाडि क्यामेरा फोटो"</string>
+    <string name="setting_front_camera_photo" msgid="4131886734622868637">"अगाडि क्यामेरा तस्बिर"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"अगाडि क्यामेरा भिडियो"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"पूर्वनिर्धारित क्यामेरा"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"मद्दत र प्रतिक्रिया"</string>
@@ -372,7 +372,7 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"उन्नत"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"मान्युअल खु्लापन"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"सेटिङहरूमा, रिजोल्युसन र गुणस्तर परिवर्तन गर्नुहोस्, वा उन्नत विशेषताहरुको प्रयास गर्नुहोस्।"</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"फोटो आकार छान्नुहोस्"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"तस्बिर आकार छान्नुहोस्"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"तपाईँले सेटिङहरूमा पछि परिवर्तन गर्न सक्नुहुन्छ।"</string>
     <string name="share_to" msgid="5144911209144798122">"साझेदारी गर्नुहोस्"</string>
     <string name="edit_with" msgid="615569327230783971">"संग सम्पादन गर्नुहोस्"</string>
