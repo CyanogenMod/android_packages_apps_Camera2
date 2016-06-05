@@ -195,7 +195,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Overschakelen naar foto"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Overschakelen naar video"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Overschakelen naar panorama"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Overschakelen naar 360° foto"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Overschakelen naar 360°-foto"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Overschakelen naar hoge kwaliteit"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Overschakelen naar Opnieuw scherpstellen"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"Controle annuleren"</string>

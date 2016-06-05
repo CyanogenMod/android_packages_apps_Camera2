@@ -35,7 +35,7 @@
     <string name="edit" msgid="2776879395749004347">"Уреди"</string>
     <string name="crop_action" msgid="6933589718464132714">"Исечи"</string>
     <string name="trim_action" msgid="4736803320203951827">"Скрати"</string>
-    <string name="set_as" msgid="5469055085024870081">"Подеси како"</string>
+    <string name="set_as" msgid="5469055085024870081">"Постави како"</string>
     <string name="video_err" msgid="1562566029875081552">"Видеото не може да се пушти."</string>
     <string name="title" msgid="8061744305671964703">"Име"</string>
     <string name="description" msgid="8193138501982849808">"Опис"</string>
