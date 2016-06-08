@@ -170,7 +170,7 @@
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"ਪਿਛਲਾ ਪਨੋਰਮਾ ਉਡੀਕ ਰਿਹਾ ਹੈ"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"ਸੁਰੱਖਿਅਤ ਕਰ ਰਿਹਾ ਹੈ..."</string>
     <string name="pano_review_rendering" msgid="2743087719999377155">"ਪਨੋਰਮਾ ਰੈਂਡਰ ਕਰ ਰਿਹਾ ਹੈ"</string>
-    <string name="tap_to_focus" msgid="3519718196270593468">"ਫੋਕਸ ਕਰਨ ਲਈ ਛੋਹਵੋ।"</string>
+    <string name="tap_to_focus" msgid="3519718196270593468">"ਫੋਕਸ ਕਰਨ ਲਈ ਸਪੱਰਸ਼ ਕਰੋ।"</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"ਇਫੈਕਟਸ"</string>
     <string name="effect_none" msgid="3102797925086872636">"ਕੋਈ ਨਹੀਂ"</string>
     <string name="effect_goofy_face_squeeze" msgid="1362021544829311452">"ਸਕਵੀਜ਼"</string>
@@ -182,7 +182,7 @@
     <string name="effect_backdropper_space" msgid="9133825395915767627">"ਸਪੇਸ ਵਿੱਚ"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"ਸ਼ਾਮ"</string>
     <string name="effect_backdropper_gallery" msgid="2333888391153564920">"ਤੁਹਾਡਾ ਵੀਡੀਓ"</string>
-    <string name="video_snapshot_hint" msgid="2707403607250082339">"ਰਿਕਾਰਡਿੰਗ ਵੇਲੇ ਫੋਟੋ ਲੈਣ ਲਈ ਛੋਹਵੋ।"</string>
+    <string name="video_snapshot_hint" msgid="2707403607250082339">"ਰਿਕਾਰਡਿੰਗ ਵੇਲੇ ਫੋਟੋ ਲੈਣ ਲਈ ਸਪੱਰਸ਼ ਕਰੋ।"</string>
     <string name="video_recording_started" msgid="3374878415050991030">"ਵੀਡੀਓ ਰਿਕਾਰਡਿੰਗ ਚਾਲੂ ਹੋਇਆ ਹੈ।"</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"ਵੀਡੀਓ ਰਿਕਾਰਡਿੰਗ ਰੁਕ ਗਈ ਹੈ।"</string>
     <string name="clear_effects" msgid="6192797848995967992">"ਇਫੈਕਟਸ ਹਟਾਓ"</string>
@@ -364,7 +364,7 @@
     <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixels"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixels"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ਰੀਫੋਕਸ ਕਰਨ ਲਈ, ਇੱਥੇ ਛੋਹਵੋ"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ਰੀਫੋਕਸ ਕਰਨ ਲਈ, ਇੱਥੇ ਸਪੱਰਸ਼ ਕਰੋ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"ਉੱਨਤ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ਮੈਨੁਅਲ ਐਕਸਪੋਜ਼ਰ"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"ਸੈਟਿੰਗਾਂ ਵਿੱਚ, ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਅਤੇ ਕੁਆਲਿਟੀ ਬਦਲੋ ਜਾਂ ਐਡਵਾਂਸਡ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"</string>
