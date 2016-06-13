@@ -15,5 +15,6 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <!-- Name of the Gallery app, for which we have an ActionBar button in Filmstrip. Should be kep in sync with the name of AOSP Gallery app [CHAR LIMIT=40]-->
   <string name="gallery_app_name">پیشەنگا</string>
 </resources>
