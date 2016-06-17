@@ -116,8 +116,11 @@
   <!-- message for the dialog showing the camera is disabled because of security policies. Camera cannot be used. -->
   <string name="error_camera_disabled">Inhabilitóse la cámara por polítiques de seguridá.</string>
   <!-- message for the dialog showing that the user's photo could not be saved [CHAR LIMIT=NONE] -->
+  <string name="error_media_storage_failure">Hebo un problema guardando la to semeya o videu.</string>
   <!-- message for the dialog showing that the app does not have sufficient permissions [CHAR LIMIT=NONE] -->
+  <string name="error_permissions">L\'aplicación nun tien permisos críticos precisos pa executase. Comprueba los tos permisos d\'axustes, por favor.</string>
   <!-- Reason used for session failure which is visible in UI [CHAR LIMIT=NONE] -->
+  <string name="reason_storage_failure">Fallu d\'almacenaxe de semeya.</string>
   <!-- alert to the user to wait for some operation to complete -->
   <string name="wait">Por favor, espera\u2026</string>
   <!-- alert to the user that an SD card must be installed before using the camera -->
@@ -129,7 +132,9 @@
   <!-- A label that overlays on top of the preview frame to indicate the camcorder is in time lapse mode [CHAR LIMIT=35] -->
   <string name="time_lapse_title">Grabación a intervalos de tiempu</string>
   <!-- Default feedback that is entered in the Feedback textview for issues related to camera access. [CHAR LIMIT=NONE] -->
+  <string name="feedback_description_camera_access">L\'aplicación nun pudo coneutase a la cámara</string>
   <!-- Default feedback that is entered in the Feedback textview for issues related to saving photos. [CHAR LIMIT=NONE] -->
+  <string name="feedback_description_save_photo">La semeya o videu nun se guardó nel preséu.</string>
   <!-- Screen display message during image capture to indicate that the capture is in progress, like during HDR+. [CHAR LIMIT=20] -->
   <string name="capturing">Capturando</string>
   <!-- Settings screen, camera selection dialog title. Users can select a camera from the phone (front-facing or back-facing). [CHAR LIMIT=20] -->
@@ -292,7 +297,9 @@
   <string name="dialog_ok">Aceutar</string>
   <string name="dialog_cancel">Encaboxar</string>
   <!-- Dialog "Report" button. Opens Google Feedback screen [CHAR LIMIT=12] -->
+  <string name="dialog_report">Informar</string>
   <!-- Dialog "Dismiss" button. Closes the dialog [CHAR LIMIT=12]-->
+  <string name="dialog_dismiss">Descartar</string>
   <!-- Low-memory dialog message [CHAR LIMIT=NONE] -->
   <string name="spaceIsLow_content" product="default">Nun hai espaciu na tarxeta SD. Cambia la configuración de calidá o desanicia dalgunes imáxenes o otros ficheros.</string>
   <!-- Camera format string for new image files. Passed to java.text.SimpleDateFormat. -->
@@ -416,10 +423,15 @@
   <!-- Text on the button that toggles the filmstrip. [CHAR LIMIT=20] -->
   <string name="btn_filmstrip_toggle">Tira de película</string>
   <!-- Content description of the button that zooms in. [CHAR LIMIT=NONE] -->
+  <string name="accessibility_mode_zoom_plus">Averar</string>
   <!-- Text on the button that zooms in [CHAR LIMIT=20] -->
+  <string name="btn_zoom_plus">Z+</string>
   <!-- Content description of the button that zooms out. [CHAR LIMIT=NONE] -->
+  <string name="accessibility_mode_zoom_minus">Alloñar</string>
   <!-- Text on the button that zooms out [CHAR LIMIT=20] -->
+  <string name="btn_zoom_minus">Z-</string>
   <!-- Accessibility message spoken by TalkBack informing user of the current zoom value [CHAR LIMIT=NONE] -->
+  <string name="accessibility_zoom_announcement">El valor del zoom ye de %.1f</string>
   <!-- Default text for a button that can be toggled on and off. -->
   <string name="capital_on">SÍ</string>
   <!-- Default text for a button that can be toggled on and off. -->
@@ -525,6 +537,7 @@
   <!-- Title for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=50] -->
   <string name="remember_location_title">¿Recordar llocalizaciones de les semeyes?</string>
   <!-- Message for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=None] -->
+  <string name="remember_location_prompt">Etiqueta les tos semeyes y vídeos colos allugamientos u se fixeron.</string>
   <!-- Negative answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=20] -->
   <string name="remember_location_no">Non, gracies</string>
   <!-- Positive answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=20] -->
@@ -619,6 +632,7 @@
   <!-- Accessibility text for retake button [CHAR_LIMIT=NONE] -->
   <string name="retake_button_description">Repitir</string>
   <!-- Accessibility text for video review button [CHAR_LIMIT=NONE] -->
+  <string name="review_button_description">Revisar</string>
   <!-- Accessibility text for filmstrip share button [CHAR_LIMIT=NONE] -->
   <string name="share_button_description">Compartir</string>
   <!-- Accessibility text for filmstrip view button used to open special image viewers, like 3d photosphere [CHAR_LIMIT=NONE] -->
