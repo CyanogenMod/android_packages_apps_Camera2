@@ -361,7 +361,7 @@
     <string name="pref_video_quality_entry_720p" msgid="4076146428148167262">"HD 720 p"</string>
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080 p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
-    <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD de 4 K"</string>
+    <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD de 4K"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapíxeles"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapíxeles"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Para volver enfocar, toca aquí"</string>

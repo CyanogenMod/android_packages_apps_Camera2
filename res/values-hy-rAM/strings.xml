@@ -23,7 +23,7 @@
     <string name="set_image" msgid="3969690281401045698">"Սահմանել նկարը որպես"</string>
     <string name="delete" msgid="2714492172818940424">"Ջնջել"</string>
     <string name="share" msgid="8581089487762243115">"Կիսվել"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"Տարածել համայնապատկերը"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"Կիսվել համայնապատկերով"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Տարածել որպես լուսանկար"</string>
     <string name="deleted" msgid="2036165115527228127">"Ջնջված է"</string>
     <string name="undo" msgid="5110048345890050107">"ՀԵՏԱՐԿԵԼ"</string>
