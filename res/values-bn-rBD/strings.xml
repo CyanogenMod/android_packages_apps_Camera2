@@ -22,9 +22,9 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"এই হিসাবে ছবি সেট করুন"</string>
     <string name="delete" msgid="2714492172818940424">"মুছুন"</string>
-    <string name="share" msgid="8581089487762243115">"ভাগ করুন"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"প্যানোরামা ভাগ করুন"</string>
-    <string name="share_as_photo" msgid="4831213580709167218">"ফটো হিসাবে ভাগ করুন"</string>
+    <string name="share" msgid="8581089487762243115">"শেয়ার করুন"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"প্যানোরামা শেয়ার করুন"</string>
+    <string name="share_as_photo" msgid="4831213580709167218">"ফটো হিসাবে শেয়ার করুন"</string>
     <string name="deleted" msgid="2036165115527228127">"মোছা হয়েছে"</string>
     <string name="undo" msgid="5110048345890050107">"পূর্বাবস্থায় ফিরুন"</string>
     <string name="details" msgid="4404020741542549488">"বিশদ বিবরণ"</string>
@@ -78,7 +78,7 @@
     <string name="feedback_description_camera_access" msgid="419090951070170132">"অ্যাপ্লিকেশানটি ক্যামেরার সাথে সংযোগ করা যায়নি।"</string>
     <string name="feedback_description_save_photo" msgid="8658767358989083228">"ফটো বা ভিডিও ডিভাইসে সংরক্ষণ করা যায়নি৷"</string>
     <string name="capturing" msgid="5255164204641920893">"ক্যাপচার করা হচ্ছে"</string>
-    <string name="pref_camera_id_title" msgid="4680648115225411185">"ক্যামেরা চয়ন করুন"</string>
+    <string name="pref_camera_id_title" msgid="4680648115225411185">"ক্যামেরা বেছে নিন"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"পিছনে"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"সামনের"</string>
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"অবস্থান সংরক্ষণ করুন"</string>
@@ -266,22 +266,22 @@
     <string name="pref_video_time_lapse_frame_interval_720000" msgid="259321148909130247">"১২ মিনিট"</string>
     <string name="pref_video_time_lapse_frame_interval_900000" msgid="6814816608134052996">"১৫ মিনিট"</string>
     <string name="pref_video_time_lapse_frame_interval_1440000" msgid="5691479246748705053">"২৪ মিনিট"</string>
-    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="8331728629455012478">"০.৫ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_3600000" msgid="4829442147263610121">"১ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_5400000" msgid="7011488725038113884">"১.৫ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_7200000" msgid="7399563587870916008">"২ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_9000000" msgid="1545856778907835970">"২.৫ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_10800000" msgid="4064231412857457518">"৩ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_14400000" msgid="5174457951350690217">"৪ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_18000000" msgid="5091441456160949740">"৫ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_21600000" msgid="6924571987775154098">"৬ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_36000000" msgid="6959912631566981301">"১০ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"১২ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"১৫ ঘন্টা"</string>
-    <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"২৪ ঘন্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_1800000" msgid="8331728629455012478">"০.৫ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_3600000" msgid="4829442147263610121">"১ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_5400000" msgid="7011488725038113884">"১.৫ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_7200000" msgid="7399563587870916008">"২ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_9000000" msgid="1545856778907835970">"২.৫ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_10800000" msgid="4064231412857457518">"৩ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_14400000" msgid="5174457951350690217">"৪ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_18000000" msgid="5091441456160949740">"৫ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_21600000" msgid="6924571987775154098">"৬ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_36000000" msgid="6959912631566981301">"১০ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_43200000" msgid="6426833030111269499">"১২ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_54000000" msgid="6688725497680331090">"১৫ ঘণ্টা"</string>
+    <string name="pref_video_time_lapse_frame_interval_86400000" msgid="5510320806095156153">"২৪ ঘণ্টা"</string>
     <string name="time_lapse_seconds" msgid="7319683099532506270">"সেকেন্ড"</string>
     <string name="time_lapse_minutes" msgid="5325447383033224679">"মিনিট"</string>
-    <string name="time_lapse_hours" msgid="5294001144133261436">"ঘন্টা"</string>
+    <string name="time_lapse_hours" msgid="5294001144133261436">"ঘণ্টা"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"সম্পন্ন"</string>
     <string name="set_time_interval" msgid="2531393962847535331">"সময় বিরতি সেট করুন"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"সময় ব্যয় বৈশিষ্ট্যটি বন্ধ। সময় বিরতি সেট করতে এটিকে চালু করুন।"</string>
@@ -341,7 +341,7 @@
     <string name="done_button_description" msgid="1334963435441544592">"সম্পন্ন"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"পুনরায় নিন"</string>
     <string name="review_button_description" msgid="7932122063748430080">"পর্যালোচনা"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"ভাগ করুন"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"শেয়ার করুন"</string>
     <string name="view_button_description" msgid="4985768837891362075">"দেখুন"</string>
     <string name="edit_button_description" msgid="98550816724901925">"সম্পাদনা করুন"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"মুছুন"</string>
@@ -380,9 +380,9 @@
     <string name="pref_category_advanced" msgid="5921085080077574872">"আরো বিকল্প"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ম্যানুয়াল এক্সপোজার"</string>
     <string name="settings_cling_text" msgid="5368054627268181292">"সেটিংস-এ, রেজোলিউশন এবং গুণমান পরিবর্তন করুন, বা উন্নত বৈশিষ্ট্যগুলি ব্যবহার করে দেখুন৷"</string>
-    <string name="photo_size_selection_title" msgid="2789753590719172645">"ফটোর আকার চয়ন করুন"</string>
+    <string name="photo_size_selection_title" msgid="2789753590719172645">"ফটোর আকার বেছে নিন"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"আপনি এই সেটিংসটি পরে পরিবর্তন করতে পারেন৷"</string>
-    <string name="share_to" msgid="5144911209144798122">"এর সাথে ভাগ করুন"</string>
+    <string name="share_to" msgid="5144911209144798122">"এর সাথে শেয়ার করুন"</string>
     <string name="edit_with" msgid="615569327230783971">"এর মাধ্যমে সম্পাদনা করুন"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"পরবর্তী"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ঠিক আছে, বুঝেছি"</string>

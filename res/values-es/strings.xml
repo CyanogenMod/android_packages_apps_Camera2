@@ -163,7 +163,7 @@
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"No queda espacio en la tarjeta SD. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Se ha alcanzado el límite de tamaño."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Muy rápido"</string>
-    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Preparando modo panorámico"</string>
+    <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Preparando modo panorámica"</string>
     <string name="pano_dialog_panorama_failed" msgid="6772546547048693619">"Error al guardar imagen panorámica"</string>
     <string name="pano_dialog_title" msgid="6662642763395425145">"Panorámica"</string>
     <string name="pano_capture_indication" msgid="4002128831255023954">"Capturando panorámica"</string>
@@ -194,7 +194,7 @@
     <string name="accessibility_check_box" msgid="1084094675439953723">"Casilla de verificación %1$s"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"Cambiar a la cámara"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"Cambiar a vídeo"</string>
-    <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Cambiar a modo panorámico"</string>
+    <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"Cambiar a modo panorámica"</string>
     <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"Cambiar a fotografía esférica"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"Alta calidad"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"Cambiar a Refocus"</string>
@@ -301,7 +301,7 @@
     <string name="mode_camera_desc" msgid="3670807361165657278">"Cambiar al modo de cámara"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"Cambiar a la cámara de vídeo"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"Cambiar al modo de fotografías esféricas"</string>
-    <string name="mode_panorama_desc" msgid="6023020404237519590">"Cambiar al modo de fotografías panorámicas"</string>
+    <string name="mode_panorama_desc" msgid="6023020404237519590">"Cambiar al modo panorámica"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"Cambiar al modo Efecto de enfoque"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"Abrir ajustes"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"Cerrar ajustes"</string>

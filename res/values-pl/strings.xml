@@ -288,7 +288,7 @@
     <string name="photo_editor" msgid="1521994560971367225">"Edytor zdjęć"</string>
     <string name="crop_save" msgid="2841974981340098579">"Zapisz"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Nie można wczytać obrazu."</string>
-    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Widok taśmy filmowej"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Widok paska zdjęć"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Ustawiam tapetę"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Ustawienia"</string>
     <string name="mode_camera" msgid="279763925715250603">"Aparat"</string>
@@ -362,8 +362,8 @@
     <string name="pref_video_quality_entry_1080p" msgid="4539958891524211120">"HD 1080p"</string>
     <string name="pref_video_quality_entry_qvga" msgid="342600517453781430">"QVGA"</string>
     <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
-    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s MP"</string>
-    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s Mpx"</string>
+    <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s Mpix"</string>
+    <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s Mpix"</string>
     <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"Aby zmienić ostrość, dotknij tutaj"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"Zaawansowane"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"Ekspozycja ręczna"</string>
