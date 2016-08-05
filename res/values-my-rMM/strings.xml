@@ -21,7 +21,7 @@
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"အနေဖြင့် ဓာတ်ပုံအားသတ်မှတ်ရန်"</string>
-    <string name="delete" msgid="2714492172818940424">"ဖျက်ပစ်ရန်"</string>
+    <string name="delete" msgid="2714492172818940424">"ဖျက်ရန်"</string>
     <string name="share" msgid="8581089487762243115">"မျှဝေခြင်း"</string>
     <string name="share_panorama" msgid="3558466186935359444">"မြင်ကွယ်ကျယ်အားမျှဝေပါ"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"ဓာတ်ပုံအနေဖြင့်မျှပါ"</string>
@@ -157,7 +157,7 @@
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"အရှေ့ကင်မရာ"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"နောက်ကင်မရာ"</string>
     <string name="dialog_ok" msgid="774141340500181131">"အိုကေ"</string>
-    <string name="dialog_cancel" msgid="692365061128351656">"မလုပ်တော့ပါ"</string>
+    <string name="dialog_cancel" msgid="692365061128351656">"မလုပ်တော့"</string>
     <string name="dialog_report" msgid="7616428760369876209">"သတင်းပို့ပါ"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"ပယ်ရန်"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"SD ကဒ်တွင် နေရာလွတ် နည်းနေပါပြီ။ ကွာလတီ ဆက်တင် ပြောင်းခြင်း သို့မဟုတ် ပုံအချို့ သို့မဟုတ် တခြားဖိုင်များအား ဖျက်ခြင်းလုပ်ပါ"</string>
@@ -189,7 +189,7 @@
     <string name="effect_silly_faces" msgid="7952713419757286453">"အသုံးမကျသောမျက်နှာများ"</string>
     <string name="effect_background" msgid="1358432220077975015">"နောက်ခံ"</string>
     <string name="accessibility_shutter_button" msgid="6040483605347230438">"ရှပ်တာ"</string>
-    <string name="accessibility_cancel_button" msgid="5679989494636116448">"မလုပ်တော့ပါ"</string>
+    <string name="accessibility_cancel_button" msgid="5679989494636116448">"မလုပ်တော့"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"မီနူးခလုတ်"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"%1$s မှတ်သားကွက်"</string>
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"ဓာတ်ပုံသို့ပြောင်းရန်"</string>
@@ -278,7 +278,7 @@
     <string name="remember_location_title" msgid="3045040613094030429">"ဓာတ်ပုံရိုက်ခဲ့တဲ့နေရာ သိမ်းရမလား"</string>
     <string name="remember_location_prompt" msgid="3006013504489919474">"ဓါတ်ပုံများနှင့် ဗီဒီယိုများနှင့်တကွ ရိုက်ကူးခဲ့သော နေရာများကို တွဲထည့်ပါ။"</string>
     <string name="remember_location_no" msgid="4412802756840226925">"ကျေးဇူးပဲ မလိုပါဘူး"</string>
-    <string name="remember_location_yes" msgid="4339424460683531388">"မှန်ပါသည်"</string>
+    <string name="remember_location_yes" msgid="4339424460683531388">"Yes"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"ပိုမိုရွေးချယ်စရာများ"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"ဆက်တင်များ"</string>
     <string name="create_tiny_planet" msgid="5186918191372107343">"Tiny Planet ဖန်တီးရန်"</string>
@@ -286,7 +286,7 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ချဲ့ချုံ့ရန်"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"လှည့်ရန်"</string>
     <string name="photo_editor" msgid="1521994560971367225">"ဓာတ်ပုံပြင်သောအရာ"</string>
-    <string name="crop_save" msgid="2841974981340098579">"သိမ်းပါ"</string>
+    <string name="crop_save" msgid="2841974981340098579">"သိမ်းရန်"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"ပုံတင်လို့မရပါ!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Filmstrip မြင်ကွင်း"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"နောက်ခံ ရွေးနေစဉ်"</string>
@@ -325,14 +325,14 @@
     <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၃ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"အချိန်စေ့ တိုင်မား ကြာချိန်ကို ၁၀ စက္ကန့်မှာ သတ်မှတ်ထား"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"ပိုမိုရွေးချယ်စရာများ"</string>
-    <string name="cancel_button_description" msgid="3801167024006905033">"မလုပ်တော့ပါ"</string>
+    <string name="cancel_button_description" msgid="3801167024006905033">"မလုပ်တော့"</string>
     <string name="done_button_description" msgid="1334963435441544592">"ပြီးပါပြီ"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ပြန်ရိုက်ကူးပါ"</string>
     <string name="review_button_description" msgid="7932122063748430080">"သုံးသပ်ရန်"</string>
     <string name="share_button_description" msgid="5108508790540832053">"မျှဝေခြင်း"</string>
     <string name="view_button_description" msgid="4985768837891362075">"မြင်ကွင်း"</string>
     <string name="edit_button_description" msgid="98550816724901925">"ပြင်ဆင်ရန်"</string>
-    <string name="delete_button_description" msgid="2251065309677200911">"ဖျက်ပစ်ရန်"</string>
+    <string name="delete_button_description" msgid="2251065309677200911">"ဖျက်ရန်"</string>
     <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"လက်ဖြင့် အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း"</string>
     <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း -၂"</string>
     <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"အလင်းဖွင့်ပေးမှုကို အစားထိုးပေးခြင်း -၁"</string>
@@ -372,7 +372,7 @@
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"နောက်မှ ဆက်တင်ထဲတွင် ပြန်ပြောင်း၍ ရပါသည်။"</string>
     <string name="share_to" msgid="5144911209144798122">"...အား မျှဝေရန်"</string>
     <string name="edit_with" msgid="615569327230783971">"...နှင့် တည်းဖြတ်ရန်"</string>
-    <string name="startup_dialog_button_next" msgid="1011831256978228993">"ရှေ့ဆက်"</string>
+    <string name="startup_dialog_button_next" msgid="1011831256978228993">"ရှေ့သို့"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"အိုကေ၊ ရပါပြီ"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"အာရုံခံပုံ အပြည့် \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"အာရုံခံကိရိယာမှ ဖြတ်ထား\n(16:9)"</string>
