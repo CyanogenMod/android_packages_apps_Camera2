@@ -16,7 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="1175086483881127797">"Фотоапарат"</string>
+    <string name="app_name" msgid="1175086483881127797">"Камера"</string>
     <string name="video_camera_label" msgid="1723708322021743770">"Видео камера"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
@@ -188,7 +188,7 @@
     <string name="clear_effects" msgid="6192797848995967992">"Отстрани ефекти"</string>
     <string name="effect_silly_faces" msgid="7952713419757286453">"ГЛУПАВИ ЛИЦА"</string>
     <string name="effect_background" msgid="1358432220077975015">"ЗАДНИНА"</string>
-    <string name="accessibility_shutter_button" msgid="6040483605347230438">"Бленда"</string>
+    <string name="accessibility_shutter_button" msgid="6040483605347230438">"Експозиција"</string>
     <string name="accessibility_cancel_button" msgid="5679989494636116448">"Откажи"</string>
     <string name="accessibility_menu_button" msgid="7692103503958544723">"Копче „Мени“"</string>
     <string name="accessibility_check_box" msgid="1084094675439953723">"Поле за избор %1$s"</string>
@@ -207,7 +207,7 @@
     <string name="media_accessibility_peek" msgid="234540330161031946">"Успешно снимено"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"Фотографирано"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"Снимено е видео"</string>
-    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Отклучи кон Фотоапарат"</string>
+    <string name="accessibility_unlock_to_camera" msgid="1251880974313179442">"Отклучи кон Камера"</string>
     <string name="media_date_content_description" msgid="2155634843596817141">"Медиумот е снимен на %s"</string>
     <string name="photo_date_content_description" msgid="5705865897898465619">"Фотографијата е снимена на %s"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"Видеото е снимено на %s"</string>
@@ -291,7 +291,7 @@
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Приказ на филмска лента"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Поставување тапет"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Поставки"</string>
-    <string name="mode_camera" msgid="279763925715250603">"Фотоапарат"</string>
+    <string name="mode_camera" msgid="279763925715250603">"Камера"</string>
     <string name="mode_video" msgid="8633929034048169139">"Видео"</string>
     <string name="mode_photosphere" msgid="5082338476237291833">"Фотосфера"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Забрзано снимање"</string>
@@ -309,9 +309,9 @@
     <string name="hdr_plus_on_desc" msgid="8204780034508139909">"HDR Плус е вклучено"</string>
     <string name="hdr_off_desc" msgid="7921924739852874675">"HDR исклучено"</string>
     <string name="hdr_on_desc" msgid="4591284110249047558">"HDR е вклучено"</string>
-    <string name="flash_off_desc" msgid="7151559466286106797">"Блицот е исклучен"</string>
+    <string name="flash_off_desc" msgid="7151559466286106797">"Без блиц"</string>
     <string name="flash_auto_desc" msgid="3009043125539675717">"Автоматски блиц"</string>
-    <string name="flash_on_desc" msgid="930372145324854699">"Блицот е вклучен"</string>
+    <string name="flash_on_desc" msgid="930372145324854699">"Со блиц"</string>
     <string name="hdr_plus_flash_off_desc" msgid="5335888906983788789">"Блицот ХДР+ е исклучен"</string>
     <string name="hdr_plus_flash_auto_desc" msgid="4812200236263011537">"Блицот ХДР+ е автоматски"</string>
     <string name="hdr_plus_flash_on_desc" msgid="8323389161987561284">"Блицот ХДР+ е вклучен"</string>
