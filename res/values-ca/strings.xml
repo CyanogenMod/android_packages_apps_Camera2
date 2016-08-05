@@ -53,7 +53,7 @@
     <string name="flash" msgid="995041910749174196">"Flaix"</string>
     <string name="aperture" msgid="2453802098282814022">"Obertura"</string>
     <string name="focal_length" msgid="8351221512187346229">"Longitud focal"</string>
-    <string name="white_balance" msgid="1600142743496129085">"Balanç de blancs"</string>
+    <string name="white_balance" msgid="1600142743496129085">"Equilibri de blancs"</string>
     <string name="exposure_time" msgid="949787291620767754">"Temps exposició"</string>
     <string name="iso" msgid="8578773821062054902">"ISO"</string>
     <string name="unit_mm" msgid="5210344300697638286">"mm"</string>
@@ -112,8 +112,8 @@
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"FLAIX AUTOMÀTIC"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"FLAIX ACTIVAT"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"FLAIX DESACTIVAT"</string>
-    <string name="pref_camera_whitebalance_title" msgid="7962809566612868179">"Balanç de blancs"</string>
-    <string name="pref_camera_whitebalance_label" msgid="7370366644738746700">"BALANÇ DE BLANCS"</string>
+    <string name="pref_camera_whitebalance_title" msgid="7962809566612868179">"Equilibri de blancs"</string>
+    <string name="pref_camera_whitebalance_label" msgid="7370366644738746700">"EQUILIBRI DE BLANCS"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="1390631794449502796">"Auto"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="1140391575294372706">"Incandescent"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="757833578153467254">"Llum natural"</string>
@@ -217,8 +217,8 @@
     <string name="media_processing_content_description" msgid="8138587719107183754">"Processament de fitxers multimèdia"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activa la llista de modes"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Llista de modes"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Activa la tira de vídeo"</string>
-    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de vídeo"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Activa la tira de pel·lícula"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de pel·lícula"</string>
     <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"Apropa"</string>
     <string name="btn_zoom_plus" msgid="4645138949375961656">"Apropa"</string>
     <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"Allunya"</string>
@@ -293,7 +293,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Configuració"</string>
     <string name="mode_camera" msgid="279763925715250603">"Càmera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Vídeo"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Fotografia esfèrica"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Interval de temps"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Gran angular"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoràmica"</string>

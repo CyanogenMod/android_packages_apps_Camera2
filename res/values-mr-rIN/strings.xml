@@ -156,7 +156,7 @@
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"पुढील कॅमेरा"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"मागील कॅमेरा"</string>
-    <string name="dialog_ok" msgid="774141340500181131">"ठिक आहे"</string>
+    <string name="dialog_ok" msgid="774141340500181131">"ठीक आहे"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"रद्द करा"</string>
     <string name="dialog_report" msgid="7616428760369876209">"अहवाल द्या"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"डिसमिस करा"</string>

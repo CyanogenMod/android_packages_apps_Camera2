@@ -21,7 +21,7 @@
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"Itakda ang larawan bilang"</string>
-    <string name="delete" msgid="2714492172818940424">"Tanggalin"</string>
+    <string name="delete" msgid="2714492172818940424">"I-delete"</string>
     <string name="share" msgid="8581089487762243115">"Ibahagi"</string>
     <string name="share_panorama" msgid="3558466186935359444">"Ibahagi ang panorama"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Ibahagi bilang larawan"</string>
@@ -160,7 +160,7 @@
     <string name="dialog_cancel" msgid="692365061128351656">"Kanselahin"</string>
     <string name="dialog_report" msgid="7616428760369876209">"Mag-ulat"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"I-dismiss"</string>
-    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Nauubusan na ng espasyo ang SD card. Baguhin ang setting ng kalidad o tanggalin ang ilan sa mga larawan o ibang mga file."</string>
+    <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"Nauubusan na ng espasyo ang SD card. Baguhin ang setting ng kalidad o i-delete ang ilan sa mga larawan o ibang mga file."</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"Naabot ang limitasyon ng laki."</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"Masyadong mabilis"</string>
     <string name="pano_dialog_prepare_preview" msgid="4445235163599534263">"Ihinahanda ang panorama"</string>
@@ -332,7 +332,7 @@
     <string name="share_button_description" msgid="5108508790540832053">"Ibahagi"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Tingnan"</string>
     <string name="edit_button_description" msgid="98550816724901925">"I-edit"</string>
-    <string name="delete_button_description" msgid="2251065309677200911">"Tanggalin"</string>
+    <string name="delete_button_description" msgid="2251065309677200911">"I-delete"</string>
     <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"Manual Exposure Compensation"</string>
     <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"Exposure Compensation -2"</string>
     <string name="exposure_compensation_desc_n1" msgid="3035027224866688267">"Exposure Compensation -1"</string>

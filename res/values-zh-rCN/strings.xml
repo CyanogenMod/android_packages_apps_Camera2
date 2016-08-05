@@ -49,7 +49,7 @@
     <string name="mimetype" msgid="6415940055077963944">"MIME 类型"</string>
     <string name="file_size" msgid="6841070748357980676">"文件大小"</string>
     <string name="maker" msgid="698691509121545856">"制造商"</string>
-    <string name="model" msgid="8547493604023069452">"型号"</string>
+    <string name="model" msgid="8547493604023069452">"机型"</string>
     <string name="flash" msgid="995041910749174196">"闪光灯"</string>
     <string name="aperture" msgid="2453802098282814022">"光圈"</string>
     <string name="focal_length" msgid="8351221512187346229">"焦距"</string>
