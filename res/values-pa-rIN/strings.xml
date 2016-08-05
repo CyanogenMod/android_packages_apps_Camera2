@@ -20,13 +20,13 @@
     <string name="video_camera_label" msgid="1723708322021743770">"ਕੈਮਕੋਰਡਰ"</string>
     <string name="details_ms" msgid="6618163484662724641">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
-    <string name="set_image" msgid="3969690281401045698">"ਇਸਦੇ ਤੌਰ ਤੇ ਤਸਵੀਰ ਸੈਟ ਕਰੋ"</string>
+    <string name="set_image" msgid="3969690281401045698">"ਇਸਦੇ ਤੌਰ ਤੇ ਤਸਵੀਰ ਸੈੱਟ ਕਰੋ"</string>
     <string name="delete" msgid="2714492172818940424">"ਮਿਟਾਓ"</string>
-    <string name="share" msgid="8581089487762243115">"ਸ਼ੇਅਰ ਕਰੋ"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"ਪਨੋਰਮਾ ਸ਼ੇਅਰ ਕਰੋ"</string>
-    <string name="share_as_photo" msgid="4831213580709167218">"ਫੋਟੋ ਦੇ ਤੌਰ ਤੇ ਸ਼ੇਅਰ ਕਰੋ"</string>
+    <string name="share" msgid="8581089487762243115">"ਸਾਂਝਾ ਕਰੋ"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"ਪਨੋਰਮਾ ਸਾਂਝਾ ਕਰੋ"</string>
+    <string name="share_as_photo" msgid="4831213580709167218">"ਫੋਟੋ ਦੇ ਤੌਰ ਤੇ ਸਾਂਝਾ ਕਰੋ"</string>
     <string name="deleted" msgid="2036165115527228127">"ਮਿਟਾਇਆ ਗਿਆ"</string>
-    <string name="undo" msgid="5110048345890050107">"ਪਹਿਲਾਂ ਵਰਗਾ ਕਰੋ"</string>
+    <string name="undo" msgid="5110048345890050107">"ਅਣਕੀਤਾ ਕਰੋ"</string>
     <string name="details" msgid="4404020741542549488">"ਵੇਰਵੇ"</string>
     <string name="close" msgid="4826166926297479820">"ਬੰਦ ਕਰੋ"</string>
     <string name="show_on_map" msgid="8542853913632649160">"ਨਕਸ਼ੇ ਤੇ ਦਿਖਾਓ"</string>
@@ -35,12 +35,12 @@
     <string name="edit" msgid="2776879395749004347">"ਸੰਪਾਦਿਤ ਕਰੋ"</string>
     <string name="crop_action" msgid="6933589718464132714">"ਕੱਟੋ"</string>
     <string name="trim_action" msgid="4736803320203951827">"ਕੱਟੋ"</string>
-    <string name="set_as" msgid="5469055085024870081">"ਇਸਦੇ ਤੌਰ ਤੇ ਸੈਟ ਕਰੋ"</string>
+    <string name="set_as" msgid="5469055085024870081">"ਇਸਦੇ ਤੌਰ ਤੇ ਸੈੱਟ ਕਰੋ"</string>
     <string name="video_err" msgid="1562566029875081552">"ਵੀਡੀਓ ਪਲੇ ਨਹੀਂ ਕਰ ਸਕਦਾ।"</string>
     <string name="title" msgid="8061744305671964703">"ਸਿਰਲੇਖ"</string>
     <string name="description" msgid="8193138501982849808">"ਵੇਰਵਾ"</string>
     <string name="time" msgid="5248213506417024287">"ਸਮਾਂ"</string>
-    <string name="location" msgid="564326205780827668">"ਨਿਰਧਾਰਿਤ ਸਥਾਨ"</string>
+    <string name="location" msgid="564326205780827668">"ਟਿਕਾਣਾ"</string>
     <string name="path" msgid="5927003361865586353">"ਪਾਥ"</string>
     <string name="width" msgid="7045750687833828758">"ਚੁੜਾਈ"</string>
     <string name="height" msgid="5186001199353423689">"ਉਚਾਈ"</string>
@@ -66,7 +66,7 @@
     <string name="please_wait" msgid="1416313324505140068">"ਕਿਰਪਾ ਕਰਕੇ ਠਹਿਰੋ"</string>
     <string name="camera_error_title" msgid="6200558085072670067">"ਕੈਮਰਾ ਅਸ਼ੁੱਧੀ"</string>
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"ਕੈਮਰੇ ਨਾਲ ਕਨੈਕਟ ਨਹੀਂ ਕਰ ਸਕਦਾ।"</string>
-    <string name="error_camera_disabled" msgid="5582398275657419692">"ਕੈਮਰਾ ਸੁਰੱਖਿਆ ਨੀਤੀਆਂ ਦੇ ਕਾਰਨ ਅਸਮਰੱਥ ਬਣਾਇਆ ਗਿਆ ਹੈ।"</string>
+    <string name="error_camera_disabled" msgid="5582398275657419692">"ਕੈਮਰਾ ਸੁਰੱਖਿਆ ਨੀਤੀਆਂ ਦੇ ਕਾਰਨ ਅਯੋਗ ਬਣਾਇਆ ਗਿਆ ਹੈ।"</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"ਤੁਹਾਡੀ ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰਨ ਵਿੱਚ ਇੱਕ ਸਮੱਸਿਆ ਹੋਈ ਸੀ।"</string>
     <string name="error_permissions" msgid="3454167403425651254">"ਐਪ ਨੂੰ ਚਲਾਉਣ ਲਈ ਲੁੜੀਂਦੀਆਂ ਲਾਜ਼ਮੀ ਅਨੁਮਤੀਆਂ ਨਹੀਂ ਹਨ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀਆਂ ਅਨੁਮਤੀ ਸੈਟਿੰਗਾਂ ਦੀ ਜਾਂਚ ਕਰੋ।"</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ਫੋਟੋ ਸਟੋਰੇਜ ਅਸਫਲਤਾ।"</string>
@@ -76,13 +76,13 @@
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD ਕਾਰਡ ਤੱਕ ਨਹੀਂ ਪਹੁੰਚ ਸਕਿਆ।"</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"ਟਾਈਮ ਲੈਪਸ ਰਿਕਾਰਡਿੰਗ"</string>
     <string name="feedback_description_camera_access" msgid="419090951070170132">"ਐਪ ਕੈਮਰੇ ਨਾਲ ਕਨੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
-    <string name="feedback_description_save_photo" msgid="8658767358989083228">"ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਡਿਵਾਈਸ ਤੇ ਸੁਰੱਖਿਅਤ ਨਹੀਂ ਕੀਤਾ ਸੀ।"</string>
+    <string name="feedback_description_save_photo" msgid="8658767358989083228">"ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਡੀਵਾਈਸ ਤੇ ਸੁਰੱਖਿਅਤ ਨਹੀਂ ਕੀਤਾ ਸੀ।"</string>
     <string name="capturing" msgid="5255164204641920893">"ਕੈਪਚਰ ਕਰ ਰਿਹਾ ਹੈ"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"ਕੈਮਰਾ ਚੁਣੋ"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"ਪਿੱਛੇ"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"ਫ੍ਰੰਟ"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ਨਿਰਧਾਰਿਤ ਸਥਾਨ ਸੁਰੱਖਿਅਤ ਕਰੋ"</string>
-    <string name="pref_camera_location_label" msgid="8695441802378057719">"ਨਿਰਧਾਰਿਤ ਸਥਾਨ"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"ਟਿਕਾਣਾ ਰੱਖਿਅਤ ਕਰੋ"</string>
+    <string name="pref_camera_location_label" msgid="8695441802378057719">"ਟਿਕਾਣਾ"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"ਕਾਊਂਟਡਾਊਨ ਟਾਈਮਰ"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
@@ -159,7 +159,7 @@
     <string name="dialog_ok" msgid="774141340500181131">"ਠੀਕ"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"ਰੱਦ ਕਰੋ"</string>
     <string name="dialog_report" msgid="7616428760369876209">"ਰਿਪੋਰਟ"</string>
-    <string name="dialog_dismiss" msgid="1382550604990470119">"ਬਰਖਾਸਤ ਕਰੋ"</string>
+    <string name="dialog_dismiss" msgid="1382550604990470119">"ਖਾਰਜ ਕਰੋ"</string>
     <string name="spaceIsLow_content" product="default" msgid="4522771065344332702">"ਤੁਹਾਡਾ SD ਖਾਲੀ ਚੱਲ ਰਿਹਾ ਹੈ। ਕੁਆਲਿਟੀ ਸੈਟਿੰਗ ਬਦਲੋ ਜਾਂ ਕੁਝ ਚਿੱਤਰ ਜਾਂ ਹੋਰ ਫਾਈਲਾਂ ਮਿਟਾਓ।"</string>
     <string name="video_reach_size_limit" msgid="9196836111505731836">"ਆਕਾਰ ਸੀਮਾ ਪੂਰੀ ਹੋਈ।"</string>
     <string name="pano_too_fast_prompt" msgid="2503148095578052177">"ਬਹੁਤ ਤੇਜ਼"</string>
@@ -170,7 +170,7 @@
     <string name="pano_dialog_waiting_previous" msgid="2646847402743245320">"ਪਿਛਲਾ ਪਨੋਰਮਾ ਉਡੀਕ ਰਿਹਾ ਹੈ"</string>
     <string name="pano_review_saving_indication_str" msgid="4691771283450663293">"ਸੁਰੱਖਿਅਤ ਕਰ ਰਿਹਾ ਹੈ..."</string>
     <string name="pano_review_rendering" msgid="2743087719999377155">"ਪਨੋਰਮਾ ਰੈਂਡਰ ਕਰ ਰਿਹਾ ਹੈ"</string>
-    <string name="tap_to_focus" msgid="3519718196270593468">"ਫੋਕਸ ਕਰਨ ਲਈ ਛੋਹਵੋ।"</string>
+    <string name="tap_to_focus" msgid="3519718196270593468">"ਫੋਕਸ ਕਰਨ ਲਈ ਸਪੱਰਸ਼ ਕਰੋ।"</string>
     <string name="pref_video_effect_title" msgid="594570613431209010">"ਇਫੈਕਟਸ"</string>
     <string name="effect_none" msgid="3102797925086872636">"ਕੋਈ ਨਹੀਂ"</string>
     <string name="effect_goofy_face_squeeze" msgid="1362021544829311452">"ਸਕਵੀਜ਼"</string>
@@ -182,7 +182,7 @@
     <string name="effect_backdropper_space" msgid="9133825395915767627">"ਸਪੇਸ ਵਿੱਚ"</string>
     <string name="effect_backdropper_sunset" msgid="7354053769863638757">"ਸ਼ਾਮ"</string>
     <string name="effect_backdropper_gallery" msgid="2333888391153564920">"ਤੁਹਾਡਾ ਵੀਡੀਓ"</string>
-    <string name="video_snapshot_hint" msgid="2707403607250082339">"ਰਿਕਾਰਡਿੰਗ ਵੇਲੇ ਫੋਟੋ ਲੈਣ ਲਈ ਛੋਹਵੋ।"</string>
+    <string name="video_snapshot_hint" msgid="2707403607250082339">"ਰਿਕਾਰਡਿੰਗ ਵੇਲੇ ਫੋਟੋ ਲੈਣ ਲਈ ਸਪੱਰਸ਼ ਕਰੋ।"</string>
     <string name="video_recording_started" msgid="3374878415050991030">"ਵੀਡੀਓ ਰਿਕਾਰਡਿੰਗ ਚਾਲੂ ਹੋਇਆ ਹੈ।"</string>
     <string name="video_recording_stopped" msgid="4658626532857624974">"ਵੀਡੀਓ ਰਿਕਾਰਡਿੰਗ ਰੁਕ ਗਈ ਹੈ।"</string>
     <string name="clear_effects" msgid="6192797848995967992">"ਇਫੈਕਟਸ ਹਟਾਓ"</string>
@@ -271,9 +271,9 @@
     <string name="time_lapse_minutes" msgid="5325447383033224679">"ਮਿੰਟ"</string>
     <string name="time_lapse_hours" msgid="5294001144133261436">"ਘੰਟੇ"</string>
     <string name="time_lapse_interval_set" msgid="2418594453248958440">"ਹੋ ਗਿਆ"</string>
-    <string name="set_time_interval" msgid="2531393962847535331">"ਸਮਾਂ ਅੰਤਰਾਲ ਸੈਟ ਕਰੋ"</string>
+    <string name="set_time_interval" msgid="2531393962847535331">"ਸਮਾਂ ਅੰਤਰਾਲ ਸੈੱਟ ਕਰੋ"</string>
     <string name="set_time_interval_help" msgid="64145154088021389">"ਟਾਈਮ ਲੈਸਪ ਵਿਸ਼ੇਸ਼ਤਾ ਬੰਦ ਹੈ। ਇਸਨੂੰ ਸਮਾਂ ਅੰਤਰਾਲ ਸੈਟ ਕਰਨ ਲਈ ਚਾਲੂ ਕਰੋ।"</string>
-    <string name="set_duration" msgid="1638453882581604341">"ਮਿਆਦ ਨੂੰ ਸਕਿੰਟਾਂ ਵਿੱਚ ਸੈਟ ਕਰੋ"</string>
+    <string name="set_duration" msgid="1638453882581604341">"ਮਿਆਦ ਨੂੰ ਸਕਿੰਟਾਂ ਵਿੱਚ ਸੈੱਟ ਕਰੋ"</string>
     <string name="count_down_title_text" msgid="7586031110595513050">"ਇੱਕ ਫੋਟੋ ਲੈਣ ਲਈ ਕਾਊਂਟ ਡਾਊਨ ਕਰ ਰਿਹਾ ਹੈ"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"ਕੀ ਫੋਟੋ ਨਿਰਧਾਰਿਤ ਸਥਾਨ ਯਾਦ ਹਨ?"</string>
     <string name="remember_location_prompt" msgid="3006013504489919474">"ਆਪਣੀਆਂ ਫੋਟੋਆਂ ਅਤੇ ਵੀਡੀਓ ਉਹਨਾਂ ਨਿਰਧਾਰਿਤ ਸਥਾਨਾਂ ਨਾਲ ਟੈਗ ਕਰੋ ਜਿੱਥੇ ਉਹ ਲਏ ਗਏ ਹਨ।"</string>
@@ -286,7 +286,7 @@
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ਜ਼ੂਮ"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"ਰੋਟੇਟ ਕਰੋ"</string>
     <string name="photo_editor" msgid="1521994560971367225">"ਫੋਟੋ ਸੰਪਾਦਕ"</string>
-    <string name="crop_save" msgid="2841974981340098579">"ਸੁਰੱਖਿਅਤ ਕਰੋ"</string>
+    <string name="crop_save" msgid="2841974981340098579">"ਰੱਖਿਅਤ ਕਰੋ"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"ਚਿੱਤਰ ਲੋਡ ਨਹੀਂ ਕਰ ਸਕਦਾ!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"ਫਿਲਮਸਟ੍ਰਿਪ ਦ੍ਰਿਸ਼"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"ਵਾਲਪੇਪਰ ਸੈਟ ਕਰ ਰਿਹਾ ਹੈ"</string>
@@ -329,7 +329,7 @@
     <string name="done_button_description" msgid="1334963435441544592">"ਹੋ ਗਿਆ"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"ਰੀਟੇਕ"</string>
     <string name="review_button_description" msgid="7932122063748430080">"ਸਮੀਖਿਆ"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"ਸ਼ੇਅਰ ਕਰੋ"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"ਸਾਂਝਾ ਕਰੋ"</string>
     <string name="view_button_description" msgid="4985768837891362075">"ਦੇਖੋ"</string>
     <string name="edit_button_description" msgid="98550816724901925">"ਸੰਪਾਦਿਤ ਕਰੋ"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ਮਿਟਾਓ"</string>
@@ -340,17 +340,17 @@
     <string name="exposure_compensation_desc_p1" msgid="2328275401634452554">"ਐਕਸਪੋਜ਼ਰ ਕੰਪਨਸੈਸ਼ਨ +1"</string>
     <string name="exposure_compensation_desc_p2" msgid="4555277824096107142">"ਐਕਸਪੋਜ਼ਰ ਕੰਪਨਸੈਸ਼ਨ +2"</string>
     <string name="button_change_announcement" msgid="3759686152778772111">"ਬਟਨ ਹੁਣ %s ਹੈ"</string>
-    <string name="setting_location" msgid="4459859689227893838">"ਨਿਰਧਾਰਿਤ ਸਥਾਨ"</string>
+    <string name="setting_location" msgid="4459859689227893838">"ਟਿਕਾਣਾ"</string>
     <string name="setting_back_camera_photo" msgid="256738900473265017">"ਬੈਕ ਕੈਮਰਾ ਫੋਟੋ"</string>
     <string name="setting_back_camera_video" msgid="5220819479408164689">"ਬੈਕ ਕੈਮਰਾ ਵੀਡੀਓ"</string>
     <string name="setting_front_camera_photo" msgid="4131886734622868637">"ਫ੍ਰੰਟ ਕੈਮਰਾ ਫੋਟੋ"</string>
     <string name="setting_front_camera_video" msgid="2178799452805359752">"ਫ੍ਰੰਟ ਕੈਮਰਾ ਵੀਡੀਓ"</string>
     <string name="setting_default_camera" msgid="6954076799301004779">"ਡਿਫੌਲਟ ਕੈਮਰਾ"</string>
-    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"ਸਹਾਇਤਾ &amp; ਫੀਡਬੈਕ"</string>
+    <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"ਮਦਦ &amp; ਫੀਡਬੈਕ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕਰ ਰਿਹਾ ਹੈ …"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"ਓਪਨ ਸ੍ਰੋਤ ਲਸੰਸ"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"ਓਪਨ ਸਰੋਤ ਲਾਇਸੰਸ"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"ਸਧਾਰਨ ਸੈਟਿੰਗਾਂ"</string>
-    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"ਰਿਜ਼ੋਲੂਸ਼ਨ &amp; ਕੁਆਲਿਟੀ"</string>
+    <string name="pref_category_resolution_quality" msgid="6641462402321962896">"ਰੈਜ਼ੋਲਿਊਸ਼ਨ &amp; ਕੁਆਲਿਟੀ"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"ਇਸਦੇ ਬਾਰੇ"</string>
     <string name="pref_title_build_version" msgid="481489988124832651">"ਵਰਜਨ ਬਣਾਓ"</string>
     <string name="pref_video_quality_entry_low" msgid="737962621299050603">"ਘੱਟ"</string>
@@ -364,16 +364,16 @@
     <string name="pref_video_quality_entry_2160p" msgid="4522927631413184505">"UHD 4K"</string>
     <string name="setting_summary_x_megapixels" msgid="6533463462760866830">"%1$s megapixels"</string>
     <string name="setting_summary_aspect_ratio_and_megapixels" msgid="5828440902461064821">"(%1$d:%2$d) %3$s megapixels"</string>
-    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ਰੀਫੋਕਸ ਕਰਨ ਲਈ, ਇੱਥੇ ਛੋਹਵੋ"</string>
+    <string name="cling_text_for_refocus_editor_button" msgid="4785017397116829802">"ਰੀਫੋਕਸ ਕਰਨ ਲਈ, ਇੱਥੇ ਸਪੱਰਸ਼ ਕਰੋ"</string>
     <string name="pref_category_advanced" msgid="5921085080077574872">"ਉੱਨਤ"</string>
     <string name="pref_camera_exposure_compensation" msgid="4143245817259719147">"ਮੈਨੁਅਲ ਐਕਸਪੋਜ਼ਰ"</string>
-    <string name="settings_cling_text" msgid="5368054627268181292">"ਸੈਟਿੰਗਾਂ ਵਿੱਚ, ਰਿਜ਼ੋਲੂਸ਼ਨ ਅਤੇ ਕੁਆਲਿਟੀ ਬਦਲੋ ਜਾਂ ਐਡਵਾਂਸਡ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"</string>
+    <string name="settings_cling_text" msgid="5368054627268181292">"ਸੈਟਿੰਗਾਂ ਵਿੱਚ, ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਅਤੇ ਕੁਆਲਿਟੀ ਬਦਲੋ ਜਾਂ ਐਡਵਾਂਸਡ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"</string>
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ਫੋਟੋ ਆਕਾਰ ਚੁਣੋ"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ਤੁਸੀਂ ਇਸਨੂੰ ਬਾਅਦ ਵਿੱਚ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਬਦਲ ਸਕਦੇ ਹੋ।"</string>
-    <string name="share_to" msgid="5144911209144798122">"ਇਸ ਨਾਲ ਸ਼ੇਅਰ ਕਰੋ"</string>
+    <string name="share_to" msgid="5144911209144798122">"ਇਸ ਨਾਲ ਸਾਂਝਾ ਕਰੋ"</string>
     <string name="edit_with" msgid="615569327230783971">"ਨਾਲ ਸੰਪਾਦਿਤ ਕਰੋ"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ਅਗਲਾ"</string>
-    <string name="confirm_button_text" msgid="7389949384482206814">"ਠੀਕ ਹੈ, ਇਹ ਮਿਲ ਗਿਆ"</string>
+    <string name="confirm_button_text" msgid="7389949384482206814">"ਠੀਕ ਹੈ, ਸਮਝ ਲਿਆ"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"ਪੂਰਾ ਸੰਵੇਦਕ \n(4:3)"</string>
     <string name="cropped_sensor_16x9_aspect_ratio" msgid="4742161537633251795">"ਕੱਟਿਆ ਗਿਆ ਸੰਵੇਦਕ \n(16:9)"</string>
     <string name="pref_boolean_false" msgid="461317129020087333">"0"</string>

@@ -217,8 +217,8 @@
     <string name="media_processing_content_description" msgid="8138587719107183754">"Processament de fitxers multimèdia"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Activa la llista de modes"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Llista de modes"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Activa la tira de vídeo"</string>
-    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de vídeo"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Activa la tira de pel·lícula"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tira de pel·lícula"</string>
     <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"Apropa"</string>
     <string name="btn_zoom_plus" msgid="4645138949375961656">"Apropa"</string>
     <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"Allunya"</string>
@@ -293,7 +293,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Configuració"</string>
     <string name="mode_camera" msgid="279763925715250603">"Càmera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Vídeo"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Fotografia esfèrica"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Interval de temps"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Gran angular"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panoràmica"</string>

@@ -202,8 +202,8 @@
     <string name="accessibility_review_ok" msgid="3486465319880320270">"بازبینی تمام"</string>
     <string name="accessibility_review_retake" msgid="2547112860787022130">"بازبینی عکس/ویدیوی دوباره ضبط شده"</string>
     <string name="accessibility_mode_options" msgid="6376831760155403217">"گزینه‌ها"</string>
-    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"لیست حالت بسته است"</string>
-    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"لیست حالت باز است"</string>
+    <string name="accessibility_mode_list_hidden" msgid="3743267380450401866">"فهرست حالت بسته است"</string>
+    <string name="accessibility_mode_list_shown" msgid="5284322142734069179">"فهرست حالت باز است"</string>
     <string name="media_accessibility_peek" msgid="234540330161031946">"عکس گرفته‌ شد"</string>
     <string name="photo_accessibility_peek" msgid="5934133371001677250">"عکس گرفته شد"</string>
     <string name="video_accessibility_peek" msgid="7845916149291383132">"فیلم‌برداری تمام"</string>
@@ -213,10 +213,10 @@
     <string name="video_date_content_description" msgid="2151884014634284456">"‏ویدیو در %s گرفته شده است"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"‏پانوراما در %s گرفته شده است"</string>
     <string name="photosphere_date_content_description" msgid="4183741743409007876">"‏عکس Photo Sphere در %s گرفته شده است"</string>
-    <string name="refocus_date_content_description" msgid="5630960320424345547">"‏عکس تاری لنز در %s گرفته شده است"</string>
+    <string name="refocus_date_content_description" msgid="5630960320424345547">"‏عکس جلوهٔ کانونی در %s گرفته شده است"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"در حال پردازش رسانه"</string>
-    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"جابجایی لیست حالت"</string>
-    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"لیست حالت"</string>
+    <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"جابجایی فهرست حالت"</string>
+    <string name="btn_mode_list_toggle" msgid="3986242443098400164">"فهرست حالت"</string>
     <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"جابجایی نوار فیلم"</string>
     <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"نوار فیلم"</string>
     <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"بزر‌گ‌نمایی"</string>
@@ -277,7 +277,7 @@
     <string name="count_down_title_text" msgid="7586031110595513050">"درحال شمارش معکوس برای عکس گرفتن"</string>
     <string name="remember_location_title" msgid="3045040613094030429">"موقعیت مکانی عکس به خاطر سپرده شود؟"</string>
     <string name="remember_location_prompt" msgid="3006013504489919474">"محل گرفتن عکس‌ها و ویدیوها را به آن‌ها برچسب کنید."</string>
-    <string name="remember_location_no" msgid="4412802756840226925">"نه سپاسگزارم"</string>
+    <string name="remember_location_no" msgid="4412802756840226925">"نه متشکرم"</string>
     <string name="remember_location_yes" msgid="4339424460683531388">"بله"</string>
     <string name="camera_menu_more_label" msgid="7951917844735828365">"گزینه‌های بیشتر"</string>
     <string name="camera_menu_settings_label" msgid="3862756725328016822">"تنظیمات"</string>
@@ -297,12 +297,12 @@
     <string name="mode_timelapse" msgid="1517168724627815453">"فاصله زمانی"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"زاویه باز"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"پانوراما"</string>
-    <string name="mode_refocus" msgid="172192967119469061">"تاری لنز"</string>
+    <string name="mode_refocus" msgid="172192967119469061">"جلوهٔ کانونی"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"تغییر به حالت دوربین"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"تغییر به دوربین فیلمبرداری"</string>
     <string name="mode_photosphere_desc" msgid="2403816283825579161">"‏تغییر به حالت Photo Sphere"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"تغییر به حالت پانوراما"</string>
-    <string name="mode_refocus_desc" msgid="6171183297515508465">"تغییر به حالت تاری لنز"</string>
+    <string name="mode_refocus_desc" msgid="6171183297515508465">"تغییر به حالت جلوهٔ کانونی"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"باز کردن تنظیمات"</string>
     <string name="settings_close_desc" msgid="3095831199632813127">"بستن تنظیمات"</string>
     <string name="hdr_plus_off_desc" msgid="5301287296717144319">"‏HDR Plus خاموش"</string>

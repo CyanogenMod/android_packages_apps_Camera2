@@ -83,7 +83,7 @@
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Voorkant"</string>
     <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Stoor ligging"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"LIGGING"</string>
-    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Aftel-tydhouer"</string>
+    <string name="pref_camera_timer_title" msgid="4728838281741571323">"Aftel-afteller"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Biep tydens aftelling"</string>
@@ -293,7 +293,7 @@
     <string name="mode_settings" msgid="2021937261522670921">"Instellings"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
     <string name="mode_video" msgid="8633929034048169139">"Video"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"Photo Sphere"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"Fotosfeer"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"Tydsverloop"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"Wyehoek"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"Panorama"</string>
@@ -321,9 +321,9 @@
     <string name="camera_id_front_desc" msgid="7497517948130254220">"Voorste kamera"</string>
     <string name="grid_lines_off_desc" msgid="2022385817190451353">"Roosterlyne af"</string>
     <string name="grid_lines_on_desc" msgid="4601540461914364817">"Roosterlyne aan"</string>
-    <string name="countdown_timer_off" msgid="1663008439564495948">"Aftel-tydhouer is af"</string>
-    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Aftel-tydhouer se tyd is gestel vir 3 sekondes"</string>
-    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Aftel-tydhouer se tyd is gestel vir 10 sekondes"</string>
+    <string name="countdown_timer_off" msgid="1663008439564495948">"Aftel-afteller is af"</string>
+    <string name="countdown_timer_duration_3s" msgid="7435393834886072664">"Aftel-afteller se tyd is gestel vir 3 sekondes"</string>
+    <string name="countdown_timer_duration_10s" msgid="9085308782250002795">"Aftel-afteller se tyd is gestel vir 10 sekondes"</string>
     <string name="more_options_desc" msgid="4628738800610478353">"Meer opsies"</string>
     <string name="cancel_button_description" msgid="3801167024006905033">"Kanselleer"</string>
     <string name="done_button_description" msgid="1334963435441544592">"Klaar"</string>

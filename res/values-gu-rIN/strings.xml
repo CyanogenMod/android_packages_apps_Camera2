@@ -68,14 +68,14 @@
     <string name="error_cannot_connect_camera" msgid="2713059773224193128">"કૅમેરા સાથે કનેક્ટ કરી શકાતું નથી."</string>
     <string name="error_camera_disabled" msgid="5582398275657419692">"સુરક્ષા નીતિઓને કારણે કૅમેરો અક્ષમ કરવામાં આવ્યો છે."</string>
     <string name="error_media_storage_failure" msgid="7711687330673245629">"તમારો ફોટો અથવા વિડિઓ સાચવવામાં સમસ્યા હતી."</string>
-    <string name="error_permissions" msgid="3454167403425651254">"એપ્લિકેશન પાસે શરૂ થવા માટેની મહત્વપૂર્ણ પરવાનગીઓ નથી. કૃપા કરીને તમારી પરવાનગીઓ સેટિંગ્સ તપાસો."</string>
+    <string name="error_permissions" msgid="3454167403425651254">"ઍપ્લિકેશન પાસે શરૂ થવા માટેની મહત્વપૂર્ણ પરવાનગીઓ નથી. કૃપા કરીને તમારી પરવાનગીઓ સેટિંગ્સ તપાસો."</string>
     <string name="reason_storage_failure" msgid="6818898304774654969">"ફોટો સ્ટોરેજ નિષ્ફળતા."</string>
     <string name="wait" msgid="765601745709933047">"કૃપા કરીને રાહ જુઓ..."</string>
     <string name="no_storage" product="default" msgid="5922012950780548098">"કૅમેરાનો ઉપયોગ કરતાં પહેલાં એક SD કાર્ડ દાખલ કરો."</string>
     <string name="preparing_sd" product="default" msgid="7435693655017362767">"SD કાર્ડ તૈયાર કરી રહ્યું છે…"</string>
     <string name="access_sd_fail" product="default" msgid="2634861611082499811">"SD કાર્ડ ઍક્સેસ કરી શકાયું નથી."</string>
     <string name="time_lapse_title" msgid="3267978566401228497">"સમય વીતી ગયો રેકોર્ડિંગ"</string>
-    <string name="feedback_description_camera_access" msgid="419090951070170132">"એપ્લિકેશન કૅમેરાથી કનેક્ટ થઈ શકી નથી"</string>
+    <string name="feedback_description_camera_access" msgid="419090951070170132">"ઍપ્લિકેશન કૅમેરાથી કનેક્ટ થઈ શકી નથી"</string>
     <string name="feedback_description_save_photo" msgid="8658767358989083228">"ઉપકરણ પર ફોટો અથવા વિડિઓ સાચવી નહોતી."</string>
     <string name="capturing" msgid="5255164204641920893">"કેપ્ચર કરી રહ્યું છે"</string>
     <string name="pref_camera_id_title" msgid="4680648115225411185">"કૅમેરો પસંદ કરો"</string>
@@ -156,7 +156,7 @@
     <string name="pref_camera_hdr_label" msgid="1918040375414771185">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="1645608049757733858">"આગળનો કૅમેરા"</string>
     <string name="pref_camera_id_label_front" msgid="349308803062874842">"પાછળનો કૅમેરા"</string>
-    <string name="dialog_ok" msgid="774141340500181131">"ઑકે"</string>
+    <string name="dialog_ok" msgid="774141340500181131">"ઓકે"</string>
     <string name="dialog_cancel" msgid="692365061128351656">"રદ કરો"</string>
     <string name="dialog_report" msgid="7616428760369876209">"જાણ કરો"</string>
     <string name="dialog_dismiss" msgid="1382550604990470119">"કાઢી નાખો"</string>
@@ -195,7 +195,7 @@
     <string name="accessibility_switch_to_camera" msgid="4518394037216725274">"ફોટો પર સ્વિચ કરો"</string>
     <string name="accessibility_switch_to_video" msgid="8174781871592793967">"વિડિઓ પર સ્વિચ કરો"</string>
     <string name="accessibility_switch_to_panorama" msgid="8322228859117808037">"પેનોરમા પર સ્વિચ કરો"</string>
-    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"360 ડિગ્રી પેનોરામા પર સ્વિચ કરો"</string>
+    <string name="accessibility_switch_to_photo_sphere" msgid="5803217570370854725">"360 ડિગ્રી પૅનોરામા પર સ્વિચ કરો"</string>
     <string name="accessibility_switch_to_gcam" msgid="7562625440767034695">"ઉચ્ચ ગુણવત્તા પર સ્વિચ કરો"</string>
     <string name="accessibility_switch_to_refocus" msgid="6796169367953860106">"રીફોકસ પર સ્વિચ કરો"</string>
     <string name="accessibility_review_cancel" msgid="5462850829869569629">"સમીક્ષા રદ કરો"</string>
@@ -212,7 +212,7 @@
     <string name="photo_date_content_description" msgid="5705865897898465619">"%s પર લેવાયેલ ફોટો"</string>
     <string name="video_date_content_description" msgid="2151884014634284456">"%s પર વિડિઓ લેવાયો"</string>
     <string name="panorama_date_content_description" msgid="990703578639006144">"%s પર લેવાયેલ પેનોરમા"</string>
-    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%s પર લેવાયેલ 360 ડિગ્રી પેનોરામા"</string>
+    <string name="photosphere_date_content_description" msgid="4183741743409007876">"%s પર લેવાયેલ 360 ડિગ્રી પૅનોરામા"</string>
     <string name="refocus_date_content_description" msgid="5630960320424345547">"%s પર લેવાયેલ ફોકસ પ્રભાવ"</string>
     <string name="media_processing_content_description" msgid="8138587719107183754">"મીડિયા પ્રોસેસિંગ"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"મોડ સૂચિ ટૉગલ કરો"</string>
@@ -293,14 +293,14 @@
     <string name="mode_settings" msgid="2021937261522670921">"સેટિંગ્સ"</string>
     <string name="mode_camera" msgid="279763925715250603">"કૅમેરો"</string>
     <string name="mode_video" msgid="8633929034048169139">"વિડિઓ"</string>
-    <string name="mode_photosphere" msgid="5082338476237291833">"360 ડિગ્રી પેનોરામા"</string>
+    <string name="mode_photosphere" msgid="5082338476237291833">"360 ડિગ્રી પૅનોરામા"</string>
     <string name="mode_timelapse" msgid="1517168724627815453">"સમય વીતી ગયો"</string>
     <string name="mode_wideangle" msgid="1099640345041696830">"વાઇડ એંગલ"</string>
     <string name="mode_panorama" msgid="6882648621305828861">"દૃશ્ય"</string>
     <string name="mode_refocus" msgid="172192967119469061">"ફોકસ પ્રભાવ"</string>
     <string name="mode_camera_desc" msgid="3670807361165657278">"કૅમેરા મોડ પર સ્વિચ કરો"</string>
     <string name="mode_video_desc" msgid="4058407412929464689">"વિડિઓ કૅમેરા પર સ્વિચ કરો"</string>
-    <string name="mode_photosphere_desc" msgid="2403816283825579161">"360 ડિગ્રી પેનોરામા મોડ પર સ્વિચ કરો"</string>
+    <string name="mode_photosphere_desc" msgid="2403816283825579161">"360 ડિગ્રી પૅનોરામા મોડ પર સ્વિચ કરો"</string>
     <string name="mode_panorama_desc" msgid="6023020404237519590">"પેનોરમા મોડ પર સ્વિચ કરો"</string>
     <string name="mode_refocus_desc" msgid="6171183297515508465">"ફોકસ પ્રભાવ મોડ પર સ્વિચ કરો"</string>
     <string name="settings_open_desc" msgid="6914471293841793766">"સેટિંગ્સ ખોલો"</string>
@@ -348,7 +348,7 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"ડિફોલ્ટ કૅમેરા"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"સહાય અને પ્રતિસાદ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"HDR+ પર પ્રક્રિયા કરી રહ્યું છે…"</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"ખુલ્લા સ્ત્રોત લાઇસેંસેસ"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"ખુલ્લા સ્ત્રોત લાઇસન્સીસ"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"સામાન્ય સેટિંગ્સ"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"રિઝોલ્યુશન અને ગુણવત્તા"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"વિશે"</string>

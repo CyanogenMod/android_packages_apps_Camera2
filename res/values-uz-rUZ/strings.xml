@@ -217,8 +217,8 @@
     <string name="media_processing_content_description" msgid="8138587719107183754">"Fayl qayta ishlanmoqda…"</string>
     <string name="accessibility_mode_list_toggle" msgid="4784230103566918645">"Suratga olish rejimlarini ko‘rsatish yoki yashirish"</string>
     <string name="btn_mode_list_toggle" msgid="3986242443098400164">"Rejimlar ro‘yxati"</string>
-    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Lentani ko‘rsatish yoki yashirish"</string>
-    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Lenta"</string>
+    <string name="accessibility_filmstrip_toggle" msgid="6966978483643396442">"Tasmani ko‘rsatish yoki yopish"</string>
+    <string name="btn_filmstrip_toggle" msgid="3666693972882351490">"Tasma"</string>
     <string name="accessibility_mode_zoom_plus" msgid="4967389173992713073">"Kattalashtirish"</string>
     <string name="btn_zoom_plus" msgid="4645138949375961656">"Z+"</string>
     <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"Kichiklashtirish"</string>
@@ -288,7 +288,7 @@
     <string name="photo_editor" msgid="1521994560971367225">"Rasm tahrirchisi"</string>
     <string name="crop_save" msgid="2841974981340098579">"Saqlash"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"Rasmni yuklashda xatolik!"</string>
-    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Diafilm ko‘rinishi"</string>
+    <string name="switch_photo_filmstrip" msgid="1448511001008888767">"Tasma"</string>
     <string name="setting_wallpaper" msgid="2397759659347872725">"Orqa fonga o‘rnatilmoqda"</string>
     <string name="mode_settings" msgid="2021937261522670921">"Sozlamalar"</string>
     <string name="mode_camera" msgid="279763925715250603">"Kamera"</string>
