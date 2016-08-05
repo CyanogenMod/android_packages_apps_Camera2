@@ -81,14 +81,14 @@
     <string name="pref_camera_id_title" msgid="4680648115225411185">"Камера тандоо"</string>
     <string name="pref_camera_id_entry_back" msgid="6386943973628160510">"Артка"</string>
     <string name="pref_camera_id_entry_front" msgid="6233067010315787044">"Алдыңкы"</string>
-    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Жайгашууну сактоо"</string>
+    <string name="pref_camera_save_location_title" msgid="2344235620113384017">"Сүрт/видео тартл жер"</string>
     <string name="pref_camera_location_label" msgid="8695441802378057719">"ЖАЙГАШТЫРУУ"</string>
     <string name="pref_camera_timer_title" msgid="4728838281741571323">"Артка саноо таймери"</string>
     <!-- no translation found for pref_camera_timer_sound_default (6225207881203007747) -->
     <skip />
     <string name="pref_camera_timer_sound_title" msgid="9036987234878551217">"Артка саналып жатканда үн чыгаруу"</string>
     <string name="setting_off" msgid="6782191065550276632">"Өчүк"</string>
-    <string name="setting_on" msgid="9086728135773197891">"Жандырылган"</string>
+    <string name="setting_on" msgid="9086728135773197891">"Күйүк"</string>
     <string name="pref_video_quality_title" msgid="5887153490982738588">"Видеонун сапаты"</string>
     <string name="pref_video_time_lapse_frame_interval_title" msgid="4975260837607993569">"Убакыт аралыгы"</string>
     <string name="pref_camera_settings_category" msgid="4274141528139077830">"Камеранын тууралоолору"</string>
@@ -107,8 +107,8 @@
     <string name="pref_camera_flashmode_title" msgid="8363803841022314574">"Жаркыма тартиби"</string>
     <string name="pref_camera_flashmode_label" msgid="5852483713534762800">"ЖАРКЫМА ТАРТИБИ"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="4211992591841657014">"Авто"</string>
-    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Жандырылган"</string>
-    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"Өчүрүлгөн"</string>
+    <string name="pref_camera_flashmode_entry_on" msgid="3519831202665377698">"Күйүк"</string>
+    <string name="pref_camera_flashmode_entry_off" msgid="8861322265566617357">"Өчүк"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="2309144918900450379">"АВТО ЖАРКЫМА"</string>
     <string name="pref_camera_flashmode_label_on" msgid="373595517770024934">"ЖАРКЫМА ЖАНДЫРЫЛГАН"</string>
     <string name="pref_camera_flashmode_label_off" msgid="7175863901446001441">"ЖАРКЫМА ӨЧҮК"</string>
@@ -224,10 +224,10 @@
     <string name="accessibility_mode_zoom_minus" msgid="8850636036927992409">"Кичирейтүү"</string>
     <string name="btn_zoom_minus" msgid="5436240345362098272">"Z-"</string>
     <string name="accessibility_zoom_announcement" msgid="6976673411698319811">"Чен өлчөмүн өзгөртүү мааниси - %.1f"</string>
-    <string name="capital_on" msgid="1118214824959797269">"Жандырылган"</string>
+    <string name="capital_on" msgid="1118214824959797269">"Күйүк"</string>
     <string name="capital_off" msgid="3020696135020167263">"ӨЧҮК"</string>
     <string name="video_control_play" msgid="6895236811408921715">"Видео ойнотуу"</string>
-    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Өчүрүлгөн"</string>
+    <string name="pref_video_time_lapse_frame_interval_off" msgid="3909611941842585497">"Өчүк"</string>
     <string name="pref_video_time_lapse_frame_interval_500" msgid="1425296755074319221">"0.5 секунд"</string>
     <string name="pref_video_time_lapse_frame_interval_1000" msgid="9126255690984179200">"1 секунд"</string>
     <string name="pref_video_time_lapse_frame_interval_1500" msgid="5793250074165436905">"1.5 секунд"</string>

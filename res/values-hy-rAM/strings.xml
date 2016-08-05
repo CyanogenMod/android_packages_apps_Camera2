@@ -22,8 +22,8 @@
     <string name="details_hms" msgid="4842276230698703554">"%1$d:%2$02d:%3$02d"</string>
     <string name="set_image" msgid="3969690281401045698">"Սահմանել նկարը որպես"</string>
     <string name="delete" msgid="2714492172818940424">"Ջնջել"</string>
-    <string name="share" msgid="8581089487762243115">"Տարածել"</string>
-    <string name="share_panorama" msgid="3558466186935359444">"Տարածել համայնապատկերը"</string>
+    <string name="share" msgid="8581089487762243115">"Կիսվել"</string>
+    <string name="share_panorama" msgid="3558466186935359444">"Կիսվել համայնապատկերով"</string>
     <string name="share_as_photo" msgid="4831213580709167218">"Տարածել որպես լուսանկար"</string>
     <string name="deleted" msgid="2036165115527228127">"Ջնջված է"</string>
     <string name="undo" msgid="5110048345890050107">"ՀԵՏԱՐԿԵԼ"</string>
@@ -329,7 +329,7 @@
     <string name="done_button_description" msgid="1334963435441544592">"Պատրաստ է"</string>
     <string name="retake_button_description" msgid="4234613030674787714">"Վերանկարել"</string>
     <string name="review_button_description" msgid="7932122063748430080">"Դիտարկել"</string>
-    <string name="share_button_description" msgid="5108508790540832053">"Տարածել"</string>
+    <string name="share_button_description" msgid="5108508790540832053">"Կիսվել"</string>
     <string name="view_button_description" msgid="4985768837891362075">"Դիտել"</string>
     <string name="edit_button_description" msgid="98550816724901925">"Փոփոխել"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"Ջնջել"</string>
@@ -348,7 +348,7 @@
     <string name="setting_default_camera" msgid="6954076799301004779">"Լռելյայն տեսախցիկը"</string>
     <string name="setting_google_help_and_feedback" msgid="2079580537079242775">"Օգնություն և հետադարձ կապ"</string>
     <string name="processing_hdr_plus" msgid="9160093263037540304">"Մշակվում է HDR+..."</string>
-    <string name="open_source_licenses" msgid="2169711954264883060">"Բաց աղբյուրով արտոնագրեր"</string>
+    <string name="open_source_licenses" msgid="2169711954264883060">"Բաց կոդի"</string>
     <string name="pref_category_general" msgid="6737748849700581019">"Հիմնական կարգավորումներ"</string>
     <string name="pref_category_resolution_quality" msgid="6641462402321962896">"Լուծաչափ և որակ"</string>
     <string name="pref_category_about" msgid="1966255405679342337">"Ծրագրի մասին"</string>

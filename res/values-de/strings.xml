@@ -36,7 +36,7 @@
     <string name="crop_action" msgid="6933589718464132714">"Zuschneiden"</string>
     <string name="trim_action" msgid="4736803320203951827">"Zuschneiden"</string>
     <string name="set_as" msgid="5469055085024870081">"Festlegen als"</string>
-    <string name="video_err" msgid="1562566029875081552">"Fehler bei Video-Wiedergabe"</string>
+    <string name="video_err" msgid="1562566029875081552">"Fehler bei Videowiedergabe"</string>
     <string name="title" msgid="8061744305671964703">"Titel"</string>
     <string name="description" msgid="8193138501982849808">"Beschreibung"</string>
     <string name="time" msgid="5248213506417024287">"Uhrzeit"</string>
