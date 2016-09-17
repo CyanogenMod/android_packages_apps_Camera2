@@ -23,18 +23,23 @@
              that is to be "set as" (e.g. set as contact photo or set as wallpaper) -->
   <!-- Details dialog "OK" button. Dismisses dialog. -->
   <!-- The label shown after an image is deleted [CHAR LIMIT=16] -->
+  <string name="deleted">Forigita</string>
   <!-- The label on the button which when clicked will undo a deletion of image [CHAR LIMIT=16]-->
+  <string name="close">Fermi</string>
   <!-- String indicating timestamp of photo or video -->
   <!-- String used as a menu label. The user can choose to edit the image
          [CHAR_LIMIT=20]-->
+  <string name="edit">Redakti</string>
   <!-- The title of the menu item to let user crop the image. [CHAR LIMIT=15] -->
   <!-- The title of the menu item to let user trim the video. [CHAR LIMIT=15] -->
   <!-- The title of the menu item to let user set the image as background etc. [CHAR LIMIT=15] -->
   <!-- String indicating an error when playing the video. [CHAR LIMIT=30] -->
   <!-- Text indicating the title of a media item in details window [CHAR LIMIT=14] -->
   <!-- Text indicating the description of a media item in details window [CHAR LIMIT=14] -->
+  <string name="description">Priskribo</string>
   <!-- Text indicating the creation time of a media item in details window [CHAR LIMIT=14] -->
   <!-- Text indicating the location of a media item in details window [CHAR LIMIT=14] -->
+  <string name="location">Loko</string>
   <!-- Text indicating the path of a media item in details window [CHAR LIMIT=14] -->
   <!-- Text indicating the width of a media item in details window [CHAR LIMIT=14] -->
   <!-- Text indicating the height of a media item in details window [CHAR LIMIT=14] -->
@@ -57,6 +62,7 @@
   <!-- String indicating camera flash is fired. [CHAR LIMIT=14] -->
   <!-- String indicating camera flash is not used. [CHAR LIMIT=14] -->
   <!-- String indicating image width or height is unknown. [CHAR LIMIT=14] -->
+  <string name="unknown">Nekonata</string>
   <!-- Toast message shown after we try to make a local album available offline
          [CHAR LIMIT=150] -->
   <!-- The content of a dialog showing trimming in progress. [CHAR LIMIT=30] -->
@@ -81,7 +87,9 @@
   <!-- In select camera setting, back facing camera value. [CHAR LIMIT=14] -->
   <!-- In select camera setting, front-facing camera value. [CHAR LIMIT=14] -->
   <!-- Settings screen, location setting text. [CHAR LIMIT=20]-->
+  <string name="pref_camera_save_location_title">Konservi lokon</string>
   <!--  Label for record location preference [CHAR LIMIT=50] -->
+  <string name="pref_camera_location_label">LOKO</string>
   <!-- Title for countdown timer on camera settings screen [CHAR LIMIT=30]-->
   <!-- Text followed by a checkbox to turn on/off sound effects during the countdown. [CHAR LIMIT=24]-->
   <!-- Entry of a on/off setting. The setting is turned off. [CHAR LIMIT=15] -->
@@ -156,6 +164,7 @@
   <!-- switch camera label back [CHAR LIMIT=60] -->
   <!-- switch camera label front [CHAR LIMIT=60] -->
   <!-- Dialog "OK" button. Dismisses dialog. -->
+  <string name="dialog_cancel">Nuligi</string>
   <!-- Dialog "Report" button. Opens Google Feedback screen [CHAR LIMIT=12] -->
   <!-- Dialog "Dismiss" button. Closes the dialog [CHAR LIMIT=12]-->
   <!-- Low-memory dialog message [CHAR LIMIT=NONE] -->
@@ -192,6 +201,7 @@
   <!-- Title of category for background replacement effects. [CHAR LIMIT=26] -->
   <!-- The shutter button. [CHAR LIMIT=NONE] -->
   <!-- The cancel button. Used to cancel an in progress shot [CHAR LIMIT=NONE] -->
+  <string name="accessibility_cancel_button">Nuligi</string>
   <!-- The menu button. [CHAR LIMIT=NONE] -->
   <!-- The check box in camera settings, such as store location. [CHAR LIMIT=NONE] -->
   <!-- The button to switch to Camera mode. [CHAR LIMIT=NONE] -->
@@ -281,9 +291,11 @@
   <!-- Message for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=None] -->
   <!-- Negative answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=20] -->
   <!-- Positive answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT=20] -->
+  <string name="remember_location_yes">Jes</string>
   <!-- Camera menu labels -->
   <!-- more options label [CHAR LIMIT=50] -->
   <!-- settings label [CHAR LIMIT=50] -->
+  <string name="camera_menu_settings_label">AGORDOJ</string>
   <!--  Tiny Planet -->
   <!-- Button to press for creating a tiny planet image. [CHAR LIMIT=30] -->
   <!-- Message shown while a tiny planet image is being saved. [CHAR LIMIT=30] -->
@@ -296,6 +308,7 @@
   <!-- Label for album filmstrip button -->
   <!--  String shown when setting the homepage wallpaper in the background [CHAR LIMIT=NONE] -->
   <!-- Camera settings. [CHAR LIMIT=25] -->
+  <string name="mode_settings">Agordoj</string>
   <!-- Text shown in the camera mode options list for normal camera mode [CHAR LIMIT=25] -->
   <!-- Text shown in the camera mode options list for putting camera in video recording mode [CHAR LIMIT=25] -->
   <!-- Text shown in the camera mode options list for putting camera in photo sphere mode. 'Photo sphere' is a product name. [CHAR LIMIT=25] -->
@@ -319,12 +332,14 @@
   <!-- Accessibility text for countdown timer toggle button states [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for More Options button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for cancel button [CHAR_LIMIT=NONE] -->
+  <string name="cancel_button_description">Nuligi</string>
   <!-- Accessibility text for done button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for retake button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for video review button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for filmstrip share button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for filmstrip view button used to open special image viewers, like 3d photosphere [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for filmstrip edit button [CHAR_LIMIT=NONE] -->
+  <string name="edit_button_description">Redakti</string>
   <!-- Accessibility text for filmstrip delete button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for manual exposure compensation button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility text for exposure compensation -2 button [CHAR_LIMIT=NONE] -->
@@ -334,6 +349,7 @@
   <!-- Accessibility text for exposure compensation +2 button [CHAR_LIMIT=NONE] -->
   <!-- Accessibility announcement when option button changes on screen after tap, e.g. from flash auto to flash off [CHAR_LIMIT=NONE] -->
   <!-- Text shown in camera settings list for toggling photo location on or off [CHAR LIMIT=25] -->
+  <string name="setting_location">Loko</string>
   <!-- Camera settings title for back camera photo resolution. [CHAR LIMIT=25] -->
   <!-- Camera settings title for back camera video resolution. [CHAR LIMIT=25] -->
   <!-- Camera settings title for front camera photo resolution. [CHAR LIMIT=25] -->
