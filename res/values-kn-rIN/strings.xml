@@ -32,7 +32,7 @@
     <string name="show_on_map" msgid="8542853913632649160">"ನಕ್ಷೆಯಲ್ಲಿ ತೋರಿಸಿ"</string>
     <string name="rotate_left" msgid="2618440058490662604">"ಎಡಕ್ಕೆ ತಿರುಗಿಸು"</string>
     <string name="rotate_right" msgid="4896096424267838355">"ಬಲಕ್ಕೆ ತಿರುಗಿಸು"</string>
-    <string name="edit" msgid="2776879395749004347">"ಸಂಪಾದಿಸು"</string>
+    <string name="edit" msgid="2776879395749004347">"ಎಡಿಟ್"</string>
     <string name="crop_action" msgid="6933589718464132714">"ಕತ್ತರಿಸಿ"</string>
     <string name="trim_action" msgid="4736803320203951827">"ಟ್ರಿಮ್"</string>
     <string name="set_as" msgid="5469055085024870081">"ಹೀಗೆ ಹೊಂದಿಸಿ"</string>
@@ -285,7 +285,7 @@
     <string name="saving_tiny_planet" msgid="8828265180177375494">"ಸಣ್ಣ ಪ್ಲಾನೆಟ್ ಉಳಿಸಲಾಗುತ್ತಿದೆ…"</string>
     <string name="tiny_planet_zoom" msgid="2985522360577158474">"ಝೂಮ್ ಮಾಡು"</string>
     <string name="tiny_planet_rotate" msgid="5445336705705350004">"ತಿರುಗಿಸು"</string>
-    <string name="photo_editor" msgid="1521994560971367225">"ಫೋಟೋ ಸಂಪಾದಕ"</string>
+    <string name="photo_editor" msgid="1521994560971367225">"ಫೋಟೋ ಎಡಿಟರ್"</string>
     <string name="crop_save" msgid="2841974981340098579">"ಉಳಿಸು"</string>
     <string name="cannot_load_image" msgid="4100136187076585580">"ಚಿತ್ರವನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ!"</string>
     <string name="switch_photo_filmstrip" msgid="1448511001008888767">"ಫಿಲ್ಮ್‌ಸ್ಟ್ರಿಪ್ ವೀಕ್ಷಣೆ"</string>
@@ -331,7 +331,7 @@
     <string name="review_button_description" msgid="7932122063748430080">"ಪರಿಶೀಲಿಸು"</string>
     <string name="share_button_description" msgid="5108508790540832053">"ಹಂಚಿಕೊಳ್ಳಿ"</string>
     <string name="view_button_description" msgid="4985768837891362075">"ವೀಕ್ಷಿಸು"</string>
-    <string name="edit_button_description" msgid="98550816724901925">"ಸಂಪಾದಿಸು"</string>
+    <string name="edit_button_description" msgid="98550816724901925">"ಎಡಿಟ್"</string>
     <string name="delete_button_description" msgid="2251065309677200911">"ಅಳಿಸು"</string>
     <string name="manual_exposure_compensation_desc" msgid="5595219532556566042">"ಮ್ಯಾನುಯಲ್ ಮಾನ್ಯತೆ ಪರಿಹಾರ"</string>
     <string name="exposure_compensation_desc_n2" msgid="8957966533506294324">"ಮಾನ್ಯತೆ ಪರಿಹಾರ -2"</string>
@@ -371,7 +371,7 @@
     <string name="photo_size_selection_title" msgid="2789753590719172645">"ಫೋಟೋ ಗಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ"</string>
     <string name="photo_aspect_ratio_selection_content" msgid="6668224437962196229">"ನೀವು ಇದನ್ನು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ನಂತರ ಬದಲಾಯಿಸಬಹುದು."</string>
     <string name="share_to" msgid="5144911209144798122">"ಇವುಗಳೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಿ"</string>
-    <string name="edit_with" msgid="615569327230783971">"ಇವರ ಜೊತೆಗೆ ಸಂಪಾದಿಸಿ"</string>
+    <string name="edit_with" msgid="615569327230783971">"ಇವರ ಜೊತೆಗೆ ಎಡಿಟ್ ಮಾಡಿ"</string>
     <string name="startup_dialog_button_next" msgid="1011831256978228993">"ಮುಂದೆ"</string>
     <string name="confirm_button_text" msgid="7389949384482206814">"ಸರಿ, ಅರ್ಥವಾಯಿತು"</string>
     <string name="full_sensor_4x3_aspect_ratio" msgid="1270461419743888925">"ಪೂರ್ಣ ಸೆನ್ಸಾರ್ \n(4:3)"</string>
