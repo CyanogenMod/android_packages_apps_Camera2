@@ -1323,25 +1323,14 @@ public class VideoModule extends CameraModule
         // Store current ringer mode so we can set it once video recording is
         // finished.
         mOriginalRingerMode = mAudioManager.getRingerMode();
-        // Make sure no system sounds and vibrations happen during video
-        // recording.
-        try {
-            mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        } catch (SecurityException e) {
-            Log.e(TAG, "Error: " + e);
-        }
+        // TODO: Use new DND APIs to properly silence device
     }
 
     private void restoreRingerMode() {
         // First check if ringer mode was changed during the recording. If not,
         // re-set the mode that was set before video recording started.
         if (mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) {
-            // Set the original ringer mode back.
-            try {
-                mAudioManager.setRingerMode(mOriginalRingerMode);
-            } catch (SecurityException e) {
-                Log.e(TAG, "Error: " + e);
-            }
+            // TODO: Use new DND APIs to properly restore device notification/alarm settings
         }
     }
 
