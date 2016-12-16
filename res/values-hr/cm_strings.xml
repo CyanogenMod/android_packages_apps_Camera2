@@ -17,9 +17,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- More Settings screen, power button title -->
-  <string name="pref_camera_power_shutter_title">Tipka za napajanje i okidač</string>
+  <string name="pref_camera_power_shutter_title">Gumb za isključivanje kao okidač</string>
   <!-- More Settings screen, max brightness title -->
-  <string name="pref_camera_max_brightness_title">Sjajan zaslon</string>
+  <string name="pref_camera_max_brightness_title">Svijetao zaslon</string>
   <!-- More Settings screen, storage title -->
   <string name="pref_camera_storage_title">Lokacija pohrane</string>
 </resources>
